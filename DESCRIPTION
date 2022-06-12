@@ -1,0 +1,23 @@
+Package: exactly
+Title: Create actuarial experience studies: prepare data, summarize results, and create reports
+Version: 0.0.0.9000
+Authors@R: 
+    person("Matt", "Heaphy", , "matt.heaphy@gmail.com", role = c("aut", "cre"))
+Description: Experience studies are used by actuaries to explore historical
+    experience across blocks of business and to inform assumption setting
+    activities. This package provides tidyverse-insprired functions for 
+    preparing data, creating studies, and beginning assumption development.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Depends: 
+    R (>= 4.1)
+Imports: 
+    lubridate,
+    dplyr,
+    ggplot2,
+    tibble
