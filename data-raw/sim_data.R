@@ -1,4 +1,5 @@
 ## code to prepare examples datasets goes here
+library(tidyverse)
 
 status_list <- c("Active", "Death", "Surrender")
 
@@ -19,4 +20,6 @@ scale_g2 <- read_csv("data-raw/rates/scaleG2.csv", col_types = "idc")
 usethis::use_data(qx_iamb, overwrite = TRUE)
 usethis::use_data(scale_g2, overwrite = TRUE)
 
-source("data-raw/exactly_simulate_data.R")
+source("data-raw/simulate_data.R")
+
+usethis::use_data(census_dat, overwrite = TRUE)

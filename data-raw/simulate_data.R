@@ -216,7 +216,8 @@ expand_sim <- function(dat) {
     mutate(term_date = if_else(status == "Active",
                                NA_Date_,
                                issue_date %m+% years(pol_yr - 1) +
-                                 sample(0:364, nrow(dat), replace = TRUE)))
+                                 sample(0:364, nrow(dat), replace = TRUE))) |>
+    select(-base_rate, -ends_with("_mult"))
 
 }
 
@@ -236,12 +237,3 @@ census_dat <- census_dat |>
   select(-pol_yr) |>
   inner_join(final_status, by = "pol_num") |>
   select(pol_num, status, pol_yr, everything())
-
-
-# Save data ---------------------------------------------------------------
-
-saveRDS(census_dat, "data/census_data.rds")
-
-expo_dat |>
-  select(-ends_with("_mult"), -base_rate) |>
-  saveRDS("data/exposure_data.rds")
