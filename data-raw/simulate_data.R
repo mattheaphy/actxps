@@ -146,6 +146,9 @@ expand_sim <- function(dat) {
 
   }
 
+  qx_iamb$gender <- str_sub(qx_iamb$gender, 1, 1)
+  scale_g2$gender <- str_sub(scale_g2$gender, 1, 1)
+
   dat <- dat |>
     slice(rep(row_number(), pol_yr)) |>
     group_by(pol_num) |>
@@ -156,26 +159,39 @@ expand_sim <- function(dat) {
            exercised = age >= wd_age & inc_guar,
            pol_yr2 = pmin(max(base_rates$pol_yr), pol_yr)) |>
     left_join(base_rates, by = c("pol_yr2" = "pol_yr", "inc_guar")) |>
+    left_join(qx_iamb, by = c("age", "gender")) |>
+    left_join(scale_g2, by = c("age", "gender")) |>
     mutate(
       qual_mult = qual_mult(qual, age),
       age_mult = age_mult(age, inc_guar),
       prod_mult = prod_mult[product],
       gender_mult = gender_mult[gender],
       wd_time_mult = wd_time_mult(exercised, age, inc_guar),
-      q_exp = pmin(qual_mult * age_mult * prod_mult * base_rate * wd_time_mult,
+      q_w = pmin(qual_mult * age_mult * prod_mult * base_rate * wd_time_mult,
                    0.99),
+      cal_yr = year(issue_date) + pol_yr - 1,
+      qx = qx * (1 - mi) ^ (cal_yr - 2012)
     ) |>
-    select(-pol_yr2, -t)
+    select(-pol_yr2, -t, -cal_yr, -mi) |>
+    rename(q_d = qx)
 
   persist <- function(x) {
-    # default to status 2 = already terminated
-    res <- rep_len(2L, length(x))
-    for (i in seq_along(x)) {
-      # if new termination, set to status 1 = just terminated and exit
-      if (runif(1) < x[[i]]) {
-        res[[i]] <- 1L
-        break
+    # default to and "already terminated" status
+    quit_status <- dim(x)[[2]] + 1
+    res <- rep_len(quit_status, dim(x)[[1]])
+
+    for (i in seq_len(dim(x)[[1]])) {
+
+      # cycle through each decrement and determine terminations
+      for (j in seq_len(dim(x)[[2]])) {
+        if (runif(1) < x[[i, j]]) {
+          res[[i]] <- j
+          break
+        }
       }
+
+      if (res[[i]] < quit_status) break
+
       # otherwise set to status 0 = active
       res[[i]] <- 0L
     }
@@ -183,16 +199,21 @@ expand_sim <- function(dat) {
     res
   }
 
+  # status mapping
+  status_map <- c(`0` = "Active", `1` = "Death", `2` = "Surrender")
+
   # add claims
   set.seed(4375)
   dat <- dat |>
     group_by(pol_num) |>
-    mutate(term = persist(q_exp)) |>
+    mutate(status = persist(cbind(Death = q_d, Surrender = q_w))) |>
     ungroup() |>
-    filter(term <= 1)
+    filter(status <= 2) |>
+    mutate(status = factor(status_map[as.character(status)],
+                           levels = status_map))
 
   dat |>
-    mutate(term_date = if_else(term == 0,
+    mutate(term_date = if_else(status == "Active",
                                NA_Date_,
                                issue_date %m+% years(pol_yr - 1) +
                                  sample(0:364, nrow(dat), replace = TRUE)))
@@ -208,13 +229,13 @@ final_status <- expo_dat |>
   group_by(pol_num) |>
   filter(pol_yr == max(pol_yr)) |>
   ungroup() |>
-  select(pol_num, term, pol_yr)
+  select(pol_num, status, pol_yr, term_date)
 
 # add final policy statuses and termination times back to the exposure data
 census_dat <- census_dat |>
   select(-pol_yr) |>
   inner_join(final_status, by = "pol_num") |>
-  select(pol_num, term, pol_yr, everything())
+  select(pol_num, status, pol_yr, everything())
 
 
 # Save data ---------------------------------------------------------------
@@ -222,4 +243,5 @@ census_dat <- census_dat |>
 saveRDS(census_dat, "data/census_data.rds")
 
 expo_dat |>
-  select(-ends_with("_mult"), -base_rate) # save this??
+  select(-ends_with("_mult"), -base_rate) |>
+  saveRDS("data/exposure_data.rds")
