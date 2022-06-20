@@ -149,10 +149,14 @@ expand_sim <- function(dat) {
   qx_iamb$gender <- str_sub(qx_iamb$gender, 1, 1)
   scale_g2$gender <- str_sub(scale_g2$gender, 1, 1)
 
+  # study end date
+  end_date <- max(dat$issue_date) |> ceiling_date("year") - 1
+
   dat <- dat |>
     slice(rep(row_number(), pol_yr)) |>
     group_by(pol_num) |>
-    mutate(pol_yr = row_number()) |>
+    mutate(pol_yr = row_number(),
+           last_yr = pol_yr == last(pol_yr)) |>
     ungroup() |>
     mutate(t = pol_yr,
            age = age + t - 1,
@@ -170,13 +174,17 @@ expand_sim <- function(dat) {
       q_w = pmin(qual_mult * age_mult * prod_mult * base_rate * wd_time_mult,
                    0.99),
       cal_yr = year(issue_date) + pol_yr - 1,
-      qx = qx * (1 - mi) ^ (cal_yr - 2012)
+      qx = qx * (1 - mi) ^ (cal_yr - 2012),
+      exposure = ifelse(last_yr,
+                        (interval(issue_date, end_date) / years(1)) %% 1, 1),
     ) |>
-    select(-pol_yr2, -t, -cal_yr, -mi) |>
+    select(-pol_yr2, -t, -cal_yr, -mi, -last_yr) |>
     rename(q_d = qx)
 
-  persist <- function(x) {
+  persist <- function(x, y) {
     # default to and "already terminated" status
+    # x = a matrix of decrement probabilities
+    # y = an array of exposures
     quit_status <- dim(x)[[2]] + 1
     res <- rep_len(quit_status, dim(x)[[1]])
 
@@ -184,7 +192,7 @@ expand_sim <- function(dat) {
 
       # cycle through each decrement and determine terminations
       for (j in seq_len(dim(x)[[2]])) {
-        if (runif(1) < x[[i, j]]) {
+        if (runif(1) < x[[i, j]] * y[[i]]) {
           res[[i]] <- j
           break
         }
@@ -206,7 +214,7 @@ expand_sim <- function(dat) {
   set.seed(4375)
   dat <- dat |>
     group_by(pol_num) |>
-    mutate(status = persist(cbind(Death = q_d, Surrender = q_w))) |>
+    mutate(status = persist(cbind(Death = q_d, Surrender = q_w), exposure)) |>
     ungroup() |>
     filter(status <= 2) |>
     mutate(status = factor(status_map[as.character(status)],
@@ -217,7 +225,7 @@ expand_sim <- function(dat) {
                                NA_Date_,
                                issue_date %m+% years(pol_yr - 1) +
                                  sample(0:364, nrow(dat), replace = TRUE))) |>
-    select(-base_rate, -ends_with("_mult"))
+    select(-base_rate, -ends_with("_mult"), -exposure)
 
 }
 

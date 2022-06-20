@@ -37,7 +37,9 @@ expose <- function(.data,
   .data |>
     dplyr::filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
-    dplyr::mutate(pol_yr = lubridate::interval(issue_date, end_date) %/%
+    dplyr::mutate(
+      last_date = pmin(term_date, end_date, na.rm = TRUE),
+      pol_yr = lubridate::interval(issue_date, last_date) %/%
                     lubridate::years(1) + 1) |>
     dplyr::slice(rep(dplyr::row_number(), pol_yr)) |>
     dplyr::group_by(pol_num) |>
@@ -48,10 +50,10 @@ expose <- function(.data,
     dplyr::mutate(
       exposure =
         ifelse(last_yr & !status %in% target_status,
-               (lubridate::interval(issue_date, end_date) /
+               (lubridate::interval(issue_date, last_date) /
                   lubridate::years(1)) %% 1, 1),
       status = dplyr::if_else(last_yr, status, default_status),
       term_date = dplyr::if_else(last_yr, term_date, lubridate::NA_Date_)
     ) |>
-    dplyr::select(-last_yr)
+    dplyr::select(-last_yr, -last_date)
 }
