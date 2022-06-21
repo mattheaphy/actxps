@@ -4,10 +4,33 @@
 \alias{expose}
 \title{Create exposoure records from census records}
 \usage{
-expose(dat)
+expose(
+  .data,
+  end_date,
+  start_date,
+  target_status = "None",
+  col_pol_num = "pol_num",
+  col_status = "status",
+  col_issue_date = "issue_date",
+  col_term_date = "term_date"
+)
 }
 \arguments{
-\item{dat}{a data frame with census-level records}
+\item{.data}{a data frame with census-level records}
+
+\item{end_date}{experience study end date}
+
+\item{start_date}{experience study start date}
+
+\item{target_status}{character vector of target status values}
+
+\item{col_pol_num}{name of the column in \code{.data} containing the policy number}
+
+\item{col_status}{name of the column in \code{.data} containing the policy status}
+
+\item{col_issue_date}{name of the column in \code{.data} containing the issue date}
+
+\item{col_term_date}{name of the column in \code{.data} containing the termination date}
 }
 \value{
 something useful
@@ -20,4 +43,5 @@ add details here
 }
 \examples{
 1
+
 }

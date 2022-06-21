@@ -20,5 +20,7 @@ Imports:
     lubridate,
     dplyr,
     ggplot2,
-    tibble
+    tibble,
+    rlang,
+    glue
 LazyData: true

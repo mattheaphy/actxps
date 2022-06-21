@@ -4,7 +4,14 @@
 #'
 #' @details add details here
 #'
-#' @param dat a data frame with census-level records
+#' @param .data a data frame with census-level records
+#' @param end_date experience study end date
+#' @param start_date experience study start date
+#' @param target_status character vector of target status values
+#' @param col_pol_num name of the column in \code{.data} containing the policy number
+#' @param col_status name of the column in \code{.data} containing the policy status
+#' @param col_issue_date name of the column in \code{.data} containing the issue date
+#' @param col_term_date name of the column in \code{.data} containing the termination date
 #'
 #' @return something useful
 #'
@@ -23,7 +30,7 @@ expose <- function(.data,
                    col_term_date = "term_date") {
 
   .data <- .data |>
-    rename(pol_num = {{col_pol_num}},
+    dplyr::rename(pol_num = {{col_pol_num}},
            status = {{col_status}},
            issue_date = {{col_issue_date}},
            term_date = {{col_term_date}})
