@@ -12,8 +12,6 @@ toy_census <- data.frame(
 
 usethis::use_data(toy_census, overwrite = TRUE)
 
-# usethis::use_data(sim_data, overwrite = TRUE)
-
 qx_iamb <- read_csv("data-raw/rates/qx_iamb.csv", col_types = "idc")
 scale_g2 <- read_csv("data-raw/rates/scaleG2.csv", col_types = "idc")
 
