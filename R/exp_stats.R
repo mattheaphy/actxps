@@ -19,7 +19,15 @@
 #'
 #' @import rlang
 #'
-#' @examples 1
+#' @examples
+#' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
+#'     exp_stats()
+#'
+#' \dontrun{
+#' census_dat |>
+#'     expose("2019-12-31", target_status = "Surrender") |>
+#'     group_by(pol_yr) |>
+#'     exp_stats()}
 #'
 #' @export
 exp_stats <- function(.data, target_status = attr(.data, "target_status"),

@@ -38,6 +38,13 @@ target status from \code{.data} if it is an \code{exposed_df} object. If
 the first level will be assumed. This will produce a warning message.
 }
 \examples{
-1
+toy_census |> expose("2020-12-31", target_status = "Surrender") |>
+    exp_stats()
+
+\dontrun{
+census_dat |>
+    expose("2019-12-31", target_status = "Surrender") |>
+    group_by(pol_yr) |>
+    exp_stats()}
 
 }

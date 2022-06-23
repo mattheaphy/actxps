@@ -42,6 +42,6 @@ update me
 add details here
 }
 \examples{
-1
+toy_census |> expose("2020-12-31", target_status = "Surrender")
 
 }

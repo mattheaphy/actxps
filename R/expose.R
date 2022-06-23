@@ -17,7 +17,8 @@
 #'
 #' @import rlang
 #'
-#' @examples 1
+#' @examples
+#' toy_census |> expose("2020-12-31", target_status = "Surrender")
 #'
 #' @export
 expose <- function(.data,
