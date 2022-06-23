@@ -1,13 +1,20 @@
 #' Summarize experience study records
 #'
-#' @description update me
+#' @description Create a summary data frame of experience for a given target
+#' status.
 #'
-#' @details add more details here
+#' @details If \code{.data} is grouped, the resulting data frame will contain
+#' one row per group.
 #'
 #' If \code{target_status} isn't provided, \code{exp_stats} will use the same
-#' target status from \code{.data} if it is an \code{exposed_df} object. If
-#' \code{.data} is not an \code{exposed_df} object, all status values except
-#' the first level will be assumed. This will produce a warning message.
+#' target status from \code{.data} if it has the class \code{exposed_df}.
+#' Otherwise, \code{.data} is not an \code{exposed_df} object, all status
+#' values except the first level will be assumed. This will produce a
+#' warning message.
+#'
+#' The \code{expected} argument is optional. If provided, this argument must
+#' be a character vector with values corresponding to columns in \code{.data}
+#' containing expected experience. More than one expected basis can be provided.
 #'
 #' @param .data a data frame with exposure-level records, ideally of type \code{exposed_df}
 #' @param target_status a character vector of target status values
@@ -15,7 +22,11 @@
 #' @param col_exposure name of the column in \code{.data} containing exposures
 #' @param col_status name of the column in \code{.data} containing the policy status
 #'
-#' @return something useful
+#' @return A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
+#' and \code{data.frame}. The results include columns for any grouping
+#' variables, claims, exposures, and observed decrement rates.
+#' If any values are passed to \code{expected}, additional columns will be
+#' added for expected decrements and actual-to-expected ratios.
 #'
 #' @import rlang
 #'
