@@ -2,7 +2,7 @@
 % Please edit documentation in R/expose.R
 \name{expose}
 \alias{expose}
-\title{Create exposoure records from census records}
+\title{Create exposure records from census records}
 \usage{
 expose(
   .data,

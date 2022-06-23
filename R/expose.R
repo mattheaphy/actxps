@@ -1,4 +1,4 @@
-#' Create exposoure records from census records
+#' Create exposure records from census records
 #'
 #' @description update me
 #'
@@ -41,7 +41,7 @@ expose <- function(.data,
 
   default_status <- factor("Active", levels = levels(.data$status))
 
-  .data |>
+  res <- .data |>
     dplyr::filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
     dplyr::mutate(
@@ -63,4 +63,11 @@ expose <- function(.data,
       term_date = dplyr::if_else(last_yr, term_date, lubridate::NA_Date_)
     ) |>
     dplyr::select(-last_yr, -last_date)
+
+  structure(res, class = c("exposed_df", class(res)),
+            target_status = target_status,
+            exposure_type = "policy_year",
+            start_date = start_date,
+            end_date = end_date)
+
 }
