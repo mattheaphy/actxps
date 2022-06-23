@@ -4,14 +4,24 @@
 \alias{exp_stats}
 \title{Summarize experience study records}
 \usage{
-exp_stats(.data, expected, target_status)
+exp_stats(
+  .data,
+  target_status = attr(.data, "target_status"),
+  expected,
+  col_exposure = "exposure",
+  col_status = "status"
+)
 }
 \arguments{
-\item{.data}{a data frame with exposure-level records}
+\item{.data}{a data frame with exposure-level records, ideally of type \code{exposed_df}}
+
+\item{target_status}{a character vector of target status values}
 
 \item{expected}{a character vector of expected values}
 
-\item{target_status}{a character vector of target status values}
+\item{col_exposure}{name of the column in \code{.data} containing exposures}
+
+\item{col_status}{name of the column in \code{.data} containing the policy status}
 }
 \value{
 something useful
@@ -22,8 +32,10 @@ update me
 \details{
 add more details here
 
-If \code{target_status} isn't provided, all status values except the first level will be used. This method
-implicitly assumes that the first level is a default active status.
+If \code{target_status} isn't provided, \code{exp_stats} will use the same
+target status from \code{.data} if it is an \code{exposed_df} object. If
+\code{.data} is not an \code{exposed_df} object, all status values except
+the first level will be assumed. This will produce a warning message.
 }
 \examples{
 1
