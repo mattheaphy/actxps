@@ -19,6 +19,10 @@
 #' \code{target_status} can be ignored. In this case, partial exposures are
 #' always applied regardless of status.
 #'
+#' \code{default_status} is used to indicate the default active status that
+#' should be used when exposure records are created. If left blank, then the
+#' first status level will be assumed to be the default active status.
+#'
 #' @param .data a data frame with census-level records
 #' @param end_date experience study end date
 #' @param start_date experience study start date. Default value = 1900-01-01.
@@ -27,6 +31,7 @@
 #' @param col_status name of the column in \code{.data} containing the policy status
 #' @param col_issue_date name of the column in \code{.data} containing the issue date
 #' @param col_term_date name of the column in \code{.data} containing the termination date
+#' @param default_status optional scalar character representing the default active status code.
 #'
 #' @return A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 #' and \code{data.frame}. The results include all existing columns in
@@ -46,13 +51,14 @@
 #'
 #' @export
 expose <- function(.data,
-                    end_date,
-                    start_date = as.Date("1900-01-01"),
-                    target_status = NULL,
-                    col_pol_num = "pol_num",
-                    col_status = "status",
-                    col_issue_date = "issue_date",
-                    col_term_date = "term_date") {
+                   end_date,
+                   start_date = as.Date("1900-01-01"),
+                   target_status = NULL,
+                   col_pol_num = "pol_num",
+                   col_status = "status",
+                   col_issue_date = "issue_date",
+                   col_term_date = "term_date",
+                   default_status) {
 
   .data <- .data |>
     dplyr::rename(pol_num = {{col_pol_num}},
@@ -62,7 +68,15 @@ expose <- function(.data,
 
   if(!is.factor(.data$status)) .data$status <- factor(.data$status)
 
-  default_status <- factor("Active", levels = levels(.data$status))
+  if (missing(default_status)) {
+    default_status <- factor(levels(.data$status)[[1]],
+                             levels = levels(.data$status))
+  } else {
+    status_levels <- union(levels(.data$status), default_status)
+    default_status <- factor(default_status,
+                             levels = status_levels)
+    levels(.data$status) <- status_levels
+  }
 
   res <- .data |>
     dplyr::filter(issue_date < end_date,

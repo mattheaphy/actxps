@@ -12,7 +12,8 @@ expose(
   col_pol_num = "pol_num",
   col_status = "status",
   col_issue_date = "issue_date",
-  col_term_date = "term_date"
+  col_term_date = "term_date",
+  default_status
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ expose(
 \item{col_issue_date}{name of the column in \code{.data} containing the issue date}
 
 \item{col_term_date}{name of the column in \code{.data} containing the termination date}
+
+\item{default_status}{optional scalar character representing the default active status code.}
 }
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
@@ -57,6 +60,10 @@ that the probability of termination is proportionate to the time elapsed
 in the observation period. If the annual exposure method isn't desired,
 \code{target_status} can be ignored. In this case, partial exposures are
 always applied regardless of status.
+
+\code{default_status} is used to indicate the default active status that
+should be used when exposure records are created. If left blank, then the
+first status level will be assumed to be the default active status.
 }
 \examples{
 toy_census |> expose("2020-12-31", target_status = "Surrender")
