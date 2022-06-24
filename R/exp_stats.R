@@ -28,8 +28,6 @@
 #' If any values are passed to \code{expected}, additional columns will be
 #' added for expected decrements and actual-to-expected ratios.
 #'
-#' @import rlang
-#'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
 #'     exp_stats()
