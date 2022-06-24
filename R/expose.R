@@ -35,7 +35,15 @@
 #'
 #' @return A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 #' and \code{data.frame}. The results include all existing columns in
-#' \code{.data} plus new columns for exposures and the observation period.
+#' \code{.data} plus new columns for exposures and observation periods.
+#'
+#' For policy year and policy month exposures, any calendar-based observation
+#' periods represent the beginning of the policy year or policy month. For
+#' example, using a policy year exposure basis, assume that for a particular
+#' record the policy year (\code{pol_yr}) is 3 and the calendar year
+#' (\code{cal_yr}) is 2022. This means that it was 2022 at the start of policy
+#' year 3.
+#'
 #'
 #' @import rlang
 #'
@@ -93,11 +101,13 @@ expose <- function(.data,
       pol_yr = dplyr::row_number()) |>
     dplyr::ungroup() |>
     dplyr::mutate(
+      cal_yr = lubridate::year(issue_date) + pol_yr - 1,
       exposure = ifelse(last_yr & !status %in% target_status, tot_yrs %% 1, 1),
       status = dplyr::if_else(last_yr, status, default_status),
       term_date = dplyr::if_else(last_yr, term_date, lubridate::NA_Date_)
     ) |>
-    dplyr::select(-last_yr, -last_date, -tot_yrs, -tot_int)
+    dplyr::select(-last_yr, -last_date, -tot_yrs, -tot_int) |>
+    dplyr::filter(cal_yr >= lubridate::year(start_date))
 
   structure(res, class = c("exposed_df", class(res)),
             target_status = target_status,
