@@ -7,8 +7,8 @@
 expose(
   .data,
   end_date,
-  start_date,
-  target_status = "None",
+  start_date = as.Date("1900-01-01"),
+  target_status = NULL,
   col_pol_num = "pol_num",
   col_status = "status",
   col_issue_date = "issue_date",
@@ -20,9 +20,9 @@ expose(
 
 \item{end_date}{experience study end date}
 
-\item{start_date}{experience study start date}
+\item{start_date}{experience study start date. Default value = 1900-01-01.}
 
-\item{target_status}{character vector of target status values}
+\item{target_status}{character vector of target status values. Default value = \code{NULL.}}
 
 \item{col_pol_num}{name of the column in \code{.data} containing the policy number}
 
@@ -33,15 +33,39 @@ expose(
 \item{col_term_date}{name of the column in \code{.data} containing the termination date}
 }
 \value{
-something useful
+A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
+and \code{data.frame}. The results include all existing columns in
+\code{.data} plus new columns for exposures and the observation period.
 }
 \description{
-update me
+Convert a data frame of census-level records to exposure-level
+records.
 }
 \details{
-add details here
+Census-level data refers to a data set wherein there is one row
+per unique policy. Exposure-level data expands census-level data such that
+there is one record per policy per observation period. Observation periods
+could be any meaningful period of time such as a policy year, policy month,
+calendar year, calendar quarter, calendar month, etc.
+
+\code{target_status} is used in the calculation of exposures. The annual
+exposure method is applied, which allocates a full period of exposure for
+any statuses in \code{target_status}. For all other statuses, new entrants
+and exits are partially exposed based on the time elapsed in the observation
+period. This method is consistent with the Balducci Hypothesis, which assumes
+that the probability of termination is proportionate to the time elapsed
+in the observation period. If the annual exposure method isn't desired,
+\code{target_status} can be ignored. In this case, partial exposures are
+always applied regardless of status.
 }
 \examples{
 toy_census |> expose("2020-12-31", target_status = "Surrender")
 
+\dontrun{
+census_dat |>
+    expose("2019-12-31", target_status = "Surrender")}
+
+}
+\references{
+https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf
 }
