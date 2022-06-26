@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# exactly
+# xps
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -13,12 +13,12 @@ preparing data, creating studies, and beginning assumption development.
 
 ## Installation
 
-You can install the development version of exactly from
+You can install the development version of xps from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mattheaphy/exactly")
+devtools::install_github("mattheaphy/xps")
 ```
 
 ## Example
@@ -26,6 +26,6 @@ devtools::install_github("mattheaphy/exactly")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(exactly)
+library(xps)
 ## basic example code
 ```
