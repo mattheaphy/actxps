@@ -1,4 +1,4 @@
 library(testthat)
-library(exactly)
+library(xps)
 
-test_check("exactly")
+test_check("xps")

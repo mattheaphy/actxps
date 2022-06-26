@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# exactly
+# xps
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -25,11 +25,11 @@ and beginning assumption development.
 
 ## Installation
 
-You can install the development version of exactly from [GitHub](https://github.com/) with:
+You can install the development version of xps from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mattheaphy/exactly")
+devtools::install_github("mattheaphy/xps")
 ```
 
 ## Example
@@ -37,6 +37,6 @@ devtools::install_github("mattheaphy/exactly")
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(exactly)
+library(xps)
 ## basic example code
 ```
