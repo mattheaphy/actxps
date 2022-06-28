@@ -2,9 +2,22 @@
 % Please edit documentation in R/expose.R
 \name{expose}
 \alias{expose}
+\alias{expose_cy}
 \title{Create exposure records from census records}
 \usage{
 expose(
+  .data,
+  end_date,
+  start_date = as.Date("1900-01-01"),
+  target_status = NULL,
+  col_pol_num = "pol_num",
+  col_status = "status",
+  col_issue_date = "issue_date",
+  col_term_date = "term_date",
+  default_status
+)
+
+expose_cy(
   .data,
   end_date,
   start_date = as.Date("1900-01-01"),

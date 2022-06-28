@@ -44,8 +44,8 @@
 #' (\code{cal_yr}) is 2022. This means that it was 2022 at the start of policy
 #' year 3.
 #'
+#' @importFrom rlang :=
 #'
-#' @import rlang
 #'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender")
@@ -90,10 +90,12 @@ expose <- function(.data,
     dplyr::filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
     dplyr::mutate(
+      term_date = dplyr::if_else(term_date > end_date, lubridate::NA_Date_, term_date),
+      status = dplyr::if_else(is.na(term_date),default_status, status),
       last_date = pmin(term_date, end_date, na.rm = TRUE),
-      tot_int = lubridate::interval(issue_date, last_date),
-      pol_yr = tot_int %/% lubridate::years(1) + 1,
-      tot_yrs = tot_int / lubridate::years(1)) |>
+      tot_int = lubridate::interval(issue_date - 1, last_date),
+      tot_yrs = tot_int / lubridate::years(1),
+      pol_yr = ceiling(tot_yrs)) |>
     dplyr::slice(rep(dplyr::row_number(), pol_yr)) |>
     dplyr::group_by(pol_num) |>
     dplyr::mutate(
@@ -102,7 +104,10 @@ expose <- function(.data,
     dplyr::ungroup() |>
     dplyr::mutate(
       cal_yr = lubridate::year(issue_date) + pol_yr - 1,
-      exposure = ifelse(last_yr & !status %in% target_status, tot_yrs %% 1, 1),
+      exposure = dplyr::if_else(last_yr & !status %in% target_status,
+                                tot_yrs %% 1, 1),
+      # exposure = 0 is possible if exactly 1 year has elapsed. replace these with 1's
+      exposure = dplyr::if_else(exposure == 0, 1, exposure),
       status = dplyr::if_else(last_yr, status, default_status),
       term_date = dplyr::if_else(last_yr, term_date, lubridate::NA_Date_)
     ) |>
@@ -112,6 +117,85 @@ expose <- function(.data,
   structure(res, class = c("exposed_df", class(res)),
             target_status = target_status,
             exposure_type = "policy_year",
+            start_date = start_date,
+            end_date = end_date)
+
+}
+
+
+
+#' @rdname expose
+#' @export
+expose_cy <- function(.data,
+                   end_date,
+                   start_date = as.Date("1900-01-01"),
+                   target_status = NULL,
+                   col_pol_num = "pol_num",
+                   col_status = "status",
+                   col_issue_date = "issue_date",
+                   col_term_date = "term_date",
+                   default_status) {
+
+  .data <- .data |>
+    dplyr::rename(pol_num = {{col_pol_num}},
+                  status = {{col_status}},
+                  issue_date = {{col_issue_date}},
+                  term_date = {{col_term_date}})
+
+  if(!is.factor(.data$status)) .data$status <- factor(.data$status)
+
+  if (missing(default_status)) {
+    default_status <- factor(levels(.data$status)[[1]],
+                             levels = levels(.data$status))
+  } else {
+    status_levels <- union(levels(.data$status), default_status)
+    default_status <- factor(default_status,
+                             levels = status_levels)
+    levels(.data$status) <- status_levels
+  }
+
+  cal_frac <- function(x, .offset = 0) {
+    (lubridate::yday(x) - .offset) / (365 + lubridate::leap_year(x))
+  }
+
+  res <- .data |>
+    dplyr::filter(issue_date < end_date,
+                  is.na(term_date) | term_date > start_date) |>
+    # different
+    dplyr::mutate(
+      term_date = dplyr::if_else(term_date > end_date, lubridate::NA_Date_, term_date),
+      status = dplyr::if_else(is.na(term_date),default_status, status),
+      last_date = pmin(term_date, end_date, na.rm = TRUE), # same
+      first_date = pmax(issue_date, start_date),
+      # tot_int = lubridate::interval(first_date, last_date), # subtract 1 from first_date???
+      # tot_per = tot_int / lubridate::years(1),
+      rep_n = lubridate::year(last_date) - lubridate::year(first_date) + 1) |>
+      # rep_n2 = ceiling(tot_per)) |>
+    dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
+    dplyr::group_by(pol_num) |>
+    dplyr::mutate(cal_per = dplyr::row_number()) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(
+      last_per = cal_per == rep_n,
+      first_per = cal_per == 1,
+      cal_per = lubridate::make_date(lubridate::year(first_date), 1, 1) +
+        lubridate::years(cal_per - 1),
+      # cal_per = cal_per + lubridate::year(first_date) - 1,
+      exposure = dplyr::case_when(
+        status %in% target_status ~ 1,
+        first_per & last_per ~ cal_frac(last_date) - cal_frac(first_date, 1),
+        first_per ~ 1 - cal_frac(first_date, 1),
+        last_per ~ cal_frac(last_date),
+        TRUE ~ 1
+      ),
+      status = dplyr::if_else(last_per, status, default_status),
+      term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_)
+    ) |>
+    dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per)
+
+  structure(res, class = c("exposed_df", class(res)),
+            target_status = target_status,
+            exposure_type = "calendar_year",
             start_date = start_date,
             end_date = end_date)
 
