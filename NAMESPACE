@@ -2,5 +2,5 @@
 
 export(exp_stats)
 export(expose)
-export(expose_cy)
+export(expose_cal)
 importFrom(rlang,":=")

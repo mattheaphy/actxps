@@ -2,7 +2,7 @@
 % Please edit documentation in R/expose.R
 \name{expose}
 \alias{expose}
-\alias{expose_cy}
+\alias{expose_cal}
 \title{Create exposure records from census records}
 \usage{
 expose(
@@ -17,11 +17,12 @@ expose(
   default_status
 )
 
-expose_cy(
+expose_cal(
   .data,
   end_date,
   start_date = as.Date("1900-01-01"),
   target_status = NULL,
+  cal_type = c("year", "quarter", "month", "week"),
   col_pol_num = "pol_num",
   col_status = "status",
   col_issue_date = "issue_date",
@@ -46,7 +47,9 @@ expose_cy(
 
 \item{col_term_date}{name of the column in \code{.data} containing the termination date}
 
-\item{default_status}{optional scalar character representing the default active status code.}
+\item{default_status}{optional scalar character representing the default active status code}
+
+\item{cal_type}{exposure basis for calendar period studies}
 }
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
