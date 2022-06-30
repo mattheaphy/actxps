@@ -89,29 +89,30 @@ expose <- function(.data,
     dplyr::filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
     dplyr::mutate(
-      term_date = dplyr::if_else(term_date > end_date, lubridate::NA_Date_, term_date),
+      term_date = dplyr::if_else(term_date > end_date,
+                                 lubridate::NA_Date_, term_date),
       status = dplyr::if_else(is.na(term_date),default_status, status),
       last_date = pmin(term_date, end_date, na.rm = TRUE),
-      tot_int = lubridate::interval(issue_date - 1, last_date),
-      tot_yrs = tot_int / lubridate::years(1),
-      pol_yr = ceiling(tot_yrs)) |>
-    dplyr::slice(rep(dplyr::row_number(), pol_yr)) |>
+      tot_per = lubridate::interval(issue_date - 1, last_date) /
+        lubridate::years(1),
+      rep_n = ceiling(tot_per)) |>
+    dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
     dplyr::group_by(pol_num) |>
-    dplyr::mutate(
-      last_yr = dplyr::row_number() == pol_yr,
-      pol_yr = dplyr::row_number()) |>
+    dplyr::mutate(.time = dplyr::row_number()) |>
     dplyr::ungroup() |>
     dplyr::mutate(
-      cal_yr = lubridate::year(issue_date) + pol_yr - 1,
-      exposure = dplyr::if_else(last_yr & !status %in% target_status,
-                                tot_yrs %% 1, 1),
+      last_per = .time == rep_n,
+      status = dplyr::if_else(last_per, status, default_status),
+      term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_),
+      cal_yr = lubridate::year(issue_date) + .time - 1,
+      exposure = dplyr::if_else(last_per & !status %in% target_status,
+                                tot_per %% 1, 1),
       # exposure = 0 is possible if exactly 1 year has elapsed. replace these with 1's
-      exposure = dplyr::if_else(exposure == 0, 1, exposure),
-      status = dplyr::if_else(last_yr, status, default_status),
-      term_date = dplyr::if_else(last_yr, term_date, lubridate::NA_Date_)
+      exposure = dplyr::if_else(exposure == 0, 1, exposure)
     ) |>
-    dplyr::select(-last_yr, -last_date, -tot_yrs, -tot_int) |>
-    dplyr::filter(cal_yr >= lubridate::year(start_date))
+    dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
+    dplyr::filter(cal_yr >= lubridate::year(start_date)) |>
+    dplyr::rename(pol_yr = .time)
 
   structure(res, class = c("exposed_df", class(res)),
             target_status = target_status,
@@ -138,6 +139,18 @@ expose_cal <- function(.data,
 
   cal_type <- rlang::arg_match(cal_type)
 
+  cal_frac <- switch(cal_type,
+                     "year" = year_frac,
+                     "quarter" = quarter_frac,
+                     "month" = month_frac,
+                     'week' = week_frac)
+
+  cal_step <- switch(cal_type,
+                     "year" = lubridate::years(1),
+                     "quarter" = months(3),
+                     "month" = months(1),
+                     "week" = lubridate::days(7))
+
   .data <- .data |>
     dplyr::rename(pol_num = {{col_pol_num}},
                   status = {{col_status}},
@@ -156,18 +169,6 @@ expose_cal <- function(.data,
     levels(.data$status) <- status_levels
   }
 
-  cal_frac <- switch(cal_type,
-                     "year" = year_frac,
-                     "quarter" = quarter_frac,
-                     "month" = month_frac,
-                     'week' = week_frac)
-
-  cal_step <- switch(cal_type,
-                     "year" = lubridate::years(1),
-                     "quarter" = months(3),
-                     "month" = months(1),
-                     "week" = lubridate::days(7))
-
   res <- .data |>
     dplyr::filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
@@ -175,35 +176,33 @@ expose_cal <- function(.data,
       term_date = dplyr::if_else(term_date > end_date,
                                  lubridate::NA_Date_, term_date),
       status = dplyr::if_else(is.na(term_date),default_status, status),
-      last_date = pmin(term_date, end_date, na.rm = TRUE), # same
+      last_date = pmin(term_date, end_date, na.rm = TRUE),
       first_date = pmax(issue_date, start_date),
       cal_b = lubridate::floor_date(first_date, cal_type),
-      tot_int = lubridate::interval(
+      tot_per = lubridate::interval(
         cal_b,
         lubridate::floor_date(last_date, cal_type)
-      ),
-      tot_per = tot_int / cal_step,
+      ) / cal_step,
       rep_n = ceiling(tot_per) + 1) |>
     dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
     dplyr::group_by(pol_num) |>
-    dplyr::mutate(cal_per = dplyr::row_number()) |>
+    dplyr::mutate(.time = dplyr::row_number()) |>
     dplyr::ungroup() |>
     dplyr::mutate(
-      last_per = cal_per == rep_n,
-      first_per = cal_per == 1,
-      cal_per = cal_b + cal_step * (cal_per - 1),
+      last_per = .time == rep_n,
+      status = dplyr::if_else(last_per, status, default_status),
+      term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_),
+      first_per = .time == 1,
+      .time = cal_b + cal_step * (.time - 1),
       exposure = dplyr::case_when(
         status %in% target_status ~ 1,
         first_per & last_per ~ cal_frac(last_date) - cal_frac(first_date, 1),
         first_per ~ 1 - cal_frac(first_date, 1),
         last_per ~ cal_frac(last_date),
-        TRUE ~ 1
-      ),
-      status = dplyr::if_else(last_per, status, default_status),
-      term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_)
+        TRUE ~ 1)
     ) |>
     dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
-                  -cal_b, -tot_int, -tot_per) |>
+                  -cal_b, -tot_per) |>
     dplyr::rename_with(
       .fn = function(x) {
         switch(cal_type,
@@ -212,7 +211,7 @@ expose_cal <- function(.data,
                "month" = "cal_mth",
                'week' = "cal_wk")
       },
-      .cols = cal_per
+      .cols = .time
     )
 
   structure(res, class = c("exposed_df", class(res)),
