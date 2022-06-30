@@ -45,9 +45,6 @@
 #' (\code{cal_yr}) is 2022. This means that it was 2022 at the start of policy
 #' year 3.
 #'
-#' @importFrom rlang :=
-#'
-#'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender")
 #'
@@ -205,7 +202,17 @@ expose_cal <- function(.data,
       term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_)
     ) |>
     dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
-                  -cal_b, -tot_int, -tot_per)
+                  -cal_b, -tot_int, -tot_per) |>
+    dplyr::rename_with(
+      .fn = function(x) {
+        switch(cal_type,
+               "year" = "cal_yr",
+               "quarter" = "cal_qtr",
+               "month" = "cal_mth",
+               'week' = "cal_wk")
+      },
+      .cols = cal_per
+    )
 
   structure(res, class = c("exposed_df", class(res)),
             target_status = target_status,
