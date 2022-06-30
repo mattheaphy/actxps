@@ -31,7 +31,8 @@
 #' @param col_status name of the column in \code{.data} containing the policy status
 #' @param col_issue_date name of the column in \code{.data} containing the issue date
 #' @param col_term_date name of the column in \code{.data} containing the termination date
-#' @param default_status optional scalar character representing the default active status code.
+#' @param default_status optional scalar character representing the default active status code
+#' @param cal_type exposure basis for calendar period studies
 #'
 #' @return A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 #' and \code{data.frame}. The results include all existing columns in
@@ -126,15 +127,18 @@ expose <- function(.data,
 
 #' @rdname expose
 #' @export
-expose_cy <- function(.data,
+expose_cal <- function(.data,
                    end_date,
                    start_date = as.Date("1900-01-01"),
                    target_status = NULL,
+                   cal_type = c("year", "quarter", "month", "week"),
                    col_pol_num = "pol_num",
                    col_status = "status",
                    col_issue_date = "issue_date",
                    col_term_date = "term_date",
                    default_status) {
+
+  cal_type <- rlang::arg_match(cal_type)
 
   .data <- .data |>
     dplyr::rename(pol_num = {{col_pol_num}},
@@ -154,23 +158,34 @@ expose_cy <- function(.data,
     levels(.data$status) <- status_levels
   }
 
-  cal_frac <- function(x, .offset = 0) {
-    (lubridate::yday(x) - .offset) / (365 + lubridate::leap_year(x))
-  }
+  cal_frac <- switch(cal_type,
+                     "year" = year_frac,
+                     "quarter" = quarter_frac,
+                     "month" = month_frac,
+                     'week' = week_frac)
+
+  cal_step <- switch(cal_type,
+                     "year" = lubridate::years(1),
+                     "quarter" = months(3),
+                     "month" = months(1),
+                     "week" = lubridate::days(7))
 
   res <- .data |>
     dplyr::filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
-    # different
     dplyr::mutate(
-      term_date = dplyr::if_else(term_date > end_date, lubridate::NA_Date_, term_date),
+      term_date = dplyr::if_else(term_date > end_date,
+                                 lubridate::NA_Date_, term_date),
       status = dplyr::if_else(is.na(term_date),default_status, status),
       last_date = pmin(term_date, end_date, na.rm = TRUE), # same
       first_date = pmax(issue_date, start_date),
-      # tot_int = lubridate::interval(first_date, last_date), # subtract 1 from first_date???
-      # tot_per = tot_int / lubridate::years(1),
-      rep_n = lubridate::year(last_date) - lubridate::year(first_date) + 1) |>
-      # rep_n2 = ceiling(tot_per)) |>
+      cal_b = lubridate::floor_date(first_date, cal_type),
+      tot_int = lubridate::interval(
+        cal_b,
+        lubridate::floor_date(last_date, cal_type)
+      ),
+      tot_per = tot_int / cal_step,
+      rep_n = ceiling(tot_per) + 1) |>
     dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
     dplyr::group_by(pol_num) |>
     dplyr::mutate(cal_per = dplyr::row_number()) |>
@@ -178,9 +193,7 @@ expose_cy <- function(.data,
     dplyr::mutate(
       last_per = cal_per == rep_n,
       first_per = cal_per == 1,
-      cal_per = lubridate::make_date(lubridate::year(first_date), 1, 1) +
-        lubridate::years(cal_per - 1),
-      # cal_per = cal_per + lubridate::year(first_date) - 1,
+      cal_per = cal_b + cal_step * (cal_per - 1),
       exposure = dplyr::case_when(
         status %in% target_status ~ 1,
         first_per & last_per ~ cal_frac(last_date) - cal_frac(first_date, 1),
@@ -191,12 +204,31 @@ expose_cy <- function(.data,
       status = dplyr::if_else(last_per, status, default_status),
       term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_)
     ) |>
-    dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per)
+    dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
+                  -cal_b, -tot_int, -tot_per)
 
   structure(res, class = c("exposed_df", class(res)),
             target_status = target_status,
-            exposure_type = "calendar_year",
+            exposure_type = paste0("calendar_", cal_type),
             start_date = start_date,
             end_date = end_date)
 
+}
+
+year_frac <- function(x, .offset = 0) {
+  (lubridate::yday(x) - .offset) / (365 + lubridate::leap_year(x))
+}
+
+quarter_frac <- function(x, .offset = 0) {
+  (lubridate::qday(x) - .offset) /
+    lubridate::qday((lubridate::ceiling_date(x, "quarter") - 1))
+}
+
+month_frac <- function(x, .offset = 0) {
+  (lubridate::mday(x) - .offset) /
+    lubridate::mday((lubridate::ceiling_date(x, "month") - 1))
+}
+
+week_frac <- function(x, .offset = 0) {
+  (lubridate::wday(x) - .offset) / 7
 }
