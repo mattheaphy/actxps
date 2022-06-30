@@ -33,6 +33,7 @@
 #' @param col_term_date name of the column in \code{.data} containing the termination date
 #' @param default_status optional scalar character representing the default active status code
 #' @param cal_type exposure basis for calendar period studies
+#' @param ... additional arguments passed to \code{expose_cal}
 #'
 #' @return A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 #' and \code{data.frame}. The results include all existing columns in

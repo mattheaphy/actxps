@@ -62,6 +62,8 @@ expose_cw(...)
 \item{default_status}{optional scalar character representing the default active status code}
 
 \item{cal_type}{exposure basis for calendar period studies}
+
+\item{...}{additional arguments passed to \code{expose_cal}}
 }
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
