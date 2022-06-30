@@ -3,6 +3,10 @@
 \name{expose}
 \alias{expose}
 \alias{expose_cal}
+\alias{expose_cy}
+\alias{expose_cq}
+\alias{expose_cm}
+\alias{expose_cw}
 \title{Create exposure records from census records}
 \usage{
 expose(
@@ -29,6 +33,14 @@ expose_cal(
   col_term_date = "term_date",
   default_status
 )
+
+expose_cy(...)
+
+expose_cq(...)
+
+expose_cm(...)
+
+expose_cw(...)
 }
 \arguments{
 \item{.data}{a data frame with census-level records}

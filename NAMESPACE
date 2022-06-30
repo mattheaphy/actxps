@@ -3,4 +3,8 @@
 export(exp_stats)
 export(expose)
 export(expose_cal)
+export(expose_cm)
+export(expose_cq)
+export(expose_cw)
+export(expose_cy)
 importFrom(rlang,":=")

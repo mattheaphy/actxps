@@ -215,6 +215,32 @@ expose_cal <- function(.data,
 
 }
 
+#' @rdname expose
+#' @export
+expose_cy <- function(...) {
+  expose_cal(cal_type = "year", ...)
+}
+
+#' @rdname expose
+#' @export
+expose_cq <- function(...) {
+  expose_cal(cal_type = "quarter", ...)
+}
+
+#' @rdname expose
+#' @export
+expose_cm <- function(...) {
+  expose_cal(cal_type = "month", ...)
+}
+
+#' @rdname expose
+#' @export
+expose_cw <- function(...) {
+  expose_cal(cal_type = "week", ...)
+}
+
+
+
 year_frac <- function(x, .offset = 0) {
   (lubridate::yday(x) - .offset) / (365 + lubridate::leap_year(x))
 }
