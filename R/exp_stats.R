@@ -45,7 +45,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   .groups <- dplyr::groups(.data)
 
-  if (is.null(target_status) | target_status == "None") {
+  if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
     rlang::warn(c(x = "No target status was provided.",
            i = glue::glue("{paste(target_status, collapse = ', ')} was assumed.")))
