@@ -71,7 +71,8 @@ expose <- function(.data,
     dplyr::rename(pol_num = {{col_pol_num}},
                   status = {{col_status}},
                   issue_date = {{col_issue_date}},
-                  term_date = {{col_term_date}})
+                  term_date = {{col_term_date}}) |>
+    .name_conflict(c("pol_yr", "exposure", "cal_yr"))
 
   if(!is.factor(.data$status)) .data$status <- factor(.data$status)
 
@@ -127,15 +128,15 @@ expose <- function(.data,
 #' @rdname expose
 #' @export
 expose_cal <- function(.data,
-                   end_date,
-                   start_date = as.Date("1900-01-01"),
-                   target_status = NULL,
-                   cal_type = c("year", "quarter", "month", "week"),
-                   col_pol_num = "pol_num",
-                   col_status = "status",
-                   col_issue_date = "issue_date",
-                   col_term_date = "term_date",
-                   default_status) {
+                       end_date,
+                       start_date = as.Date("1900-01-01"),
+                       target_status = NULL,
+                       cal_type = c("year", "quarter", "month", "week"),
+                       col_pol_num = "pol_num",
+                       col_status = "status",
+                       col_issue_date = "issue_date",
+                       col_term_date = "term_date",
+                       default_status) {
 
   cal_type <- rlang::arg_match(cal_type)
 
@@ -151,11 +152,18 @@ expose_cal <- function(.data,
                      "month" = months(1),
                      "week" = lubridate::days(7))
 
+  cal_name <- switch(cal_type,
+                     "year" = "cal_yr",
+                     "quarter" = "cal_qtr",
+                     "month" = "cal_mth",
+                     'week' = "cal_wk")
+
   .data <- .data |>
     dplyr::rename(pol_num = {{col_pol_num}},
                   status = {{col_status}},
                   issue_date = {{col_issue_date}},
-                  term_date = {{col_term_date}})
+                  term_date = {{col_term_date}}) |>
+    .name_conflict(c(cal_name, "exposure"))
 
   if(!is.factor(.data$status)) .data$status <- factor(.data$status)
 
@@ -204,13 +212,7 @@ expose_cal <- function(.data,
     dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
                   -cal_b, -tot_per) |>
     dplyr::rename_with(
-      .fn = function(x) {
-        switch(cal_type,
-               "year" = "cal_yr",
-               "quarter" = "cal_qtr",
-               "month" = "cal_mth",
-               'week' = "cal_wk")
-      },
+      .fn = function(x) {cal_name},
       .cols = .time
     )
 
@@ -264,4 +266,12 @@ month_frac <- function(x, .offset = 0) {
 
 week_frac <- function(x, .offset = 0) {
   (lubridate::wday(x) - .offset) / 7
+}
+
+# helper function to handle name conflicts
+.name_conflict <- function(.data, x) {
+  x <- x[x %in% names(.data)]
+  .data[x] <- NULL
+  rlang::warn(c(x = glue::glue(".data contains the conflicting column names that will be overridden: {paste(x, collapse = ', ')}. If you don't want this to happen, please rename these columns prior to calling the applicable expose function.")))
+  .data
 }
