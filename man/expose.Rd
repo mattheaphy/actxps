@@ -2,7 +2,7 @@
 % Please edit documentation in R/expose.R
 \name{expose}
 \alias{expose}
-\alias{expose_cal}
+\alias{expose_py}
 \alias{expose_cy}
 \alias{expose_cq}
 \alias{expose_cm}
@@ -14,6 +14,8 @@ expose(
   end_date,
   start_date = as.Date("1900-01-01"),
   target_status = NULL,
+  cal_expo = FALSE,
+  expo_length = c("year", "quarter", "month", "week"),
   col_pol_num = "pol_num",
   col_status = "status",
   col_issue_date = "issue_date",
@@ -21,18 +23,7 @@ expose(
   default_status
 )
 
-expose_cal(
-  .data,
-  end_date,
-  start_date = as.Date("1900-01-01"),
-  target_status = NULL,
-  cal_type = c("year", "quarter", "month", "week"),
-  col_pol_num = "pol_num",
-  col_status = "status",
-  col_issue_date = "issue_date",
-  col_term_date = "term_date",
-  default_status
-)
+expose_py(...)
 
 expose_cy(...)
 
@@ -51,6 +42,10 @@ expose_cw(...)
 
 \item{target_status}{character vector of target status values. Default value = \code{NULL.}}
 
+\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are used.}
+
+\item{expo_length}{exposure period length}
+
 \item{col_pol_num}{name of the column in \code{.data} containing the policy number}
 
 \item{col_status}{name of the column in \code{.data} containing the policy status}
@@ -60,8 +55,6 @@ expose_cw(...)
 \item{col_term_date}{name of the column in \code{.data} containing the termination date}
 
 \item{default_status}{optional scalar character representing the default active status code}
-
-\item{cal_type}{exposure basis for calendar period studies}
 
 \item{...}{additional arguments passed to \code{expose_cal}}
 }

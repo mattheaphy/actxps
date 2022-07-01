@@ -1,5 +1,5 @@
-study_py <- expose(census_dat, "2019-12-31")
-study_cy <- expose_cal(census_dat, "2019-12-31")
+study_py <- expose_py(census_dat, "2019-12-31")
+study_cy <- expose_cy(census_dat, "2019-12-31")
 
 test_that("py_exposure_checks", {
   expect_gt(min(study_py$exposure), 0)
