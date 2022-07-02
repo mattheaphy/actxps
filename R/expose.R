@@ -40,12 +40,10 @@
 #' and \code{data.frame}. The results include all existing columns in
 #' \code{.data} plus new columns for exposures and observation periods.
 #'
-#' For policy year-based exposures, any calendar-based observation
-#' periods represent the beginning of the policy year or policy month. For
-#' example, using a policy year exposure basis, assume that for a particular
-#' record the policy year (\code{pol_yr}) is 3 and the calendar year
-#' (\code{cal_yr}) is 2022. This means that it was 2022 at the start of policy
-#' year 3.
+#' For policy year exposures, two observation period columns are returned.
+#' Columns beginning with (\code{pol_}) are integer policy periods. Columns
+#' beginning with (\code{pol_date_}) are calendar dates representing
+#' anniversary dates, monthiversary dates, etc.
 #'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender")
@@ -70,20 +68,13 @@ expose <- function(.data,
                    default_status) {
 
   # helper functions
-  rename_cal <- function(x) {
-    switch(expo_length,
-           "year" = "cal_yr",
-           "quarter" = "cal_qtr",
-           "month" = "cal_mth",
-           'week' = "cal_wk")
-  }
-
-  rename_pol <- function(x) {
-    switch(expo_length,
-           "year" = "pol_yr",
-           "quarter" = "pol_qtr",
-           "month" = "pol_mth",
-           'week' = "pol_wk")
+  rename_col <- function(x, prefix) {
+    res <- switch(expo_length,
+           "year" = "_yr",
+           "quarter" = "_qtr",
+           "month" = "_mth",
+           'week' = "_wk")
+    paste0(prefix, res)
   }
 
 
@@ -100,7 +91,6 @@ expose <- function(.data,
                      "quarter" = quarter_frac,
                      "month" = month_frac,
                      'week' = week_frac)
-
 
   # column renames and name conflicts
   .data <- .data |>
@@ -146,7 +136,6 @@ expose <- function(.data,
   } else {
     res <- res |>
       dplyr::mutate(
-        cal_b = lubridate::floor_date(issue_date, expo_length),
         tot_per = lubridate::interval(issue_date - 1, last_date) / expo_step,
         rep_n = ceiling(tot_per))
   }
@@ -175,11 +164,11 @@ expose <- function(.data,
       ) |>
       dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
                     -cal_b, -tot_per) |>
-      dplyr::rename_with(.fn = rename_cal, .cols = .time)
+      dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "cal")
   } else {
     res <- res |>
       dplyr::mutate(
-        cal_b = cal_b + expo_step * (.time - 1),
+        cal_b = issue_date + expo_step * (.time - 1),
         exposure = dplyr::if_else(last_per & !status %in% target_status,
                                   tot_per %% 1, 1),
         # exposure = 0 is possible if exactly 1 period has elapsed. replace these with 1's
@@ -187,8 +176,8 @@ expose <- function(.data,
       ) |>
       dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
       dplyr::filter(cal_b >= start_date) |>
-      dplyr::rename_with(.fn = rename_pol,.cols = .time) |>
-      dplyr::rename_with(.fn = rename_cal, .cols = cal_b)
+      dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "pol") |>
+      dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date")
 
   }
 

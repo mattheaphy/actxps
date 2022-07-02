@@ -72,12 +72,10 @@ A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include all existing columns in
 \code{.data} plus new columns for exposures and observation periods.
 
-For policy year-based exposures, any calendar-based observation
-periods represent the beginning of the policy year or policy month. For
-example, using a policy year exposure basis, assume that for a particular
-record the policy year (\code{pol_yr}) is 3 and the calendar year
-(\code{cal_yr}) is 2022. This means that it was 2022 at the start of policy
-year 3.
+For policy year exposures, two observation period columns are returned.
+Columns beginning with (\code{pol_}) are integer policy periods. Columns
+beginning with (\code{pol_date_}) are calendar dates representing
+anniversary dates, monthiversary dates, etc.
 }
 \description{
 Convert a data frame of census-level records to exposure-level
