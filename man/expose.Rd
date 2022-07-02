@@ -3,6 +3,9 @@
 \name{expose}
 \alias{expose}
 \alias{expose_py}
+\alias{expose_pq}
+\alias{expose_pm}
+\alias{expose_pw}
 \alias{expose_cy}
 \alias{expose_cq}
 \alias{expose_cm}
@@ -24,6 +27,12 @@ expose(
 )
 
 expose_py(...)
+
+expose_pq(...)
+
+expose_pm(...)
+
+expose_pw(...)
 
 expose_cy(...)
 
@@ -63,7 +72,7 @@ A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include all existing columns in
 \code{.data} plus new columns for exposures and observation periods.
 
-For policy year and policy month exposures, any calendar-based observation
+For policy year-based exposures, any calendar-based observation
 periods represent the beginning of the policy year or policy month. For
 example, using a policy year exposure basis, assume that for a particular
 record the policy year (\code{pol_yr}) is 3 and the calendar year

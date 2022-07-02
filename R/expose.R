@@ -40,7 +40,7 @@
 #' and \code{data.frame}. The results include all existing columns in
 #' \code{.data} plus new columns for exposures and observation periods.
 #'
-#' For policy year and policy month exposures, any calendar-based observation
+#' For policy year-based exposures, any calendar-based observation
 #' periods represent the beginning of the policy year or policy month. For
 #' example, using a policy year exposure basis, assume that for a particular
 #' record the policy year (\code{pol_yr}) is 3 and the calendar year
@@ -53,7 +53,6 @@
 #' \dontrun{
 #' census_dat |>
 #'     expose("2019-12-31", target_status = "Surrender")}
-
 #'
 #' @references https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf
 #'
@@ -70,6 +69,24 @@ expose <- function(.data,
                    col_term_date = "term_date",
                    default_status) {
 
+  # helper functions
+  rename_cal <- function(x) {
+    switch(expo_length,
+           "year" = "cal_yr",
+           "quarter" = "cal_qtr",
+           "month" = "cal_mth",
+           'week' = "cal_wk")
+  }
+
+  rename_pol <- function(x) {
+    switch(expo_length,
+           "year" = "pol_yr",
+           "quarter" = "pol_qtr",
+           "month" = "pol_mth",
+           'week' = "pol_wk")
+  }
+
+
   # set up exposure period lengths
   expo_length <- rlang::arg_match(expo_length)
   expo_step <- switch(expo_length,
@@ -78,16 +95,12 @@ expose <- function(.data,
                       "month" = months(1),
                       "week" = lubridate::days(7))
 
-  # calendar fraction function
-  if (cal_expo) {
+  cal_frac <- switch(expo_length,
+                     "year" = year_frac,
+                     "quarter" = quarter_frac,
+                     "month" = month_frac,
+                     'week' = week_frac)
 
-    cal_frac <- switch(expo_length,
-                       "year" = year_frac,
-                       "quarter" = quarter_frac,
-                       "month" = month_frac,
-                       'week' = week_frac)
-
-  }
 
   # column renames and name conflicts
   .data <- .data |>
@@ -95,7 +108,7 @@ expose <- function(.data,
                   status = {{col_status}},
                   issue_date = {{col_issue_date}},
                   term_date = {{col_term_date}}) |>
-    .name_conflict(if(cal_expo) "exposure" else c("pol_yr", "exposure", "cal_yr"))
+    .name_conflict(if(cal_expo) "exposure" else c("pol_yr", "exposure"))
 
   # set up statuses
   if(!is.factor(.data$status)) .data$status <- factor(.data$status)
@@ -133,8 +146,8 @@ expose <- function(.data,
   } else {
     res <- res |>
       dplyr::mutate(
-        tot_per = lubridate::interval(issue_date - 1, last_date) /
-          lubridate::years(1),
+        cal_b = lubridate::floor_date(issue_date, expo_length),
+        tot_per = lubridate::interval(issue_date - 1, last_date) / expo_step,
         rep_n = ceiling(tot_per))
   }
 
@@ -162,40 +175,27 @@ expose <- function(.data,
       ) |>
       dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
                     -cal_b, -tot_per) |>
-      dplyr::rename_with(
-        .fn = function(x) {
-          switch(expo_length,
-                 "year" = "cal_yr",
-                 "quarter" = "cal_qtr",
-                 "month" = "cal_mth",
-                 'week' = "cal_wk")
-        },
-        .cols = .time
-      )
+      dplyr::rename_with(.fn = rename_cal, .cols = .time)
   } else {
     res <- res |>
       dplyr::mutate(
-        cal_yr = lubridate::year(issue_date) + .time - 1,
+        cal_b = cal_b + expo_step * (.time - 1),
         exposure = dplyr::if_else(last_per & !status %in% target_status,
                                   tot_per %% 1, 1),
         # exposure = 0 is possible if exactly 1 period has elapsed. replace these with 1's
         exposure = dplyr::if_else(exposure == 0, 1, exposure)
       ) |>
       dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
-      dplyr::filter(cal_yr >= lubridate::year(start_date)) |>
-      dplyr::rename(pol_yr = .time)
-
+      dplyr::filter(cal_b >= start_date) |>
+      dplyr::rename_with(.fn = rename_pol,.cols = .time) |>
+      dplyr::rename_with(.fn = rename_cal, .cols = cal_b)
 
   }
 
   # set up S3 object
   structure(res, class = c("exposed_df", class(res)),
             target_status = target_status,
-            exposure_type = if(cal_expo) {
-              paste0("calendar_", expo_length)
-            } else {
-              "policy_year"
-            },
+            exposure_type = glue::glue("{if(cal_expo) 'calendar' else 'policy'}_{expo_length}"),
             start_date = start_date,
             end_date = end_date)
 }
@@ -204,7 +204,25 @@ expose <- function(.data,
 #' @rdname expose
 #' @export
 expose_py <- function(...) {
-  expose(cal_expo = FALSE, ...)
+  expose(cal_expo = FALSE, expo_length = "year", ...)
+}
+
+#' @rdname expose
+#' @export
+expose_pq <- function(...) {
+  expose(cal_expo = FALSE, expo_length = "quarter", ...)
+}
+
+#' @rdname expose
+#' @export
+expose_pm <- function(...) {
+  expose(cal_expo = FALSE, expo_length = "month", ...)
+}
+
+#' @rdname expose
+#' @export
+expose_pw <- function(...) {
+  expose(cal_expo = FALSE, expo_length = "week", ...)
 }
 
 #' @rdname expose
