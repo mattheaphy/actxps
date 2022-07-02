@@ -2,6 +2,14 @@
 % Please edit documentation in R/expose.R
 \name{expose}
 \alias{expose}
+\alias{expose_py}
+\alias{expose_pq}
+\alias{expose_pm}
+\alias{expose_pw}
+\alias{expose_cy}
+\alias{expose_cq}
+\alias{expose_cm}
+\alias{expose_cw}
 \title{Create exposure records from census records}
 \usage{
 expose(
@@ -9,12 +17,30 @@ expose(
   end_date,
   start_date = as.Date("1900-01-01"),
   target_status = NULL,
+  cal_expo = FALSE,
+  expo_length = c("year", "quarter", "month", "week"),
   col_pol_num = "pol_num",
   col_status = "status",
   col_issue_date = "issue_date",
   col_term_date = "term_date",
   default_status
 )
+
+expose_py(...)
+
+expose_pq(...)
+
+expose_pm(...)
+
+expose_pw(...)
+
+expose_cy(...)
+
+expose_cq(...)
+
+expose_cm(...)
+
+expose_cw(...)
 }
 \arguments{
 \item{.data}{a data frame with census-level records}
@@ -25,6 +51,10 @@ expose(
 
 \item{target_status}{character vector of target status values. Default value = \code{NULL.}}
 
+\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are used.}
+
+\item{expo_length}{exposure period length}
+
 \item{col_pol_num}{name of the column in \code{.data} containing the policy number}
 
 \item{col_status}{name of the column in \code{.data} containing the policy status}
@@ -33,19 +63,19 @@ expose(
 
 \item{col_term_date}{name of the column in \code{.data} containing the termination date}
 
-\item{default_status}{optional scalar character representing the default active status code.}
+\item{default_status}{optional scalar character representing the default active status code}
+
+\item{...}{additional arguments passed to \code{expose_cal}}
 }
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include all existing columns in
 \code{.data} plus new columns for exposures and observation periods.
 
-For policy year and policy month exposures, any calendar-based observation
-periods represent the beginning of the policy year or policy month. For
-example, using a policy year exposure basis, assume that for a particular
-record the policy year (\code{pol_yr}) is 3 and the calendar year
-(\code{cal_yr}) is 2022. This means that it was 2022 at the start of policy
-year 3.
+For policy year exposures, two observation period columns are returned.
+Columns beginning with (\code{pol_}) are integer policy periods. Columns
+beginning with (\code{pol_date_}) are calendar dates representing
+anniversary dates, monthiversary dates, etc.
 }
 \description{
 Convert a data frame of census-level records to exposure-level

@@ -28,8 +28,6 @@
 #' If any values are passed to \code{expected}, additional columns will be
 #' added for expected decrements and actual-to-expected ratios.
 #'
-#' @import rlang
-#'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
 #'     exp_stats()
@@ -47,20 +45,20 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   .groups <- dplyr::groups(.data)
 
-  if (is.null(target_status) | target_status == "None") {
+  if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
-    warn(c(x = "No target status was provided.",
+    rlang::warn(c(x = "No target status was provided.",
            i = glue::glue("{paste(target_status, collapse = ', ')} was assumed.")))
   }
 
   if (!missing(expected)) {
     ex_mean <- glue::glue("weighted.mean({expected}, exposure)") |>
-      set_names(expected) |>
-      parse_exprs()
+      purrr::set_names(expected) |>
+      rlang::parse_exprs()
 
     ex_ae <- glue::glue("q_obs / {expected}") |>
-      set_names(glue::glue("ae_{expected}")) |>
-      parse_exprs()
+      purrr::set_names(glue::glue("ae_{expected}")) |>
+      rlang::parse_exprs()
   } else {
     ex_ae <- ex_mean <- NULL
   }

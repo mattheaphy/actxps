@@ -2,4 +2,11 @@
 
 export(exp_stats)
 export(expose)
-import(rlang)
+export(expose_cm)
+export(expose_cq)
+export(expose_cw)
+export(expose_cy)
+export(expose_pm)
+export(expose_pq)
+export(expose_pw)
+export(expose_py)

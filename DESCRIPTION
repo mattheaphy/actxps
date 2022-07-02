@@ -22,5 +22,6 @@ Imports:
     ggplot2,
     tibble,
     rlang,
-    glue
+    glue,
+    purrr
 LazyData: true
