@@ -98,7 +98,7 @@ expose <- function(.data,
                   status = {{col_status}},
                   issue_date = {{col_issue_date}},
                   term_date = {{col_term_date}}) |>
-    .name_conflict(if(cal_expo) "exposure" else c("pol_yr", "exposure"))
+    .expo_name_conflict(cal_expo, expo_length)
 
   # set up statuses
   if(!is.factor(.data$status)) .data$status <- factor(.data$status)
@@ -257,7 +257,16 @@ week_frac <- function(x, .offset = 0) {
 }
 
 # helper function to handle name conflicts
-.name_conflict <- function(.data, x) {
+.expo_name_conflict <- function(.data, cal_expo, expo_length) {
+
+  abbrevs <- c(year = "yr", quarter = "qtr", month = "mth", week = "wk")
+
+  x <- c(
+    "exposure",
+    paste0(if (cal_expo) "cal_" else "pol_", abbrevs[expo_length]),
+    if (!cal_expo) paste0("pol_date_", abbrevs[expo_length])
+  )
+
   x <- x[x %in% names(.data)]
   .data[x] <- NULL
   if (length(x > 0)) {
