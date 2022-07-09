@@ -59,7 +59,10 @@ census_dat
 The data includes 3 policy statuses: Active, Death, and Surrender.
 
 ``` r
-status_counts <- table(census_dat$status)
+(status_counts <- table(census_dat$status))
+#> 
+#>    Active     Death Surrender 
+#>     15195      1860      2945
 ```
 
 Let’s assume we’re interested in calculating the probability of
