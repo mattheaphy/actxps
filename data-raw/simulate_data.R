@@ -238,10 +238,10 @@ final_status <- expo_dat |>
   group_by(pol_num) |>
   filter(pol_yr == max(pol_yr)) |>
   ungroup() |>
-  select(pol_num, status, pol_yr, term_date)
+  select(pol_num, status, term_date)
 
 # add final policy statuses and termination times back to the exposure data
 census_dat <- census_dat |>
   select(-pol_yr) |>
   inner_join(final_status, by = "pol_num") |>
-  select(pol_num, status, pol_yr, everything())
+  select(pol_num, status, everything())
