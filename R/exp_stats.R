@@ -18,7 +18,8 @@
 #'
 #' @param .data a data frame with exposure-level records, ideally of type \code{exposed_df}
 #' @param target_status a character vector of target status values
-#' @param expected a character vector of expected values
+#' @param expected a character vector containing column names in \code{.data}
+#' with expected values
 #' @param col_exposure name of the column in \code{.data} containing exposures
 #' @param col_status name of the column in \code{.data} containing the policy status
 #'
@@ -48,7 +49,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
     rlang::warn(c(x = "No target status was provided.",
-           i = glue::glue("{paste(target_status, collapse = ', ')} was assumed.")))
+                  i = glue::glue("{paste(target_status, collapse = ', ')} was assumed.")))
   }
 
   if (!missing(expected)) {
@@ -71,11 +72,11 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   res <- .data |>
     dplyr::mutate(term = status %in% target_status) |>
     dplyr::summarize(claims = sum(term),
-              exposure = sum(exposure),
-              q_obs = claims / exposure,
-              !!!ex_mean,
-              !!!ex_ae,
-              .groups = "drop")
+                     !!!ex_mean,
+                     exposure = sum(exposure),
+                     q_obs = claims / exposure,
+                     !!!ex_ae,
+                     .groups = "drop")
 
   structure(res, class = c("exp_df", class(res)),
             groups = .groups, target_status = target_status)

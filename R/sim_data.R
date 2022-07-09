@@ -8,7 +8,6 @@
 #' \describe{
 #'   \item{pol_num}{policy number}
 #'   \item{status}{policy status: Active, Surrender, or Death}
-#'   \item{pol_yr}{policy year}
 #'   \item{issue_date}{issue date}
 #'   \item{inc_guar}{indicates whether the policy was issued with an income guarantee}
 #'   \item{qual}{indicates whether the policy was purchased with tax-qualified funds}
