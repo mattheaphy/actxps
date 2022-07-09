@@ -17,7 +17,8 @@ exp_stats(
 
 \item{target_status}{a character vector of target status values}
 
-\item{expected}{a character vector of expected values}
+\item{expected}{a character vector containing column names in \code{.data}
+with expected values}
 
 \item{col_exposure}{name of the column in \code{.data} containing exposures}
 

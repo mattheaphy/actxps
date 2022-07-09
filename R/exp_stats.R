@@ -18,7 +18,8 @@
 #'
 #' @param .data a data frame with exposure-level records, ideally of type \code{exposed_df}
 #' @param target_status a character vector of target status values
-#' @param expected a character vector of expected values
+#' @param expected a character vector containing column names in \code{.data}
+#' with expected values
 #' @param col_exposure name of the column in \code{.data} containing exposures
 #' @param col_status name of the column in \code{.data} containing the policy status
 #'
