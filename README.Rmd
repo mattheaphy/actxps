@@ -104,21 +104,18 @@ exp_res <- exposed_data |>
 exp_res
 ```
 
-```{r, echo = FALSE, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 library(ggplot2)
 
 .colors <- c("#eb15e4", "#7515eb")
-
 theme_set(theme_light())
 
 exp_res |> 
-  ggplot(aes(pol_yr, q_obs, color = inc_guar)) + 
-  geom_point() + 
-  geom_line() + 
-  scale_y_continuous(labels = scales::label_percent(accuracy = 1)) + 
+  autoplot() + 
   scale_color_manual(values = .colors) + 
   labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
+
 ```
 
 

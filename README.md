@@ -165,6 +165,18 @@ exp_res
 #> # ... with 20 more rows
 ```
 
+``` r
+library(ggplot2)
+
+.colors <- c("#eb15e4", "#7515eb")
+theme_set(theme_light())
+
+exp_res |> 
+  autoplot() + 
+  scale_color_manual(values = .colors) + 
+  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
+```
+
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
 To derive actual-to-expected rates, attach one or more columns of

@@ -23,5 +23,6 @@ Imports:
     tibble,
     rlang,
     glue,
-    purrr
+    purrr,
+    scales
 LazyData: true
