@@ -45,6 +45,8 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       col_status = "status") {
 
   .groups <- dplyr::groups(.data)
+  start_date <- attr(.data, "start_date")
+  end_date <- attr(.data, "end_date")
 
   if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
@@ -79,11 +81,25 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                      .groups = "drop")
 
   structure(res, class = c("exp_df", class(res)),
-            groups = .groups, target_status = target_status)
+            groups = .groups, target_status = target_status,
+            start_date = start_date,
+            end_date = end_date)
 
 }
+
+#' @export
+print.exp_df <- function(x, ...) {
+  cat("Experience study results\n\n",
+      "Groups:", paste(groups(x), collapse = ", "), "\n",
+      "Target status:", attr(x, "target_status"), "\n",
+      "Study range:", as.character(attr(x, "start_date")), "to",
+      as.character(attr(x, "end_date")), "\n\n")
+  NextMethod()
+}
+
 
 #' @export
 groups.exp_df <- function(x) {
   attr(x, "groups")
 }
+
