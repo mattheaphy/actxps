@@ -27,7 +27,7 @@ with expected values}
 \value{
 A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include columns for any grouping
-variables, claims, exposures, and observed decrement rates.
+variables, claims, exposures, and observed decrement rates (\code{q_obs}).
 If any values are passed to \code{expected}, additional columns will be
 added for expected decrements and actual-to-expected ratios.
 }
@@ -39,7 +39,7 @@ status.
 If \code{.data} is grouped, the resulting data frame will contain
 one row per group.
 
-If \code{target_status} isn't provided, \code{exp_stats} will use the same
+If \code{target_status} isn't provided, \code{exp_stats()} will use the same
 target status from \code{.data} if it has the class \code{exposed_df}.
 Otherwise, \code{.data} is not an \code{exposed_df} object, all status
 values except the first level will be assumed. This will produce a

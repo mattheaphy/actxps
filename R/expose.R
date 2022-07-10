@@ -23,6 +23,15 @@
 #' should be used when exposure records are created. If left blank, then the
 #' first status level will be assumed to be the default active status.
 #'
+#' The functions \code{expose_py()}, \code{expose_pq()}, \code{expose_pm()},
+#' \code{expose_pw()}, \code{expose_cy()}, \code{expose_cq()},
+#' \code{expose_cm()}, \code{expose_cw()} are convenience functions for
+#' specific implementations of \code{expose()}. The two characgters after the
+#' underscore describe the exposure type and exposure period, respectively. For
+#' exposures types, "p" refers to policy years and "c" refers to calendar years.
+#' For exposure periods, "y" = years, "q" = quarters, "m" = months, and "w" =
+#' weeks.
+#'
 #' @param .data a data frame with census-level records
 #' @param end_date experience study end date
 #' @param start_date experience study start date. Default value = 1900-01-01.
@@ -34,7 +43,7 @@
 #' @param col_issue_date name of the column in \code{.data} containing the issue date
 #' @param col_term_date name of the column in \code{.data} containing the termination date
 #' @param default_status optional scalar character representing the default active status code
-#' @param ... additional arguments passed to \code{expose_cal}
+#' @param ... arguments passed to \code{expose()}
 #'
 #' @return A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 #' and \code{data.frame}. The results include all existing columns in

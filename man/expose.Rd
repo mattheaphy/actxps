@@ -65,7 +65,7 @@ expose_cw(...)
 
 \item{default_status}{optional scalar character representing the default active status code}
 
-\item{...}{additional arguments passed to \code{expose_cal}}
+\item{...}{arguments passed to \code{expose()}}
 }
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
@@ -101,6 +101,15 @@ always applied regardless of status.
 \code{default_status} is used to indicate the default active status that
 should be used when exposure records are created. If left blank, then the
 first status level will be assumed to be the default active status.
+
+The functions \code{expose_py()}, \code{expose_pq()}, \code{expose_pm()},
+\code{expose_pw()}, \code{expose_cy()}, \code{expose_cq()},
+\code{expose_cm()}, \code{expose_cw()} are convenience functions for
+specific implementations of \code{expose()}. The two characgters after the
+underscore describe the exposure type and exposure period, respectively. For
+exposures types, "p" refers to policy years and "c" refers to calendar years.
+For exposure periods, "y" = years, "q" = quarters, "m" = months, and "w" =
+weeks.
 }
 \examples{
 toy_census |> expose("2020-12-31", target_status = "Surrender")
