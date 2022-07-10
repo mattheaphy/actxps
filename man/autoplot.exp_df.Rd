@@ -4,13 +4,25 @@
 \alias{autoplot.exp_df}
 \title{Plot experience study results}
 \usage{
-\method{autoplot}{exp_df}(object, ...)
+\method{autoplot}{exp_df}(object, ..., mapping, scales = "fixed")
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
-function \code{exp_stats}.}
+function \code{exp_stats()}.}
 
-\item{...}{Not currently used.}
+\item{...}{Faceting variables passed to \code{facet_wrap()}.}
+
+\item{mapping}{Aesthetic mapping passed to \code{ggplot()}.}
+
+\item{scales}{The \code{scales} argument passed to \code{facet_wrap()}.
+
+If no aesthetic map is supplied, the plot will use the first grouping
+variable in \code{object} on the x axis and \code{q_obs} on the y axis.
+In addition, the second grouping variable in \code{object} will be used for
+color and fill.
+
+If no faceting variables are supplied, the plot will use all grouping
+variables 3+ as facets passed into \code{facet_wrap()}.}
 }
 \description{
 Plot experience study results
