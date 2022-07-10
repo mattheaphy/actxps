@@ -4,6 +4,7 @@
 \name{reexports}
 \alias{reexports}
 \alias{autoplot}
+\alias{groups}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -11,6 +12,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{dplyr}{\code{\link[dplyr:group_data]{groups}}}
+
   \item{ggplot2}{\code{\link[ggplot2]{autoplot}}}
 }}
 

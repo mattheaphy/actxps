@@ -82,3 +82,8 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
             groups = .groups, target_status = target_status)
 
 }
+
+#' @export
+groups.exp_df <- function(x) {
+  attr(x, "groups")
+}
