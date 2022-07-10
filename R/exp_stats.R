@@ -91,7 +91,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 print.exp_df <- function(x, ...) {
   cat("Experience study results\n\n",
       "Groups:", paste(groups(x), collapse = ", "), "\n",
-      "Target status:", attr(x, "target_status"), "\n",
+      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n\n")
   NextMethod()

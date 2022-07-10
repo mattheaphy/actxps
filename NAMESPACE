@@ -3,6 +3,7 @@
 S3method(autoplot,exp_df)
 S3method(groups,exp_df)
 S3method(print,exp_df)
+S3method(print,exposed_df)
 export(autoplot)
 export(exp_stats)
 export(expose)
