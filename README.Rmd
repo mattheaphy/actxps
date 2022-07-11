@@ -104,6 +104,8 @@ exp_res <- exposed_data |>
 exp_res
 ```
 
+The `autoplot()` and `autotable()` functions can be used to create pre-built visualizations and summary tables.
+
 ```{r, warning=FALSE, message=FALSE}
 
 library(ggplot2)
@@ -117,6 +119,11 @@ exp_res |>
   labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
 
 ```
+
+```{r}
+autotable(exp_res)
+```
+
 
 
 To derive actual-to-expected rates, attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
