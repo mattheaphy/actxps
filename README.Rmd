@@ -1,7 +1,7 @@
 ---
 output: github_document
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -120,10 +120,16 @@ exp_res |>
 
 ```
 
-```{r}
+```{r, eval=FALSE}
+
 autotable(exp_res)
+
 ```
 
+```{r, echo=FALSE}
+# necessary to avoid printing of excessive HTML / CSS
+autotable(exp_res) |> gt::as_raw_html()
+```
 
 
 To derive actual-to-expected rates, attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
