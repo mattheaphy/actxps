@@ -11,6 +11,7 @@
 #' @param object An object of class \code{exp_df} usually created by the
 #' function \code{exp_stats()}.
 #' @param fontsize Font size percentage multiplier.
+#' @param decimals Number of decimals to display for percentages
 #' @param ... Additional arguments passed to \code{gt::gt()}.
 #'
 #'
@@ -23,7 +24,7 @@ autotable <- function(object, ...) {
 
 #' @rdname autotable
 #' @export
-autotable.exp_df <- function(object, fontsize = 100, ...) {
+autotable.exp_df <- function(object, fontsize = 100, decimals = 1, ...) {
 
   object |>
     gt::gt(...) |>
@@ -31,7 +32,7 @@ autotable.exp_df <- function(object, fontsize = 100, ...) {
     gt::fmt_percent(c(q_obs,
                       dplyr::starts_with("ae_"),
                       attr(object, "expected")),
-                    decimals = 1) |>
+                    decimals = decimals) |>
     gt::tab_options(table.font.size = gt::pct(fontsize),
                     row.striping.include_table_body = TRUE) |>
     gt::tab_style(list(gt::cell_text(weight = "bold")),
