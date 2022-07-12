@@ -63,7 +63,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
       purrr::set_names(glue::glue("ae_{expected}")) |>
       rlang::parse_exprs()
   } else {
-    ex_ae <- ex_mean <- NULL
+    ex_ae <- ex_mean <- expected <- NULL
   }
 
 
@@ -83,17 +83,25 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   structure(res, class = c("exp_df", class(res)),
             groups = .groups, target_status = target_status,
             start_date = start_date,
+            expected = expected,
             end_date = end_date)
 
 }
 
 #' @export
 print.exp_df <- function(x, ...) {
+
   cat("Experience study results\n\n",
       "Groups:", paste(groups(x), collapse = ", "), "\n",
       "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
       "Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")), "\n\n")
+      as.character(attr(x, "end_date")), "\n")
+  if (is.null(attr(x, "expected"))) {
+    cat("\n")
+  } else {
+    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n\n")
+  }
+
   NextMethod()
 }
 
