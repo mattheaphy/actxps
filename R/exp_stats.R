@@ -78,7 +78,8 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                      exposure = sum(exposure),
                      q_obs = claims / exposure,
                      !!!ex_ae,
-                     .groups = "drop")
+                     .groups = "drop") |>
+    dplyr::relocate(exposure, q_obs, .after = claims)
 
   structure(res, class = c("exp_df", class(res)),
             groups = .groups, target_status = target_status,
