@@ -29,6 +29,7 @@ autotable <- function(object, ...) {
 autotable.exp_df <- function(object, fontsize = 100, decimals = 1, ...) {
 
   expected <- attr(object, "expected")
+  target_status <- attr(object, "target_status")
 
   tab <- object |>
     gt::gt(...) |>
@@ -40,7 +41,10 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1, ...) {
     gt::tab_options(table.font.size = gt::pct(fontsize),
                     row.striping.include_table_body = TRUE) |>
     gt::tab_style(list(gt::cell_text(weight = "bold")),
-                  locations = gt::cells_column_labels())
+                  locations = gt::cells_column_labels()) |>
+    gt::tab_header(title = "Experience Study Results",
+                   subtitle = glue::glue("Target status{ifelse(length(target_status) > 1,'es','')}: {paste(target_status, collapse = ', ')}")) |>
+    gt::tab_source_note(glue::glue("Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"))
 
   for (i in expected) {
     tab <- tab |> span_expected(i)
