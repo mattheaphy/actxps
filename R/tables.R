@@ -17,6 +17,8 @@
 #'
 #' @return a \code{gt} object
 #'
+#' @importFrom rlang :=
+#'
 #' @export
 autotable <- function(object, ...) {
   UseMethod("autotable")
@@ -26,16 +28,40 @@ autotable <- function(object, ...) {
 #' @export
 autotable.exp_df <- function(object, fontsize = 100, decimals = 1, ...) {
 
-  object |>
+  expected <- attr(object, "expected")
+
+  tab <- object |>
     gt::gt(...) |>
     gt::fmt_number(c(claims, exposure), decimals = 0) |>
     gt::fmt_percent(c(q_obs,
                       dplyr::starts_with("ae_"),
-                      attr(object, "expected")),
+                      expected),
                     decimals = decimals) |>
     gt::tab_options(table.font.size = gt::pct(fontsize),
                     row.striping.include_table_body = TRUE) |>
     gt::tab_style(list(gt::cell_text(weight = "bold")),
                   locations = gt::cells_column_labels())
 
+  for (i in expected) {
+    tab <- tab |> span_expected(i)
+  }
+
+  if (length(expected > 0)) {
+    tab <- tab |>
+      gt::tab_style(list(gt::cell_text(weight = "bold")),
+                    locations = gt::cells_column_spanners())
+
+  }
+
+  tab
+
+}
+
+span_expected <- function(tab, ex) {
+
+  force(ex)
+  tab |>
+    gt::tab_spanner(ex, c(ex, paste0("ae_", ex))) |>
+    gt::cols_label(!!rlang::enquo(ex) := gt::md("E[*X*]"),
+                   !!rlang::sym(paste0("ae_", ex)) := "A/E")
 }

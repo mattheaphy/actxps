@@ -7,15 +7,17 @@
 \usage{
 autotable(object, ...)
 
-\method{autotable}{exp_df}(object, fontsize = 100, ...)
+\method{autotable}{exp_df}(object, fontsize = 100, decimals = 1, ...)
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
 function \code{exp_stats()}.}
 
-\item{...}{Not used}
+\item{...}{Additional arguments passed to \code{gt::gt()}.}
 
 \item{fontsize}{Font size percentage multiplier.}
+
+\item{decimals}{Number of decimals to display for percentages}
 }
 \value{
 a \code{gt} object
