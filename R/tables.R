@@ -12,8 +12,16 @@
 #' function \code{exp_stats()}.
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
+#' @param colorful If \code{TRUE}, color will be added to the the observed
+#' decrement rate and actual-to-expected columns.
+#' @param color_q_obs Color palette used for the observed decrement rate.
+#' @param color_ae_ Color palette used for actual-to-expected rates.
 #' @param ... Additional arguments passed to \code{gt::gt()}.
 #'
+#' @details
+#'
+#' See \code{paletteer::paletteer_d()}'s \code{palette} argument for usage of
+#' the \code{color_q_obs} and \code{color_ae_} arguments.
 #'
 #' @return a \code{gt} object
 #'
@@ -26,7 +34,11 @@ autotable <- function(object, ...) {
 
 #' @rdname autotable
 #' @export
-autotable.exp_df <- function(object, fontsize = 100, decimals = 1, ...) {
+autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
+                             colorful = TRUE,
+                             color_q_obs = "RColorBrewer::GnBu",
+                             color_ae_ = "RColorBrewer::RdBu",
+                             ...) {
 
   expected <- attr(object, "expected")
   target_status <- attr(object, "target_status")
@@ -55,6 +67,27 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1, ...) {
       gt::tab_style(list(gt::cell_text(weight = "bold")),
                     locations = gt::cells_column_spanners())
 
+  }
+
+  if (colorful) {
+    tab <- tab |>
+      gt::data_color(
+        columns = q_obs,
+        colors = scales::col_numeric(
+          palette = paletteer::paletteer_d(palette = color_q_obs) |>
+            as.character(),
+          domain = NULL
+        )
+      ) |>
+      gt::data_color(
+        columns = dplyr::starts_with("ae_"),
+        colors = scales::col_numeric(
+          palette = paletteer::paletteer_d(palette = color_ae_) |>
+            as.character(),
+          domain = NULL,
+          reverse = TRUE
+        )
+      )
   }
 
   tab

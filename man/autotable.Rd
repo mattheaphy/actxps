@@ -7,7 +7,15 @@
 \usage{
 autotable(object, ...)
 
-\method{autotable}{exp_df}(object, fontsize = 100, decimals = 1, ...)
+\method{autotable}{exp_df}(
+  object,
+  fontsize = 100,
+  decimals = 1,
+  colorful = TRUE,
+  color_q_obs = "RColorBrewer::GnBu",
+  color_ae_ = "RColorBrewer::RdBu",
+  ...
+)
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
@@ -18,6 +26,13 @@ function \code{exp_stats()}.}
 \item{fontsize}{Font size percentage multiplier.}
 
 \item{decimals}{Number of decimals to display for percentages}
+
+\item{colorful}{If \code{TRUE}, color will be added to the the observed
+decrement rate and actual-to-expected columns.}
+
+\item{color_q_obs}{Color palette used for the observed decrement rate.}
+
+\item{color_ae_}{Color palette used for actual-to-expected rates.}
 }
 \value{
 a \code{gt} object
@@ -29,4 +44,8 @@ from an object of a particular class. Tables are constructed using the
 
 \code{autotable.exp_df} is used to convert experience study results to a
 presentation-friendly format.
+}
+\details{
+See \code{paletteer::paletteer_d()}'s \code{palette} argument for usage of
+the \code{color_q_obs} and \code{color_ae_} arguments.
 }

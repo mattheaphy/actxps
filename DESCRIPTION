@@ -25,5 +25,7 @@ Imports:
     glue,
     purrr,
     scales,
-    gt
+    gt,
+    paletteer,
+    RColorBrewer
 LazyData: true
