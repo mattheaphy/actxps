@@ -145,21 +145,26 @@ exp_res |>
 
 ```
 
-```{r}
-autotable(exp_res, groupname_col = "inc_guar")
+```{r, eval = FALSE}
+autotable(exp_res)
 ```
+
+```{r, echo = FALSE}
+autotable(exp_res) |> gt::gtsave(paste0(tempfile(), ".png"))
+```
+
 
 ### `summary()`
 
 Calling the `summary` function on an `exp_df` object re-summarizes experience results. This also produces an `exp_df` object.
 
 ```{r}
-summary(exp_res) |> autotable()
+summary(exp_res)
 ```
 
 If additional variables are passed to `...`, these variables become groups in the re-summarized `exp_df` object.
 
 ```{r}
-summary(exp_res, inc_guar) |> autotable()
+summary(exp_res, inc_guar)
 ```
 
