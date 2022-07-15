@@ -104,9 +104,30 @@ exp_res <- exposed_data |>
 exp_res
 ```
 
+
+To derive actual-to-expected rates, attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
+
+```{r}
+
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+
+exposed_data <- exposed_data |> 
+  mutate(expected_1 = expected_table[pol_yr],
+         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
+
+exp_res <- exposed_data |> 
+  group_by(pol_yr, inc_guar) |> 
+  exp_stats(expected = c("expected_1", "expected_2"))
+
+exp_res
+
+```
+
+
 The `autoplot()` and `autotable()` functions can be used to create pre-built visualizations and summary tables.
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.height=3, fig.width=4.5, dpi = 400}
 
 library(ggplot2)
 
@@ -121,26 +142,12 @@ exp_res |>
 ```
 
 ```{r, eval=FALSE}
-
-autotable(exp_res)
-
+autotable(exp_res, groupname_col = "inc_guar")
 ```
 
 ```{r, echo=FALSE}
 # necessary to avoid printing of excessive HTML / CSS
-autotable(exp_res) |> gt::as_raw_html()
+autotable(exp_res, groupname_col = "inc_guar") |> gt::as_raw_html()
 ```
 
 
-To derive actual-to-expected rates, attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
-
-```{r}
-exposed_data$exp_surr <- ifelse(exposed_data$inc_guar, 0.015, 0.03)
-
-exp_res <- exposed_data |> 
-  group_by(pol_yr, inc_guar) |> 
-  exp_stats(expected = "exp_surr")
-
-exp_res
-
-```
