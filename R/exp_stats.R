@@ -6,7 +6,7 @@
 #' @details If \code{.data} is grouped, the resulting data frame will contain
 #' one row per group.
 #'
-#' If \code{target_status} isn't provided, \code{exp_stats} will use the same
+#' If \code{target_status} isn't provided, \code{exp_stats()} will use the same
 #' target status from \code{.data} if it has the class \code{exposed_df}.
 #' Otherwise, \code{.data} is not an \code{exposed_df} object, all status
 #' values except the first level will be assumed. This will produce a
@@ -16,16 +16,22 @@
 #' be a character vector with values corresponding to columns in \code{.data}
 #' containing expected experience. More than one expected basis can be provided.
 #'
+#' Applying \code{summary()} to a \code{exp_df} object will re-summarize the
+#' data while retaining any grouping variables passed to the "dots"
+#' (\code{...}).
+#'
 #' @param .data a data frame with exposure-level records, ideally of type \code{exposed_df}
 #' @param target_status a character vector of target status values
 #' @param expected a character vector containing column names in \code{.data}
 #' with expected values
 #' @param col_exposure name of the column in \code{.data} containing exposures
 #' @param col_status name of the column in \code{.data} containing the policy status
+#' @param object an \code{exp_df} object
+#' @param ... groups to retain after \code{summary()} is called
 #'
 #' @return A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
 #' and \code{data.frame}. The results include columns for any grouping
-#' variables, claims, exposures, and observed decrement rates.
+#' variables, claims, exposures, and observed decrement rates (\code{q_obs}).
 #' If any values are passed to \code{expected}, additional columns will be
 #' added for expected decrements and actual-to-expected ratios.
 #'
@@ -34,10 +40,14 @@
 #'     exp_stats()
 #'
 #' \dontrun{
-#' census_dat |>
-#'     expose("2019-12-31", target_status = "Surrender") |>
-#'     group_by(pol_yr) |>
-#'     exp_stats()}
+#' exp_res <- census_dat |>
+#'            expose("2019-12-31", target_status = "Surrender") |>
+#'            group_by(pol_yr, inc_guar) |>
+#'            exp_stats()
+#'
+#' exp_res
+#' summary(exp_res)
+#' summary(exp_res, inc_guar)}
 #'
 #' @export
 exp_stats <- function(.data, target_status = attr(.data, "target_status"),
@@ -45,12 +55,68 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       col_status = "status") {
 
   .groups <- dplyr::groups(.data)
+  start_date <- attr(.data, "start_date")
+  end_date <- attr(.data, "end_date")
 
   if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
     rlang::warn(c(x = "No target status was provided.",
                   i = glue::glue("{paste(target_status, collapse = ', ')} was assumed.")))
   }
+
+  res <- .data |>
+    dplyr::rename(exposure = {{col_exposure}},
+                  status = {{col_status}}) |>
+    dplyr::mutate(claims = status %in% target_status)
+
+  finish_exp_stats(res, target_status, expected, .groups,
+                   start_date, end_date)
+
+}
+
+#' @export
+print.exp_df <- function(x, ...) {
+
+  cat("Experience study results\n\n",
+      "Groups:", paste(groups(x), collapse = ", "), "\n",
+      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
+      "Study range:", as.character(attr(x, "start_date")), "to",
+      as.character(attr(x, "end_date")), "\n")
+  if (is.null(attr(x, "expected"))) {
+    cat("\n")
+  } else {
+    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n\n")
+  }
+
+  NextMethod()
+}
+
+
+#' @export
+groups.exp_df <- function(x) {
+  attr(x, "groups")
+}
+
+#' @export
+#' @rdname exp_stats
+summary.exp_df <- function(object, ...) {
+
+  res <- dplyr::group_by(object, !!!rlang::enquos(...))
+
+  .groups <- dplyr::groups(res)
+  target_status <- attr(object, "target_status")
+  start_date <- attr(object, "start_date")
+  end_date <- attr(object, "end_date")
+  expected <- attr(object, "expected")
+
+  finish_exp_stats(res, target_status, expected, .groups,
+                   start_date, end_date)
+
+}
+
+
+finish_exp_stats <- function(.data, target_status, expected,
+                             .groups, start_date, end_date) {
 
   if (!missing(expected)) {
     ex_mean <- glue::glue("weighted.mean({expected}, exposure)") |>
@@ -61,24 +127,21 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
       purrr::set_names(glue::glue("ae_{expected}")) |>
       rlang::parse_exprs()
   } else {
-    ex_ae <- ex_mean <- NULL
+    ex_ae <- ex_mean <- expected <- NULL
   }
 
-
-  .data <- .data |>
-    dplyr::rename(exposure = {{col_exposure}},
-                  status = {{col_status}})
-
   res <- .data |>
-    dplyr::mutate(term = status %in% target_status) |>
-    dplyr::summarize(claims = sum(term),
+    dplyr::summarize(claims = sum(claims),
                      !!!ex_mean,
                      exposure = sum(exposure),
                      q_obs = claims / exposure,
                      !!!ex_ae,
-                     .groups = "drop")
+                     .groups = "drop") |>
+    dplyr::relocate(exposure, q_obs, .after = claims)
 
   structure(res, class = c("exp_df", class(res)),
-            groups = .groups, target_status = target_status)
-
+            groups = .groups, target_status = target_status,
+            start_date = start_date,
+            expected = expected,
+            end_date = end_date)
 }

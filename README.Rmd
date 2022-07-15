@@ -1,7 +1,7 @@
 ---
 output: github_document
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -86,11 +86,13 @@ As a default, the `expose` function calculate exposures by policy year. This can
 
 ## Experience study summary function
 
-The `exp_stats` function can be used to create a summary of observed experience data.
+The `exp_stats` function creates a summary of observed experience data. The output of this function is an `exp_df` object.
 
 ```{r}
 exp_stats(exposed_data)
 ```
+
+### Grouped experience data
 
 If the data frame passed into `exp_stats` is grouped, the resulting output will contain one record for each unique group.
 
@@ -104,33 +106,65 @@ exp_res <- exposed_data |>
 exp_res
 ```
 
-```{r, echo = FALSE, warning=FALSE, message=FALSE}
+### Actual-to-expected rates
 
-library(ggplot2)
-
-.colors <- c("#eb15e4", "#7515eb")
-
-theme_set(theme_light())
-
-exp_res |> 
-  ggplot(aes(pol_yr, q_obs, color = inc_guar)) + 
-  geom_point() + 
-  geom_line() + 
-  scale_y_continuous(labels = scales::label_percent(accuracy = 1)) + 
-  scale_color_manual(values = .colors) + 
-  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
-```
-
-
-To derive actual-to-expected rates, attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
+To derive actual-to-expected rates, first attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
 
 ```{r}
-exposed_data$exp_surr <- ifelse(exposed_data$inc_guar, 0.015, 0.03)
+
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+
+exposed_data <- exposed_data |> 
+  mutate(expected_1 = expected_table[pol_yr],
+         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
 
 exp_res <- exposed_data |> 
   group_by(pol_yr, inc_guar) |> 
-  exp_stats(expected = "exp_surr")
+  exp_stats(expected = c("expected_1", "expected_2"))
 
 exp_res
 
 ```
+
+### `autoplot()` and `autotable()`
+
+The `autoplot()` and `autotable()` functions can be used to create pre-built visualizations and summary tables.
+
+```{r, warning=FALSE, message=FALSE, dpi = 400}
+
+library(ggplot2)
+
+.colors <- c("#eb15e4", "#7515eb")
+theme_set(theme_light())
+
+exp_res |> 
+  autoplot() + 
+  scale_color_manual(values = .colors) + 
+  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
+
+```
+
+```{r, eval = FALSE}
+autotable(exp_res)
+```
+
+```{r, echo = FALSE}
+autotable(exp_res) |> gt::gtsave(paste0(tempfile(), ".png"))
+```
+
+
+### `summary()`
+
+Calling the `summary` function on an `exp_df` object re-summarizes experience results. This also produces an `exp_df` object.
+
+```{r}
+summary(exp_res)
+```
+
+If additional variables are passed to `...`, these variables become groups in the re-summarized `exp_df` object.
+
+```{r}
+summary(exp_res, inc_guar)
+```
+

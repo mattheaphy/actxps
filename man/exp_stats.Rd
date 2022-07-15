@@ -2,6 +2,7 @@
 % Please edit documentation in R/exp_stats.R
 \name{exp_stats}
 \alias{exp_stats}
+\alias{summary.exp_df}
 \title{Summarize experience study records}
 \usage{
 exp_stats(
@@ -11,6 +12,8 @@ exp_stats(
   col_exposure = "exposure",
   col_status = "status"
 )
+
+\method{summary}{exp_df}(object, ...)
 }
 \arguments{
 \item{.data}{a data frame with exposure-level records, ideally of type \code{exposed_df}}
@@ -23,11 +26,15 @@ with expected values}
 \item{col_exposure}{name of the column in \code{.data} containing exposures}
 
 \item{col_status}{name of the column in \code{.data} containing the policy status}
+
+\item{object}{an \code{exp_df} object}
+
+\item{...}{groups to retain after \code{summary()} is called}
 }
 \value{
 A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include columns for any grouping
-variables, claims, exposures, and observed decrement rates.
+variables, claims, exposures, and observed decrement rates (\code{q_obs}).
 If any values are passed to \code{expected}, additional columns will be
 added for expected decrements and actual-to-expected ratios.
 }
@@ -39,7 +46,7 @@ status.
 If \code{.data} is grouped, the resulting data frame will contain
 one row per group.
 
-If \code{target_status} isn't provided, \code{exp_stats} will use the same
+If \code{target_status} isn't provided, \code{exp_stats()} will use the same
 target status from \code{.data} if it has the class \code{exposed_df}.
 Otherwise, \code{.data} is not an \code{exposed_df} object, all status
 values except the first level will be assumed. This will produce a
@@ -48,15 +55,23 @@ warning message.
 The \code{expected} argument is optional. If provided, this argument must
 be a character vector with values corresponding to columns in \code{.data}
 containing expected experience. More than one expected basis can be provided.
+
+Applying \code{summary()} to a \code{exp_df} object will re-summarize the
+data while retaining any grouping variables passed to the "dots"
+(\code{...}).
 }
 \examples{
 toy_census |> expose("2020-12-31", target_status = "Surrender") |>
     exp_stats()
 
 \dontrun{
-census_dat |>
-    expose("2019-12-31", target_status = "Surrender") |>
-    group_by(pol_yr) |>
-    exp_stats()}
+exp_res <- census_dat |>
+           expose("2019-12-31", target_status = "Surrender") |>
+           group_by(pol_yr, inc_guar) |>
+           exp_stats()
+
+exp_res
+summary(exp_res)
+summary(exp_res, inc_guar)}
 
 }

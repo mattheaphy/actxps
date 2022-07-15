@@ -1,0 +1,50 @@
+#' Plot experience study results
+#'
+#' @param object An object of class \code{exp_df} usually created by the
+#' function \code{exp_stats()}.
+#' @param ... Faceting variables passed to \code{facet_wrap()}.
+#' @param mapping Aesthetic mapping passed to \code{ggplot()}.
+#' @param scales The \code{scales} argument passed to \code{facet_wrap()}.
+#'
+#' @details If no aesthetic map is supplied, the plot will use the first
+#' grouping variable in \code{object} on the x axis and \code{q_obs} on the y
+#' axis. In addition, the second grouping variable in \code{object} will be
+#' used for color and fill.
+#'
+#' If no faceting variables are supplied, the plot will use all grouping
+#' variables 3+ as facets passed into \code{facet_wrap()}.
+#'
+#' @return a \code{ggplot} object
+#'
+#' @export
+autoplot.exp_df <- function(object, ..., mapping, scales = "fixed") {
+
+  .groups <- attr(object, "groups")
+  n_groups <- length(.groups)
+
+  defaultNULL <- function(x) if (length(.groups) < x) NULL else .groups[[x]]
+
+  # set up aesthetics
+  if(missing(mapping)) {
+    x <- .groups[[1]]
+    color <- defaultNULL(2)
+    fill <- defaultNULL(2)
+    mapping <- ggplot2::aes(!!x, q_obs, color = !!color)
+  }
+
+  if(missing(...)) {
+    facet <- .groups[-(1:2)]
+    if (length(facet) == 0) facet <- NULL
+  } else {
+    facet <- rlang::enquos(...)
+  }
+
+  p <- ggplot2::ggplot(object, mapping) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line() +
+    ggplot2::scale_y_continuous(labels = scales::label_percent(accuracy = 0.1))
+
+  if (is.null(facet)) return(p)
+  p + ggplot2::facet_wrap(ggplot2::vars(!!!facet), scales = scales)
+
+}
