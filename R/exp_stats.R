@@ -16,6 +16,11 @@
 #' be a character vector with values corresponding to columns in \code{.data}
 #' containing expected experience. More than one expected basis can be provided.
 #'
+#' If \code{credibility} is set to \code{TRUE}, the output will contain a
+#' \code{credibility} column equal to the partial credibility estimate under
+#' the Limited Fluctuation credibility method (also known as Classical
+#' Credibility) assuming a binomial distribution of claims.
+#'
 #' Applying \code{summary()} to a \code{exp_df} object will re-summarize the
 #' data while retaining any grouping variables passed to the "dots"
 #' (\code{...}).
@@ -26,6 +31,11 @@
 #' with expected values
 #' @param col_exposure name of the column in \code{.data} containing exposures
 #' @param col_status name of the column in \code{.data} containing the policy status
+#' @param credibility whether the output should include partial credibility
+#' weights and credibility-weighted decrement rates.
+#' @param cred_p confidence level under the Limited Flucation credibility method
+#' @param cred_r error tolerance under the Limited Fluctuation credibility
+#' method
 #' @param object an \code{exp_df} object
 #' @param ... groups to retain after \code{summary()} is called
 #'
@@ -49,10 +59,14 @@
 #' summary(exp_res)
 #' summary(exp_res, inc_guar)}
 #'
+#' @references Herzog, Thomas (2010). Introduction to Credibility Theory
+#'
 #' @export
 exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       expected, col_exposure = "exposure",
-                      col_status = "status") {
+                      col_status = "status",
+                      credibility = FALSE,
+                      cred_p = 0.95, cred_r = 0.05) {
 
   .groups <- dplyr::groups(.data)
   start_date <- attr(.data, "start_date")
@@ -70,7 +84,8 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
     dplyr::mutate(claims = status %in% target_status)
 
   finish_exp_stats(res, target_status, expected, .groups,
-                   start_date, end_date)
+                   start_date, end_date, credibility,
+                   cred_p, cred_r)
 
 }
 
@@ -108,26 +123,48 @@ summary.exp_df <- function(object, ...) {
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
   expected <- attr(object, "expected")
+  cred_params <- attr(object, "cred_params")
 
   finish_exp_stats(res, target_status, expected, .groups,
-                   start_date, end_date)
+                   start_date, end_date, cred_params$credibility,
+                   cred_params$cred_p, cred_params$cred_r)
 
 }
 
 
+# support functions -------------------------------------------------------
+
+
 finish_exp_stats <- function(.data, target_status, expected,
-                             .groups, start_date, end_date) {
+                             .groups, start_date, end_date,
+                             credibility, cred_p, cred_r) {
 
   if (!missing(expected)) {
-    ex_mean <- glue::glue("weighted.mean({expected}, exposure)") |>
-      purrr::set_names(expected) |>
-      rlang::parse_exprs()
+    ex_mean <- exp_form("weighted.mean({expected}, exposure)",
+                        "{expected}", expected)
 
-    ex_ae <- glue::glue("q_obs / {expected}") |>
-      purrr::set_names(glue::glue("ae_{expected}")) |>
-      rlang::parse_exprs()
+    ex_ae <- exp_form("q_obs / {expected}",
+                      "ae_{expected}", expected)
   } else {
     ex_ae <- ex_mean <- expected <- NULL
+  }
+
+  if (credibility) {
+    cred <- rlang::exprs(
+      credibility = pmin(1, sqrt(
+        claims /
+          ((stats::qnorm((1 + cred_p) / 2) / cred_r) ^ 2 * (1 - q_obs))))
+    )
+
+    if(!is.null(expected)) {
+      adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {expected}",
+                            "adj_{expected}", expected)
+
+      cred <- append(cred, adj_q_exp)
+    }
+
+  } else{
+    cred <- NULL
   }
 
   res <- .data |>
@@ -136,6 +173,7 @@ finish_exp_stats <- function(.data, target_status, expected,
                      exposure = sum(exposure),
                      q_obs = claims / exposure,
                      !!!ex_ae,
+                     !!!cred,
                      .groups = "drop") |>
     dplyr::relocate(exposure, q_obs, .after = claims)
 
@@ -143,5 +181,14 @@ finish_exp_stats <- function(.data, target_status, expected,
             groups = .groups, target_status = target_status,
             start_date = start_date,
             expected = expected,
-            end_date = end_date)
+            end_date = end_date,
+            cred_params = list(credibility = credibility,
+                               cred_p = cred_p, cred_r = cred_r))
+}
+
+exp_form <- function(form, col_names, expected) {
+  glue::glue(form) |>
+    purrr::set_names(glue::glue(col_names)) |>
+    rlang::parse_exprs()
+
 }
