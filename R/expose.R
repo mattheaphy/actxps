@@ -61,7 +61,9 @@
 #' census_dat |>
 #'     expose("2019-12-31", target_status = "Surrender")}
 #'
-#' @references https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf
+#' @references Atkinson and McGarry (2016). Experience Study Calculations.
+#' https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf
+#'
 #'
 #' @export
 expose <- function(.data,

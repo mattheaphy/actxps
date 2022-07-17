@@ -120,5 +120,6 @@ census_dat |>
 
 }
 \references{
+Atkinson and McGarry (2016). Experience Study Calculations.
 https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf
 }
