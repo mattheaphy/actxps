@@ -93,8 +93,8 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   if (!is.null(wt)) {
     res <- res |>
       dplyr::mutate(
-        claims = n_claims * !!ensym(wt),
-        exposure = exposure * !!ensym(wt)
+        claims = n_claims * !!rlang::ensym(wt),
+        exposure = exposure * !!rlang::ensym(wt)
       )
   } else {
     res$claims <- res$n_claims

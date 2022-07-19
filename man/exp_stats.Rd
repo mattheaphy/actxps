@@ -11,6 +11,7 @@ exp_stats(
   expected,
   col_exposure = "exposure",
   col_status = "status",
+  wt = NULL,
   credibility = FALSE,
   cred_p = 0.95,
   cred_r = 0.05
@@ -29,6 +30,9 @@ with expected values}
 \item{col_exposure}{name of the column in \code{.data} containing exposures}
 
 \item{col_status}{name of the column in \code{.data} containing the policy status}
+
+\item{wt}{Optional. A length 1 character vector containing the name of a weighting
+column to use in the calculation of claims and exposure amounts.}
 
 \item{credibility}{whether the output should include partial credibility
 weights and credibility-weighted decrement rates.}
