@@ -123,11 +123,11 @@ summary.exp_df <- function(object, ...) {
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
   expected <- attr(object, "expected")
-  cred_params <- attr(object, "cred_params")
+  exp_params <- attr(object, "exp_params")
 
   finish_exp_stats(res, target_status, expected, .groups,
-                   start_date, end_date, cred_params$credibility,
-                   cred_params$cred_p, cred_params$cred_r)
+                   start_date, end_date, exp_params$credibility,
+                   exp_params$cred_p, exp_params$cred_r)
 
 }
 
@@ -182,8 +182,8 @@ finish_exp_stats <- function(.data, target_status, expected,
             start_date = start_date,
             expected = expected,
             end_date = end_date,
-            cred_params = list(credibility = credibility,
-                               cred_p = cred_p, cred_r = cred_r))
+            exp_params = list(credibility = credibility,
+                              cred_p = cred_p, cred_r = cred_r))
 }
 
 exp_form <- function(form, col_names, expected) {
