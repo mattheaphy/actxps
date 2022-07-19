@@ -31,6 +31,8 @@
 #' with expected values
 #' @param col_exposure name of the column in \code{.data} containing exposures
 #' @param col_status name of the column in \code{.data} containing the policy status
+#' @param wt Optional. A length 1 character vector containing the name of a weighting
+#' column to use in the calculation of claims and exposure amounts.
 #' @param credibility whether the output should include partial credibility
 #' weights and credibility-weighted decrement rates.
 #' @param cred_p confidence level under the Limited Flucation credibility method
@@ -65,6 +67,7 @@
 exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       expected, col_exposure = "exposure",
                       col_status = "status",
+                      wt = NULL,
                       credibility = FALSE,
                       cred_p = 0.95, cred_r = 0.05) {
 
@@ -78,14 +81,28 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                   i = glue::glue("{paste(target_status, collapse = ', ')} was assumed.")))
   }
 
+  if (length(wt) > 1) {
+    rlang::abort(c(x = glue::glue("Only 1 column can be passed to wt. You supplied {length(wt)} values.")))
+  }
+
   res <- .data |>
     dplyr::rename(exposure = {{col_exposure}},
                   status = {{col_status}}) |>
-    dplyr::mutate(claims = status %in% target_status)
+    dplyr::mutate(n_claims = status %in% target_status)
+
+  if (!is.null(wt)) {
+    res <- res |>
+      dplyr::mutate(
+        claims = n_claims * !!ensym(wt),
+        exposure = exposure * !!ensym(wt)
+      )
+  } else {
+    res$claims <- res$n_claims
+  }
 
   finish_exp_stats(res, target_status, expected, .groups,
                    start_date, end_date, credibility,
-                   cred_p, cred_r)
+                   cred_p, cred_r, wt)
 
 }
 
@@ -97,10 +114,13 @@ print.exp_df <- function(x, ...) {
       "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n")
-  if (is.null(attr(x, "expected"))) {
+  if (!is.null(attr(x, "expected"))) {
+    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n\n")
+  }
+  if (is.null(attr(x, "wt"))) {
     cat("\n")
   } else {
-    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n\n")
+    cat(" Weighted by:", attr(x, "wt"), "\n\n")
   }
 
   NextMethod()
@@ -124,10 +144,12 @@ summary.exp_df <- function(object, ...) {
   end_date <- attr(object, "end_date")
   expected <- attr(object, "expected")
   exp_params <- attr(object, "exp_params")
+  wt <- attr(object, "wt")
 
   finish_exp_stats(res, target_status, expected, .groups,
                    start_date, end_date, exp_params$credibility,
-                   exp_params$cred_p, exp_params$cred_r)
+                   exp_params$cred_p, exp_params$cred_r,
+                   wt)
 
 }
 
@@ -137,12 +159,12 @@ summary.exp_df <- function(object, ...) {
 
 finish_exp_stats <- function(.data, target_status, expected,
                              .groups, start_date, end_date,
-                             credibility, cred_p, cred_r) {
+                             credibility, cred_p, cred_r,
+                             wt) {
 
   if (!missing(expected)) {
     ex_mean <- exp_form("weighted.mean({expected}, exposure)",
                         "{expected}", expected)
-
     ex_ae <- exp_form("q_obs / {expected}",
                       "ae_{expected}", expected)
   } else {
@@ -152,7 +174,7 @@ finish_exp_stats <- function(.data, target_status, expected,
   if (credibility) {
     cred <- rlang::exprs(
       credibility = pmin(1, sqrt(
-        claims /
+        n_claims /
           ((stats::qnorm((1 + cred_p) / 2) / cred_r) ^ 2 * (1 - q_obs))))
     )
 
@@ -168,7 +190,8 @@ finish_exp_stats <- function(.data, target_status, expected,
   }
 
   res <- .data |>
-    dplyr::summarize(claims = sum(claims),
+    dplyr::summarize(n_claims = sum(n_claims),
+                     claims = sum(claims),
                      !!!ex_mean,
                      exposure = sum(exposure),
                      q_obs = claims / exposure,
@@ -182,6 +205,7 @@ finish_exp_stats <- function(.data, target_status, expected,
             start_date = start_date,
             expected = expected,
             end_date = end_date,
+            wt = wt,
             exp_params = list(credibility = credibility,
                               cred_p = cred_p, cred_r = cred_r))
 }
