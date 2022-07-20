@@ -45,6 +45,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   wt <- attr(object, "wt")
 
   tab <- object |>
+    dplyr::select(-dplyr::starts_with(".weight")) |>
     gt::gt(...) |>
     gt::fmt_number(c(claims, exposure), decimals = 0) |>
     gt::fmt_percent(c(q_obs,
