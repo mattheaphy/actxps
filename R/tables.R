@@ -43,6 +43,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   expected <- attr(object, "expected")
   target_status <- attr(object, "target_status")
   wt <- attr(object, "wt")
+  cred <- attr(object, "exp_params")$credibility
 
   tab <- object |>
     dplyr::select(-dplyr::starts_with(".weight")) |>
@@ -72,7 +73,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
 
 
   for (i in expected) {
-    tab <- tab |> span_expected(i)
+    tab <- tab |> span_expected(i, cred)
   }
 
   if (length(expected > 0)) {
@@ -105,12 +106,18 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
 
 }
 
-span_expected <- function(tab, ex) {
+span_expected <- function(tab, ex, cred) {
 
   force(ex)
-  tab |>
-    gt::tab_spanner(ex, c(ex, paste0("ae_", ex), paste0("adj_", ex))) |>
-    gt::cols_label(!!rlang::enquo(ex) := gt::md("E[*X*]"),
-                   !!rlang::sym(paste0("ae_", ex)) := "A/E",
-                   !!rlang::sym(paste0("adj_", ex)) := gt::md("*q<sup>adj</sup>*"))
+  tab <- tab |>
+    gt::tab_spanner(ex, c(ex, paste0("ae_", ex),
+                          if (cred) paste0("adj_", ex))) |>
+    gt::cols_label(!!rlang::enquo(ex) := gt::md("*q<sup>exp</sup>*"),
+                   !!rlang::sym(paste0("ae_", ex)) := "A/E")
+
+  if (!cred) return(tab)
+
+  tab |> gt::cols_label(
+    !!rlang::sym(paste0("adj_", ex)) := gt::md("*q<sup>adj</sup>*"))
+
 }
