@@ -31,8 +31,9 @@
 #' with expected values
 #' @param col_exposure name of the column in \code{.data} containing exposures
 #' @param col_status name of the column in \code{.data} containing the policy status
-#' @param wt Optional. A length 1 character vector containing the name of a weighting
-#' column to use in the calculation of claims and exposure amounts.
+#' @param wt Optional. Length 1 character vector. Name of the column in
+#' \code{.data} containing weights to use in the calculation of claims,
+#' exposures, and partial credibility.
 #' @param credibility whether the output should include partial credibility
 #' weights and credibility-weighted decrement rates.
 #' @param cred_p confidence level under the Limited Flucation credibility method
@@ -92,9 +93,11 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   if (!is.null(wt)) {
     res <- res |>
+      dplyr::rename(.weight = {{wt}}) |>
       dplyr::mutate(
-        claims = n_claims * !!rlang::ensym(wt),
-        exposure = exposure * !!rlang::ensym(wt)
+        claims = n_claims * .weight,
+        exposure = exposure * .weight,
+        .weight_n = 1
       )
   } else {
     res$claims <- res$n_claims
@@ -115,7 +118,7 @@ print.exp_df <- function(x, ...) {
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n")
   if (!is.null(attr(x, "expected"))) {
-    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n\n")
+    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n")
   }
   if (is.null(attr(x, "wt"))) {
     cat("\n")
@@ -162,6 +165,7 @@ finish_exp_stats <- function(.data, target_status, expected,
                              credibility, cred_p, cred_r,
                              wt) {
 
+  # expected value formulas. these are already weighted if applicable
   if (!missing(expected)) {
     ex_mean <- exp_form("weighted.mean({expected}, exposure)",
                         "{expected}", expected)
@@ -171,12 +175,37 @@ finish_exp_stats <- function(.data, target_status, expected,
     ex_ae <- ex_mean <- expected <- NULL
   }
 
-  if (credibility) {
-    cred <- rlang::exprs(
-      credibility = pmin(1, sqrt(
-        n_claims /
-          ((stats::qnorm((1 + cred_p) / 2) / cred_r) ^ 2 * (1 - q_obs))))
+  # additional columns for weighted studies
+  if (!is.null(wt)) {
+    wt_forms <- rlang::exprs(
+      .weight = sum(.weight),
+      .weight_sq = sum(.weight^2),
+      .weight_n = sum(.weight_n),
+      ex_wt = .weight / .weight_n,
+      ex2_wt = .weight_sq / .weight_n,
     )
+  } else {
+    wt_forms <- NULL
+  }
+
+  # credibility formulas - varying by weights
+  if (credibility) {
+
+    y <- (stats::qnorm((1 + cred_p) / 2) / cred_r) ^ 2
+
+    if (is.null(wt)) {
+      cred <- rlang::exprs(
+        credibility = pmin(1, sqrt(
+          n_claims / (y * (1 - q_obs))
+          )))
+    } else {
+      cred <- rlang::exprs(
+        credibility = pmin(1, sqrt(
+          n_claims /
+            (y * ((ex2_wt - ex_wt ^ 2) * .weight_n / (.weight_n - 1) /
+                    ex_wt ^ 2 + 1 - q_obs))
+          )))
+    }
 
     if(!is.null(expected)) {
       adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {expected}",
@@ -196,9 +225,17 @@ finish_exp_stats <- function(.data, target_status, expected,
                      exposure = sum(exposure),
                      q_obs = claims / exposure,
                      !!!ex_ae,
+                     !!!wt_forms,
                      !!!cred,
                      .groups = "drop") |>
     dplyr::relocate(exposure, q_obs, .after = claims)
+
+  if (!is.null(wt)) {
+    res <- res |>
+      dplyr::select(-ex_wt, -ex2_wt) |>
+      dplyr::relocate(.weight, .weight_sq, .weight_n,
+                      .after = dplyr::last_col())
+  }
 
   structure(res, class = c("exp_df", class(res)),
             groups = .groups, target_status = target_status,

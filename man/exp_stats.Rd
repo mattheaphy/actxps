@@ -31,8 +31,9 @@ with expected values}
 
 \item{col_status}{name of the column in \code{.data} containing the policy status}
 
-\item{wt}{Optional. A length 1 character vector containing the name of a weighting
-column to use in the calculation of claims and exposure amounts.}
+\item{wt}{Optional. Length 1 character vector. Name of the column in
+\code{.data} containing weights to use in the calculation of claims,
+exposures, and partial credibility.}
 
 \item{credibility}{whether the output should include partial credibility
 weights and credibility-weighted decrement rates.}
