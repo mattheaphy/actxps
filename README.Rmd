@@ -151,6 +151,7 @@ autotable(exp_res)
 
 ```{r, echo = FALSE}
 autotable(exp_res) |> gt::gtsave(paste0(tempfile(), ".png"))
+
 ```
 
 

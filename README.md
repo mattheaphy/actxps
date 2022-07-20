@@ -144,10 +144,10 @@ exp_stats(exposed_data)
 #>  Target status: Surrender 
 #>  Study range: 1900-01-01 to 2019-12-31 
 #> 
-#> # A tibble: 1 x 3
-#>   claims exposure  q_obs
-#> *  <int>    <dbl>  <dbl>
-#> 1   2846  132669. 0.0215
+#> # A tibble: 1 x 4
+#>   n_claims claims exposure  q_obs
+#> *    <int>  <int>    <dbl>  <dbl>
+#> 1     2846   2846  132669. 0.0215
 ```
 
 ### Grouped experience data
@@ -169,19 +169,19 @@ exp_res
 #>  Target status: Surrender 
 #>  Study range: 1900-01-01 to 2019-12-31 
 #> 
-#> # A tibble: 30 x 5
-#>    pol_yr inc_guar claims exposure   q_obs
-#>  *  <int> <lgl>     <int>    <dbl>   <dbl>
-#>  1      1 FALSE        42    7719. 0.00544
-#>  2      1 TRUE         38   11526. 0.00330
-#>  3      2 FALSE        65    7117. 0.00913
-#>  4      2 TRUE         61   10605. 0.00575
-#>  5      3 FALSE        67    6476. 0.0103 
-#>  6      3 TRUE         60    9626. 0.00623
-#>  7      4 FALSE       103    5823. 0.0177 
-#>  8      4 TRUE         58    8697. 0.00667
-#>  9      5 FALSE        94    5147. 0.0183 
-#> 10      5 TRUE         72    7779. 0.00926
+#> # A tibble: 30 x 6
+#>    pol_yr inc_guar n_claims claims exposure   q_obs
+#>  *  <int> <lgl>       <int>  <int>    <dbl>   <dbl>
+#>  1      1 FALSE          42     42    7719. 0.00544
+#>  2      1 TRUE           38     38   11526. 0.00330
+#>  3      2 FALSE          65     65    7117. 0.00913
+#>  4      2 TRUE           61     61   10605. 0.00575
+#>  5      3 FALSE          67     67    6476. 0.0103 
+#>  6      3 TRUE           60     60    9626. 0.00623
+#>  7      4 FALSE         103    103    5823. 0.0177 
+#>  8      4 TRUE           58     58    8697. 0.00667
+#>  9      5 FALSE          94     94    5147. 0.0183 
+#> 10      5 TRUE           72     72    7779. 0.00926
 #> # ... with 20 more rows
 ```
 
@@ -211,20 +211,21 @@ exp_res
 #>  Study range: 1900-01-01 to 2019-12-31 
 #>  Expected values: expected_1, expected_2 
 #> 
-#> # A tibble: 30 x 9
-#>    pol_yr inc_guar claims exposure   q_obs expected_1 expected_2 ae_expected_1
-#>  *  <int> <lgl>     <int>    <dbl>   <dbl>      <dbl>      <dbl>         <dbl>
-#>  1      1 FALSE        42    7719. 0.00544    0.005        0.03          1.09 
-#>  2      1 TRUE         38   11526. 0.00330    0.005        0.015         0.659
-#>  3      2 FALSE        65    7117. 0.00913    0.00778      0.03          1.17 
-#>  4      2 TRUE         61   10605. 0.00575    0.00778      0.015         0.740
-#>  5      3 FALSE        67    6476. 0.0103     0.0106       0.03          0.980
-#>  6      3 TRUE         60    9626. 0.00623    0.0106       0.015         0.591
-#>  7      4 FALSE       103    5823. 0.0177     0.0133       0.03          1.33 
-#>  8      4 TRUE         58    8697. 0.00667    0.0133       0.015         0.500
-#>  9      5 FALSE        94    5147. 0.0183     0.0161       0.03          1.13 
-#> 10      5 TRUE         72    7779. 0.00926    0.0161       0.015         0.574
-#> # ... with 20 more rows, and 1 more variable: ae_expected_2 <dbl>
+#> # A tibble: 30 x 10
+#>    pol_yr inc_guar n_claims claims exposure   q_obs expected_1 expected_2
+#>  *  <int> <lgl>       <int>  <int>    <dbl>   <dbl>      <dbl>      <dbl>
+#>  1      1 FALSE          42     42    7719. 0.00544    0.005        0.03 
+#>  2      1 TRUE           38     38   11526. 0.00330    0.005        0.015
+#>  3      2 FALSE          65     65    7117. 0.00913    0.00778      0.03 
+#>  4      2 TRUE           61     61   10605. 0.00575    0.00778      0.015
+#>  5      3 FALSE          67     67    6476. 0.0103     0.0106       0.03 
+#>  6      3 TRUE           60     60    9626. 0.00623    0.0106       0.015
+#>  7      4 FALSE         103    103    5823. 0.0177     0.0133       0.03 
+#>  8      4 TRUE           58     58    8697. 0.00667    0.0133       0.015
+#>  9      5 FALSE          94     94    5147. 0.0183     0.0161       0.03 
+#> 10      5 TRUE           72     72    7779. 0.00926    0.0161       0.015
+#> # ... with 20 more rows, and 2 more variables: ae_expected_1 <dbl>,
+#> #   ae_expected_2 <dbl>
 ```
 
 ### `autoplot()` and `autotable()`
@@ -266,10 +267,11 @@ summary(exp_res)
 #>  Study range: 1900-01-01 to 2019-12-31 
 #>  Expected values: expected_1, expected_2 
 #> 
-#> # A tibble: 1 x 7
-#>   claims exposure  q_obs expected_1 expected_2 ae_expected_1 ae_expected_2
-#> *  <int>    <dbl>  <dbl>      <dbl>      <dbl>         <dbl>         <dbl>
-#> 1   2846  132669. 0.0215     0.0242     0.0209         0.885          1.03
+#> # A tibble: 1 x 8
+#>   n_claims claims exposure  q_obs expected_1 expected_2 ae_expected_1
+#> *    <int>  <int>    <dbl>  <dbl>      <dbl>      <dbl>         <dbl>
+#> 1     2846   2846  132669. 0.0215     0.0242     0.0209         0.885
+#> # ... with 1 more variable: ae_expected_2 <dbl>
 ```
 
 If additional variables are passed to `...`, these variables become
@@ -284,10 +286,10 @@ summary(exp_res, inc_guar)
 #>  Study range: 1900-01-01 to 2019-12-31 
 #>  Expected values: expected_1, expected_2 
 #> 
-#> # A tibble: 2 x 8
-#>   inc_guar claims exposure  q_obs expected_1 expected_2 ae_expected_1
-#> * <lgl>     <int>    <dbl>  <dbl>      <dbl>      <dbl>         <dbl>
-#> 1 FALSE      1615   52338. 0.0309     0.0234      0.03          1.32 
-#> 2 TRUE       1231   80331. 0.0153     0.0248      0.015         0.619
+#> # A tibble: 2 x 9
+#>   inc_guar n_claims claims exposure  q_obs expected_1 expected_2 ae_expected_1
+#> * <lgl>       <int>  <int>    <dbl>  <dbl>      <dbl>      <dbl>         <dbl>
+#> 1 FALSE        1615   1615   52338. 0.0309     0.0234      0.03          1.32 
+#> 2 TRUE         1231   1231   80331. 0.0153     0.0248      0.015         0.619
 #> # ... with 1 more variable: ae_expected_2 <dbl>
 ```
