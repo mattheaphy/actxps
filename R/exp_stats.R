@@ -97,6 +97,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
       dplyr::mutate(
         claims = n_claims * .weight,
         exposure = exposure * .weight,
+        .weight_sq = .weight ^ 2,
         .weight_n = 1
       )
   } else {
@@ -179,7 +180,7 @@ finish_exp_stats <- function(.data, target_status, expected,
   if (!is.null(wt)) {
     wt_forms <- rlang::exprs(
       .weight = sum(.weight),
-      .weight_sq = sum(.weight^2),
+      .weight_sq = sum(.weight_sq),
       .weight_n = sum(.weight_n),
       ex_wt = .weight / .weight_n,
       ex2_wt = .weight_sq / .weight_n,
