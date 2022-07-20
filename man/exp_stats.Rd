@@ -10,7 +10,11 @@ exp_stats(
   target_status = attr(.data, "target_status"),
   expected,
   col_exposure = "exposure",
-  col_status = "status"
+  col_status = "status",
+  wt = NULL,
+  credibility = FALSE,
+  cred_p = 0.95,
+  cred_r = 0.05
 )
 
 \method{summary}{exp_df}(object, ...)
@@ -26,6 +30,18 @@ with expected values}
 \item{col_exposure}{name of the column in \code{.data} containing exposures}
 
 \item{col_status}{name of the column in \code{.data} containing the policy status}
+
+\item{wt}{Optional. Length 1 character vector. Name of the column in
+\code{.data} containing weights to use in the calculation of claims,
+exposures, and partial credibility.}
+
+\item{credibility}{whether the output should include partial credibility
+weights and credibility-weighted decrement rates.}
+
+\item{cred_p}{confidence level under the Limited Flucation credibility method}
+
+\item{cred_r}{error tolerance under the Limited Fluctuation credibility
+method}
 
 \item{object}{an \code{exp_df} object}
 
@@ -56,6 +72,11 @@ The \code{expected} argument is optional. If provided, this argument must
 be a character vector with values corresponding to columns in \code{.data}
 containing expected experience. More than one expected basis can be provided.
 
+If \code{credibility} is set to \code{TRUE}, the output will contain a
+\code{credibility} column equal to the partial credibility estimate under
+the Limited Fluctuation credibility method (also known as Classical
+Credibility) assuming a binomial distribution of claims.
+
 Applying \code{summary()} to a \code{exp_df} object will re-summarize the
 data while retaining any grouping variables passed to the "dots"
 (\code{...}).
@@ -74,4 +95,7 @@ exp_res
 summary(exp_res)
 summary(exp_res, inc_guar)}
 
+}
+\references{
+Herzog, Thomas (2010). Introduction to Credibility Theory
 }
