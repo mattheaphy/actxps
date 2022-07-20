@@ -14,6 +14,7 @@ autotable(object, ...)
   colorful = TRUE,
   color_q_obs = "RColorBrewer::GnBu",
   color_ae_ = "RColorBrewer::RdBu",
+  rename_cols = rlang::list2(...),
   ...
 )
 }
@@ -33,6 +34,11 @@ decrement rate and actual-to-expected columns.}
 \item{color_q_obs}{Color palette used for the observed decrement rate.}
 
 \item{color_ae_}{Color palette used for actual-to-expected rates.}
+
+\item{rename_cols}{An optional list consisting of key-value pairs. This is
+can be used to relabel columns on the output table. Names are column names
+in \code{object} and values are new labels. See \code{gt::cols_label()} for
+more information.}
 }
 \value{
 a \code{gt} object
