@@ -46,7 +46,10 @@
 #' and \code{data.frame}. The results include columns for any grouping
 #' variables, claims, exposures, and observed decrement rates (\code{q_obs}).
 #' If any values are passed to \code{expected}, additional columns will be
-#' added for expected decrements and actual-to-expected ratios.
+#' added for expected decrements and actual-to-expected ratios. If
+#' \code{credibility} is set to \code{TRUE}, additional columns are added
+#' for partial credibility and credibility-weighted decrement rates
+#' (assuming values are passed to \code{expected}).
 #'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
