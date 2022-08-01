@@ -1,33 +1,33 @@
 #' Tabular experience study summary
 #'
-#' @description \code{autotable} is a generic function used to create a table
+#' @description `autotable` is a generic function used to create a table
 #' from an object of a particular class. Tables are constructed using the
-#' \code{gt} package.
+#' `gt` package.
 #'
-#' \code{autotable.exp_df} is used to convert experience study results to a
+#' `autotable.exp_df` is used to convert experience study results to a
 #' presentation-friendly format.
 
 #'
-#' @param object An object of class \code{exp_df} usually created by the
-#' function \code{exp_stats()}.
+#' @param object An object of class `exp_df` usually created by the
+#' function `exp_stats()`.
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
-#' @param colorful If \code{TRUE}, color will be added to the the observed
+#' @param colorful If `TRUE`, color will be added to the the observed
 #' decrement rate and actual-to-expected columns.
 #' @param color_q_obs Color palette used for the observed decrement rate.
 #' @param color_ae_ Color palette used for actual-to-expected rates.
 #' @param rename_cols An optional list consisting of key-value pairs. This is
 #' can be used to relabel columns on the output table. Names are column names
-#' in \code{object} and values are new labels. See \code{gt::cols_label()} for
+#' in `object` and values are new labels. See `gt::cols_label()` for
 #' more information.
-#' @param ... Additional arguments passed to \code{gt::gt()}.
+#' @param ... Additional arguments passed to `gt::gt()`.
 #'
 #' @details
 #'
-#' See \code{paletteer::paletteer_d()}'s \code{palette} argument for usage of
-#' the \code{color_q_obs} and \code{color_ae_} arguments.
+#' See `paletteer::paletteer_d()`'s `palette` argument for usage of
+#' the `color_q_obs` and `color_ae_` arguments.
 #'
-#' @return a \code{gt} object
+#' @return a `gt` object
 #'
 #' @importFrom rlang :=
 #'
