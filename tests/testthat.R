@@ -1,5 +1,4 @@
 library(testthat)
-library(xps)
-library(dplyr)
+library(actxps)
 
-test_check("xps")
+test_check("actxps")

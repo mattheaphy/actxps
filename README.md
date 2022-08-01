@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# xps
+# actxps
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -13,22 +13,22 @@ preparing data, creating studies, and beginning assumption development.
 
 ## Installation
 
-You can install the development version of xps from
+You can install the development version of `actxps` from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mattheaphy/xps")
+devtools::install_github("mattheaphy/actxps")
 ```
 
 ## Simulated data set
 
-The `xps` package includes a data frame containing simulated census data
-for a theoretical deferred annuity product with an optional guaranteed
-income rider. The grain of this data is one row per policy.
+The `actxps` package includes a data frame containing simulated census
+data for a theoretical deferred annuity product with an optional
+guaranteed income rider. The grain of this data is one row per policy.
 
 ``` r
-library(xps)
+library(actxps)
 library(dplyr)
 #> 
 #> Attaching package: 'dplyr'
