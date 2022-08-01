@@ -3,6 +3,6 @@ toy_res <- toy_census |>
   dplyr::group_by(pol_yr) |>
   exp_stats()
 
-test_that("Autplot works", {
+test_that("Autoplot works", {
   expect_s3_class(toy_res |> autoplot(), c("gg", "ggplot"))
 })
