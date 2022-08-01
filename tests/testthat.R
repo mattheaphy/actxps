@@ -1,4 +1,4 @@
 library(testthat)
-library(xps)
+library(actxps)
 
-test_check("xps")
+test_check("actxps")

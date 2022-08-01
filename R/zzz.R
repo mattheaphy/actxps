@@ -6,11 +6,11 @@
 # start-up template for usage of options
 # .onLoad <- function(libname, pkgname) {
 #   op <- options()
-#   op.xps <- list(
-#     xps.option = value,
+#   op.actxps <- list(
+#     actxps.option = value,
 #   )
-#   toset <- !(names(op.xps) %in% names(op))
-#   if(any(toset)) options(op.xps[toset])
+#   toset <- !(names(op.actxps) %in% names(op))
+#   if(any(toset)) options(op.actxps[toset])
 #
 #   invisible()
 # }
