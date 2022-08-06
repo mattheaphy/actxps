@@ -35,7 +35,7 @@ decrement rate and actual-to-expected columns.}
 
 \item{color_ae_}{Color palette used for actual-to-expected rates.}
 
-\item{rename_cols}{An optional list consisting of key-value pairs. This is
+\item{rename_cols}{An optional list consisting of key-value pairs. This
 can be used to relabel columns on the output table. Names are column names
 in \code{object} and values are new labels. See \code{gt::cols_label()} for
 more information.}

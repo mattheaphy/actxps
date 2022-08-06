@@ -12,14 +12,20 @@
 #' values except the first level will be assumed. This will produce a
 #' warning message.
 #'
+#' # Expected values
+#'
 #' The `expected` argument is optional. If provided, this argument must
 #' be a character vector with values corresponding to columns in `.data`
 #' containing expected experience. More than one expected basis can be provided.
+#'
+#' # Credibility
 #'
 #' If `credibility` is set to `TRUE`, the output will contain a
 #' `credibility` column equal to the partial credibility estimate under
 #' the Limited Fluctuation credibility method (also known as Classical
 #' Credibility) assuming a binomial distribution of claims.
+#'
+#' # `summary()` Method
 #'
 #' Applying `summary()` to a `exp_df` object will re-summarize the
 #' data while retaining any grouping variables passed to the "dots"

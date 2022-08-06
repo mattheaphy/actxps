@@ -101,16 +101,29 @@ always applied regardless of status.
 \code{default_status} is used to indicate the default active status that
 should be used when exposure records are created. If left blank, then the
 first status level will be assumed to be the default active status.
-
+}
+\section{Policy period and calendar period variations}{
 The functions \code{expose_py()}, \code{expose_pq()}, \code{expose_pm()},
 \code{expose_pw()}, \code{expose_cy()}, \code{expose_cq()},
 \code{expose_cm()}, \code{expose_cw()} are convenience functions for
 specific implementations of \code{expose()}. The two characters after the
-underscore describe the exposure type and exposure period, respectively. For
-exposures types, "p" refers to policy years and "c" refers to calendar years.
-For exposure periods, "y" = years, "q" = quarters, "m" = months, and "w" =
-weeks.
+underscore describe the exposure type and exposure period, respectively.
+
+For exposures types:
+\itemize{
+\item \code{p} refers to policy years
+\item \code{c} refers to calendar years.
 }
+
+For exposure periods:
+\itemize{
+\item \code{y} = years
+\item \code{q} = quarters
+\item \code{m} = months
+\item \code{w} = weeks.
+}
+}
+
 \examples{
 toy_census |> expose("2020-12-31", target_status = "Surrender")
 

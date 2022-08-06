@@ -23,14 +23,25 @@
 #' should be used when exposure records are created. If left blank, then the
 #' first status level will be assumed to be the default active status.
 #'
+#' # Policy period and calendar period variations
+#'
 #' The functions `expose_py()`, `expose_pq()`, `expose_pm()`,
 #' `expose_pw()`, `expose_cy()`, `expose_cq()`,
 #' `expose_cm()`, `expose_cw()` are convenience functions for
 #' specific implementations of `expose()`. The two characters after the
-#' underscore describe the exposure type and exposure period, respectively. For
-#' exposures types, "p" refers to policy years and "c" refers to calendar years.
-#' For exposure periods, "y" = years, "q" = quarters, "m" = months, and "w" =
-#' weeks.
+#' underscore describe the exposure type and exposure period, respectively.
+#'
+#' For exposures types:
+#'
+#' - `p` refers to policy years
+#' - `c` refers to calendar years.
+#'
+#' For exposure periods:
+#'
+#' - `y` = years
+#' - `q` = quarters
+#' - `m` = months
+#' - `w` = weeks.
 #'
 #' @param .data a data frame with census-level records
 #' @param end_date experience study end date
