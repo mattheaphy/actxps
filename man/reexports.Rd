@@ -5,6 +5,8 @@
 \alias{reexports}
 \alias{autoplot}
 \alias{groups}
+\alias{prep}
+\alias{bake}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -15,5 +17,7 @@ below to see their documentation.
   \item{dplyr}{\code{\link[dplyr:group_data]{groups}}}
 
   \item{ggplot2}{\code{\link[ggplot2]{autoplot}}}
+
+  \item{recipes}{\code{\link[recipes]{bake}}, \code{\link[recipes]{prep}}}
 }}
 

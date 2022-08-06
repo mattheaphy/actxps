@@ -5,3 +5,9 @@ ggplot2::autoplot
 #' @importFrom dplyr groups
 #' @export
 dplyr::groups
+
+#' @importFrom recipes prep bake
+#' @export
+recipes::prep
+#' @export
+recipes::bake
