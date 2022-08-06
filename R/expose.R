@@ -142,7 +142,7 @@ expose <- function(.data,
     dplyr::mutate(
       term_date = dplyr::if_else(term_date > end_date,
                                  lubridate::NA_Date_, term_date),
-      status = dplyr::if_else(is.na(term_date),default_status, status),
+      status = dplyr::if_else(is.na(term_date), default_status, status),
       last_date = pmin(term_date, end_date, na.rm = TRUE))
 
   if (cal_expo) {
