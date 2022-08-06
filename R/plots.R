@@ -1,20 +1,20 @@
 #' Plot experience study results
 #'
-#' @param object An object of class \code{exp_df} usually created by the
-#' function \code{exp_stats()}.
-#' @param ... Faceting variables passed to \code{facet_wrap()}.
-#' @param mapping Aesthetic mapping passed to \code{ggplot()}.
-#' @param scales The \code{scales} argument passed to \code{facet_wrap()}.
+#' @param object An object of class `exp_df` usually created by the
+#' function `exp_stats()`.
+#' @param ... Faceting variables passed to `facet_wrap()`.
+#' @param mapping Aesthetic mapping passed to `ggplot()`.
+#' @param scales The `scales` argument passed to `facet_wrap()`.
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
-#' grouping variable in \code{object} on the x axis and \code{q_obs} on the y
-#' axis. In addition, the second grouping variable in \code{object} will be
+#' grouping variable in `object` on the x axis and `q_obs` on the y
+#' axis. In addition, the second grouping variable in `object` will be
 #' used for color and fill.
 #'
 #' If no faceting variables are supplied, the plot will use all grouping
-#' variables 3+ as facets passed into \code{facet_wrap()}.
+#' variables 3+ as facets passed into `facet_wrap()`.
 #'
-#' @return a \code{ggplot} object
+#' @return a `ggplot` object
 #'
 #' @export
 autoplot.exp_df <- function(object, ..., mapping, scales = "fixed") {

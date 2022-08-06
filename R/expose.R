@@ -9,49 +9,60 @@
 #' could be any meaningful period of time such as a policy year, policy month,
 #' calendar year, calendar quarter, calendar month, etc.
 #'
-#' \code{target_status} is used in the calculation of exposures. The annual
+#' `target_status` is used in the calculation of exposures. The annual
 #' exposure method is applied, which allocates a full period of exposure for
-#' any statuses in \code{target_status}. For all other statuses, new entrants
+#' any statuses in `target_status`. For all other statuses, new entrants
 #' and exits are partially exposed based on the time elapsed in the observation
 #' period. This method is consistent with the Balducci Hypothesis, which assumes
 #' that the probability of termination is proportionate to the time elapsed
 #' in the observation period. If the annual exposure method isn't desired,
-#' \code{target_status} can be ignored. In this case, partial exposures are
+#' `target_status` can be ignored. In this case, partial exposures are
 #' always applied regardless of status.
 #'
-#' \code{default_status} is used to indicate the default active status that
+#' `default_status` is used to indicate the default active status that
 #' should be used when exposure records are created. If left blank, then the
 #' first status level will be assumed to be the default active status.
 #'
-#' The functions \code{expose_py()}, \code{expose_pq()}, \code{expose_pm()},
-#' \code{expose_pw()}, \code{expose_cy()}, \code{expose_cq()},
-#' \code{expose_cm()}, \code{expose_cw()} are convenience functions for
-#' specific implementations of \code{expose()}. The two characgters after the
-#' underscore describe the exposure type and exposure period, respectively. For
-#' exposures types, "p" refers to policy years and "c" refers to calendar years.
-#' For exposure periods, "y" = years, "q" = quarters, "m" = months, and "w" =
-#' weeks.
+#' # Policy period and calendar period variations
+#'
+#' The functions `expose_py()`, `expose_pq()`, `expose_pm()`,
+#' `expose_pw()`, `expose_cy()`, `expose_cq()`,
+#' `expose_cm()`, `expose_cw()` are convenience functions for
+#' specific implementations of `expose()`. The two characters after the
+#' underscore describe the exposure type and exposure period, respectively.
+#'
+#' For exposures types:
+#'
+#' - `p` refers to policy years
+#' - `c` refers to calendar years.
+#'
+#' For exposure periods:
+#'
+#' - `y` = years
+#' - `q` = quarters
+#' - `m` = months
+#' - `w` = weeks.
 #'
 #' @param .data a data frame with census-level records
 #' @param end_date experience study end date
 #' @param start_date experience study start date. Default value = 1900-01-01.
-#' @param target_status character vector of target status values. Default value = \code{NULL.}
+#' @param target_status character vector of target status values. Default value = `NULL`.
 #' @param cal_expo set to TRUE for calendar year exposures. Otherwise policy year exposures are used.
 #' @param expo_length exposure period length
-#' @param col_pol_num name of the column in \code{.data} containing the policy number
-#' @param col_status name of the column in \code{.data} containing the policy status
-#' @param col_issue_date name of the column in \code{.data} containing the issue date
-#' @param col_term_date name of the column in \code{.data} containing the termination date
+#' @param col_pol_num name of the column in `.data` containing the policy number
+#' @param col_status name of the column in `.data` containing the policy status
+#' @param col_issue_date name of the column in `.data` containing the issue date
+#' @param col_term_date name of the column in `.data` containing the termination date
 #' @param default_status optional scalar character representing the default active status code
-#' @param ... arguments passed to \code{expose()}
+#' @param ... arguments passed to `expose()`
 #'
-#' @return A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
-#' and \code{data.frame}. The results include all existing columns in
-#' \code{.data} plus new columns for exposures and observation periods.
+#' @return A tibble with class `exposed_df`, `tbl_df`, `tbl`,
+#' and `data.frame`. The results include all existing columns in
+#' `.data` plus new columns for exposures and observation periods.
 #'
 #' For policy year exposures, two observation period columns are returned.
-#' Columns beginning with (\code{pol_}) are integer policy periods. Columns
-#' beginning with (\code{pol_date_}) are calendar dates representing
+#' Columns beginning with (`pol_`) are integer policy periods. Columns
+#' beginning with (`pol_date_`) are calendar dates representing
 #' anniversary dates, monthiversary dates, etc.
 #'
 #' @examples

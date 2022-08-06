@@ -70,20 +70,26 @@ target status from \code{.data} if it has the class \code{exposed_df}.
 Otherwise, \code{.data} is not an \code{exposed_df} object, all status
 values except the first level will be assumed. This will produce a
 warning message.
-
+}
+\section{Expected values}{
 The \code{expected} argument is optional. If provided, this argument must
 be a character vector with values corresponding to columns in \code{.data}
 containing expected experience. More than one expected basis can be provided.
+}
 
+\section{Credibility}{
 If \code{credibility} is set to \code{TRUE}, the output will contain a
 \code{credibility} column equal to the partial credibility estimate under
 the Limited Fluctuation credibility method (also known as Classical
 Credibility) assuming a binomial distribution of claims.
+}
 
+\section{\code{summary()} Method}{
 Applying \code{summary()} to a \code{exp_df} object will re-summarize the
 data while retaining any grouping variables passed to the "dots"
 (\code{...}).
 }
+
 \examples{
 toy_census |> expose("2020-12-31", target_status = "Surrender") |>
     exp_stats()

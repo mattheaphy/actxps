@@ -3,53 +3,59 @@
 #' @description Create a summary data frame of experience for a given target
 #' status.
 #'
-#' @details If \code{.data} is grouped, the resulting data frame will contain
+#' @details If `.data` is grouped, the resulting data frame will contain
 #' one row per group.
 #'
-#' If \code{target_status} isn't provided, \code{exp_stats()} will use the same
-#' target status from \code{.data} if it has the class \code{exposed_df}.
-#' Otherwise, \code{.data} is not an \code{exposed_df} object, all status
+#' If `target_status` isn't provided, `exp_stats()` will use the same
+#' target status from `.data` if it has the class `exposed_df`.
+#' Otherwise, `.data` is not an `exposed_df` object, all status
 #' values except the first level will be assumed. This will produce a
 #' warning message.
 #'
-#' The \code{expected} argument is optional. If provided, this argument must
-#' be a character vector with values corresponding to columns in \code{.data}
+#' # Expected values
+#'
+#' The `expected` argument is optional. If provided, this argument must
+#' be a character vector with values corresponding to columns in `.data`
 #' containing expected experience. More than one expected basis can be provided.
 #'
-#' If \code{credibility} is set to \code{TRUE}, the output will contain a
-#' \code{credibility} column equal to the partial credibility estimate under
+#' # Credibility
+#'
+#' If `credibility` is set to `TRUE`, the output will contain a
+#' `credibility` column equal to the partial credibility estimate under
 #' the Limited Fluctuation credibility method (also known as Classical
 #' Credibility) assuming a binomial distribution of claims.
 #'
-#' Applying \code{summary()} to a \code{exp_df} object will re-summarize the
-#' data while retaining any grouping variables passed to the "dots"
-#' (\code{...}).
+#' # `summary()` Method
 #'
-#' @param .data a data frame with exposure-level records, ideally of type \code{exposed_df}
+#' Applying `summary()` to a `exp_df` object will re-summarize the
+#' data while retaining any grouping variables passed to the "dots"
+#' (`...`).
+#'
+#' @param .data a data frame with exposure-level records, ideally of type `exposed_df`
 #' @param target_status a character vector of target status values
-#' @param expected a character vector containing column names in \code{.data}
+#' @param expected a character vector containing column names in `.data`
 #' with expected values
-#' @param col_exposure name of the column in \code{.data} containing exposures
-#' @param col_status name of the column in \code{.data} containing the policy status
+#' @param col_exposure name of the column in `.data` containing exposures
+#' @param col_status name of the column in `.data` containing the policy status
 #' @param wt Optional. Length 1 character vector. Name of the column in
-#' \code{.data} containing weights to use in the calculation of claims,
+#' `.data` containing weights to use in the calculation of claims,
 #' exposures, and partial credibility.
 #' @param credibility whether the output should include partial credibility
 #' weights and credibility-weighted decrement rates.
 #' @param cred_p confidence level under the Limited Flucation credibility method
 #' @param cred_r error tolerance under the Limited Fluctuation credibility
 #' method
-#' @param object an \code{exp_df} object
-#' @param ... groups to retain after \code{summary()} is called
+#' @param object an `exp_df` object
+#' @param ... groups to retain after `summary()` is called
 #'
-#' @return A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
-#' and \code{data.frame}. The results include columns for any grouping
-#' variables, claims, exposures, and observed decrement rates (\code{q_obs}).
-#' If any values are passed to \code{expected}, additional columns will be
+#' @return A tibble with class `exp_df`, `tbl_df`, `tbl`,
+#' and `data.frame`. The results include columns for any grouping
+#' variables, claims, exposures, and observed decrement rates (`q_obs`).
+#' If any values are passed to `expected`, additional columns will be
 #' added for expected decrements and actual-to-expected ratios. If
-#' \code{credibility} is set to \code{TRUE}, additional columns are added
+#' `credibility` is set to `TRUE`, additional columns are added
 #' for partial credibility and credibility-weighted decrement rates
-#' (assuming values are passed to \code{expected}).
+#' (assuming values are passed to `expected`).
 #'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
