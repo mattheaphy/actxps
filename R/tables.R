@@ -16,7 +16,7 @@
 #' decrement rate and actual-to-expected columns.
 #' @param color_q_obs Color palette used for the observed decrement rate.
 #' @param color_ae_ Color palette used for actual-to-expected rates.
-#' @param rename_cols An optional list consisting of key-value pairs. This is
+#' @param rename_cols An optional list consisting of key-value pairs. This
 #' can be used to relabel columns on the output table. Names are column names
 #' in `object` and values are new labels. See `gt::cols_label()` for
 #' more information.
