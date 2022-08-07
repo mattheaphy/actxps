@@ -114,3 +114,20 @@ bake.step_expose <- function(object, new_data, ...) {
     dplyr::select(-pol_num)
 
 }
+
+#' @export
+print.step_expose <- function(x, width = max(20, options()$width - 30), ...) {
+
+  title <- glue::glue("Exposed data based on {if (x$cal_expo) 'calendar' else 'policy'} {x$expo_length}s ")
+
+  recipes::print_step(
+    untr_obj = NULL,
+    tr_obj = NULL,
+    trained = x$trained,
+    title = title,
+    width = width
+  )
+
+  invisible(x)
+
+}
