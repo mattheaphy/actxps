@@ -3,11 +3,13 @@
 #' `step_expose` creates a *specification* of a recipe step that will convert
 #' a data frame of census-level records to exposure-level records.
 #'
+#' Policy year exposures are calculated as a default. To switch to calendar
+#' exposures or another exposure length, use pass the appropriate arguments to
+#' the `options` parameter.
 #'
 #' @inheritParams recipes::step_center
 #' @inheritParams expose
-#' @param col_names A named list of column names passed to the `col_pol_num`,
-#' `col_status`, `col_issue_date`, and `col_term_date` arguments of `expose()`.
+#' @param options A named list of additional arguments passed to `expose()`.
 #'
 #' @examples
 #'
@@ -24,14 +26,9 @@ step_expose <- function(recipe,
                         end_date,
                         start_date = as.Date("1900-01-01"),
                         target_status = NULL,
-                        cal_expo = FALSE,
-                        expo_length = "year",
-                        col_names = list(
-                          col_pol_num = "pol_num",
-                          col_status = "status",
-                          col_issue_date = "issue_date",
-                          col_term_date = "term_date"),
-                        default_status,
+                        options = list(
+                          cal_expo = FALSE,
+                          expo_length = "year"),
                         skip = TRUE,
                         id = recipes::rand_id("expose")) {
 
@@ -44,10 +41,7 @@ step_expose <- function(recipe,
       end_date = end_date,
       start_date = start_date,
       target_status = target_status,
-      cal_expo = cal_expo,
-      expo_length = expo_length,
-      col_names = col_names,
-      default_status = default_status,
+      options = options,
       skip = skip,
       id = id
     )
@@ -56,8 +50,7 @@ step_expose <- function(recipe,
 }
 
 step_expose_new <- function(terms, role, trained, end_date, start_date,
-                            target_status, cal_expo, expo_length, col_names,
-                            default_status, skip, id) {
+                            target_status, options, skip, id) {
 
   recipes::step(
     subclass = "expose",
@@ -67,10 +60,7 @@ step_expose_new <- function(terms, role, trained, end_date, start_date,
     end_date = end_date,
     start_date = start_date,
     target_status = target_status,
-    cal_expo = cal_expo,
-    expo_length = expo_length,
-    col_names = col_names,
-    default_status = default_status,
+    options = options,
     skip = skip,
     id = id
   )
@@ -87,10 +77,7 @@ prep.step_expose <- function(x, training, info = NULL, ...) {
     end_date = x$end_date,
     start_date = x$start_date,
     target_status = x$target_status,
-    cal_expo = x$cal_expo,
-    expo_length = x$expo_length,
-    col_names = x$col_names,
-    default_status = x$default_status,
+    options = x$options,
     skip = x$skip,
     id = x$id
   )
@@ -100,17 +87,12 @@ prep.step_expose <- function(x, training, info = NULL, ...) {
 #' @export
 bake.step_expose <- function(object, new_data, ...) {
 
-  expose(new_data,
-         object$end_date,
-         object$start_date,
-         object$target_status,
-         object$cal_expo,
-         object$expo_length,
-         object$col_names$col_pol_num,
-         object$col_names$col_status,
-         object$col_names$col_issue_date,
-         object$col_names$col_term_date,
-         object$default_status) |>
+  rlang::exec("expose",
+              new_data,
+              object$end_date,
+              object$start_date,
+              object$target_status,
+              !!!object$options) |>
     dplyr::select(-pol_num)
 
 }
@@ -118,7 +100,7 @@ bake.step_expose <- function(object, new_data, ...) {
 #' @export
 print.step_expose <- function(x, width = max(20, options()$width - 30), ...) {
 
-  title <- glue::glue("Exposed data based on {if (x$cal_expo) 'calendar' else 'policy'} {x$expo_length}s ")
+  title <- glue::glue("Exposed data based on {if (x$options$cal_expo) 'calendar' else 'policy'} {x$options$expo_length}s{if(!is.null(x$target_status)) paste(' for target status', paste(x$target_status, collapse = ', ')) else ''} ")
 
   recipes::print_step(
     untr_obj = NULL,

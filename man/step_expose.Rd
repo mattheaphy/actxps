@@ -12,11 +12,7 @@ step_expose(
   end_date,
   start_date = as.Date("1900-01-01"),
   target_status = NULL,
-  cal_expo = FALSE,
-  expo_length = "year",
-  col_names = list(col_pol_num = "pol_num", col_status = "status", col_issue_date =
-    "issue_date", col_term_date = "term_date"),
-  default_status,
+  options = list(cal_expo = FALSE, expo_length = "year"),
   skip = TRUE,
   id = recipes::rand_id("expose")
 )
@@ -40,14 +36,7 @@ preprocessing have been estimated.}
 
 \item{target_status}{character vector of target status values. Default value = \code{NULL}.}
 
-\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are used.}
-
-\item{expo_length}{exposure period length}
-
-\item{col_names}{A named list of column names passed to the \code{col_pol_num},
-\code{col_status}, \code{col_issue_date}, and \code{col_term_date} arguments of \code{expose()}.}
-
-\item{default_status}{optional scalar character representing the default active status code}
+\item{options}{A named list of additional arguments passed to \code{expose()}.}
 
 \item{skip}{A logical. Should the step be skipped when the
 recipe is baked by \code{\link[recipes:bake]{bake()}}? While all operations are baked
@@ -61,6 +50,11 @@ the computations for subsequent operations.}
 \description{
 \code{step_expose} creates a \emph{specification} of a recipe step that will convert
 a data frame of census-level records to exposure-level records.
+}
+\details{
+Policy year exposures are calculated as a default. To switch to calendar
+exposures or another exposure length, use pass the appropriate arguments to
+the \code{options} parameter.
 }
 \examples{
 
