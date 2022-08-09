@@ -38,6 +38,10 @@ step_expose <- function(recipe,
                         skip = TRUE,
                         id = recipes::rand_id("expose")) {
 
+  if (length(rlang::enquos(...)) > 0) {
+    rlang::warn("No variable selectors are used for step_expose.")
+  }
+
   if (!"cal_expo" %in% names(options)) options$cal_expo <- FALSE
   if (!"expo_length" %in% names(options)) options$expo_length <- "year"
 
