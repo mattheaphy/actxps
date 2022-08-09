@@ -11,3 +11,7 @@ dplyr::groups
 recipes::prep
 #' @export
 recipes::bake
+
+#' @importFrom generics tidy
+#' @export
+generics::tidy

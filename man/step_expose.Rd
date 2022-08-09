@@ -58,7 +58,14 @@ the \code{options} parameter.
 }
 \examples{
 
-1
+\dontrun{
+expo_rec <- recipes::recipe(status ~ ., toy_census) |>
+  step_expose(end_date = "2022-12-31", target_status = "Surrender",
+              options = list(expo_length = "month")) |>
+  prep()
+
+recipes::juice(expo_rec)
+}
 
 }
 \seealso{

@@ -13,13 +13,14 @@
 #'
 #' @examples
 #'
-#' \dontrun{}
+#' \dontrun{
 #' expo_rec <- recipes::recipe(status ~ ., toy_census) |>
 #'   step_expose(end_date = "2022-12-31", target_status = "Surrender",
 #'               options = list(expo_length = "month")) |>
 #'   prep()
 #'
-#' recipes::juice()
+#' recipes::juice(expo_rec)
+#' }
 #'
 #' @seealso
 #' [expose()]
@@ -125,4 +126,18 @@ print.step_expose <- function(x, width = max(20, options()$width - 30), ...) {
 
   invisible(x)
 
+}
+
+#' @export
+tidy.step_expose <- function(x, ...) {
+  tibble::tibble(
+    exposure_type = paste(
+      if (x$options$cal_expo) "calendar" else "policy",
+      x$options$expo_length,
+      sep = "_"
+    ),
+    target_status = x$target_status,
+    start_date = x$start_date,
+    end_date = x$end_date
+  )
 }
