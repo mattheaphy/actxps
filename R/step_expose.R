@@ -13,7 +13,13 @@
 #'
 #' @examples
 #'
-#' 1
+#' \dontrun{}
+#' expo_rec <- recipes::recipe(status ~ ., toy_census) |>
+#'   step_expose(end_date = "2022-12-31", target_status = "Surrender",
+#'               options = list(expo_length = "month")) |>
+#'   prep()
+#'
+#' recipes::juice()
 #'
 #' @seealso
 #' [expose()]
@@ -31,6 +37,9 @@ step_expose <- function(recipe,
                           expo_length = "year"),
                         skip = TRUE,
                         id = recipes::rand_id("expose")) {
+
+  if (!"cal_expo" %in% names(options)) options$cal_expo <- FALSE
+  if (!"expo_length" %in% names(options)) options$expo_length <- "year"
 
   recipes::add_step(
     recipe,
