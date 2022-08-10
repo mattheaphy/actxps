@@ -13,6 +13,7 @@ step_expose(
   start_date = as.Date("1900-01-01"),
   target_status = NULL,
   options = list(cal_expo = FALSE, expo_length = "year"),
+  drop_pol_num = TRUE,
   skip = TRUE,
   id = recipes::rand_id("expose")
 )
@@ -38,6 +39,9 @@ preprocessing have been estimated.}
 
 \item{options}{A named list of additional arguments passed to \code{expose()}.}
 
+\item{drop_pol_num}{Whether the \code{pol_num} column produced by \code{expose()}
+should be dropped. Defaults to \code{TRUE}.}
+
 \item{skip}{A logical. Should the step be skipped when the
 recipe is baked by \code{\link[recipes:bake]{bake()}}? While all operations are baked
 when \code{\link[recipes:prep]{prep()}} is run, some operations may not be able to be
@@ -55,6 +59,11 @@ a data frame of census-level records to exposure-level records.
 Policy year exposures are calculated as a default. To switch to calendar
 exposures or another exposure length, use pass the appropriate arguments to
 the \code{options} parameter.
+
+Policy numbers are dropped as a default whenever the recipe is baked. This
+is done to prevent unintentional errors when the model formula includes
+all variables (\code{y ~ .}). If policy numbers are required for any reason
+(mixed effect models, identification, etc.), set \code{drop_pol_num} to \code{FALSE}.
 }
 \examples{
 

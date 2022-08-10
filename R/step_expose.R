@@ -7,9 +7,16 @@
 #' exposures or another exposure length, use pass the appropriate arguments to
 #' the `options` parameter.
 #'
+#' Policy numbers are dropped as a default whenever the recipe is baked. This
+#' is done to prevent unintentional errors when the model formula includes
+#' all variables (`y ~ .`). If policy numbers are required for any reason
+#' (mixed effect models, identification, etc.), set `drop_pol_num` to `FALSE`.
+#'
 #' @inheritParams recipes::step_center
 #' @inheritParams expose
 #' @param options A named list of additional arguments passed to `expose()`.
+#' @param drop_pol_num Whether the `pol_num` column produced by `expose()`
+#' should be dropped. Defaults to `TRUE`.
 #'
 #' @examples
 #'
@@ -36,6 +43,7 @@ step_expose <- function(recipe,
                         options = list(
                           cal_expo = FALSE,
                           expo_length = "year"),
+                        drop_pol_num = TRUE,
                         skip = TRUE,
                         id = recipes::rand_id("expose")) {
 
@@ -56,6 +64,7 @@ step_expose <- function(recipe,
       start_date = start_date,
       target_status = target_status,
       options = options,
+      drop_pol_num = drop_pol_num,
       skip = skip,
       id = id
     )
@@ -64,7 +73,7 @@ step_expose <- function(recipe,
 }
 
 step_expose_new <- function(terms, role, trained, end_date, start_date,
-                            target_status, options, skip, id) {
+                            target_status, options, drop_pol_num, skip, id) {
 
   recipes::step(
     subclass = "expose",
@@ -75,6 +84,7 @@ step_expose_new <- function(terms, role, trained, end_date, start_date,
     start_date = start_date,
     target_status = target_status,
     options = options,
+    drop_pol_num = drop_pol_num,
     skip = skip,
     id = id
   )
@@ -92,6 +102,7 @@ prep.step_expose <- function(x, training, info = NULL, ...) {
     start_date = x$start_date,
     target_status = x$target_status,
     options = x$options,
+    drop_pol_num = x$drop_pol_num,
     skip = x$skip,
     id = x$id
   )
@@ -101,13 +112,18 @@ prep.step_expose <- function(x, training, info = NULL, ...) {
 #' @export
 bake.step_expose <- function(object, new_data, ...) {
 
-  rlang::exec("expose",
+  new_data <- rlang::exec("expose",
               new_data,
               object$end_date,
               object$start_date,
               object$target_status,
-              !!!object$options) |>
-    dplyr::select(-pol_num)
+              !!!object$options)
+
+  if (object$drop_pol_num) {
+    new_data |> dplyr::select(-pol_num)
+  } else {
+    new_data
+  }
 
 }
 
