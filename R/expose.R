@@ -307,3 +307,8 @@ print.exposed_df <- function(x, ...) {
       as.character(attr(x, "end_date")), "\n\n")
   NextMethod()
 }
+
+#' @export
+is_exposed_df <- function(x) {
+  "exposed_df" %in% class(x)
+}

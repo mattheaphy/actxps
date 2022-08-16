@@ -29,5 +29,6 @@ Imports:
     paletteer,
     RColorBrewer,
     recipes,
-    generics
+    generics,
+    shiny
 LazyData: true
