@@ -8,6 +8,9 @@ exp_explore(dat, predictors = names(dat))
 }
 \arguments{
 \item{dat}{An \code{exposed_df} object}
+
+\item{predictors}{A character vector of independent variables to include in the
+shiny app.}
 }
 \value{
 \code{NULL}
@@ -20,7 +23,6 @@ experience.
 of reserved column names from predictors. also explain exposed_df importance
 }
 \examples{
-toy_census |> expose("2020-12-31", target_status = "Surrender")
 
 \dontrun{1}
 

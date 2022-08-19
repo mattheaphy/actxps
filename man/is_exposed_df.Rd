@@ -17,7 +17,7 @@ as_exposed_df(
 )
 }
 \arguments{
-\item{x}{an object. \code{x} must be a data frame when calling \code{as_exposed_df}}
+\item{x}{an object. \code{x} must be a data frame when calling \code{as_exposed_df()}}
 
 \item{end_date}{experience study end date}
 
@@ -29,10 +29,18 @@ as_exposed_df(
 
 \item{expo_length}{exposure period length}
 }
+\value{
+For \code{is_exposed_df()}, a length-1 logical vector. For
+\code{as_exposed_df()}, an \code{exposed_df} object.
+}
 \description{
 Test for and coerce to the \code{exposed_df} class.
 }
 \details{
 These are behind-the-scenes functions that will generally not be called
 by users.
+
+\code{is_exposed_df()} will return \code{TRUE} if \code{x} is an \code{exposed_df} object.
+
+\code{as_exposed_df()} will coerce a data frame to an \code{exposed_df} object.
 }

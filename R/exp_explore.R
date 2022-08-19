@@ -7,13 +7,12 @@
 #' of reserved column names from predictors. also explain exposed_df importance
 #'
 #' @param dat An `exposed_df` object
-#' @predictors A character vector of independent variables to include in the
+#' @param predictors A character vector of independent variables to include in the
 #' shiny app.
 #'
 #' @return `NULL`
 #'
 #' @examples
-#' toy_census |> expose("2020-12-31", target_status = "Surrender")
 #'
 #' \dontrun{1}
 #'

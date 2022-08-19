@@ -5,8 +5,15 @@
 #' These are behind-the-scenes functions that will generally not be called
 #' by users.
 #'
-#' @param x an object. `x` must be a data frame when calling `as_exposed_df`
+#' `is_exposed_df()` will return `TRUE` if `x` is an `exposed_df` object.
+#'
+#' `as_exposed_df()` will coerce a data frame to an `exposed_df` object.
+#'
+#' @param x an object. `x` must be a data frame when calling `as_exposed_df()`
 #' @inheritParams expose
+#'
+#' @return For `is_exposed_df()`, a length-1 logical vector. For
+#' `as_exposed_df()`, an `exposed_df` object.
 #'
 #' @export
 is_exposed_df <- function(x) {
