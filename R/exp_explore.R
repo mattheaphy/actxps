@@ -23,6 +23,8 @@ exp_explore <- function(dat, predictors = names(dat)) {
     rlang::abort("`dat` is not an `exposed_df` object. Try converting `dat` to an `exposed_df` using `as_exposed_df`.")
   }
 
+  total_rows <- nrow(dat)
+
   # organize predictors
   preds <- data.frame(predictors = predictors) |>
     # drop non-predictors (if any)
@@ -36,7 +38,8 @@ exp_explore <- function(dat, predictors = names(dat)) {
                     class1 %in% c("numeric", "integer", "double") ~ 4,
                     TRUE ~ 5
                   )) |>
-    dplyr::arrange(order)
+    dplyr::arrange(order) |>
+    dplyr::select(-order)
 
   # function to make input widgets
   widget <- function(x,
@@ -100,7 +103,25 @@ exp_explore <- function(dat, predictors = names(dat)) {
 
   }
 
-  # Define UI for application that draws a histogram
+  # function to build filter expressions
+  expr_filter <- function(x) {
+
+    inputId <- paste("i", x, sep = "_")
+
+
+    res <- if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
+      # numeric or date
+      glue::glue("dplyr::between({x}, input${inputId}[[1]], input${inputId}[[2]])")
+    } else {
+      # categorical
+      glue::glue("{x} %in% input${inputId}")
+
+    }
+
+    rlang::parse_expr(res)
+
+  }
+
   ui <- shiny::fluidPage(
 
     shiny::titlePanel("Experience Data Explorer"),
@@ -113,15 +134,8 @@ exp_explore <- function(dat, predictors = names(dat)) {
         # add filter widgets
         purrr::map(preds$predictors, widget),
 
-
-        shiny::sliderInput("bins",
-                           "Number of bins:",
-                           min = 1,
-                           max = 50,
-                           value = 30)
       ),
 
-      # Show a plot of the generated distribution
       shiny::mainPanel(
         shiny::fluidRow(
           shiny::h3("Variable Selection")
@@ -134,24 +148,44 @@ exp_explore <- function(dat, predictors = names(dat)) {
             width = 6,
             shiny::h3("Table")),
         ),
-        shiny::plotOutput("distPlot")
+        shiny::plotOutput("xpPlot"),
+
+        shiny::h3("Filter Information"),
+        shiny::verbatimTextOutput("filterInfo"),
+
+        # temporary!!!
+        gt::gt(preds)
       )
     )
   )
 
-  # Define server logic required to draw a histogram
   server <- function(input, output) {
 
-    output$distPlot <- shiny::renderPlot({
-      # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2]
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    # reactive data
+    rdat <- reactive({
 
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white',
-           xlab = 'Waiting time to next eruption (in mins)',
-           main = 'Histogram of waiting times')
+      filters <- purrr::map(preds$predictors, expr_filter)
+
+      dat |>
+        dplyr::filter(!!!filters)
     })
+
+    output$xpPlot <- shiny::renderPlot({
+
+      rdat() |>
+        dplyr::group_by(pol_yr, inc_guar) |>
+        exp_stats() |>
+        ggplot2::ggplot(ggplot2::aes(pol_yr, q_obs, fill = inc_guar)) +
+        ggplot2::geom_col(position = "dodge")
+
+    })
+
+    # filter information
+    output$filterInfo <- shiny::renderPrint({
+      glue::glue("Total records = {scales::label_comma()(total_rows)}
+                 Remaining records = {scales::label_comma()(nrow(rdat()))}")
+    })
+
   }
 
   # Run the application
