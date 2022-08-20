@@ -37,7 +37,9 @@ exp_explore <- function(dat, predictors = names(dat)) {
                     class1 %in% c("character", "factor") ~ 3,
                     class1 %in% c("numeric", "integer", "double") ~ 4,
                     TRUE ~ 5
-                  )) |>
+                  ),
+                  is_number = purrr::map_lgl(predictors,
+                                             ~ is.numeric(dat[[.x]]))) |>
     dplyr::arrange(order) |>
     dplyr::select(-order)
 
@@ -133,7 +135,8 @@ exp_explore <- function(dat, predictors = names(dat)) {
 
   ui <- shiny::fluidPage(
 
-    shiny::titlePanel("Experience Data Explorer"),
+    shiny::titlePanel(paste(attr(dat, "target_status"), collapse = "/") |>
+                        paste("Experience Study")),
 
     shiny::sidebarLayout(
       shiny::sidebarPanel(
@@ -153,6 +156,9 @@ exp_explore <- function(dat, predictors = names(dat)) {
           selectPred("colorVar", "Color:", 3),
           selectPred("facetVar", "Facets:", 3, multiple = TRUE,
                      choices = preds$predictors),
+          selectPred("weightVar", "Weight by:", 3,
+                     choices = c("None",
+                                 dplyr::filter(preds, is_number)$predictors))
         ),
 
         shiny::tabsetPanel(
@@ -206,9 +212,18 @@ exp_explore <- function(dat, predictors = names(dat)) {
       .groups <- c(input$xVar, input$colorVar, input$facetVar)
       .groups <- .groups[.groups != "None"]
 
+      if (input$weightVar == "None") {
+        wt <- NULL
+      } else {
+        wt <- input$weightVar
+        if (wt %in% as.character(.groups)) {
+          rlang::abort("Error: the weighting variable cannot be one of the grouping (x, color, facets) variables.")
+        }
+      }
+
       rdat() |>
         dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
-        exp_stats()
+        exp_stats(wt = wt)
     })
 
     output$xpPlot <- shiny::renderPlot({
