@@ -156,12 +156,18 @@ exp_explore <- function(dat, predictors = names(dat)) {
         ),
 
         shiny::tabsetPanel(
-          shiny::tabPanel("Plot",
-                          shiny::br(),
-                          shiny::plotOutput("xpPlot")),
-          shiny::tabPanel("Table",
-                          shiny::br(),
-                          gt::gt_output("xpTable")
+          shiny::tabPanel(
+            "Plot",
+            shiny::br(),
+            shiny::radioButtons("plotGeom",
+                                "Geometry",
+                                choices = c("Bars" = "bars",
+                                            "Lines and Point" = "lines")),
+            shiny::plotOutput("xpPlot")),
+          shiny::tabPanel(
+            "Table",
+            shiny::br(),
+            gt::gt_output("xpTable")
           )
         ),
 
@@ -209,13 +215,14 @@ exp_explore <- function(dat, predictors = names(dat)) {
         rlang::sym(input$colorVar)
       }
 
-      mapping <- ggplot2::aes(!!x, q_obs, color = !!color, group = !!color)
+      mapping <- ggplot2::aes(!!x, q_obs, color = !!color,
+                              fill = !!color, group = !!color)
 
       if (is.null(input$facetVar)) {
-        dat |> autoplot(mapping = mapping)
+        dat |> autoplot(mapping = mapping, geoms = input$plotGeom)
       } else {
         facets <- rlang::syms(input$facetVar)
-        dat |> autoplot(!!!facets, mapping = mapping)
+        dat |> autoplot(!!!facets, mapping = mapping, geoms = input$plotGeom)
       }
 
     })
@@ -227,7 +234,8 @@ exp_explore <- function(dat, predictors = names(dat)) {
     # filter information
     output$filterInfo <- shiny::renderPrint({
       glue::glue("Total records = {scales::label_comma()(total_rows)}
-                 Remaining records = {scales::label_comma()(nrow(rdat()))}")
+                 Remaining records = {scales::label_comma()(nrow(rdat()))}
+                 % Data Remainings = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
     })
 
   }

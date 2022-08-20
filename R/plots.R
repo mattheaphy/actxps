@@ -37,7 +37,8 @@ autoplot.exp_df <- function(object, ..., mapping, scales = "fixed",
     x <- .groups[[1]]
     color <- defaultNULL(2)
     fill <- defaultNULL(2)
-    mapping <- ggplot2::aes(!!x, q_obs, color = !!color, group = !!color)
+    mapping <- ggplot2::aes(!!x, q_obs, color = !!color,
+                            fill = !!color, group = !!color)
   }
 
   if(missing(...)) {
