@@ -209,7 +209,7 @@ exp_explore <- function(dat, predictors = names(dat)) {
         rlang::sym(input$colorVar)
       }
 
-      mapping <- ggplot2::aes(!!x, q_obs, color = !!color)
+      mapping <- ggplot2::aes(!!x, q_obs, color = !!color, group = !!color)
 
       if (is.null(input$facetVar)) {
         dat |> autoplot(mapping = mapping)
