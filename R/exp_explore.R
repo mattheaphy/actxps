@@ -122,6 +122,14 @@ exp_explore <- function(dat, predictors = names(dat)) {
 
   }
 
+  selectPred <- function(inputID, label, width, ...) {
+    shiny::column(
+      width = width,
+      shiny::selectInput(inputID, label,
+                         choices = c("None", preds$predictors), ...)
+    )
+  }
+
   ui <- shiny::fluidPage(
 
     shiny::titlePanel("Experience Data Explorer"),
@@ -137,24 +145,27 @@ exp_explore <- function(dat, predictors = names(dat)) {
       ),
 
       shiny::mainPanel(
+
+        shiny::h3("Variable Selection"),
         shiny::fluidRow(
-          shiny::h3("Variable Selection")
+          selectPred("xVar", "x:", 3),
+          selectPred("colorVar", "Color:", 3),
+          selectPred("facetVar", "Facets:", 3, multiple = TRUE),
         ),
-        shiny::fluidRow(
-          shiny::column(
-            width = 6,
-            shiny::h3("Plot")),
-          shiny::column(
-            width = 6,
-            shiny::h3("Table")),
+
+        shiny::tabsetPanel(
+          shiny::tabPanel("Plot",
+                          shiny::br(),
+                          shiny::plotOutput("xpPlot")),
+          shiny::tabPanel("Table",
+                          shiny::br(),
+                          gt::gt_output("xpTable")
+          )
         ),
-        shiny::plotOutput("xpPlot"),
 
         shiny::h3("Filter Information"),
         shiny::verbatimTextOutput("filterInfo"),
 
-        # temporary!!!
-        gt::gt(preds)
       )
     )
   )
@@ -170,14 +181,23 @@ exp_explore <- function(dat, predictors = names(dat)) {
         dplyr::filter(!!!filters)
     })
 
-    output$xpPlot <- shiny::renderPlot({
+    # experience study
+    rxp <- function() {
+
+      .groups <- c(input$xVar, input$colorVar, input$facetVar)
+      .groups <- .groups[.groups != "None"]
 
       rdat() |>
-        dplyr::group_by(pol_yr, inc_guar) |>
-        exp_stats() |>
-        ggplot2::ggplot(ggplot2::aes(pol_yr, q_obs, fill = inc_guar)) +
-        ggplot2::geom_col(position = "dodge")
+        dplyr::group_by(across(all_of(.groups))) |>
+        exp_stats()
+    }
 
+    output$xpPlot <- shiny::renderPlot({
+      rxp() |> autoplot()
+    })
+
+    output$xpTable <- gt::render_gt({
+      rxp() |> autotable()
     })
 
     # filter information
