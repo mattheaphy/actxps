@@ -124,11 +124,11 @@ exp_shiny <- function(dat, predictors = names(dat)) {
 
   }
 
-  selectPred <- function(inputID, label, width,
+  selectPred <- function(inputId, label, width,
                          choices = c("None", preds$predictors), ...) {
     shiny::column(
       width = width,
-      shiny::selectInput(inputID, label,
+      shiny::selectInput(inputId, label,
                          choices = choices, ...)
     )
   }
@@ -151,34 +151,43 @@ exp_shiny <- function(dat, predictors = names(dat)) {
       shiny::mainPanel(
 
         shiny::h3("Variable Selection"),
-        shiny::fluidRow(
-          selectPred("xVar", "x:", 3),
-          selectPred("colorVar", "Color:", 3),
-          selectPred("facetVar", "Facets:", 3, multiple = TRUE,
-                     choices = preds$predictors),
-          selectPred("weightVar", "Weight by:", 3,
-                     choices = c("None",
-                                 dplyr::filter(preds, is_number)$predictors))
-        ),
+
+        shiny::wellPanel(
+          shiny::fluidRow(
+            selectPred("xVar", "x:", 4),
+            selectPred("colorVar", "Color:", 4),
+            selectPred("facetVar", "Facets:", 4, multiple = TRUE,
+                       choices = preds$predictors)
+          ),
+          shiny::fluidRow(
+            selectPred("weightVar", "Weight by:", 4,
+                       choices = c("None",
+                                   dplyr::filter(preds, is_number)$predictors))
+          )),
+
+        shiny::h3("Output"),
 
         shiny::tabsetPanel(
           shiny::tabPanel(
             "Plot",
             shiny::br(),
             shiny::fluidRow(
+              selectPred("yVar", "y:", 4,
+                         choices = c("q_obs", "n_claims", "claims",
+                                     "exposure", "credibility")),
               shiny::column(
-                width = 6,
+                width = 4,
                 shiny::radioButtons("plotGeom",
                                     "Geometry:",
                                     choices = c("Bars" = "bars",
                                                 "Lines and Point" = "lines"))
               ),
               shiny::column(
-                width = 6,
+                width = 4,
                 shiny::checkboxInput("plotSmooth",
                                      "Add Smoothing?",
                                      value = FALSE)
-              ),
+              )
             ),
             shiny::plotOutput("xpPlot")),
           shiny::tabPanel(
@@ -223,7 +232,7 @@ exp_shiny <- function(dat, predictors = names(dat)) {
 
       rdat() |>
         dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
-        exp_stats(wt = wt)
+        exp_stats(wt = wt, credibility = TRUE)
     })
 
     output$xpPlot <- shiny::renderPlot({
@@ -241,7 +250,9 @@ exp_shiny <- function(dat, predictors = names(dat)) {
         rlang::sym(input$colorVar)
       }
 
-      mapping <- ggplot2::aes(!!x, q_obs, color = !!color,
+      y <- rlang::sym(input$yVar)
+
+      mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                               fill = !!color, group = !!color)
 
       if (is.null(input$facetVar)) {
@@ -254,7 +265,15 @@ exp_shiny <- function(dat, predictors = names(dat)) {
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
                                                           formula = y ~ x)
-      p
+
+      # fix y variable
+      if (input$yVar %in% c("claims", "n_claims", "exposure")) {
+        p <- p + ggplot2::scale_y_continuous(
+          labels = scales::label_comma(accuracy = 1))
+
+      }
+
+      p + ggplot2::theme_light()
 
     })
 
