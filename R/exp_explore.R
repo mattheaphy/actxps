@@ -160,14 +160,14 @@ exp_explore <- function(dat, predictors = names(dat)) {
             "Plot",
             shiny::br(),
             shiny::fluidRow(
-              column(
+              shiny::column(
                 width = 6,
                 shiny::radioButtons("plotGeom",
                                     "Geometry:",
                                     choices = c("Bars" = "bars",
                                                 "Lines and Point" = "lines"))
               ),
-              column(
+              shiny::column(
                 width = 6,
                 shiny::checkboxInput("plotSmooth",
                                      "Add Smoothing?",
