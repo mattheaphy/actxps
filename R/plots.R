@@ -22,10 +22,10 @@
 autoplot.exp_df <- function(object, ..., mapping, scales = "fixed",
                             geoms = c("lines", "bars")) {
 
-  .groups <- attr(object, "groups")
+  .groups <- groups(object)
   if(length(.groups) == 0) {
-    .groups <- list(rlang::expr(All))
-    object$All <- ""
+    .groups <- list(rlang::parse_expr("All"))
+    object[["All"]] <- ""
   }
 
   defaultNULL <- function(x) if (length(.groups) < x) NULL else .groups[[x]]

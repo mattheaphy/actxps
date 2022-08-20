@@ -4,7 +4,7 @@
 \alias{autoplot.exp_df}
 \title{Plot experience study results}
 \usage{
-\method{autoplot}{exp_df}(object, ..., mapping, scales = "fixed")
+\method{autoplot}{exp_df}(object, ..., mapping, scales = "fixed", geoms = c("lines", "bars"))
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
@@ -15,6 +15,9 @@ function \code{exp_stats()}.}
 \item{mapping}{Aesthetic mapping passed to \code{ggplot()}.}
 
 \item{scales}{The \code{scales} argument passed to \code{facet_wrap()}.}
+
+\item{geoms}{Type of geometry. If "points" is passed, the plot will
+display lines and points. If "bars", the plot will display bars.}
 }
 \value{
 a \code{ggplot} object

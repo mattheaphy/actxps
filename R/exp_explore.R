@@ -122,11 +122,12 @@ exp_explore <- function(dat, predictors = names(dat)) {
 
   }
 
-  selectPred <- function(inputID, label, width, ...) {
+  selectPred <- function(inputID, label, width,
+                         choices = c("None", preds$predictors), ...) {
     shiny::column(
       width = width,
       shiny::selectInput(inputID, label,
-                         choices = c("None", preds$predictors), ...)
+                         choices = choices, ...)
     )
   }
 
@@ -150,7 +151,8 @@ exp_explore <- function(dat, predictors = names(dat)) {
         shiny::fluidRow(
           selectPred("xVar", "x:", 3),
           selectPred("colorVar", "Color:", 3),
-          selectPred("facetVar", "Facets:", 3, multiple = TRUE),
+          selectPred("facetVar", "Facets:", 3, multiple = TRUE,
+                     choices = preds$predictors),
         ),
 
         shiny::tabsetPanel(
@@ -164,7 +166,7 @@ exp_explore <- function(dat, predictors = names(dat)) {
         ),
 
         shiny::h3("Filter Information"),
-        shiny::verbatimTextOutput("filterInfo"),
+        shiny::verbatimTextOutput("filterInfo")
 
       )
     )
@@ -173,7 +175,7 @@ exp_explore <- function(dat, predictors = names(dat)) {
   server <- function(input, output) {
 
     # reactive data
-    rdat <- reactive({
+    rdat <- shiny::reactive({
 
       filters <- purrr::map(preds$predictors, expr_filter)
 
@@ -182,18 +184,40 @@ exp_explore <- function(dat, predictors = names(dat)) {
     })
 
     # experience study
-    rxp <- function() {
+    rxp <- shiny::reactive({
 
       .groups <- c(input$xVar, input$colorVar, input$facetVar)
       .groups <- .groups[.groups != "None"]
 
       rdat() |>
-        dplyr::group_by(across(all_of(.groups))) |>
+        dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
         exp_stats()
-    }
+    })
 
     output$xpPlot <- shiny::renderPlot({
-      rxp() |> autoplot()
+
+      dat <- rxp()
+
+      x <- if (input$xVar != "None") {
+        rlang::sym(input$xVar)
+      } else {
+        dat[["All"]] <- ""
+        rlang::sym("All")
+      }
+
+      color <- if (input$colorVar != "None") {
+        rlang::sym(input$colorVar)
+      }
+
+      mapping <- ggplot2::aes(!!x, q_obs, color = !!color)
+
+      if (is.null(input$facetVar)) {
+        dat |> autoplot(mapping = mapping)
+      } else {
+        facets <- rlang::syms(input$facetVar)
+        dat |> autoplot(!!!facets, mapping = mapping)
+      }
+
     })
 
     output$xpTable <- gt::render_gt({
