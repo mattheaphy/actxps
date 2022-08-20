@@ -16,8 +16,8 @@
 #'
 #' \dontrun{1}
 #'
-
-exp_explore <- function(dat, predictors = names(dat)) {
+#' @export
+exp_shiny <- function(dat, predictors = names(dat)) {
 
   if (!is_exposed_df(dat)) {
     rlang::abort("`dat` is not an `exposed_df` object. Try converting `dat` to an `exposed_df` using `as_exposed_df`.")
