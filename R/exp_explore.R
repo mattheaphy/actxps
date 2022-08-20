@@ -159,10 +159,21 @@ exp_explore <- function(dat, predictors = names(dat)) {
           shiny::tabPanel(
             "Plot",
             shiny::br(),
-            shiny::radioButtons("plotGeom",
-                                "Geometry",
-                                choices = c("Bars" = "bars",
-                                            "Lines and Point" = "lines")),
+            shiny::fluidRow(
+              column(
+                width = 6,
+                shiny::radioButtons("plotGeom",
+                                    "Geometry:",
+                                    choices = c("Bars" = "bars",
+                                                "Lines and Point" = "lines"))
+              ),
+              column(
+                width = 6,
+                shiny::checkboxInput("plotSmooth",
+                                     "Add Smoothing?",
+                                     value = FALSE)
+              ),
+            ),
             shiny::plotOutput("xpPlot")),
           shiny::tabPanel(
             "Table",
@@ -219,11 +230,16 @@ exp_explore <- function(dat, predictors = names(dat)) {
                               fill = !!color, group = !!color)
 
       if (is.null(input$facetVar)) {
-        dat |> autoplot(mapping = mapping, geoms = input$plotGeom)
+        p <- dat |> autoplot(mapping = mapping, geoms = input$plotGeom)
       } else {
         facets <- rlang::syms(input$facetVar)
-        dat |> autoplot(!!!facets, mapping = mapping, geoms = input$plotGeom)
+        p <- dat |> autoplot(!!!facets, mapping = mapping,
+                             geoms = input$plotGeom)
       }
+
+      if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
+                                                          formula = y ~ x)
+      p
 
     })
 
