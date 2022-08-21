@@ -4,7 +4,14 @@
 \alias{autoplot.exp_df}
 \title{Plot experience study results}
 \usage{
-\method{autoplot}{exp_df}(object, ..., mapping, scales = "fixed", geoms = c("lines", "bars"))
+\method{autoplot}{exp_df}(
+  object,
+  ...,
+  mapping,
+  scales = "fixed",
+  geoms = c("lines", "bars"),
+  y_labels = scales::label_percent(accuracy = 0.1)
+)
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
@@ -18,6 +25,8 @@ function \code{exp_stats()}.}
 
 \item{geoms}{Type of geometry. If "points" is passed, the plot will
 display lines and points. If "bars", the plot will display bars.}
+
+\item{y_labels}{Label function passed to \code{scale_y_continuous()}.}
 }
 \value{
 a \code{ggplot} object

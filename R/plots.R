@@ -7,6 +7,7 @@
 #' @param scales The `scales` argument passed to `facet_wrap()`.
 #' @param geoms Type of geometry. If "points" is passed, the plot will
 #' display lines and points. If "bars", the plot will display bars.
+#' @param y_labels Label function passed to `scale_y_continuous()`.
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
 #' grouping variable in `object` on the x axis and `q_obs` on the y
@@ -19,8 +20,10 @@
 #' @return a `ggplot` object
 #'
 #' @export
-autoplot.exp_df <- function(object, ..., mapping, scales = "fixed",
-                            geoms = c("lines", "bars")) {
+autoplot.exp_df <- function(
+    object, ..., mapping, scales = "fixed",
+    geoms = c("lines", "bars"),
+    y_labels = scales::label_percent(accuracy = 0.1)) {
 
   .groups <- groups(object)
   if(length(.groups) == 0) {
@@ -49,7 +52,7 @@ autoplot.exp_df <- function(object, ..., mapping, scales = "fixed",
   }
 
   p <- ggplot2::ggplot(object, mapping) +
-    ggplot2::scale_y_continuous(labels = scales::label_percent(accuracy = 0.1))
+    ggplot2::scale_y_continuous(labels = y_labels)
 
   if (geoms == "lines") {
     p <- p + ggplot2::geom_point() + ggplot2::geom_line()

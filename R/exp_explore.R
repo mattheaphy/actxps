@@ -255,23 +255,26 @@ exp_shiny <- function(dat, predictors = names(dat)) {
       mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                               fill = !!color, group = !!color)
 
+      # y labels
+      if (input$yVar %in% c("claims", "n_claims", "exposure")) {
+        y_labels <- scales::label_comma(accuracy = 1)
+      } else {
+        y_labels <- scales::label_percent(accuracy = 0.1)
+      }
+
       if (is.null(input$facetVar)) {
-        p <- dat |> autoplot(mapping = mapping, geoms = input$plotGeom)
+        p <- dat |> autoplot(mapping = mapping, geoms = input$plotGeom,
+                             y_labels = y_labels)
       } else {
         facets <- rlang::syms(input$facetVar)
         p <- dat |> autoplot(!!!facets, mapping = mapping,
-                             geoms = input$plotGeom)
+                             geoms = input$plotGeom,
+                             y_labels = y_labels)
       }
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
                                                           formula = y ~ x)
 
-      # fix y variable
-      if (input$yVar %in% c("claims", "n_claims", "exposure")) {
-        p <- p + ggplot2::scale_y_continuous(
-          labels = scales::label_comma(accuracy = 1))
-
-      }
 
       p + ggplot2::theme_light()
 
