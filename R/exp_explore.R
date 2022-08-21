@@ -53,6 +53,8 @@ exp_shiny <- function(dat,
     dplyr::arrange(order) |>
     dplyr::select(-order)
 
+  yVar_basic <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
+
   # function to make input widgets
   widget <- function(x,
                      checkbox_limit = 8) {
@@ -199,9 +201,7 @@ exp_shiny <- function(dat,
             "Plot",
             shiny::br(),
             shiny::fluidRow(
-              selectPred("yVar", "y:", 4,
-                         choices = c("q_obs", "n_claims", "claims",
-                                     "exposure", "credibility")),
+              selectPred("yVar", "y:", 4, choices = yVar_basic),
               shiny::column(
                 width = 4,
                 shiny::radioButtons("plotGeom",
@@ -231,7 +231,18 @@ exp_shiny <- function(dat,
     )
   )
 
-  server <- function(input, output) {
+  server <- function(input, output, session) {
+
+    # update y variable selections in response to expected value outputs
+    observe(
+      shiny::updateSelectInput(
+        session, "yVar", choices = c(yVar_basic,
+                                     input$ex_checks,
+                                     glue::glue("ae_{input$ex_checks}"),
+                                     glue::glue("adj_{input$ex_checks}"))
+      )
+    ) |>
+      bindEvent(input$ex_checks)
 
     # reactive data
     rdat <- shiny::reactive({

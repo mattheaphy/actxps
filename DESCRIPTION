@@ -30,5 +30,5 @@ Imports:
     RColorBrewer,
     recipes,
     generics,
-    shiny
+    shiny (>= 1.6)
 LazyData: true
