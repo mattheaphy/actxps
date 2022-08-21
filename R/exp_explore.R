@@ -7,8 +7,10 @@
 #' of reserved column names from predictors. also explain exposed_df importance
 #'
 #' @param dat An `exposed_df` object
-#' @param predictors A character vector of independent variables to include in the
-#' shiny app.
+#' @param predictors A character vector of independent variables in `dat` to
+#' include in the shiny app.
+#' @param expected A character vector of expected values in `dat` to include
+#' in the shiny app.
 #'
 #' @return `NULL`
 #'
@@ -17,10 +19,18 @@
 #' \dontrun{1}
 #'
 #' @export
-exp_shiny <- function(dat, predictors = names(dat)) {
+exp_shiny <- function(dat,
+                      predictors = names(dat),
+                      expected = stringr::str_subset(names(dat), "expected")) {
 
   if (!is_exposed_df(dat)) {
     rlang::abort("`dat` is not an `exposed_df` object. Try converting `dat` to an `exposed_df` using `as_exposed_df`.")
+  }
+
+  if (any(!c(predictors, expected) %in% names(dat))) {
+    rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values will be removed.")
+    predictors <- predictors[predictors %in% names(dat)]
+    expected <- expected[expected %in% names(dat)]
   }
 
   total_rows <- nrow(dat)
@@ -133,6 +143,14 @@ exp_shiny <- function(dat, predictors = names(dat)) {
     )
   }
 
+  expected_widget <- if (length(expected) > 0) {
+    column(
+      width = 4,
+      shiny::checkboxGroupInput("ex_checks", "Expected values:",
+                                choices = expected)
+    )
+  }
+
   ui <- shiny::fluidPage(
 
     shiny::titlePanel(paste(attr(dat, "target_status"), collapse = "/") |>
@@ -160,6 +178,7 @@ exp_shiny <- function(dat, predictors = names(dat)) {
                        choices = preds$predictors)
           ),
           shiny::fluidRow(
+            expected_widget,
             selectPred("weightVar", "Weight by:", 4,
                        choices = c("None",
                                    dplyr::filter(preds, is_number)$predictors))
