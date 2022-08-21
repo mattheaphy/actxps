@@ -151,7 +151,7 @@ exp_shiny <- function(dat,
     has_expected <- TRUE
 
     expected_widget <-
-      column(
+      shiny::column(
         width = 4,
         shiny::checkboxGroupInput("ex_checks", "Expected values:",
                                   choices = expected)
@@ -234,7 +234,7 @@ exp_shiny <- function(dat,
   server <- function(input, output, session) {
 
     # update y variable selections in response to expected value outputs
-    observe(
+    shiny::observe(
       shiny::updateSelectInput(
         session, "yVar", choices = c(yVar_basic,
                                      input$ex_checks,
@@ -242,7 +242,7 @@ exp_shiny <- function(dat,
                                      glue::glue("adj_{input$ex_checks}"))
       )
     ) |>
-      bindEvent(input$ex_checks)
+      shiny::bindEvent(input$ex_checks)
 
     # reactive data
     rdat <- shiny::reactive({

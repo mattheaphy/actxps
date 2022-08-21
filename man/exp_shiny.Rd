@@ -4,13 +4,20 @@
 \alias{exp_shiny}
 \title{Interactively explore experience data}
 \usage{
-exp_shiny(dat, predictors = names(dat))
+exp_shiny(
+  dat,
+  predictors = names(dat),
+  expected = stringr::str_subset(names(dat), "expected")
+)
 }
 \arguments{
 \item{dat}{An \code{exposed_df} object}
 
-\item{predictors}{A character vector of independent variables to include in the
-shiny app.}
+\item{predictors}{A character vector of independent variables in \code{dat} to
+include in the shiny app.}
+
+\item{expected}{A character vector of expected values in \code{dat} to include
+in the shiny app.}
 }
 \value{
 \code{NULL}
