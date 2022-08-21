@@ -143,12 +143,20 @@ exp_shiny <- function(dat,
     )
   }
 
-  expected_widget <- if (length(expected) > 0) {
-    column(
-      width = 4,
-      shiny::checkboxGroupInput("ex_checks", "Expected values:",
-                                choices = expected)
-    )
+  # expected values set up
+  if (length(expected) > 0) {
+
+    has_expected <- TRUE
+
+    expected_widget <-
+      column(
+        width = 4,
+        shiny::checkboxGroupInput("ex_checks", "Expected values:",
+                                  choices = expected)
+      )
+  } else {
+    has_expected <- FALSE
+    expected_widget <- NULL
   }
 
   ui <- shiny::fluidPage(
@@ -249,9 +257,13 @@ exp_shiny <- function(dat,
         }
       }
 
+      ex <- if (has_expected) {
+        input$ex_checks
+      }
+
       rdat() |>
         dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
-        exp_stats(wt = wt, credibility = TRUE)
+        exp_stats(wt = wt, credibility = TRUE, expected = ex)
     })
 
     output$xpPlot <- shiny::renderPlot({
@@ -293,7 +305,6 @@ exp_shiny <- function(dat,
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
                                                           formula = y ~ x)
-
 
       p + ggplot2::theme_light()
 
