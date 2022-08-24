@@ -32,5 +32,6 @@ Imports:
     generics,
     shiny (>= 1.6),
     bslib,
-    thematic
+    thematic,
+    readr
 LazyData: true
