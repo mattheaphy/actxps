@@ -11,7 +11,7 @@ exp_shiny(
 )
 }
 \arguments{
-\item{dat}{An \code{exposed_df} object}
+\item{dat}{An \code{exposed_df} object.}
 
 \item{predictors}{A character vector of independent variables in \code{dat} to
 include in the shiny app.}
@@ -26,11 +26,86 @@ in the shiny app.}
 Launch a shiny application to interactively explore drivers of
 experience.
 
-\strong{temp} details here. note filters and data visualization, also removal
-of reserved column names from predictors. also explain exposed_df importance
+\code{dat} must be an \code{exposed_df} object. An error will be thrown is any other
+object type is passed.
+
+If nothing is passed to \code{predictors}, all columns names in \code{dat} will be
+used (excluding the policy number, status, termination date, and exposure
+columns).
+
+The \code{expected} argument is optional. As a default, any column names
+containing the word "expected" are used.
 }
+\section{Layout}{
+\subsection{Filters}{
+
+The sidebar contains filtering widgets for all variables passed
+to the \code{predictors} argument.
+}
+
+\subsection{Variable Selection}{
+
+This box includes widgets to select grouping variables for summarizing
+experience. The "x" widget is also used as the x variable in the plot output.
+Similarly, the "Color" and "Facets" widgets are used for color and facets in
+the plot. Multiple faceting variables are allowed. For the table output,
+"x", "Color", and "Facets" have no particular meaning beyond the order in
+which of grouping variables are displayed.
+
+The expected values checkboxes are used to activate and deactivate expected
+values passed to the \code{expected} argument. This impacts the table output
+directly and the available "y" variables in the plot. If there are no
+expected values available, this widget will not appear. The "Weight by"
+widget is used to specify which column, if any, contains weights for
+summarizing experience.
+}
+
+\subsection{Output}{
+\subsection{Plot Tab}{
+
+This tab includes a plot and various options for customization:
+\itemize{
+\item y: y variable
+\item Geometry: plotting geometry
+\item Add Smoothing?: activate to plot loess curves
+\item Free y Scales: activate to enable separate y scales in each plot.
+}
+}
+
+\subsection{Table}{
+
+This tab includes a data table.
+}
+
+\subsection{Export Data}{
+
+This tab includes a download button that will save a copy of the summarized
+experience data.
+}
+
+}
+
+\subsection{Filter Information}{
+
+This box contains information on the original number of exposure records,
+the number of records after filters are applied, and the percentage of
+records retained.
+}
+}
+
 \examples{
 
-\dontrun{1}
+\dontrun{
+study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+set.seed(123)
+study_py <- study_py |>
+dplyr::mutate(expected_1 = expected_table[pol_yr],
+              expected_2 = ifelse(study_py$inc_guar, 0.015, 0.03),
+              weights = rnorm(nrow(study_py), 100, 50) |> abs())
+
+exp_shiny(study_py)
+}
 
 }
