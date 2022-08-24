@@ -30,5 +30,7 @@ Imports:
     RColorBrewer,
     recipes,
     generics,
-    shiny (>= 1.6)
+    shiny (>= 1.6),
+    bslib,
+    thematic
 LazyData: true

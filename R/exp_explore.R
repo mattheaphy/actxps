@@ -163,6 +163,8 @@ exp_shiny <- function(dat,
 
   ui <- shiny::fluidPage(
 
+    theme = bslib::bs_theme(bootswatch = "flatly"),
+
     shiny::titlePanel(paste(attr(dat, "target_status"), collapse = "/") |>
                         paste("Experience Study")),
 
@@ -232,6 +234,8 @@ exp_shiny <- function(dat,
   )
 
   server <- function(input, output, session) {
+
+    thematic::thematic_shiny()
 
     # update y variable selections in response to expected value outputs
     shiny::observe(
@@ -317,9 +321,14 @@ exp_shiny <- function(dat,
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
                                                           formula = y ~ x)
 
-      p + ggplot2::theme_light()
+      p +
+        ggplot2::theme_light() +
+        ggplot2::theme(axis.text = ggplot2::element_text(size = ggplot2::rel(0.95)),
+                       strip.text = ggplot2::element_text(size = ggplot2::rel(1)),
+                       strip.background = ggplot2::element_rect(fill = "#43536b")
+                       )
 
-    })
+    }, res = 92)
 
     output$xpTable <- gt::render_gt({
       rxp() |> autotable()
