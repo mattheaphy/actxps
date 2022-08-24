@@ -199,6 +199,7 @@ exp_shiny <- function(dat,
         shiny::h3("Output"),
 
         shiny::tabsetPanel(
+          type = "pills",
           shiny::tabPanel(
             "Plot",
             shiny::br(),
@@ -234,6 +235,10 @@ exp_shiny <- function(dat,
             "Table",
             shiny::br(),
             gt::gt_output("xpTable")
+          ),
+          shiny::tabPanel(
+            "Export Data",
+            shiny::downloadButton("xpDownload", "Download")
           )
         ),
 
@@ -353,6 +358,15 @@ exp_shiny <- function(dat,
                  Remaining records = {scales::label_comma()(nrow(rdat()))}
                  % Data Remainings = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
     })
+
+    output$xpDownload <- shiny::downloadHandler(
+      filename = function() {
+        paste0("exp-data-", Sys.Date(), ".csv")
+      },
+      content = function(file) {
+        readr::write_csv(rxp(), file)
+      }
+    )
 
   }
 
