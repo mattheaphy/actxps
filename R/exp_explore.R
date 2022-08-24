@@ -70,7 +70,7 @@ exp_shiny <- function(dat,
     if (is.numeric(dat[[x]])) {
 
       shiny::sliderInput(
-        inputId, x,
+        inputId, shiny::strong(x),
         min = min(dat[[x]], na.rm = TRUE),
         max = max(dat[[x]], na.rm = TRUE),
         value = range(dat[[x]], na.rm = TRUE)
@@ -81,7 +81,7 @@ exp_shiny <- function(dat,
       date_range <- range(dat[[x]], na.rm = TRUE)
 
       shiny::dateRangeInput(
-        inputId, x,
+        inputId, shiny::strong(x),
         start = date_range[[1]],
         end = date_range[[2]],
         min = date_range[[1]],
@@ -96,13 +96,13 @@ exp_shiny <- function(dat,
 
       if (length(choices) > checkbox_limit) {
         shiny::selectInput(
-          inputId, x,
+          inputId, shiny::strong(x),
           choices = choices, selected = choices,
           multiple = TRUE
         )
       } else {
         shiny::checkboxGroupInput(
-          inputId, x,
+          inputId, shiny::strong(x),
           choices = unique(dat[[x]]), selected = choices
         )
       }
@@ -140,7 +140,7 @@ exp_shiny <- function(dat,
                          choices = c("None", preds$predictors), ...) {
     shiny::column(
       width = width,
-      shiny::selectInput(inputId, label,
+      shiny::selectInput(inputId, shiny::strong(label),
                          choices = choices, ...)
     )
   }
@@ -153,7 +153,8 @@ exp_shiny <- function(dat,
     expected_widget <-
       shiny::column(
         width = 4,
-        shiny::checkboxGroupInput("ex_checks", "Expected values:",
+        shiny::checkboxGroupInput("ex_checks",
+                                  shiny::strong("Expected values:"),
                                   choices = expected)
       )
   } else {
@@ -180,9 +181,9 @@ exp_shiny <- function(dat,
 
       shiny::mainPanel(
 
-        shiny::h3("Variable Selection"),
-
         shiny::wellPanel(
+          shiny::h3("Variable Selection"),
+          shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
           shiny::fluidRow(
             selectPred("xVar", "x:", 4),
             selectPred("colorVar", "Color:", 4),
@@ -208,14 +209,14 @@ exp_shiny <- function(dat,
               shiny::column(
                 width = 4,
                 shiny::radioButtons("plotGeom",
-                                    "Geometry:",
+                                    shiny::strong("Geometry:"),
                                     choices = c("Bars" = "bars",
-                                                "Lines and Point" = "lines"))
+                                                "Lines and Points" = "lines"))
               ),
               shiny::column(
                 width = 4,
                 shiny::checkboxInput("plotSmooth",
-                                     "Add Smoothing?",
+                                     shiny::strong("Add Smoothing?"),
                                      value = FALSE)
               )
             ),
@@ -224,7 +225,7 @@ exp_shiny <- function(dat,
               shiny::column(
                 width = 4,
                 shiny::checkboxInput("plotFreeY",
-                                     "Free y Scales?",
+                                     shiny::strong("Free y Scales?"),
                                      value = FALSE)
               )
 
@@ -238,6 +239,7 @@ exp_shiny <- function(dat,
           ),
           shiny::tabPanel(
             "Export Data",
+            shiny::br(),
             shiny::downloadButton("xpDownload", "Download")
           )
         ),
@@ -356,7 +358,7 @@ exp_shiny <- function(dat,
     output$filterInfo <- shiny::renderPrint({
       glue::glue("Total records = {scales::label_comma()(total_rows)}
                  Remaining records = {scales::label_comma()(nrow(rdat()))}
-                 % Data Remainings = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
+                 % Data Remaining = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
     })
 
     output$xpDownload <- shiny::downloadHandler(
