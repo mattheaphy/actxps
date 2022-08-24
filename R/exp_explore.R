@@ -218,6 +218,17 @@ exp_shiny <- function(dat,
                                      value = FALSE)
               )
             ),
+
+            shiny::fluidRow(
+              shiny::column(
+                width = 4,
+                shiny::checkboxInput("plotFreeY",
+                                     "Free y Scales?",
+                                     value = FALSE)
+              )
+
+            ),
+
             shiny::plotOutput("xpPlot")),
           shiny::tabPanel(
             "Table",
@@ -315,7 +326,9 @@ exp_shiny <- function(dat,
         facets <- rlang::syms(input$facetVar)
         p <- dat |> autoplot(!!!facets, mapping = mapping,
                              geoms = input$plotGeom,
-                             y_labels = y_labels)
+                             y_labels = y_labels,
+                             scales =
+                               if (input$plotFreeY) "free_y" else "fixed")
       }
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
