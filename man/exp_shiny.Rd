@@ -7,7 +7,8 @@
 exp_shiny(
   dat,
   predictors = names(dat),
-  expected = stringr::str_subset(names(dat), "expected")
+  expected = stringr::str_subset(names(dat), "expected"),
+  distinct_max = 25L
 )
 }
 \arguments{
@@ -18,6 +19,10 @@ include in the shiny app.}
 
 \item{expected}{A character vector of expected values in \code{dat} to include
 in the shiny app.}
+
+\item{distinct_max}{Maximum number of distinct values allowed for \code{predictors}
+to be included as "Color" and "Facets" grouping variables. This input
+prevents the drawing of overly complex plots. Default value = 25.}
 }
 \value{
 \code{NULL}

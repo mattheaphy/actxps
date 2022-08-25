@@ -67,6 +67,9 @@
 #' include in the shiny app.
 #' @param expected A character vector of expected values in `dat` to include
 #' in the shiny app.
+#' @param distinct_max Maximum number of distinct values allowed for `predictors`
+#' to be included as "Color" and "Facets" grouping variables. This input
+#' prevents the drawing of overly complex plots. Default value = 25.
 #'
 #' @return `NULL`
 #'
@@ -88,7 +91,8 @@
 #' @export
 exp_shiny <- function(dat,
                       predictors = names(dat),
-                      expected = stringr::str_subset(names(dat), "expected")) {
+                      expected = stringr::str_subset(names(dat), "expected"),
+                      distinct_max = 25L) {
 
   if (!is_exposed_df(dat)) {
     rlang::abort("`dat` is not an `exposed_df` object. Try converting `dat` to an `exposed_df` using `as_exposed_df`.")
@@ -116,9 +120,13 @@ exp_shiny <- function(dat,
                     TRUE ~ 5
                   ),
                   is_number = purrr::map_lgl(predictors,
-                                             ~ is.numeric(dat[[.x]]))) |>
+                                             ~ is.numeric(dat[[.x]])),
+                  n_unique = purrr::map_int(predictors,
+                                            ~ dplyr::n_distinct(dat[[.x]]))) |>
     dplyr::arrange(order) |>
     dplyr::select(-order)
+
+  preds_small <- dplyr::filter(preds, n_unique <= distinct_max)$predictors
 
   yVar_basic <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
 
@@ -253,9 +261,10 @@ exp_shiny <- function(dat,
           shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
           shiny::fluidRow(
             selectPred("xVar", "x:", 4),
-            selectPred("colorVar", "Color:", 4),
+            selectPred("colorVar", "Color:", 4,
+                       choices = c("None", preds_small)),
             selectPred("facetVar", "Facets:", 4, multiple = TRUE,
-                       choices = preds$predictors)
+                       choices = preds_small)
           ),
           shiny::fluidRow(
             expected_widget,
