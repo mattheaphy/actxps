@@ -204,11 +204,9 @@ expose <- function(.data,
   }
 
   # set up S3 object
-  structure(res, class = c("exposed_df", class(res)),
-            target_status = target_status,
-            exposure_type = glue::glue("{if(cal_expo) 'calendar' else 'policy'}_{expo_length}"),
-            start_date = start_date,
-            end_date = end_date)
+  as_exposed_df(res, end_date, start_date,
+                target_status, cal_expo, expo_length)
+
 }
 
 

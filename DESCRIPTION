@@ -1,6 +1,6 @@
 Package: actxps
 Title: Create actuarial experience studies: prepare data, summarize results, and create reports
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Matt", "Heaphy", , "matt.heaphy@gmail.com", role = c("aut", "cre"))
 Description: Experience studies are used by actuaries to explore historical
@@ -29,5 +29,9 @@ Imports:
     paletteer,
     RColorBrewer,
     recipes,
-    generics
+    generics,
+    shiny (>= 1.6),
+    bslib,
+    thematic,
+    readr
 LazyData: true

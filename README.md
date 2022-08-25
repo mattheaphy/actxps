@@ -131,6 +131,8 @@ implementations of `expose` include:
 -   `expose_pm` = exposures by policy month
 -   `expose_cm` = exposures by calendar month
 
+All `expose_` functions return `exposed_df` objects.
+
 ## Experience study summary function
 
 The `exp_stats` function creates a summary of observed experience data.
@@ -192,6 +194,7 @@ expected termination rates to the exposure data. Then, pass these column
 names to the `expected` argument of `exp_stats`.
 
 ``` r
+
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 
@@ -234,6 +237,7 @@ The `autoplot()` and `autotable()` functions can be used to create
 pre-built visualizations and summary tables.
 
 ``` r
+
 library(ggplot2)
 
 .colors <- c("#eb15e4", "#7515eb")
@@ -293,3 +297,14 @@ summary(exp_res, inc_guar)
 #> 2 TRUE         1231   1231   80331. 0.0153     0.0248      0.015         0.619
 #> # ... with 1 more variable: ae_expected_2 <dbl>
 ```
+
+## Shiny App
+
+Passing an `exposed_df` object to the `exp_shiny` function launches a
+shiny app that enables interactive exploration of experience data.
+
+``` r
+exp_shiny(exposed_data)
+```
+
+<img src="man/figures/exp_shiny.png" width="100%" />
