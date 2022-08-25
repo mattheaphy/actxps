@@ -84,6 +84,8 @@ As a default, the `expose` function calculate exposures by policy year. This can
 - `expose_pm` = exposures by policy month
 - `expose_cm` = exposures by calendar month
 
+All `expose_` functions return `exposed_df` objects.
+
 ## Experience study summary function
 
 The `exp_stats` function creates a summary of observed experience data. The output of this function is an `exp_df` object.
@@ -169,3 +171,12 @@ If additional variables are passed to `...`, these variables become groups in th
 summary(exp_res, inc_guar)
 ```
 
+## Shiny App
+
+Passing an `exposed_df` object to the `exp_shiny` function launches a shiny app that enables interactive exploration of experience data.
+
+```{r, eval = FALSE}
+exp_shiny(exposed_data)
+```
+
+<img src="man/figures/exp_shiny.png" width="100%" />
