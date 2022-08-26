@@ -4,3 +4,5 @@
 ^README\.Rmd$
 ^data-raw$
 next_actions.txt
+^\.github$
+cran-comments.md

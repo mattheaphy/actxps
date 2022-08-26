@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2022 actxps authors
+Copyright (c) 2022 Matt Heaphy
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

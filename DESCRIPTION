@@ -1,13 +1,16 @@
 Package: actxps
-Title: Create actuarial experience studies: prepare data, summarize results, and create reports
+Title: Create Actuarial Experience Studies: Prepare Data, Summarize Results, and Create Reports
 Version: 0.2.0
 Authors@R: 
-    person("Matt", "Heaphy", , "matt.heaphy@gmail.com", role = c("aut", "cre"))
+    person("Matt", "Heaphy", email = "mattrmattrs@gmail.com", role = c("aut", "cre"))
+Maintainer: Matt Heaphy <mattrmattrs@gmail.com>
 Description: Experience studies are used by actuaries to explore historical
     experience across blocks of business and to inform assumption setting
     activities. This package provides tidyverse-insprired functions for 
     preparing data, creating studies, and beginning assumption development.
 License: MIT + file LICENSE
+URL: https://github.com/mattheaphy/actxps/
+BugReports: https://github.com/mattheaphy/actxps/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
