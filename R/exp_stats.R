@@ -42,7 +42,7 @@
 #' exposures, and partial credibility.
 #' @param credibility whether the output should include partial credibility
 #' weights and credibility-weighted decrement rates.
-#' @param cred_p confidence level under the Limited Flucation credibility method
+#' @param cred_p confidence level under the Limited Fluctuation credibility method
 #' @param cred_r error tolerance under the Limited Fluctuation credibility
 #' method
 #' @param object an `exp_df` object

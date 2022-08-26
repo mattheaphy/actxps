@@ -16,7 +16,7 @@ For the 2012 IAMB table, a data frame with 242 rows and 3 columns:
 For the Project Scale G2 table, a data frame with 242 rows and 3 columns:
 \describe{
 \item{age}{attained age}
-\item{mi}{mortality improvment rate}
+\item{mi}{mortality improvement rate}
 \item{gender}{Female or Male}
 }
 }

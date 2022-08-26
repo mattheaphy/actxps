@@ -38,7 +38,7 @@ exposures, and partial credibility.}
 \item{credibility}{whether the output should include partial credibility
 weights and credibility-weighted decrement rates.}
 
-\item{cred_p}{confidence level under the Limited Flucation credibility method}
+\item{cred_p}{confidence level under the Limited Fluctuation credibility method}
 
 \item{cred_r}{error tolerance under the Limited Fluctuation credibility
 method}
