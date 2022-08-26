@@ -2,5 +2,5 @@
 
 There were no ERRORs, WARNINGs, or NOTEs.
 
-This is the first release.
+This is the first submission.
 
