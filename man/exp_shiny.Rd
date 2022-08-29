@@ -25,7 +25,8 @@ to be included as "Color" and "Facets" grouping variables. This input
 prevents the drawing of overly complex plots. Default value = 25.}
 }
 \value{
-\code{NULL}
+No return value. This function is called for the side effect of
+launching a shiny application.
 }
 \description{
 Launch a shiny application to interactively explore drivers of
@@ -100,17 +101,17 @@ records retained.
 
 \examples{
 
-\dontrun{
-study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
-expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+if (interactive()) {
+  study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+  expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
-set.seed(123)
-study_py <- study_py |>
-dplyr::mutate(expected_1 = expected_table[pol_yr],
-              expected_2 = ifelse(study_py$inc_guar, 0.015, 0.03),
-              weights = rnorm(nrow(study_py), 100, 50) |> abs())
+  set.seed(123)
+  study_py <- study_py |>
+  dplyr::mutate(expected_1 = expected_table[pol_yr],
+                expected_2 = ifelse(study_py$inc_guar, 0.015, 0.03),
+                weights = rnorm(nrow(study_py), 100, 50) |> abs())
 
-exp_shiny(study_py)
+  exp_shiny(study_py)
 }
 
 }

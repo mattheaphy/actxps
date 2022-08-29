@@ -66,14 +66,12 @@
 #' anniversary dates, monthiversary dates, etc.
 #'
 #' @examples
-#' toy_census |> expose("2020-12-31", target_status = "Surrender")
+#' toy_census |> expose("2020-12-31")
 #'
-#' \dontrun{
-#' census_dat |>
-#'     expose("2019-12-31", target_status = "Surrender")}
+#' census_dat |> expose_py("2019-12-31", target_status = "Surrender")
 #'
 #' @references Atkinson and McGarry (2016). Experience Study Calculations.
-#' https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf
+#' <https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf>
 #'
 #'
 #' @export

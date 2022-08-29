@@ -61,17 +61,16 @@
 #' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
 #'     exp_stats()
 #'
-#' \dontrun{
 #' exp_res <- census_dat |>
 #'            expose("2019-12-31", target_status = "Surrender") |>
-#'            group_by(pol_yr, inc_guar) |>
+#'            dplyr::group_by(pol_yr, inc_guar) |>
 #'            exp_stats()
 #'
 #' exp_res
 #' summary(exp_res)
-#' summary(exp_res, inc_guar)}
+#' summary(exp_res, inc_guar)
 #'
-#' @references Herzog, Thomas (2010). Introduction to Credibility Theory
+#' @references Herzog, Thomas (1999). Introduction to Credibility Theory
 #'
 #' @export
 exp_stats <- function(.data, target_status = attr(.data, "target_status"),
