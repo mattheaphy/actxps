@@ -6,3 +6,4 @@
 ^next_actions\.txt$
 ^\.github$
 ^cran-comments\.md$
+^CRAN-SUBMISSION$
