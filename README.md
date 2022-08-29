@@ -10,8 +10,8 @@
 
 Experience studies are used by actuaries to explore historical
 experience across blocks of business and to inform assumption setting
-activities. This package provides tidyverse-inspired functions for
-preparing data, creating studies, and beginning assumption development.
+activities. This package provides functions for preparing data, creating
+studies, and beginning assumption development.
 
 ## Installation
 
