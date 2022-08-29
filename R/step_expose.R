@@ -18,16 +18,18 @@
 #' @param drop_pol_num Whether the `pol_num` column produced by `expose()`
 #' should be dropped. Defaults to `TRUE`.
 #'
+#' @return An updated version of `recipe` with the new expose step added to the
+#' sequence of any existing operations. For the `tidy` method, a `tibble` with
+#' the columns `exposure_type`, `target_status`, `start_date`, and `end_date`.
+#'
 #' @examples
 #'
-#' \dontrun{
 #' expo_rec <- recipes::recipe(status ~ ., toy_census) |>
 #'   step_expose(end_date = "2022-12-31", target_status = "Surrender",
 #'               options = list(expo_length = "month")) |>
 #'   prep()
 #'
 #' recipes::juice(expo_rec)
-#' }
 #'
 #' @seealso
 #' [expose()]
