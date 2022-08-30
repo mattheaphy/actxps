@@ -51,6 +51,11 @@ the computations for subsequent operations.}
 
 \item{id}{A character string that is unique to this step to identify it.}
 }
+\value{
+An updated version of \code{recipe} with the new expose step added to the
+sequence of any existing operations. For the \code{tidy} method, a \code{tibble} with
+the columns \code{exposure_type}, \code{target_status}, \code{start_date}, and \code{end_date}.
+}
 \description{
 \code{step_expose} creates a \emph{specification} of a recipe step that will convert
 a data frame of census-level records to exposure-level records.
@@ -67,14 +72,12 @@ all variables (\code{y ~ .}). If policy numbers are required for any reason
 }
 \examples{
 
-\dontrun{
 expo_rec <- recipes::recipe(status ~ ., toy_census) |>
   step_expose(end_date = "2022-12-31", target_status = "Surrender",
               options = list(expo_length = "month")) |>
   prep()
 
 recipes::juice(expo_rec)
-}
 
 }
 \seealso{

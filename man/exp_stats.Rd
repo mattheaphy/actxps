@@ -38,7 +38,7 @@ exposures, and partial credibility.}
 \item{credibility}{whether the output should include partial credibility
 weights and credibility-weighted decrement rates.}
 
-\item{cred_p}{confidence level under the Limited Flucation credibility method}
+\item{cred_p}{confidence level under the Limited Fluctuation credibility method}
 
 \item{cred_r}{error tolerance under the Limited Fluctuation credibility
 method}
@@ -94,17 +94,16 @@ data while retaining any grouping variables passed to the "dots"
 toy_census |> expose("2020-12-31", target_status = "Surrender") |>
     exp_stats()
 
-\dontrun{
 exp_res <- census_dat |>
            expose("2019-12-31", target_status = "Surrender") |>
-           group_by(pol_yr, inc_guar) |>
+           dplyr::group_by(pol_yr, inc_guar) |>
            exp_stats()
 
 exp_res
 summary(exp_res)
-summary(exp_res, inc_guar)}
+summary(exp_res, inc_guar)
 
 }
 \references{
-Herzog, Thomas (2010). Introduction to Credibility Theory
+Herzog, Thomas (1999). Introduction to Credibility Theory
 }
