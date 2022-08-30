@@ -440,7 +440,7 @@ exp_shiny <- function(dat,
 
     output$xpDownload <- shiny::downloadHandler(
       filename = function() {
-        paste0("exp-data-", Sys.Date(), ".csv")
+        file.path(tempdir(), paste0("exp-data-", Sys.Date(), ".csv"))
       },
       content = function(file) {
         readr::write_csv(rxp(), file)
