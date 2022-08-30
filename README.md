@@ -236,7 +236,7 @@ exp_res
 ### `autoplot()` and `autotable()`
 
 The `autoplot()` and `autotable()` functions can be used to create
-prebuilt visualizations and summary tables.
+visualizations and summary tables.
 
 ``` r
 
