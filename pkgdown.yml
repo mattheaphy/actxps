@@ -1,0 +1,9 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles: {}
+last_built: 2023-01-02T02:53Z
+urls:
+  reference: https://mattheaphy.github.io/actxps/reference
+  article: https://mattheaphy.github.io/actxps/articles
+
