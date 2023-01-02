@@ -20,9 +20,9 @@ autotable(object, ...)
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
-function \code{exp_stats()}.}
+function \code{\link[=exp_stats]{exp_stats()}}.}
 
-\item{...}{Additional arguments passed to \code{gt::gt()}.}
+\item{...}{Additional arguments passed to \code{\link[gt:gt]{gt::gt()}}.}
 
 \item{fontsize}{Font size percentage multiplier.}
 
@@ -37,21 +37,21 @@ decrement rate and actual-to-expected columns.}
 
 \item{rename_cols}{An optional list consisting of key-value pairs. This
 can be used to relabel columns on the output table. Names are column names
-in \code{object} and values are new labels. See \code{gt::cols_label()} for
+in \code{object} and values are new labels. See \code{\link[gt:cols_label]{gt::cols_label()}} for
 more information.}
 }
 \value{
 a \code{gt} object
 }
 \description{
-\code{autotable} is a generic function used to create a table
+\code{autotable()} is a generic function used to create a table
 from an object of a particular class. Tables are constructed using the
 \code{gt} package.
 
-\code{autotable.exp_df} is used to convert experience study results to a
+\code{autotable.exp_df()} is used to convert experience study results to a
 presentation-friendly format.
 }
 \details{
-See \code{paletteer::paletteer_d()}'s \code{palette} argument for usage of
+See \code{\link[paletteer:paletteer_d]{paletteer::paletteer_d()}}'s \code{palette} argument for usage of
 the \code{color_q_obs} and \code{color_ae_} arguments.
 }

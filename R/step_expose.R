@@ -1,6 +1,6 @@
 #' Create exposure records in a `recipes` step
 #'
-#' `step_expose` creates a *specification* of a recipe step that will convert
+#' `step_expose()` creates a *specification* of a recipe step that will convert
 #' a data frame of census-level records to exposure-level records.
 #'
 #' Policy year exposures are calculated as a default. To switch to calendar
@@ -14,8 +14,8 @@
 #'
 #' @inheritParams recipes::step_center
 #' @inheritParams expose
-#' @param options A named list of additional arguments passed to `expose()`.
-#' @param drop_pol_num Whether the `pol_num` column produced by `expose()`
+#' @param options A named list of additional arguments passed to [expose()].
+#' @param drop_pol_num Whether the `pol_num` column produced by [expose()]
 #' should be dropped. Defaults to `TRUE`.
 #'
 #' @return An updated version of `recipe` with the new expose step added to the

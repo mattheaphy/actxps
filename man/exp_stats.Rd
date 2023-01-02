@@ -65,7 +65,7 @@ status.
 If \code{.data} is grouped, the resulting data frame will contain
 one row per group.
 
-If \code{target_status} isn't provided, \code{exp_stats()} will use the same
+If \code{target_status} isn't provided, \code{\link[=exp_stats]{exp_stats()}} will use the same
 target status from \code{.data} if it has the class \code{exposed_df}.
 Otherwise, \code{.data} is not an \code{exposed_df} object, all status
 values except the first level will be assumed. This will produce a

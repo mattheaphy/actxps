@@ -6,7 +6,7 @@
 #' @details If `.data` is grouped, the resulting data frame will contain
 #' one row per group.
 #'
-#' If `target_status` isn't provided, `exp_stats()` will use the same
+#' If `target_status` isn't provided, [exp_stats()] will use the same
 #' target status from `.data` if it has the class `exposed_df`.
 #' Otherwise, `.data` is not an `exposed_df` object, all status
 #' values except the first level will be assumed. This will produce a

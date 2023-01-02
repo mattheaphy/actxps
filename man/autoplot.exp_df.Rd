@@ -15,18 +15,18 @@
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
-function \code{exp_stats()}.}
+function \code{\link[=exp_stats]{exp_stats()}}.}
 
-\item{...}{Faceting variables passed to \code{facet_wrap()}.}
+\item{...}{Faceting variables passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
-\item{mapping}{Aesthetic mapping passed to \code{ggplot()}.}
+\item{mapping}{Aesthetic mapping passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}.}
 
-\item{scales}{The \code{scales} argument passed to \code{facet_wrap()}.}
+\item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
 \item{geoms}{Type of geometry. If "points" is passed, the plot will
 display lines and points. If "bars", the plot will display bars.}
 
-\item{y_labels}{Label function passed to \code{scale_y_continuous()}.}
+\item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
 }
 \value{
 a \code{ggplot} object
@@ -41,5 +41,5 @@ axis. In addition, the second grouping variable in \code{object} will be
 used for color and fill.
 
 If no faceting variables are supplied, the plot will use all grouping
-variables 3+ as facets passed into \code{facet_wrap()}.
+variables 3+ as facets passed into \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.
 }

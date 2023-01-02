@@ -1,13 +1,13 @@
 #' Plot experience study results
 #'
 #' @param object An object of class `exp_df` usually created by the
-#' function `exp_stats()`.
-#' @param ... Faceting variables passed to `facet_wrap()`.
-#' @param mapping Aesthetic mapping passed to `ggplot()`.
-#' @param scales The `scales` argument passed to `facet_wrap()`.
+#' function [exp_stats()].
+#' @param ... Faceting variables passed to [ggplot2::facet_wrap()].
+#' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()].
+#' @param scales The `scales` argument passed to [ggplot2::facet_wrap()].
 #' @param geoms Type of geometry. If "points" is passed, the plot will
 #' display lines and points. If "bars", the plot will display bars.
-#' @param y_labels Label function passed to `scale_y_continuous()`.
+#' @param y_labels Label function passed to [ggplot2::scale_y_continuous()].
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
 #' grouping variable in `object` on the x axis and `q_obs` on the y
@@ -15,7 +15,7 @@
 #' used for color and fill.
 #'
 #' If no faceting variables are supplied, the plot will use all grouping
-#' variables 3+ as facets passed into `facet_wrap()`.
+#' variables 3+ as facets passed into [ggplot2::facet_wrap()].
 #'
 #' @return a `ggplot` object
 #'
