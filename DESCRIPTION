@@ -20,7 +20,7 @@ URL: https://github.com/mattheaphy/actxps/,
 BugReports: https://github.com/mattheaphy/actxps/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
