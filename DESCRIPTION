@@ -15,7 +15,8 @@ Description: Experience studies are used by actuaries to explore historical
     function is described in: Herzog (1999, ISBN:1-56698-374-6) 
     "Introduction to Credibility Theory".
 License: MIT + file LICENSE
-URL: https://github.com/mattheaphy/actxps/
+URL: https://github.com/mattheaphy/actxps/,
+    https://mattheaphy.github.io/actxps/
 BugReports: https://github.com/mattheaphy/actxps/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
