@@ -130,13 +130,11 @@ exp_res |>
 
 ```
 
-```{r, eval = FALSE}
+```{r}
 autotable(exp_res)
 ```
 
-```{r, echo = FALSE}
-autotable(exp_res) |> gt::gtsave(paste0(tempfile(), ".png"))
-```
+
 Launches a shiny app to interactively explore experience data.
 
 ```{r, eval = FALSE}
