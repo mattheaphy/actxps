@@ -135,8 +135,10 @@ autotable(exp_res)
 ```
 
 ```{r, echo = FALSE}
-autotable(exp_res) |> gt::gtsave(paste0(tempfile(), ".png"))
+autotable(exp_res) |> gt::gtsave("man/figures/exp_gt.png")
 ```
+
+<center><img src="man/figures/exp_gt.png" width="55%" height="55%" /></center>
 
 Launch a shiny app to interactively explore experience data.
 

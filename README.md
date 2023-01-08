@@ -219,6 +219,10 @@ exp_res |>
 autotable(exp_res)
 ```
 
+<center>
+<img src="man/figures/exp_gt.png" width="55%" height="55%" />
+</center>
+
 Launch a shiny app to interactively explore experience data.
 
 ``` r
