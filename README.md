@@ -29,7 +29,7 @@ to inform assumption setting for projection models.
 The actxps package can be installed from CRAN with:
 
 ``` r
-install.packages("devtools")
+install.packages("actxps")
 ```
 
 To install the development version from [GitHub](https://github.com/)
@@ -219,7 +219,7 @@ exp_res |>
 autotable(exp_res)
 ```
 
-Launches a shiny app to interactively explore experience data.
+Launch a shiny app to interactively explore experience data.
 
 ``` r
 exp_shiny(exposed_data)

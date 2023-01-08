@@ -41,7 +41,7 @@ exploration of experience drivers.
 The actxps package can be installed from CRAN with:
 
 ``` r
-install.packages("devtools")
+install.packages("actxps")
 ```
 
 To install the development version from [GitHub](https://github.com/) use:
@@ -137,7 +137,8 @@ autotable(exp_res)
 ```{r, echo = FALSE}
 autotable(exp_res) |> gt::gtsave(paste0(tempfile(), ".png"))
 ```
-Launches a shiny app to interactively explore experience data.
+
+Launch a shiny app to interactively explore experience data.
 
 ```{r, eval = FALSE}
 exp_shiny(exposed_data)
