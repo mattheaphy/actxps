@@ -1,15 +1,15 @@
 #' Tabular experience study summary
 #'
-#' @description `autotable` is a generic function used to create a table
+#' @description `autotable()` is a generic function used to create a table
 #' from an object of a particular class. Tables are constructed using the
 #' `gt` package.
 #'
-#' `autotable.exp_df` is used to convert experience study results to a
+#' `autotable.exp_df()` is used to convert experience study results to a
 #' presentation-friendly format.
 
 #'
 #' @param object An object of class `exp_df` usually created by the
-#' function `exp_stats()`.
+#' function [exp_stats()].
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
 #' @param colorful If `TRUE`, color will be added to the the observed
@@ -18,13 +18,13 @@
 #' @param color_ae_ Color palette used for actual-to-expected rates.
 #' @param rename_cols An optional list consisting of key-value pairs. This
 #' can be used to relabel columns on the output table. Names are column names
-#' in `object` and values are new labels. See `gt::cols_label()` for
+#' in `object` and values are new labels. See [gt::cols_label()] for
 #' more information.
-#' @param ... Additional arguments passed to `gt::gt()`.
+#' @param ... Additional arguments passed to [gt::gt()].
 #'
 #' @details
 #'
-#' See `paletteer::paletteer_d()`'s `palette` argument for usage of
+#' See [paletteer::paletteer_d()]'s `palette` argument for usage of
 #' the `color_q_obs` and `color_ae_` arguments.
 #'
 #' @return a `gt` object
@@ -44,6 +44,8 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                              color_ae_ = "RColorBrewer::RdBu",
                              rename_cols = rlang::list2(...),
                              ...) {
+
+  x <- RColorBrewer::brewer.pal(3, "GnBu")
 
   expected <- attr(object, "expected")
   target_status <- attr(object, "target_status")

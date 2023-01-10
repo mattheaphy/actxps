@@ -6,7 +6,7 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -21,48 +21,52 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/mattheaphy/actxps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mattheaphy/actxps/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-Experience studies are used by actuaries to explore historical experience across
-blocks of business and to inform assumption setting activities. This package 
-provides functions for preparing data, creating studies, and beginning assumption development.
+The actxps package provides a set of tools to assist with the creation of 
+actuarial experience studies.  Experience studies are used by actuaries to 
+explore historical experience across blocks of business and to inform assumption
+setting for projection models. 
+
+- The `expose()` family of functions convert census-level records into policy 
+or calendar year exposure records.
+- The `exp_stats()` function creates experience summary data frames containing
+observed termination claims and rates. Optionally, expected termination rates, 
+actual-to-expected ratios, and limited fluctuation credibility estimates can
+also be returned.
+- The `autoplot()` and `autotable()` functions creates plots and tables for
+reporting.
+- The `exp_shiny()` app launches a Shiny app that allows for interactive 
+exploration of experience drivers.
 
 ## Installation
 
-You can install the development version of `actxps` from [GitHub](https://github.com/) with:
+The actxps package can be installed from CRAN with:
 
 ``` r
-# install.packages("devtools")
+install.packages("actxps")
+```
+
+To install the development version from [GitHub](https://github.com/) use:
+
+``` r
 devtools::install_github("mattheaphy/actxps")
 ```
 
-## Simulated data set
+## Basic usage
 
-The `actxps` package includes a data frame containing simulated census data for a theoretical deferred annuity product with an optional guaranteed income rider. The grain of this data is one row per policy.
+An expanded version of this demo is available in the package's [Get started](https://mattheaphy.github.io/actxps/articles/actxps.html) vignette.
 
-```{r, warning=FALSE}
+The actxps package includes sample simulated census data for a theoretical 
+deferred annuity product with an optional guaranteed income rider. 
+The grain of this data is one row *per policy*.
+
+```{r packages, warning=FALSE}
 library(actxps)
 library(dplyr)
 
 census_dat
 ```
 
-The data includes 3 policy statuses: Active, Death, and Surrender.
-
-```{r}
-(status_counts <- table(census_dat$status))
-```
-
-Let's assume we're interested in calculating the probability of surrender over one policy year. We cannot simply calculate the proportion of policies in a surrendered status as this does not represent an annualized surrender rate. 
-
-```{r}
-prop.table(status_counts)
-```
-
-## Creating exposed data
-
-In order to calculate annual surrender rates, we need to break each policy into multiple records. There should be one row per policy per year.
-
-The `expose_` family of functions is used to perform this transformation. 
-
+Convert census records to exposure records with one row *per policy per year*.
 
 ```{r example}
 exposed_data <- expose(census_dat, end_date = "2019-12-31", 
@@ -71,35 +75,11 @@ exposed_data <- expose(census_dat, end_date = "2019-12-31",
 exposed_data
 ```
 
-Now that the data has been "exposed" by policy year, the observed annual surrender probability can be calculated as:
 
-```{r}
-sum(exposed_data$status == "Surrender") / sum(exposed_data$exposure)
-```
+Create a summary grouped by policy year and the presence of a guaranteed 
+income rider.
 
-As a default, the `expose` function calculate exposures by policy year. This can also be accomplished with the function `expose_py`. Other implementations of `expose` include:
-
-- `expose_cy` = exposures by calendar year
-- `expose_cq` = exposures by calendar quarter
-- `expose_pm` = exposures by policy month
-- `expose_cm` = exposures by calendar month
-
-All `expose_` functions return `exposed_df` objects.
-
-## Experience study summary function
-
-The `exp_stats` function creates a summary of observed experience data. The output of this function is an `exp_df` object.
-
-```{r}
-exp_stats(exposed_data)
-```
-
-### Grouped experience data
-
-If the data frame passed into `exp_stats` is grouped, the resulting output will contain one record for each unique group.
-
-```{r}
-library(dplyr)
+```{r stats-grouped}
 
 exp_res <- exposed_data |> 
   group_by(pol_yr, inc_guar) |> 
@@ -108,15 +88,16 @@ exp_res <- exposed_data |>
 exp_res
 ```
 
-### Actual-to-expected rates
+Calculate actual-to-expected ratios.
 
-To derive actual-to-expected rates, first attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
+First, attach one or more columns of expected termination rates to the exposure
+data. Then, pass these column names to the `expected` argument of `exp_stats`.
 
-```{r}
+```{r stats-ae}
 
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
-
+# using 2 different expected termination rates
 exposed_data <- exposed_data |> 
   mutate(expected_1 = expected_table[pol_yr],
          expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
@@ -129,11 +110,9 @@ exp_res
 
 ```
 
-### `autoplot()` and `autotable()`
+Create visualizations using the `autoplot()` and `autotable()` functions.
 
-The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables.
-
-```{r, warning=FALSE, message=FALSE, dpi = 400}
+```{r plots, warning=FALSE, message=FALSE, dpi = 400}
 
 library(ggplot2)
 
@@ -147,35 +126,19 @@ exp_res |>
 
 ```
 
-```{r, eval = FALSE}
+```{r table1, eval = FALSE}
 autotable(exp_res)
 ```
 
-```{r, echo = FALSE}
-autotable(exp_res) |> gt::gtsave(paste0(tempfile(), ".png"))
-
+```{r table2, echo = FALSE}
+autotable(exp_res) |> gt::gtsave("man/figures/exp_gt.png")
 ```
 
+<center><img src="man/figures/exp_gt.png" width="55%" height="55%" /></center>
 
-### `summary()`
+Launch a shiny app to interactively explore experience data.
 
-Calling the `summary` function on an `exp_df` object re-summarizes experience results. This also produces an `exp_df` object.
-
-```{r}
-summary(exp_res)
-```
-
-If additional variables are passed to `...`, these variables become groups in the re-summarized `exp_df` object.
-
-```{r}
-summary(exp_res, inc_guar)
-```
-
-## Shiny App
-
-Passing an `exposed_df` object to the `exp_shiny` function launches a shiny app that enables interactive exploration of experience data.
-
-```{r, eval = FALSE}
+```{r shiny, eval = FALSE}
 exp_shiny(exposed_data)
 ```
 

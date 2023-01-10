@@ -1,0 +1,162 @@
+---
+title: "Getting started with actxps"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with actxps}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Simulated data set
+
+The actxps package includes a data frame containing simulated census data for a theoretical deferred annuity product with an optional guaranteed income rider. The grain of this data is one row per policy.
+
+```{r packages, warning=FALSE}
+library(actxps)
+library(dplyr)
+
+census_dat
+```
+
+The data includes 3 policy statuses: Active, Death, and Surrender.
+
+```{r status-count}
+(status_counts <- table(census_dat$status))
+```
+
+Let's assume we're interested in calculating the probability of surrender over one policy year. We cannot simply calculate the proportion of policies in a surrendered status as this does not represent an annualized surrender rate.
+
+```{r naive}
+# incorrect
+prop.table(status_counts)
+```
+
+## Creating exposed data
+
+In order to calculate annual surrender rates, we need to break each policy into multiple records. There should be one row per policy per year.
+
+The `expose_` family of functions is used to perform this transformation.
+
+
+```{r example}
+exposed_data <- expose(census_dat, end_date = "2019-12-31",
+                       target_status = "Surrender")
+
+exposed_data
+```
+
+Now that the data has been "exposed" by policy year, the observed annual surrender probability can be calculated as:
+
+```{r term-rate}
+sum(exposed_data$status == "Surrender") / sum(exposed_data$exposure)
+```
+
+As a default, the `expose` function calculate exposures by policy year. This can also be accomplished with the function `expose_py`. Other implementations of `expose` include:
+
+- `expose_cy` = exposures by calendar year
+- `expose_cq` = exposures by calendar quarter
+- `expose_cw` = exposures by calendar week
+- `expose_pm` = exposures by policy month
+- `expose_pq` = exposures by policy quarter
+- `expose_pq` = exposures by policy week
+
+
+## Experience study summary function
+
+The `exp_stats` function creates a summary of observed experience data. The output of this function is an `exp_df` object.
+
+```{r stats-1}
+exp_stats(exposed_data)
+```
+
+
+
+### Grouped experience data
+
+If the data frame passed into `exp_stats` is grouped using `dplyr::group_by()`, the resulting output will contain one record for each unique group.
+
+```{r stats-grouped}
+library(dplyr)
+
+exp_res <- exposed_data |>
+  group_by(pol_yr, inc_guar) |>
+  exp_stats()
+
+exp_res
+```
+
+### Actual-to-expected rates
+
+To derive actual-to-expected rates, first attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
+
+```{r stats-ae}
+
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+# using 2 different expected termination rates
+exposed_data <- exposed_data |>
+  mutate(expected_1 = expected_table[pol_yr],
+         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
+
+exp_res <- exposed_data |>
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(expected = c("expected_1", "expected_2"))
+
+exp_res
+
+```
+
+### `autoplot()` and `autotable()`
+
+The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables.
+
+```{r plot, warning=FALSE, message=FALSE, dpi = 400}
+
+library(ggplot2)
+
+.colors <- c("#eb15e4", "#7515eb")
+theme_set(theme_light())
+
+exp_res |>
+  autoplot() +
+  scale_color_manual(values = .colors) +
+  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
+
+```
+
+```{r table, eval = FALSE}
+autotable(exp_res)
+```
+
+<center><img src="../man/figures/exp_gt.png" width="55%" height="55%" /></center>
+
+### `summary()`
+
+Calling the `summary` function on an `exp_df` object re-summarizes experience results. This also produces an `exp_df` object.
+
+```{r summary-1}
+summary(exp_res)
+```
+
+If additional variables are passed to `...`, these variables become groups in the re-summarized `exp_df` object.
+
+```{r summary-2}
+summary(exp_res, inc_guar)
+```
+
+## Shiny App
+
+Passing an `exposed_df` object to the `exp_shiny` function launches a shiny app that enables interactive exploration of experience data.
+
+```{r shiny, eval = FALSE}
+exp_shiny(exposed_data)
+```
+
+<img src="../man/figures/exp_shiny.png" width="100%" />

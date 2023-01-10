@@ -37,9 +37,9 @@ preprocessing have been estimated.}
 
 \item{target_status}{character vector of target status values. Default value = \code{NULL}.}
 
-\item{options}{A named list of additional arguments passed to \code{expose()}.}
+\item{options}{A named list of additional arguments passed to \code{\link[=expose]{expose()}}.}
 
-\item{drop_pol_num}{Whether the \code{pol_num} column produced by \code{expose()}
+\item{drop_pol_num}{Whether the \code{pol_num} column produced by \code{\link[=expose]{expose()}}
 should be dropped. Defaults to \code{TRUE}.}
 
 \item{skip}{A logical. Should the step be skipped when the
@@ -57,7 +57,7 @@ sequence of any existing operations. For the \code{tidy} method, a \code{tibble}
 the columns \code{exposure_type}, \code{target_status}, \code{start_date}, and \code{end_date}.
 }
 \description{
-\code{step_expose} creates a \emph{specification} of a recipe step that will convert
+\code{step_expose()} creates a \emph{specification} of a recipe step that will convert
 a data frame of census-level records to exposure-level records.
 }
 \details{
