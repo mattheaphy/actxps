@@ -40,7 +40,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="index.html">actxps</a>
 
@@ -53,6 +53,9 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="articles/actxps.html">Get started</a>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
@@ -83,20 +86,29 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Experience studies are used by actuaries to explore historical experience across blocks of business and to inform assumption setting activities. This package provides functions for preparing data, creating studies, and beginning assumption development.</p>
+<p>The actxps package provides a set of tools to assist with the creation of actuarial experience studies. Experience studies are used by actuaries to explore historical experience across blocks of business and to inform assumption setting for projection models.</p>
+<ul>
+<li>The <code><a href="reference/expose.html">expose()</a></code> family of functions convert census-level records into policy or calendar year exposure records.</li>
+<li>The <code><a href="reference/exp_stats.html">exp_stats()</a></code> function creates experience summary data frames containing observed termination claims and rates. Optionally, expected termination rates, actual-to-expected ratios, and limited fluctuation credibility estimates can also be returned.</li>
+<li>The <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="reference/autotable.html">autotable()</a></code> functions creates plots and tables for reporting.</li>
+<li>The <code><a href="reference/exp_shiny.html">exp_shiny()</a></code> app launches a Shiny app that allows for interactive exploration of experience drivers.</li>
+</ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of <code>actxps</code> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>The actxps package can be installed from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mattheaphy/actxps"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"actxps"</span><span class="op">)</span></span></code></pre></div>
+<p>To install the development version from <a href="https://github.com/" class="external-link">GitHub</a> use:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mattheaphy/actxps"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="simulated-data-set">Simulated data set<a class="anchor" aria-label="anchor" href="#simulated-data-set"></a>
+<h2 id="basic-usage">Basic usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h2>
-<p>The <code>actxps</code> package includes a data frame containing simulated census data for a theoretical deferred annuity product with an optional guaranteed income rider. The grain of this data is one row per policy.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>An expanded version of this demo is available in the package’s <a href="https://mattheaphy.github.io/actxps/articles/actxps.html">Get started</a> vignette.</p>
+<p>The actxps package includes sample simulated census data for a theoretical deferred annuity product with an optional guaranteed income rider. The grain of this data is one row <em>per policy</em>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mattheaphy/actxps/" class="external-link">actxps</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -109,7 +121,7 @@
 <span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span></span>
 <span><span class="va">census_dat</span></span>
-<span><span class="co">#&gt; # A tibble: 20,000 x 10</span></span>
+<span><span class="co">#&gt; # A tibble: 20,000 × 10</span></span>
 <span><span class="co">#&gt;    pol_num status    issue_date inc_guar qual    age product gender wd_age</span></span>
 <span><span class="co">#&gt;      &lt;int&gt; &lt;fct&gt;     &lt;date&gt;     &lt;lgl&gt;    &lt;lgl&gt; &lt;int&gt; &lt;fct&gt;   &lt;fct&gt;   &lt;int&gt;</span></span>
 <span><span class="co">#&gt;  1       1 Active    2014-12-17 TRUE     FALSE    56 b       F          77</span></span>
@@ -122,26 +134,9 @@
 <span><span class="co">#&gt;  8       8 Surrender 2005-11-08 TRUE     TRUE     58 a       M          58</span></span>
 <span><span class="co">#&gt;  9       9 Active    2010-09-19 FALSE    FALSE    53 c       M          64</span></span>
 <span><span class="co">#&gt; 10      10 Active    2012-05-25 TRUE     FALSE    61 b       M          73</span></span>
-<span><span class="co">#&gt; # ... with 19,990 more rows, and 1 more variable: term_date &lt;date&gt;</span></span></code></pre></div>
-<p>The data includes 3 policy statuses: Active, Death, and Surrender.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">status_counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">census_dat</span><span class="op">$</span><span class="va">status</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    Active     Death Surrender </span></span>
-<span><span class="co">#&gt;     15195      1860      2945</span></span></code></pre></div>
-<p>Let’s assume we’re interested in calculating the probability of surrender over one policy year. We cannot simply calculate the proportion of policies in a surrendered status as this does not represent an annualized surrender rate.</p>
+<span><span class="co">#&gt; # … with 19,990 more rows, and 1 more variable: term_date &lt;date&gt;</span></span></code></pre></div>
+<p>Convert census records to exposure records with one row <em>per policy per year</em>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/proportions.html" class="external-link">prop.table</a></span><span class="op">(</span><span class="va">status_counts</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    Active     Death Surrender </span></span>
-<span><span class="co">#&gt;   0.75975   0.09300   0.14725</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="creating-exposed-data">Creating exposed data<a class="anchor" aria-label="anchor" href="#creating-exposed-data"></a>
-</h2>
-<p>In order to calculate annual surrender rates, we need to break each policy into multiple records. There should be one row per policy per year.</p>
-<p>The <code>expose_</code> family of functions is used to perform this transformation.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/expose.html">expose</a></span><span class="op">(</span><span class="va">census_dat</span>, end_date <span class="op">=</span> <span class="st">"2019-12-31"</span>, </span>
 <span>                        target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span></span>
@@ -152,7 +147,7 @@
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; # A tibble: 141,297 x 13</span></span>
+<span><span class="co">#&gt; # A tibble: 141,297 × 13</span></span>
 <span><span class="co">#&gt;    pol_num status issue_date inc_guar qual    age product gender wd_age</span></span>
 <span><span class="co">#&gt;  *   &lt;int&gt; &lt;fct&gt;  &lt;date&gt;     &lt;lgl&gt;    &lt;lgl&gt; &lt;int&gt; &lt;fct&gt;   &lt;fct&gt;   &lt;int&gt;</span></span>
 <span><span class="co">#&gt;  1       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77</span></span>
@@ -165,48 +160,11 @@
 <span><span class="co">#&gt;  8       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71</span></span>
 <span><span class="co">#&gt;  9       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71</span></span>
 <span><span class="co">#&gt; 10       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71</span></span>
-<span><span class="co">#&gt; # ... with 141,287 more rows, and 4 more variables: term_date &lt;date&gt;,</span></span>
+<span><span class="co">#&gt; # … with 141,287 more rows, and 4 more variables: term_date &lt;date&gt;,</span></span>
 <span><span class="co">#&gt; #   pol_yr &lt;int&gt;, pol_date_yr &lt;date&gt;, exposure &lt;dbl&gt;</span></span></code></pre></div>
-<p>Now that the data has been “exposed” by policy year, the observed annual surrender probability can be calculated as:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">exposed_data</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"Surrender"</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">exposed_data</span><span class="op">$</span><span class="va">exposure</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.02145196</span></span></code></pre></div>
-<p>As a default, the <code>expose</code> function calculate exposures by policy year. This can also be accomplished with the function <code>expose_py</code>. Other implementations of <code>expose</code> include:</p>
-<ul>
-<li>
-<code>expose_cy</code> = exposures by calendar year</li>
-<li>
-<code>expose_cq</code> = exposures by calendar quarter</li>
-<li>
-<code>expose_pm</code> = exposures by policy month</li>
-<li>
-<code>expose_cm</code> = exposures by calendar month</li>
-</ul>
-<p>All <code>expose_</code> functions return <code>exposed_df</code> objects.</p>
-</div>
-<div class="section level2">
-<h2 id="experience-study-summary-function">Experience study summary function<a class="anchor" aria-label="anchor" href="#experience-study-summary-function"></a>
-</h2>
-<p>The <code>exp_stats</code> function creates a summary of observed experience data. The output of this function is an <code>exp_df</code> object.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="va">exposed_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups:  </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; # A tibble: 1 x 4</span></span>
-<span><span class="co">#&gt;   n_claims claims exposure  q_obs</span></span>
-<span><span class="co">#&gt; *    &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1     2846   2846  132669. 0.0215</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="grouped-experience-data">Grouped experience data<a class="anchor" aria-label="anchor" href="#grouped-experience-data"></a>
-</h3>
-<p>If the data frame passed into <code>exp_stats</code> is grouped, the resulting output will contain one record for each unique group.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span></span>
+<p>Create a summary grouped by policy year and the presence of a guaranteed income rider.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">exp_res</span> <span class="op">&lt;-</span> <span class="va">exposed_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -218,7 +176,7 @@
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; # A tibble: 30 x 6</span></span>
+<span><span class="co">#&gt; # A tibble: 30 × 6</span></span>
 <span><span class="co">#&gt;    pol_yr inc_guar n_claims claims exposure   q_obs</span></span>
 <span><span class="co">#&gt;  *  &lt;int&gt; &lt;lgl&gt;       &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;   &lt;dbl&gt;</span></span>
 <span><span class="co">#&gt;  1      1 FALSE          42     42    7719. 0.00544</span></span>
@@ -231,17 +189,14 @@
 <span><span class="co">#&gt;  8      4 TRUE           58     58    8697. 0.00667</span></span>
 <span><span class="co">#&gt;  9      5 FALSE          94     94    5147. 0.0183 </span></span>
 <span><span class="co">#&gt; 10      5 TRUE           72     72    7779. 0.00926</span></span>
-<span><span class="co">#&gt; # ... with 20 more rows</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="actual-to-expected-rates">Actual-to-expected rates<a class="anchor" aria-label="anchor" href="#actual-to-expected-rates"></a>
-</h3>
-<p>To derive actual-to-expected rates, first attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the <code>expected</code> argument of <code>exp_stats</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt; # … with 20 more rows</span></span></code></pre></div>
+<p>Calculate actual-to-expected ratios.</p>
+<p>First, attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the <code>expected</code> argument of <code>exp_stats</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">expected_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.005</span>, <span class="fl">0.03</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, <span class="fl">0.2</span>, <span class="fl">0.15</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span></span>
+<span><span class="co"># using 2 different expected termination rates</span></span>
 <span><span class="va">exposed_data</span> <span class="op">&lt;-</span> <span class="va">exposed_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>expected_1 <span class="op">=</span> <span class="va">expected_table</span><span class="op">[</span><span class="va">pol_yr</span><span class="op">]</span>,</span>
 <span>         expected_2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">exposed_data</span><span class="op">$</span><span class="va">inc_guar</span>, <span class="fl">0.015</span>, <span class="fl">0.03</span><span class="op">)</span><span class="op">)</span></span>
@@ -258,29 +213,23 @@
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; # A tibble: 30 x 10</span></span>
-<span><span class="co">#&gt;    pol_yr inc_guar n_claims claims exposure   q_obs expected_1 expected_2</span></span>
-<span><span class="co">#&gt;  *  &lt;int&gt; &lt;lgl&gt;       &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1      1 FALSE          42     42    7719. 0.00544    0.005        0.03 </span></span>
-<span><span class="co">#&gt;  2      1 TRUE           38     38   11526. 0.00330    0.005        0.015</span></span>
-<span><span class="co">#&gt;  3      2 FALSE          65     65    7117. 0.00913    0.00778      0.03 </span></span>
-<span><span class="co">#&gt;  4      2 TRUE           61     61   10605. 0.00575    0.00778      0.015</span></span>
-<span><span class="co">#&gt;  5      3 FALSE          67     67    6476. 0.0103     0.0106       0.03 </span></span>
-<span><span class="co">#&gt;  6      3 TRUE           60     60    9626. 0.00623    0.0106       0.015</span></span>
-<span><span class="co">#&gt;  7      4 FALSE         103    103    5823. 0.0177     0.0133       0.03 </span></span>
-<span><span class="co">#&gt;  8      4 TRUE           58     58    8697. 0.00667    0.0133       0.015</span></span>
-<span><span class="co">#&gt;  9      5 FALSE          94     94    5147. 0.0183     0.0161       0.03 </span></span>
-<span><span class="co">#&gt; 10      5 TRUE           72     72    7779. 0.00926    0.0161       0.015</span></span>
-<span><span class="co">#&gt; # ... with 20 more rows, and 2 more variables: ae_expected_1 &lt;dbl&gt;,</span></span>
-<span><span class="co">#&gt; #   ae_expected_2 &lt;dbl&gt;</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="autoplot-and-autotable">
-<code>autoplot()</code> and <code>autotable()</code>
-<a class="anchor" aria-label="anchor" href="#autoplot-and-autotable"></a>
-</h3>
-<p>The <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="reference/autotable.html">autotable()</a></code> functions can be used to create visualizations and summary tables.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt; # A tibble: 30 × 10</span></span>
+<span><span class="co">#&gt;    pol_yr inc_g…¹ n_cla…² claims expos…³   q_obs expec…⁴ expec…⁵ ae_ex…⁶ ae_ex…⁷</span></span>
+<span><span class="co">#&gt;  *  &lt;int&gt; &lt;lgl&gt;     &lt;int&gt;  &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1      1 FALSE        42     42   7719. 0.00544 0.005     0.03    1.09    0.181</span></span>
+<span><span class="co">#&gt;  2      1 TRUE         38     38  11526. 0.00330 0.005     0.015   0.659   0.220</span></span>
+<span><span class="co">#&gt;  3      2 FALSE        65     65   7117. 0.00913 0.00778   0.03    1.17    0.304</span></span>
+<span><span class="co">#&gt;  4      2 TRUE         61     61  10605. 0.00575 0.00778   0.015   0.740   0.383</span></span>
+<span><span class="co">#&gt;  5      3 FALSE        67     67   6476. 0.0103  0.0106    0.03    0.980   0.345</span></span>
+<span><span class="co">#&gt;  6      3 TRUE         60     60   9626. 0.00623 0.0106    0.015   0.591   0.416</span></span>
+<span><span class="co">#&gt;  7      4 FALSE       103    103   5823. 0.0177  0.0133    0.03    1.33    0.590</span></span>
+<span><span class="co">#&gt;  8      4 TRUE         58     58   8697. 0.00667 0.0133    0.015   0.500   0.445</span></span>
+<span><span class="co">#&gt;  9      5 FALSE        94     94   5147. 0.0183  0.0161    0.03    1.13    0.609</span></span>
+<span><span class="co">#&gt; 10      5 TRUE         72     72   7779. 0.00926 0.0161    0.015   0.574   0.617</span></span>
+<span><span class="co">#&gt; # … with 20 more rows, and abbreviated variable names ¹​inc_guar, ²​n_claims,</span></span>
+<span><span class="co">#&gt; #   ³​exposure, ⁴​expected_1, ⁵​expected_2, ⁶​ae_expected_1, ⁷​ae_expected_2</span></span></code></pre></div>
+<p>Create visualizations using the <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="reference/autotable.html">autotable()</a></code> functions.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -291,53 +240,14 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">.colors</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Observed Surrender Rates by Policy Year and Income Guarantee Presence"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p><img src="reference/figures/README-plots-1.png" width="100%"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/autotable.html">autotable</a></span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-11-1.png" width="100%"></p>
-</div>
-<div class="section level3">
-<h3 id="summary">
-<code>summary()</code><a class="anchor" aria-label="anchor" href="#summary"></a>
-</h3>
-<p>Calling the <code>summary</code> function on an <code>exp_df</code> object re-summarizes experience results. This also produces an <code>exp_df</code> object.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups:  </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
-<span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; # A tibble: 1 x 8</span></span>
-<span><span class="co">#&gt;   n_claims claims exposure  q_obs expected_1 expected_2 ae_expected_1</span></span>
-<span><span class="co">#&gt; *    &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1     2846   2846  132669. 0.0215     0.0242     0.0209         0.885</span></span>
-<span><span class="co">#&gt; # ... with 1 more variable: ae_expected_2 &lt;dbl&gt;</span></span></code></pre></div>
-<p>If additional variables are passed to <code>...</code>, these variables become groups in the re-summarized <code>exp_df</code> object.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span>, <span class="va">inc_guar</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: inc_guar </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
-<span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; # A tibble: 2 x 9</span></span>
-<span><span class="co">#&gt;   inc_guar n_claims claims exposure  q_obs expected_1 expected_2 ae_expected_1</span></span>
-<span><span class="co">#&gt; * &lt;lgl&gt;       &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 FALSE        1615   1615   52338. 0.0309     0.0234      0.03          1.32 </span></span>
-<span><span class="co">#&gt; 2 TRUE         1231   1231   80331. 0.0153     0.0248      0.015         0.619</span></span>
-<span><span class="co">#&gt; # ... with 1 more variable: ae_expected_2 &lt;dbl&gt;</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="shiny-app">Shiny App<a class="anchor" aria-label="anchor" href="#shiny-app"></a>
-</h2>
-<p>Passing an <code>exposed_df</code> object to the <code>exp_shiny</code> function launches a shiny app that enables interactive exploration of experience data.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<center>
+<img src="reference/figures/exp_gt.png" width="55%" height="55%">
+</center>
+<p>Launch a shiny app to interactively explore experience data.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/exp_shiny.html">exp_shiny</a></span><span class="op">(</span><span class="va">exposed_data</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/exp_shiny.png" width="100%"></p>
 </div>
