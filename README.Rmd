@@ -6,7 +6,7 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -29,10 +29,11 @@ setting for projection models.
 - The `expose()` family of functions convert census-level records into policy 
 or calendar year exposure records.
 - The `exp_stats()` function creates experience summary data frames containing
-observed claims, observed claim rates. Optionally, expected claim rates, 
+observed termination claims and rates. Optionally, expected termination rates, 
 actual-to-expected ratios, and limited fluctuation credibility estimates can
 also be returned.
-- The `autoplot()` and `autotable()` creates plots and tables for reporting.
+- The `autoplot()` and `autotable()` functions creates plots and tables for
+reporting.
 - The `exp_shiny()` app launches a Shiny app that allows for interactive 
 exploration of experience drivers.
 
@@ -52,18 +53,20 @@ devtools::install_github("mattheaphy/actxps")
 
 ## Basic usage
 
-The `actxps` package includes a data frame containing simulated census data for 
-a theoretical deferred annuity product with an optional guaranteed income rider. 
-The grain of this data is one row per policy.
+An expanded version of this demo is available in the package's [Get started](https://mattheaphy.github.io/actxps/articles/actxps.html) vignette.
 
-```{r, warning=FALSE}
+The actxps package includes sample simulated census data for a theoretical 
+deferred annuity product with an optional guaranteed income rider. 
+The grain of this data is one row *per policy*.
+
+```{r packages, warning=FALSE}
 library(actxps)
 library(dplyr)
 
 census_dat
 ```
 
-Convert census records to exposure records with one row per policy per year.
+Convert census records to exposure records with one row *per policy per year*.
 
 ```{r example}
 exposed_data <- expose(census_dat, end_date = "2019-12-31", 
@@ -73,17 +76,10 @@ exposed_data
 ```
 
 
+Create a summary grouped by policy year and the presence of a guaranteed 
+income rider.
 
-Creates a summary of observed experience.
-
-```{r}
-exp_stats(exposed_data)
-```
-
-Using `dplyr::group_by`, create a summary grouped by policy year and the 
-presence of a guaranteed income rider.
-
-```{r}
+```{r stats-grouped}
 
 exp_res <- exposed_data |> 
   group_by(pol_yr, inc_guar) |> 
@@ -97,11 +93,11 @@ Calculate actual-to-expected ratios.
 First, attach one or more columns of expected termination rates to the exposure
 data. Then, pass these column names to the `expected` argument of `exp_stats`.
 
-```{r}
+```{r stats-ae}
 
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
-
+# using 2 different expected termination rates
 exposed_data <- exposed_data |> 
   mutate(expected_1 = expected_table[pol_yr],
          expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
@@ -116,7 +112,7 @@ exp_res
 
 Create visualizations using the `autoplot()` and `autotable()` functions.
 
-```{r, warning=FALSE, message=FALSE, dpi = 400}
+```{r plots, warning=FALSE, message=FALSE, dpi = 400}
 
 library(ggplot2)
 
@@ -130,11 +126,11 @@ exp_res |>
 
 ```
 
-```{r, eval = FALSE}
+```{r table1, eval = FALSE}
 autotable(exp_res)
 ```
 
-```{r, echo = FALSE}
+```{r table2, echo = FALSE}
 autotable(exp_res) |> gt::gtsave("man/figures/exp_gt.png")
 ```
 
@@ -142,7 +138,7 @@ autotable(exp_res) |> gt::gtsave("man/figures/exp_gt.png")
 
 Launch a shiny app to interactively explore experience data.
 
-```{r, eval = FALSE}
+```{r shiny, eval = FALSE}
 exp_shiny(exposed_data)
 ```
 

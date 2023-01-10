@@ -16,11 +16,11 @@ to inform assumption setting for projection models.
 - The `expose()` family of functions convert census-level records into
   policy or calendar year exposure records.
 - The `exp_stats()` function creates experience summary data frames
-  containing observed claims, observed claim rates. Optionally, expected
-  claim rates, actual-to-expected ratios, and limited fluctuation
+  containing observed termination claims and rates. Optionally, expected
+  termination rates, actual-to-expected ratios, and limited fluctuation
   credibility estimates can also be returned.
-- The `autoplot()` and `autotable()` creates plots and tables for
-  reporting.
+- The `autoplot()` and `autotable()` functions creates plots and tables
+  for reporting.
 - The `exp_shiny()` app launches a Shiny app that allows for interactive
   exploration of experience drivers.
 
@@ -41,9 +41,13 @@ devtools::install_github("mattheaphy/actxps")
 
 ## Basic usage
 
-The `actxps` package includes a data frame containing simulated census
-data for a theoretical deferred annuity product with an optional
-guaranteed income rider. The grain of this data is one row per policy.
+An expanded version of this demo is available in the package’s [Get
+started](https://mattheaphy.github.io/actxps/articles/actxps.html)
+vignette.
+
+The actxps package includes sample simulated census data for a
+theoretical deferred annuity product with an optional guaranteed income
+rider. The grain of this data is one row *per policy*.
 
 ``` r
 library(actxps)
@@ -74,8 +78,8 @@ census_dat
 #> # … with 19,990 more rows, and 1 more variable: term_date <date>
 ```
 
-Convert census records to exposure records with one row per policy per
-year.
+Convert census records to exposure records with one row *per policy per
+year*.
 
 ``` r
 exposed_data <- expose(census_dat, end_date = "2019-12-31", 
@@ -105,24 +109,8 @@ exposed_data
 #> #   pol_yr <int>, pol_date_yr <date>, exposure <dbl>
 ```
 
-Creates a summary of observed experience.
-
-``` r
-exp_stats(exposed_data)
-#> Experience study results
-#> 
-#>  Groups:  
-#>  Target status: Surrender 
-#>  Study range: 1900-01-01 to 2019-12-31 
-#> 
-#> # A tibble: 1 × 4
-#>   n_claims claims exposure  q_obs
-#> *    <int>  <int>    <dbl>  <dbl>
-#> 1     2846   2846  132669. 0.0215
-```
-
-Using `dplyr::group_by`, create a summary grouped by policy year and the
-presence of a guaranteed income rider.
+Create a summary grouped by policy year and the presence of a guaranteed
+income rider.
 
 ``` r
 
@@ -163,7 +151,7 @@ of `exp_stats`.
 
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
-
+# using 2 different expected termination rates
 exposed_data <- exposed_data |> 
   mutate(expected_1 = expected_table[pol_yr],
          expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
@@ -213,7 +201,7 @@ exp_res |>
   labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-plots-1.png" width="100%" />
 
 ``` r
 autotable(exp_res)
