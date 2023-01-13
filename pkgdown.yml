@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   actxps: actxps.html
-last_built: 2023-01-10T13:17Z
+last_built: 2023-01-13T12:52Z
 urls:
   reference: https://mattheaphy.github.io/actxps/reference
   article: https://mattheaphy.github.io/actxps/articles
