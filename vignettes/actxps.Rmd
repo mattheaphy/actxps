@@ -62,10 +62,11 @@ As a default, the `expose` function calculate exposures by policy year. This can
 
 - `expose_cy` = exposures by calendar year
 - `expose_cq` = exposures by calendar quarter
+- `expose_cm` = exposures by calendar month
 - `expose_cw` = exposures by calendar week
-- `expose_pm` = exposures by policy month
 - `expose_pq` = exposures by policy quarter
-- `expose_pq` = exposures by policy week
+- `expose_pm` = exposures by policy month
+- `expose_pw` = exposures by policy week
 
 
 ## Experience study summary function

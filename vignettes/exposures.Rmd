@@ -136,25 +136,90 @@ exposed_data2 |>
 ```
 
 
+## Other exposures periods
+
+The default exposure basis used by `expose()` is policy years. Using the arguments `cal_expo` and `expo_length` other exposure periods can be used.
+
+### Calendar years
+
+If `cal_expo` is set to `TRUE`, calendar year exposures will be calculated. 
+
+Looking at the second policy, we can see that the first year is left-censored because the policy was issued 2/5 of the way through the year, and the last period is right-censored because the policy terminated roughly 7/10 of the way through the year.
+
+```{r expo-cal}
+
+toy_census[2, ] |> 
+  expose(end_date = "2022-12-31", cal_expo = TRUE, target_status = "Surrender")
+
+```
+
+
+
+### Quarters, months, and weeks
+
+The length of the exposure period can be decreased by passing "quarter", "month", or "week" to the `expo_length` argument. This can be used with policy or calendar-based exposures.
+
+```{r expo-mth}
+toy_census[2, ] |> 
+  expose(end_date = "2022-12-31", 
+         cal_expo = TRUE,
+         expo_length = "quarter", 
+         target_status = "Surrender")
+```
+
+### Convenience functions
+
+The following functions are convenience wrappers around `expose()` that can be used to target a specific exposure type without specifying `cal_expo` and `expo_length`.
+
+- `expose_py` = exposures by policy year
+- `expose_pq` = exposures by policy quarter
+- `expose_pm` = exposures by policy month
+- `expose_pw` = exposures by policy week
+- `expose_cy` = exposures by calendar year
+- `expose_cq` = exposures by calendar quarter
+- `expose_cm` = exposures by calendar month
+- `expose_cw` = exposures by calendar week
+
+## Miscellaneous
+
 
 ### Column names
 
+As a default, the `expose()` functions assume the census data frame uses the following naming conventions:
+
+- The policy number column is called `pol_num`
+- The status column is called `status`
+- The issue date column is called `issue_date`
+- The termination date column is called `term_date`
+
+These default names can be overridden using the `col_pol_num`, `col_status`, `col_issue_date`, and `col_term_date` arguments. 
+
+For example, if the policy number column was called `id` in our census-level data, we could write:
+
+```{r col-names, eval=FALSE}
+expose(toy_census, end_date = "2022-12-31", 
+       target = "Surrender",
+       col_pol_num = "id")
+```
 
 
-### Other variables in the census data
+### Treatment of additional columns in the census data
+
+If the census-level data contains other policy attributes like plan type or policy values, they will be broadcast across all exposure periods. Depending on the nature of the data, this may or may not be desirable. Constant policy attributes like plan type make sense to broadcast, but numeric values may or may not. 
 
 
+```{r broadcast}
+toy_census2 <- toy_census |> 
+  mutate(plan_type = c("X", "Y", "Z"), 
+         policy_value = c(100, 125, 90))
 
-## Calendar year exposures
+expose(toy_census2, end_date = "2022-12-31", 
+       target = "Surrender")
+```
 
 
-## Other exposures lengths
-
-
-
-## Limitations
+### Limitations
 
 The `expose()` family does not support:
 
 - Studies with multiple changes from an active to an inactive status. For example, these functions do not support changes from an active status to an impaired status, and back to an active status.
-
