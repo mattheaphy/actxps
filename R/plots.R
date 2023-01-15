@@ -14,8 +14,9 @@
 #' axis. In addition, the second grouping variable in `object` will be
 #' used for color and fill.
 #'
-#' If no faceting variables are supplied, the plot will use all grouping
-#' variables 3+ as facets passed into [ggplot2::facet_wrap()].
+#' If no faceting variables are supplied, the plot will use grouping
+#' variables 3 and up as facets. These variables are passed into
+#' [ggplot2::facet_wrap()].
 #'
 #' @return a `ggplot` object
 #'
