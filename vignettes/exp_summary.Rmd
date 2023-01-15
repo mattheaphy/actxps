@@ -1,0 +1,82 @@
+---
+title: "Experience summaries"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Experience summaries}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+
+```{r packages, message=FALSE}
+library(actxps)
+library(dplyr)
+
+exposed_data <- expose(census_dat, end_date = "2019-12-31",
+                       target_status = "Surrender")
+
+```
+
+## The `exp_stats()` function
+
+```{r}
+exp_stats(exposed_data)
+```
+
+### Grouped data
+
+
+```{r}
+
+exposed_data |> 
+  group_by(pol_yr) |> 
+  exp_stats()
+```
+
+
+```{r}
+exposed_data |> 
+  group_by(inc_guar, pol_yr) |> 
+  exp_stats()
+```
+
+
+### Target status
+
+
+
+## Weighted results
+
+
+## Credibility
+
+
+## Miscellaneous
+
+### Summary method
+
+
+### Column names
+<!-- update me -->
+As a default, `exp_stats()` assumes the input data frame uses the following naming conventions:
+
+- The exposure column is called `exposure`
+- The status column is called `status`
+
+These default names can be overridden using the `col_exposure` and `col_status` arguments. 
+
+For example, if the status column was called `curr_stat` in our data, we could write:
+
+```{r col-names, eval=FALSE}
+exposed_data |> 
+  exp_stats(col_status = "curr_stat")
+```

@@ -36,7 +36,7 @@ To get started, we're going to use a toy census data frame from the actxps packa
 - `term_date`: termination date, if any. Otherwise `NA`
 
 
-```{r packages, message=FALSE}
+```{r packages, warning=FALSE}
 library(actxps)
 library(dplyr)
 
