@@ -205,7 +205,7 @@ expose(toy_census, end_date = "2022-12-31",
 
 ### Treatment of additional columns in the census data
 
-If the census-level data contains other policy attributes like plan type or policy values, they will be broadcast across all exposure periods. Depending on the nature of the data, this may or may not be desirable. Constant policy attributes like plan type make sense to broadcast, but numeric values may or may not. 
+If the census-level data contains other policy attributes like plan type or policy values, they will be broadcast across all exposure periods. Depending on the nature of the data, this may or may not be desirable. Constant policy attributes like plan type make sense to broadcast, but numeric values may or may not depending on the circumstances. 
 
 
 ```{r broadcast}
@@ -216,6 +216,19 @@ toy_census2 <- toy_census |>
 expose(toy_census2, end_date = "2022-12-31", 
        target = "Surrender")
 ```
+
+
+If your experience study requires a numeric feature that varies over time (ex: policy values, crediting rates, etc.), you can always attach it to an `exposed_df` object using a join function.
+
+```{r join-ex, eval=FALSE}
+
+# Illustrative example - assume `values` is a data frame containing the columns pol_num and pol_yr.
+
+exposed_data |> 
+  left_join(values, by = c("pol_num", "pol_yr"))
+
+```
+
 
 
 ### Limitations
