@@ -145,7 +145,7 @@ Calculate actual-to-expected ratios.
 
 First, attach one or more columns of expected termination rates to the
 exposure data. Then, pass these column names to the `expected` argument
-of `exp_stats`.
+of `exp_stats()`.
 
 ``` r
 
