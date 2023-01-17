@@ -15,6 +15,7 @@
 #'   \item{product}{product: a, b, or c}
 #'   \item{gender}{M (Male) or F (Female)}
 #'   \item{wd_age}{Age that withdrawals commence}
+#'   \item{pol_val}{Policy value}
 #'   \item{term_date}{termination date upon death or surrender}
 #' }
 "census_dat"
