@@ -15,6 +15,22 @@ knitr::opts_chunk$set(
 ```
 
 
+After experience data has been prepared for analysis, the next step is to summarize results. `exp_stats()` is the actxps package's workhorse function for summarizing termination experience. This function returns an `exp_df` object, which is a type of data frame containing additional attributes about the experience study.
+
+At a minimum, an `exp_df` includes:
+
+- The number of claims (termination events)
+- The amount of claims (weighted by a variable of the user's choice; more on this below)
+- The total exposure
+- The observed termination rate
+
+Optionally, an `exp_df` can also include:
+
+- Any grouping variables attached to the input data
+- Expected termination rates and actual-to-expected (A/E) ratios
+- Limited fluctuation credibility estimates and credibility-adjusted expected termination rates
+
+To demonstrate this function, we're going to use a data frame containing simulated census data for a theoretical deferred annuity product that has an optional guaranteed income rider. Before `exp_stats()` can be used, we must convert our census data into exposure records using the `expose()` function^[ See `vignette('exposures', package = 'actxps')` for more information on exposures.]. In addition, let's assume we're interested in studying surrender rates, so we'll pass the argument `target_status = 'Surrender'` to `expose()`.
 
 
 ```{r packages, message=FALSE}
@@ -28,33 +44,89 @@ exposed_data <- expose(census_dat, end_date = "2019-12-31",
 
 ## The `exp_stats()` function
 
-```{r}
+To use `exp_stats()` pass it a data frame of exposure-level records, ideally of type `exposed_df`, the object class returned by the `expose()` family of functions.
+
+```{r xp-basic}
 exp_stats(exposed_data)
 ```
 
+The results show us that we specified no groups, which is why the output data is a single row. In addition, we can see that we're looking at surrender rates through the end of 2019, which `exp_stats` inferred from `exposed_data`. 
+
+The number of claims (`n_claims`) is equal to the number of "Surrender" statuses in `exposed_data`. Since we didn't specify any weighting variable, the amount of claims (`claims`) equals the number of claims.
+
+```{r claim-check}
+(amount <- sum(exposed_data$status == "Surrender"))
+```
+
+The total exposure (`exposure`) is equal to the sum of the exposures in `exposed_data`. Had we specified a weighting variable, this would be equal to the sum of **weighted** exposures.
+
+```{r expo-check}
+(sum_expo <- sum(exposed_data$exposure))
+```
+
+Lastly, the observed termination rate `q_obs` equals the amount of claims divided by the exposures.
+
+```{r q-check}
+amount / sum_expo
+```
+
+
 ### Grouped data
 
+If the data frame passed into `exp_stats()` is grouped using `dplyr::group_by()`, the resulting output will contain one record for each unique group.
 
-```{r}
+In the following, `exposed_data` is grouped by policy year before being passed to `exp_stats()`. This results in one per policy year found in the data.
+
+```{r grouped-1}
 
 exposed_data |> 
   group_by(pol_yr) |> 
   exp_stats()
+
 ```
 
+Multiple grouping variable are allowed. Below, the presence of an income guarantee (`inc_guar`) is included as a grouping variable.
 
-```{r}
+```{r grouped-2}
+
 exposed_data |> 
   group_by(inc_guar, pol_yr) |> 
   exp_stats()
+
 ```
 
 
 ### Target status
 
+The `target_status` argument of `exp_stats()` specifies which status levels count as claims in the experience study summary. If the data passed to `exp_stats()` is an `exposed_df` object that already has a specified target status (via a prior call to `expose()`), then this argument is not necessary because the target status is automatically inferred.
+
+Even if the target status exists on the input data, it can be overridden. However care should be taken to ensure that exposure values in the data are appropriate for the new status.
+
+Using the example data, a total termination rate can be estimated by including both death and surrender statuses in `target_status`. To ensure exposures are accurate, an adjustment is made to fully expose deaths prior to calling `exp_stats`^[This adjustment is not necessary on surrenders because the `expose()` function already did this for us.].
+
+```{r targ-status}
+
+exposed_data |> 
+  mutate(exposure = ifelse(status == "Death", 1, status)) |> 
+  group_by(pol_yr) |> 
+  exp_stats(target_status = c("Surrender", "Death"))
+
+```
 
 
 ## Weighted results
+
+Experience studies often weight output by key policy values. Examples include account values, cash values, face amount, premiums, and more. Weighting can be accomplished by passing the name of a weighting column to the `wt` argument of `exp_stats()`.
+
+Our sample data contains a column called `pol_val` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.
+
+```{r weight-res}
+
+exposed_data |> 
+  exp_stats(wt = 'pol_val')
+
+
+```
 
 
 ## Credibility
@@ -66,7 +138,7 @@ exposed_data |>
 
 
 ### Column names
-<!-- update me -->
+
 As a default, `exp_stats()` assumes the input data frame uses the following naming conventions:
 
 - The exposure column is called `exposure`
@@ -80,3 +152,27 @@ For example, if the status column was called `curr_stat` in our data, we could w
 exposed_data |> 
   exp_stats(col_status = "curr_stat")
 ```
+
+
+### Applying exp_stats to a non-`exposed_df` data frame
+
+`exp_stats()` will still work when applied to a non-`exposed_df` data frame. However, it will be unable to infer certain attributes like the target status and the study dates. For target status, all statuses except the first level are assumed to be terminations. Since this may (often) not be desirable, a warning message will pop-up informing what statuses were assumed to be terminated.
+
+```{r not-exposed_df}
+
+not_exposed_df <- data.frame(exposed_data)
+
+exp_stats(not_exposed_df)
+
+```
+
+If `target_status` is provided, no warning message will appear.
+
+```{r not-exposed_df-2}
+exp_stats(not_exposed_df, target_status = "Surrender")
+```
+
+
+### Limitations
+
+The `exp_stats()` function only supports termination studies. It does not contain support for transaction studies or studies with multiple changes from an active to an inactive status.

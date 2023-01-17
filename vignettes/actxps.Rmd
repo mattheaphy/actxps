@@ -42,7 +42,7 @@ prop.table(status_counts)
 
 In order to calculate annual surrender rates, we need to break each policy into multiple records. There should be one row per policy per year.
 
-The `expose_` family of functions is used to perform this transformation.
+The `expose()` family of functions is used to perform this transformation.
 
 
 ```{r example}
