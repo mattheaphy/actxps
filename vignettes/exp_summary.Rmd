@@ -123,18 +123,126 @@ Our sample data contains a column called `pol_val` that we can weight by. When w
 ```{r weight-res}
 
 exposed_data |> 
+  group_by(pol_yr) |> 
+  # exp_stats(wt = 'pol_val')
   exp_stats(wt = 'pol_val')
 
+```
+
+## Expected values and A/E ratios
+
+As common metric in experience studies is actual-to-expected, or A/E ratio.
+
+$$
+A/E\ ratio = \frac{observed\ value}{expected\ value}
+$$
+
+If the data passed to `exp_stats()` has one or more columns containing expected termination rates, A/E ratios can be calculated by passing the names of these columns to the `expected` argument.
+
+Let's assume we have two sets of expected rates. The first set is a vector that varies by policy year. The second set is either 1.5% or 3.0% depending on whether the policy has a guaranteed income benefit. First, we need to attach these assumptions to our exposure data, and we will use the names `expected_1` and `expected_1`. Then we pass these names to the `expected` argument when we call `exp_stats()`.
+
+In the output, 4 new columns are created for expected rates and A/E ratios.
+
+
+```{r act-exp}
+
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+# using 2 different expected termination rates
+exposed_data2 <- exposed_data |>
+  mutate(expected_1 = expected_table[pol_yr],
+         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
+
+exp_res <- exposed_data2 |>
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(expected = c("expected_1", "expected_2"))
+  
+
+exp_res |> 
+  select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
+         ae_expected_1, ae_expected_2)
+
+```
+
+As noted above if weights are passed to `exp_stats()` then A/E ratios will also be weighted.
+
+```{r act-exp-wt}
+
+exposed_data2 |>
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(expected = c("expected_1", "expected_2"), 
+            wt = "pol_val") |> 
+  select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
+         ae_expected_1, ae_expected_2)
 
 ```
 
 
 ## Credibility
 
+If the `credibility` argument is set to `TRUE`, `exp_stats()` will produce an estimate of partial credibility under the Limited Fluctuation credibility method (also known as Classical Credibility) assuming a binomial distribution of claims.^[See Herzog, Thomas (1999). Introduction to Credibility Theory for more information on Limited Fluctuation Credibility.]
+
+```{r cred1}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(credibility = TRUE) |> 
+  select(pol_yr, inc_guar, claims, q_obs, credibility)
+```
+
+Under the default arguments, credibility calculations assume a 95% confidence of being within 5% of the true value. These parameters can be overridden using the `cred_p` and `cred_r` arguments, respectively.
+
+```{r cred2}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(credibility = TRUE, cred_p = 0.98, cred_r = 0.03) |> 
+  select(pol_yr, inc_guar, claims, q_obs, credibility)
+```
+
+If expected values are passed to `exp_stats()` and `credibility` is set to `TRUE`, then the output will also contain credibility-weighted expected values:
+
+$$
+q^{adj} = Z^{cred} \times q^{obs} + (1-Z^{cred}) \times q^{exp}
+$$
+where,
+
+  - $q^{adj}$ = credibility-weighted estimate
+  - $Z^{cred}$ = partial credibility factor
+  - $q^{obs}$ = observed termination rate
+  - $q^{exp}$ = expected termination rate
+
+
+```{r cred3}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(credibility = TRUE, expected = "expected_1") |> 
+  select(pol_yr, inc_guar, claims, q_obs, credibility, adj_expected_1, 
+         expected_1, ae_expected_1)
+```
+
 
 ## Miscellaneous
 
 ### Summary method
+
+As noted above, the result of `exp_stats()` is an `exp_df` object. If the `summary()` function is applied to an `exp_df` object, the data will be summarized again and return a higher level `exp_df` object.
+
+If not additional arguments are passed, `summary()` returns a single row of aggregate results.
+
+```{r summary1}
+summary(exp_res)
+```
+
+If additional variable names are passed to the `summary()` function, then the output will group the data by those variables. In our example, if `pol_yr` is passed to `summary()`, the output will contain one row per policy year.
+
+```{r summary2}
+summary(exp_res, pol_yr)
+```
+
+Similarly, if `inc_guar` is passed to `summary()`, the output will contain a row for each unique value in `inc_guar`.
+
+```{r summary3}
+summary(exp_res, inc_guar)
+```
 
 
 ### Column names
@@ -156,7 +264,7 @@ exposed_data |>
 
 ### Applying exp_stats to a non-`exposed_df` data frame
 
-`exp_stats()` will still work when applied to a non-`exposed_df` data frame. However, it will be unable to infer certain attributes like the target status and the study dates. For target status, all statuses except the first level are assumed to be terminations. Since this may (often) not be desirable, a warning message will pop-up informing what statuses were assumed to be terminated.
+`exp_stats()` can still work when given a non-`exposed_df` data frame. However, it will be unable to infer certain attributes like the target status and the study dates. For target status, all statuses except the first level are assumed to be terminations. Since this may not be desirable, a warning message will appear informing what statuses were assumed to be terminated.
 
 ```{r not-exposed_df}
 
