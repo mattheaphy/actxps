@@ -82,7 +82,8 @@ sim_data <- function(n_pol = 1) {
     age = draw(iss_age_dist),
     product = draw(product_dist),
     gender = draw(gender_dist),
-    wd_age = draw(wd_time_dist) |> pmax(age)
+    wd_age = draw(wd_time_dist) |> pmax(age),
+    pol_val = round(1000 * exp(rnorm(n_pol, 0, 0.75)), 0)
   )
 
 }
@@ -146,6 +147,17 @@ expand_sim <- function(dat) {
 
   }
 
+  # policy value
+  size_mult <- function(x) {
+
+    case_when(
+      x > quantile(x, 0.8) ~ 0.5,
+      x < quantile(x, 0.2) ~ 2,
+      TRUE ~ 1
+    )
+
+  }
+
   qx_iamb$gender <- str_sub(qx_iamb$gender, 1, 1)
   scale_g2$gender <- str_sub(scale_g2$gender, 1, 1)
 
@@ -171,12 +183,14 @@ expand_sim <- function(dat) {
       prod_mult = prod_mult[product],
       gender_mult = gender_mult[gender],
       wd_time_mult = wd_time_mult(exercised, age, inc_guar),
-      q_w = pmin(qual_mult * age_mult * prod_mult * base_rate * wd_time_mult,
+      size_mult = size_mult(pol_val),
+      q_w = pmin(qual_mult * age_mult * prod_mult * base_rate *
+                   wd_time_mult * size_mult,
                    0.99),
       cal_yr = year(issue_date) + pol_yr - 1,
       qx = qx * (1 - mi) ^ (cal_yr - 2012),
       exposure = ifelse(last_yr,
-                        (interval(issue_date, end_date) / years(1)) %% 1, 1),
+                        (interval(issue_date, end_date) / years(1)) %% 1, 1)
     ) |>
     select(-pol_yr2, -t, -cal_yr, -mi, -last_yr) |>
     rename(q_d = qx)

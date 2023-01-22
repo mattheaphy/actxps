@@ -1,0 +1,286 @@
+---
+title: "Experience summaries"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Experience summaries}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+After experience data has been prepared for analysis, the next step is to summarize results. The actxps package's workhorse function for summarizing termination experience is `exp_stats()`. This function returns an `exp_df` object, which is a type of data frame containing additional attributes about the experience study.
+
+At a minimum, an `exp_df` includes:
+
+- The number of claims (termination events)
+- The amount of claims (weighted by a variable of the user's choice; more on this below)
+- The total exposure
+- The observed termination rate
+
+Optionally, an `exp_df` can also include:
+
+- Any grouping variables attached to the input data
+- Expected termination rates and actual-to-expected (A/E) ratios
+- Limited fluctuation credibility estimates and credibility-adjusted expected termination rates
+
+To demonstrate this function, we're going to use a data frame containing simulated census data for a theoretical deferred annuity product that has an optional guaranteed income rider. Before `exp_stats()` can be used, we must convert our census data into exposure records using the `expose()` function^[ See `vignette('exposures')` for more information on exposures.]. In addition, let's assume we're interested in studying surrender rates, so we'll pass the argument `target_status = 'Surrender'` to `expose()`.
+
+
+```{r packages, message=FALSE}
+library(actxps)
+library(dplyr)
+
+exposed_data <- expose(census_dat, end_date = "2019-12-31",
+                       target_status = "Surrender")
+
+```
+
+## The `exp_stats()` function
+
+To use `exp_stats()`, pass it a data frame of exposure-level records, ideally of type `exposed_df` (the object class returned by the `expose()` family of functions).
+
+```{r xp-basic}
+exp_stats(exposed_data)
+```
+
+The results show us that we specified no groups, which is why the output data is a single row. In addition, we can see that we're looking at surrender rates through the end of 2019, which `exp_stats` inferred from `exposed_data`. 
+
+The number of claims (`n_claims`) is equal to the number of "Surrender" statuses in `exposed_data`. Since we didn't specify any weighting variable, the amount of claims (`claims`) equals the number of claims.
+
+```{r claim-check}
+(amount <- sum(exposed_data$status == "Surrender"))
+```
+
+The total exposure (`exposure`) is equal to the sum of the exposures in `exposed_data`. Had we specified a weighting variable, this would be equal to the sum of weighted exposures.
+
+```{r expo-check}
+(sum_expo <- sum(exposed_data$exposure))
+```
+
+Lastly, the observed termination rate (`q_obs`) equals the amount of claims divided by the exposures.
+
+```{r q-check}
+amount / sum_expo
+```
+
+
+### Grouped data
+
+If the data frame passed into `exp_stats()` is grouped using `dplyr::group_by()`, the resulting output will contain one record for each unique group.
+
+In the following, `exposed_data` is grouped by policy year before being passed to `exp_stats()`. This results in one row per policy year found in the data.
+
+```{r grouped-1}
+
+exposed_data |> 
+  group_by(pol_yr) |> 
+  exp_stats()
+
+```
+
+Multiple grouping variables are allowed. Below, the presence of an income guarantee (`inc_guar`) is added as a second grouping variable.
+
+```{r grouped-2}
+
+exposed_data |> 
+  group_by(inc_guar, pol_yr) |> 
+  exp_stats()
+
+```
+
+
+### Target status
+
+The `target_status` argument of `exp_stats()` specifies which status levels count as claims in the experience study summary. If the data passed to `exp_stats()` is an `exposed_df` object that already has a specified target status (via a prior call to `expose()`), then this argument is not necessary because the target status is automatically inferred.
+
+Even if the target status exists on the input data, it can be overridden. However care should be taken to ensure that exposure values in the data are appropriate for the new status.
+
+Using the example data, a total termination rate can be estimated by including both death and surrender statuses in `target_status`. To ensure exposures are accurate, an adjustment is made to fully expose deaths prior to calling `exp_stats()`^[This adjustment is not necessary on surrenders because the `expose()` function previously did this for us.].
+
+```{r targ-status}
+
+exposed_data |> 
+  mutate(exposure = ifelse(status == "Death", 1, status)) |> 
+  group_by(pol_yr) |> 
+  exp_stats(target_status = c("Surrender", "Death"))
+
+```
+
+
+## Weighted results
+
+Experience studies often weight output by key policy values. Examples include account values, cash values, face amount, premiums, and more. Weighting can be accomplished by passing the name of a weighting column to the `wt` argument of `exp_stats()`.
+
+Our sample data contains a column called `pol_val` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
+
+```{r weight-res}
+
+exposed_data |> 
+  group_by(pol_yr) |> 
+  exp_stats(wt = 'pol_val')
+
+```
+
+
+## Expected values and A/E ratios
+
+As common metric in experience studies is the actual-to-expected, or A/E ratio.
+
+$$
+A/E\ ratio = \frac{observed\ value}{expected\ value}
+$$
+
+If the data passed to `exp_stats()` has one or more columns containing expected termination rates, A/E ratios can be calculated by passing the names of these columns to the `expected` argument.
+
+Let's assume we have two sets of expected rates. The first set is a vector that varies by policy year. The second set is either 1.5% or 3.0% depending on whether the policy has a guaranteed income benefit. First, we need to attach these assumptions to our exposure data. We will use the names `expected_1` and `expected_2`. Then we pass these names to the `expected` argument when we call `exp_stats()`.
+
+In the output, 4 new columns are created for expected rates and A/E ratios.
+
+
+```{r act-exp}
+
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+# using 2 different expected termination assumption sets
+exposed_data2 <- exposed_data |>
+  mutate(expected_1 = expected_table[pol_yr],
+         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
+
+exp_res <- exposed_data2 |>
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(expected = c("expected_1", "expected_2"))
+  
+
+exp_res |> 
+  select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
+         ae_expected_1, ae_expected_2)
+
+```
+
+As noted above, if weights are passed to `exp_stats()` then A/E ratios will also be weighted.
+
+```{r act-exp-wt}
+
+exposed_data2 |>
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(expected = c("expected_1", "expected_2"), 
+            wt = "pol_val") |> 
+  select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
+         ae_expected_1, ae_expected_2)
+
+```
+
+
+## Credibility
+
+If the `credibility` argument is set to `TRUE`, `exp_stats()` will produce an estimate of partial credibility under the Limited Fluctuation credibility method (also known as Classical Credibility) assuming a binomial distribution of claims.^[See Herzog, Thomas (1999). Introduction to Credibility Theory for more information on Limited Fluctuation Credibility.]
+
+```{r cred1}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(credibility = TRUE) |> 
+  select(pol_yr, inc_guar, claims, q_obs, credibility)
+```
+
+Under the default arguments, credibility calculations assume a 95% confidence of being within 5% of the true value. These parameters can be overridden using the `cred_p` and `cred_r` arguments, respectively.
+
+```{r cred2}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(credibility = TRUE, cred_p = 0.98, cred_r = 0.03) |> 
+  select(pol_yr, inc_guar, claims, q_obs, credibility)
+```
+
+If expected values are passed to `exp_stats()` and `credibility` is set to `TRUE`, then the output will also contain credibility-weighted expected values:
+
+$$
+q^{adj} = Z^{cred} \times q^{obs} + (1-Z^{cred}) \times q^{exp}
+$$
+where,
+
+  - $q^{adj}$ = credibility-weighted estimate
+  - $Z^{cred}$ = partial credibility factor
+  - $q^{obs}$ = observed termination rate
+  - $q^{exp}$ = expected termination rate
+
+
+```{r cred3}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(credibility = TRUE, expected = "expected_1") |> 
+  select(pol_yr, inc_guar, claims, q_obs, credibility, adj_expected_1, 
+         expected_1, ae_expected_1)
+```
+
+
+## Miscellaneous
+
+### Summary method
+
+As noted above, the result of `exp_stats()` is an `exp_df` object. If the `summary()` function is applied to an `exp_df` object, the data will be summarized again and return a higher level `exp_df` object.
+
+If no additional arguments are passed, `summary()` returns a single row of aggregate results.
+
+```{r summary1}
+summary(exp_res)
+```
+
+If additional variable names are passed to the `summary()` function, then the output will group the data by those variables. In our example, if `pol_yr` is passed to `summary()`, the output will contain one row per policy year.
+
+```{r summary2}
+summary(exp_res, pol_yr)
+```
+
+Similarly, if `inc_guar` is passed to `summary()`, the output will contain a row for each unique value in `inc_guar`.
+
+```{r summary3}
+summary(exp_res, inc_guar)
+```
+
+
+### Column names
+
+As a default, `exp_stats()` assumes the input data frame uses the following naming conventions:
+
+- The exposure column is called `exposure`
+- The status column is called `status`
+
+These default names can be overridden using the `col_exposure` and `col_status` arguments. 
+
+For example, if the status column was called `curr_stat` in our data, we could write:
+
+```{r col-names, eval=FALSE}
+exposed_data |> 
+  exp_stats(col_status = "curr_stat")
+```
+
+
+### Applying exp_stats to a non-`exposed_df` data frame
+
+`exp_stats()` can still work when given a non-`exposed_df` data frame. However, it will be unable to infer certain attributes like the target status and the study dates. For target status, all statuses except the first level are assumed to be terminations. Since this may not be desirable, a warning message will appear informing what statuses were assumed to be terminated.
+
+```{r not-exposed_df}
+
+not_exposed_df <- data.frame(exposed_data)
+
+exp_stats(not_exposed_df)
+
+```
+
+If `target_status` is provided, no warning message will appear.
+
+```{r not-exposed_df-2}
+exp_stats(not_exposed_df, target_status = "Surrender")
+```
+
+
+### Limitations
+
+The `exp_stats()` function only supports termination studies. It does not contain support for transaction studies or studies with multiple changes from an active to an inactive status.

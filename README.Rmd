@@ -29,12 +29,12 @@ setting for projection models.
 - The `expose()` family of functions convert census-level records into policy 
 or calendar year exposure records.
 - The `exp_stats()` function creates experience summary data frames containing
-observed termination claims and rates. Optionally, expected termination rates, 
+observed termination rates and claims. Optionally, expected termination rates, 
 actual-to-expected ratios, and limited fluctuation credibility estimates can
 also be returned.
 - The `autoplot()` and `autotable()` functions creates plots and tables for
 reporting.
-- The `exp_shiny()` app launches a Shiny app that allows for interactive 
+- The `exp_shiny()` function launches a Shiny app that allows for interactive 
 exploration of experience drivers.
 
 ## Installation
@@ -53,13 +53,13 @@ devtools::install_github("mattheaphy/actxps")
 
 ## Basic usage
 
-An expanded version of this demo is available in the package's [Get started](https://mattheaphy.github.io/actxps/articles/actxps.html) vignette.
+An expanded version of this demo is available in `vignette("actxps")`.
 
-The actxps package includes sample simulated census data for a theoretical 
+The actxps package includes simulated census data for a theoretical 
 deferred annuity product with an optional guaranteed income rider. 
 The grain of this data is one row *per policy*.
 
-```{r packages, warning=FALSE}
+```{r packages, message=FALSE}
 library(actxps)
 library(dplyr)
 
@@ -91,7 +91,7 @@ exp_res
 Calculate actual-to-expected ratios.
 
 First, attach one or more columns of expected termination rates to the exposure
-data. Then, pass these column names to the `expected` argument of `exp_stats`.
+data. Then, pass these column names to the `expected` argument of `exp_stats()`.
 
 ```{r stats-ae}
 

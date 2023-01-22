@@ -1,0 +1,260 @@
+---
+title: "Exposure calculations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exposure calculations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+**Census-level data** refers to a data set wherein there is one row per policy. **Exposure-level data** expands census-level data such that there is one record per policy per observation period. Observation periods could be any meaningful period of time such as a policy year, policy month, calendar year, calendar quarter, calendar month, etc.
+
+A common step in experience studies is converting census-level data into exposure-level data. The `expose()` family of functions assists with this task. Specifically, the `expose()` family:
+
+- Expands a census-level data frame to an exposure-level data frame
+- Calculates partial exposures for left-censored and right-censored records using exact day counts
+- For terminated policies, sets the policy status to an active state for all observation periods except the last. Similarly, the termination date is set to `NA` for all periods except the last.
+- Adds identifier columns for observation periods
+
+## Toy census data
+
+To get started, we're going to use a toy census data frame from the actxps package that contains 3 policies: one active, one that terminated due to death, and one that terminated due to surrender.
+
+`toy_census` contains the 4 columns necessary to compute exposures:
+
+- `pol_num`: a unique identifier for individual policies
+- `status`: the policy status
+- `issue_date`: issue date
+- `term_date`: termination date, if any. Otherwise `NA`
+
+
+```{r packages, message=FALSE}
+library(actxps)
+library(dplyr)
+
+toy_census
+```
+
+
+## Policy year exposures
+
+Let's assume we're performing an experience study as of 2022-12-31 and we're interested in policy year exposures. Here's what we should expect for our 3 policies.
+
+- Policy 1 was issued on January 1, 2010 and has not terminated. Therefore we expect 13 exposure years.
+- Policy 2 was issued on May 27, 2011 and was terminated in 2020 due to death. The death occurred after the 9th policy anniversary, therefore we expect 9 fully exposed years and a partial exposure in the 10th year.
+- Policy 3 was issued on November 10, 2009 and was terminated in 2022 due to surrender. The surrender occurred after the 12th policy anniversary, therefore we expect 12 fully exposed years and a partial exposure in the 13th year.
+
+To calculate exposures, we pass our data to the `expose()` function and we specify a study `end_date`. 
+
+```{r expose-1}
+
+exposed_data <- expose(toy_census, end_date = "2022-12-31")
+
+```
+
+
+This creates an `exposed_df` object, which is a type of data frame with some additional attributes related to the experience study.
+
+```{r is-exposed}
+is_exposed_df(exposed_data)
+```
+
+Let's examine what happened to each policy.
+
+**Policy 1**: As expected, there are 13 rows for this policy. New columns were added for the policy year (`pol_yr`), anniversary (`pol_date_yr`), and exposure. All exposures are 100% since this policy was active for all 13 years.
+
+When the data is printed, additional attributes from the `exposed_df` class are displayed.
+
+```{r expose-pol-1}
+exposed_data |> filter(pol_num == 1)
+```
+
+**Policy 2**: There are 10 rows for this policy. The first 9 periods show the policy in an active `status` and the termination date (`term_date`) is set to `NA`. The last period includes the final status of "Death" and the actual termination date. The last exposure is less than one because roughly a third of a year elapsed between the last anniversary date on 2020-05-27 and the termination date on 2020-09-14.
+
+```{r expose-pol-2}
+exposed_data |> filter(pol_num == 2)
+```
+
+
+**Policy 3**: There are 13 rows for this policy. The first 12 periods show the policy in an active `status` and the termination date (`term_date`) is set to `NA`. The last period includes the final status of "Surrender" and the actual termination date. The last exposure is less than one because the roughly a third of a year elapsed between the last anniversary date on 2021-11-10 and the termination date on 2022-02-25.
+
+```{r expose-pol-3}
+exposed_data |> filter(pol_num == 3)
+```
+
+### Study start date
+
+The previous section only supplied data and a study `end_date` to `expose()`. These are the minimum required arguments for the function. Optionally, a `start_date` can be supplied that will drop exposure periods that begin before a specified date.
+
+```{r expose-start}
+expose(toy_census, end_date = "2022-12-31", start_date = "2019-12-31")
+```
+
+
+
+### Target status
+
+Most experience studies use the annual exposure method which allocates a full period of exposure for the particular termination event of interest in the scope of the study.
+
+The intuition for this approach is simple: let's assume we have an unrealistically small study with a single data point for one policy over the course of one year. Let's assume that policy terminated due to surrender half way through the year. 
+
+If we don't apply the annual exposure method, we would calculate a termination rate as:
+
+$$
+q^{surr} = \frac{claims}{exposures} = \frac{1}{0.5} = 200\%
+$$
+
+A termination rate of 200% doesn't make any sense. Under the annual exposure method we would see a rate of 100%, which is intuitive.
+
+$$
+q^{surr} = \frac{claims}{exposures} = \frac{1}{1} = 100\%
+$$
+
+The annual exposure method can be applied by passing a character vector of target statuses to the `expose()` function.
+
+Let's assume we are performing a surrender study.
+
+```{r expose-targ}
+exposed_data2 <- expose(toy_census, end_date = "2022-12-31", 
+                        target = "Surrender")
+```
+
+Now let's verify that the exposure on the surrendered policy increased to 100% in the last exposure period.
+
+```{r expose-targ-check}
+exposed_data2 |> 
+  group_by(pol_num) |> 
+  slice_max(pol_yr)
+```
+
+
+## Other exposures periods
+
+The default exposure basis used by `expose()` is policy years. Using the arguments `cal_expo` and `expo_length` other exposure periods can be used.
+
+### Calendar years
+
+If `cal_expo` is set to `TRUE`, calendar year exposures will be calculated. 
+
+Looking at the second policy, we can see that the first year is left-censored because the policy was issued two-fifths of the way through the year, and the last period is right-censored because the policy terminated roughly seven-tenths of the way through the year.
+
+```{r expo-cal}
+
+toy_census[2, ] |> 
+  expose(end_date = "2022-12-31", cal_expo = TRUE, target_status = "Surrender")
+
+```
+
+
+
+### Quarters, months, and weeks
+
+The length of the exposure period can be decreased by passing `"quarter"`, `"month"`, or `"week"` to the `expo_length` argument. This can be used with policy or calendar-based exposures.
+
+```{r expo-mth}
+toy_census[2, ] |> 
+  expose(end_date = "2022-12-31", 
+         cal_expo = TRUE,
+         expo_length = "quarter", 
+         target_status = "Surrender")
+```
+
+### Convenience functions
+
+The following functions are convenience wrappers around `expose()` that can be used to target a specific exposure type without specifying `cal_expo` and `expo_length`.
+
+- `expose_py` = exposures by policy year
+- `expose_pq` = exposures by policy quarter
+- `expose_pm` = exposures by policy month
+- `expose_pw` = exposures by policy week
+- `expose_cy` = exposures by calendar year
+- `expose_cq` = exposures by calendar quarter
+- `expose_cm` = exposures by calendar month
+- `expose_cw` = exposures by calendar week
+
+## Tidymodels recipe step
+
+For machine learning feature engineering, the actxps package contains a function called `step_expose()` that is compatible with the recipes package from tidymodels. This function can be used to apply the `expose()` function within a recipe.
+
+```{r rec-expose}
+
+library(recipes)
+
+expo_rec <- recipe(status ~ ., toy_census) |>
+  step_expose(end_date = "2022-12-31", target_status = "Surrender",
+              options = list(expo_length = "month")) |>
+  prep()
+
+expo_rec
+
+tidy(expo_rec, number = 1)
+
+bake(expo_rec, new_data = NULL)
+
+```
+
+
+## Miscellaneous
+
+
+### Column names
+
+As a default, the `expose()` functions assume the census data frame uses the following naming conventions:
+
+- The policy number column is called `pol_num`
+- The status column is called `status`
+- The issue date column is called `issue_date`
+- The termination date column is called `term_date`
+
+These default names can be overridden using the `col_pol_num`, `col_status`, `col_issue_date`, and `col_term_date` arguments. 
+
+For example, if the policy number column was called `id` in our census-level data, we could write:
+
+```{r col-names, eval=FALSE}
+expose(toy_census, end_date = "2022-12-31", 
+       target = "Surrender",
+       col_pol_num = "id")
+```
+
+
+### Treatment of additional columns in the census data
+
+If the census-level data contains other policy attributes like plan type or policy values, they will be broadcast across all exposure periods. Depending on the nature of the data, this may or may not be desirable. Constant policy attributes like plan type make sense to broadcast, but numeric values may or may not depending on the circumstances. 
+
+
+```{r broadcast}
+toy_census2 <- toy_census |> 
+  mutate(plan_type = c("X", "Y", "Z"), 
+         policy_value = c(100, 125, 90))
+
+expose(toy_census2, end_date = "2022-12-31", 
+       target = "Surrender")
+```
+
+
+If your experience study requires a numeric feature that varies over time (ex: policy values, crediting rates, etc.), you can always attach it to an `exposed_df` object using a join function.
+
+```{r join-ex, eval=FALSE}
+
+# Illustrative example - assume `values` is a data frame containing the columns pol_num and pol_yr.
+
+exposed_data |> 
+  left_join(values, by = c("pol_num", "pol_yr"))
+
+```
+
+
+
+### Limitations
+
+The `expose()` family does not support:
+
+- Studies with multiple changes from an active to an inactive status. For example, these functions do not support changes from an active status to an impaired status, and back to an active status.

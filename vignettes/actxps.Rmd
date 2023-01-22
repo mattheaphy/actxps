@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 The actxps package includes a data frame containing simulated census data for a theoretical deferred annuity product with an optional guaranteed income rider. The grain of this data is one row per policy.
 
-```{r packages, warning=FALSE}
+```{r packages, message=FALSE}
 library(actxps)
 library(dplyr)
 
@@ -42,7 +42,7 @@ prop.table(status_counts)
 
 In order to calculate annual surrender rates, we need to break each policy into multiple records. There should be one row per policy per year.
 
-The `expose_` family of functions is used to perform this transformation.
+The `expose()` family of functions is used to perform this transformation.
 
 
 ```{r example}
@@ -52,35 +52,39 @@ exposed_data <- expose(census_dat, end_date = "2019-12-31",
 exposed_data
 ```
 
+These functions create `exposed_df` objects, which are a type of data frame with some additional attributes related to the experience study.
+
 Now that the data has been "exposed" by policy year, the observed annual surrender probability can be calculated as:
 
 ```{r term-rate}
 sum(exposed_data$status == "Surrender") / sum(exposed_data$exposure)
 ```
 
-As a default, the `expose` function calculate exposures by policy year. This can also be accomplished with the function `expose_py`. Other implementations of `expose` include:
+As a default, the `expose()` function calculates exposures by policy year. This can also be accomplished with the function `expose_py()`. Other implementations of `expose()` include:
 
 - `expose_cy` = exposures by calendar year
 - `expose_cq` = exposures by calendar quarter
+- `expose_cm` = exposures by calendar month
 - `expose_cw` = exposures by calendar week
-- `expose_pm` = exposures by policy month
 - `expose_pq` = exposures by policy quarter
-- `expose_pq` = exposures by policy week
+- `expose_pm` = exposures by policy month
+- `expose_pw` = exposures by policy week
 
+See `vignette("exposures")` for further details on exposure calculations.
 
 ## Experience study summary function
 
-The `exp_stats` function creates a summary of observed experience data. The output of this function is an `exp_df` object.
+The `exp_stats()` function creates a summary of observed experience data. The output of this function is an `exp_df` object.
 
 ```{r stats-1}
 exp_stats(exposed_data)
 ```
 
-
+See `vignette("exp_summary")` for further details on exposure calculations.
 
 ### Grouped experience data
 
-If the data frame passed into `exp_stats` is grouped using `dplyr::group_by()`, the resulting output will contain one record for each unique group.
+If the data frame passed into `exp_stats()` is grouped using `dplyr::group_by()`, the resulting output will contain one record for each unique group.
 
 ```{r stats-grouped}
 library(dplyr)
@@ -94,7 +98,7 @@ exp_res
 
 ### Actual-to-expected rates
 
-To derive actual-to-expected rates, first attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats`.
+To derive actual-to-expected rates, first attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats()`.
 
 ```{r stats-ae}
 
@@ -139,7 +143,7 @@ autotable(exp_res)
 
 ### `summary()`
 
-Calling the `summary` function on an `exp_df` object re-summarizes experience results. This also produces an `exp_df` object.
+Calling the `summary()` function on an `exp_df` object re-summarizes experience results. This also produces an `exp_df` object.
 
 ```{r summary-1}
 summary(exp_res)
@@ -153,7 +157,7 @@ summary(exp_res, inc_guar)
 
 ## Shiny App
 
-Passing an `exposed_df` object to the `exp_shiny` function launches a shiny app that enables interactive exploration of experience data.
+Passing an `exposed_df` object to the `exp_shiny()` function launches a shiny app that enables interactive exploration of experience data.
 
 ```{r shiny, eval = FALSE}
 exp_shiny(exposed_data)
