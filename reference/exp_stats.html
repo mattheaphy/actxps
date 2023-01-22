@@ -26,6 +26,13 @@ status."><meta property="og:image" content="https://mattheaphy.github.io/actxps/
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -201,16 +208,16 @@ data while retaining any grouping variables passed to the "dots"
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 30 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    pol_yr inc_guar n_claims claims exposure   q_obs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BCBCBC;">*</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>      1 FALSE          42     42    <span style="text-decoration: underline;">7</span>719. 0.005<span style="text-decoration: underline;">44</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>      1 TRUE           38     38   <span style="text-decoration: underline;">11</span>526. 0.003<span style="text-decoration: underline;">30</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>      2 FALSE          65     65    <span style="text-decoration: underline;">7</span>117. 0.009<span style="text-decoration: underline;">13</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>      2 TRUE           61     61   <span style="text-decoration: underline;">10</span>605. 0.005<span style="text-decoration: underline;">75</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>      3 FALSE          67     67    <span style="text-decoration: underline;">6</span>476. 0.010<span style="text-decoration: underline;">3</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>      3 TRUE           60     60    <span style="text-decoration: underline;">9</span>626. 0.006<span style="text-decoration: underline;">23</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>      4 FALSE         103    103    <span style="text-decoration: underline;">5</span>823. 0.017<span style="text-decoration: underline;">7</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>      4 TRUE           58     58    <span style="text-decoration: underline;">8</span>697. 0.006<span style="text-decoration: underline;">67</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>      5 FALSE          94     94    <span style="text-decoration: underline;">5</span>147. 0.018<span style="text-decoration: underline;">3</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>      5 TRUE           72     72    <span style="text-decoration: underline;">7</span>779. 0.009<span style="text-decoration: underline;">26</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>      1 FALSE          56     56    <span style="text-decoration: underline;">7</span>720. 0.007<span style="text-decoration: underline;">25</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>      1 TRUE           46     46   <span style="text-decoration: underline;">11</span>532. 0.003<span style="text-decoration: underline;">99</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>      2 FALSE          92     92    <span style="text-decoration: underline;">7</span>101. 0.013<span style="text-decoration: underline;">0</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>      2 TRUE           67     67   <span style="text-decoration: underline;">10</span>609. 0.006<span style="text-decoration: underline;">32</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>      3 FALSE          67     67    <span style="text-decoration: underline;">6</span>445. 0.010<span style="text-decoration: underline;">4</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>      3 TRUE           57     57    <span style="text-decoration: underline;">9</span>648. 0.005<span style="text-decoration: underline;">91</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>      4 FALSE         123    123    <span style="text-decoration: underline;">5</span>797. 0.021<span style="text-decoration: underline;">2</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>      4 TRUE           45     45    <span style="text-decoration: underline;">8</span>735. 0.005<span style="text-decoration: underline;">15</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>      5 FALSE          97     97    <span style="text-decoration: underline;">5</span>106. 0.019<span style="text-decoration: underline;">0</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>      5 TRUE           67     67    <span style="text-decoration: underline;">7</span>810. 0.008<span style="text-decoration: underline;">58</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 20 more rows</span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Experience study results</span>
@@ -222,7 +229,7 @@ data while retaining any grouping variables passed to the "dots"
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   n_claims claims exposure  q_obs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">*</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     <span style="text-decoration: underline;">2</span>846   <span style="text-decoration: underline;">2</span>846  <span style="text-decoration: underline;">132</span>669. 0.021<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     <span style="text-decoration: underline;">2</span>868   <span style="text-decoration: underline;">2</span>868  <span style="text-decoration: underline;">132</span>616. 0.021<span style="text-decoration: underline;">6</span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span>, <span class="va">inc_guar</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Experience study results</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -233,8 +240,8 @@ data while retaining any grouping variables passed to the "dots"
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   inc_guar n_claims claims exposure  q_obs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE        <span style="text-decoration: underline;">1</span>615   <span style="text-decoration: underline;">1</span>615   <span style="text-decoration: underline;">52</span>338. 0.030<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> TRUE         <span style="text-decoration: underline;">1</span>231   <span style="text-decoration: underline;">1</span>231   <span style="text-decoration: underline;">80</span>331. 0.015<span style="text-decoration: underline;">3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE        <span style="text-decoration: underline;">1</span>601   <span style="text-decoration: underline;">1</span>601   <span style="text-decoration: underline;">52</span>115. 0.030<span style="text-decoration: underline;">7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> TRUE         <span style="text-decoration: underline;">1</span>267   <span style="text-decoration: underline;">1</span>267   <span style="text-decoration: underline;">80</span>501. 0.015<span style="text-decoration: underline;">7</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

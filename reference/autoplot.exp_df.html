@@ -24,6 +24,13 @@
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -105,8 +112,9 @@ display lines and points. If "bars", the plot will display bars.</p></dd>
 grouping variable in <code>object</code> on the x axis and <code>q_obs</code> on the y
 axis. In addition, the second grouping variable in <code>object</code> will be
 used for color and fill.</p>
-<p>If no faceting variables are supplied, the plot will use all grouping
-variables 3+ as facets passed into <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">ggplot2::facet_wrap()</a></code>.</p>
+<p>If no faceting variables are supplied, the plot will use grouping
+variables 3 and up as facets. These variables are passed into
+<code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">ggplot2::facet_wrap()</a></code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

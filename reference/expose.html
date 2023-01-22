@@ -26,6 +26,13 @@ records."><meta property="og:image" content="https://mattheaphy.github.io/actxps
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -223,20 +230,20 @@ underscore describe the exposure type and exposure period, respectively.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Target status: Surrender </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Study range: 1900-01-01 to 2019-12-31 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 141,297 × 13</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    pol_num status issue_date inc_guar qual    age product gender wd_age</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BCBCBC;">*</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 141,287 more rows, and 4 more variables: term_date &lt;date&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 141,233 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    pol_num status issue_date inc_guar qual    age product gender wd_age pol_val</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BCBCBC;">*</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 141,223 more rows, and 4 more variables: term_date &lt;date&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pol_yr &lt;int&gt;, pol_date_yr &lt;date&gt;, exposure &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
