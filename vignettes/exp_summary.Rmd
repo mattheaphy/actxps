@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 
-After experience data has been prepared for analysis, the next step is to summarize results. `exp_stats()` is the actxps package's workhorse function for summarizing termination experience. This function returns an `exp_df` object, which is a type of data frame containing additional attributes about the experience study.
+After experience data has been prepared for analysis, the next step is to summarize results. The actxps package's workhorse function for summarizing termination experience is `exp_stats()`. This function returns an `exp_df` object, which is a type of data frame containing additional attributes about the experience study.
 
 At a minimum, an `exp_df` includes:
 
@@ -30,7 +30,7 @@ Optionally, an `exp_df` can also include:
 - Expected termination rates and actual-to-expected (A/E) ratios
 - Limited fluctuation credibility estimates and credibility-adjusted expected termination rates
 
-To demonstrate this function, we're going to use a data frame containing simulated census data for a theoretical deferred annuity product that has an optional guaranteed income rider. Before `exp_stats()` can be used, we must convert our census data into exposure records using the `expose()` function^[ See `vignette('exposures', package = 'actxps')` for more information on exposures.]. In addition, let's assume we're interested in studying surrender rates, so we'll pass the argument `target_status = 'Surrender'` to `expose()`.
+To demonstrate this function, we're going to use a data frame containing simulated census data for a theoretical deferred annuity product that has an optional guaranteed income rider. Before `exp_stats()` can be used, we must convert our census data into exposure records using the `expose()` function^[ See `vignette('exposures')` for more information on exposures.]. In addition, let's assume we're interested in studying surrender rates, so we'll pass the argument `target_status = 'Surrender'` to `expose()`.
 
 
 ```{r packages, message=FALSE}
@@ -44,7 +44,7 @@ exposed_data <- expose(census_dat, end_date = "2019-12-31",
 
 ## The `exp_stats()` function
 
-To use `exp_stats()` pass it a data frame of exposure-level records, ideally of type `exposed_df`, the object class returned by the `expose()` family of functions.
+To use `exp_stats()`, pass it a data frame of exposure-level records, ideally of type `exposed_df` (the object class returned by the `expose()` family of functions).
 
 ```{r xp-basic}
 exp_stats(exposed_data)
@@ -58,13 +58,13 @@ The number of claims (`n_claims`) is equal to the number of "Surrender" statuses
 (amount <- sum(exposed_data$status == "Surrender"))
 ```
 
-The total exposure (`exposure`) is equal to the sum of the exposures in `exposed_data`. Had we specified a weighting variable, this would be equal to the sum of **weighted** exposures.
+The total exposure (`exposure`) is equal to the sum of the exposures in `exposed_data`. Had we specified a weighting variable, this would be equal to the sum of weighted exposures.
 
 ```{r expo-check}
 (sum_expo <- sum(exposed_data$exposure))
 ```
 
-Lastly, the observed termination rate `q_obs` equals the amount of claims divided by the exposures.
+Lastly, the observed termination rate (`q_obs`) equals the amount of claims divided by the exposures.
 
 ```{r q-check}
 amount / sum_expo
@@ -75,7 +75,7 @@ amount / sum_expo
 
 If the data frame passed into `exp_stats()` is grouped using `dplyr::group_by()`, the resulting output will contain one record for each unique group.
 
-In the following, `exposed_data` is grouped by policy year before being passed to `exp_stats()`. This results in one per policy year found in the data.
+In the following, `exposed_data` is grouped by policy year before being passed to `exp_stats()`. This results in one row per policy year found in the data.
 
 ```{r grouped-1}
 
@@ -85,7 +85,7 @@ exposed_data |>
 
 ```
 
-Multiple grouping variable are allowed. Below, the presence of an income guarantee (`inc_guar`) is included as a grouping variable.
+Multiple grouping variables are allowed. Below, the presence of an income guarantee (`inc_guar`) is added as a second grouping variable.
 
 ```{r grouped-2}
 
@@ -102,7 +102,7 @@ The `target_status` argument of `exp_stats()` specifies which status levels coun
 
 Even if the target status exists on the input data, it can be overridden. However care should be taken to ensure that exposure values in the data are appropriate for the new status.
 
-Using the example data, a total termination rate can be estimated by including both death and surrender statuses in `target_status`. To ensure exposures are accurate, an adjustment is made to fully expose deaths prior to calling `exp_stats`^[This adjustment is not necessary on surrenders because the `expose()` function already did this for us.].
+Using the example data, a total termination rate can be estimated by including both death and surrender statuses in `target_status`. To ensure exposures are accurate, an adjustment is made to fully expose deaths prior to calling `exp_stats()`^[This adjustment is not necessary on surrenders because the `expose()` function previously did this for us.].
 
 ```{r targ-status}
 
@@ -118,20 +118,20 @@ exposed_data |>
 
 Experience studies often weight output by key policy values. Examples include account values, cash values, face amount, premiums, and more. Weighting can be accomplished by passing the name of a weighting column to the `wt` argument of `exp_stats()`.
 
-Our sample data contains a column called `pol_val` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.
+Our sample data contains a column called `pol_val` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
 
 ```{r weight-res}
 
 exposed_data |> 
   group_by(pol_yr) |> 
-  # exp_stats(wt = 'pol_val')
   exp_stats(wt = 'pol_val')
 
 ```
 
+
 ## Expected values and A/E ratios
 
-As common metric in experience studies is actual-to-expected, or A/E ratio.
+As common metric in experience studies is the actual-to-expected, or A/E ratio.
 
 $$
 A/E\ ratio = \frac{observed\ value}{expected\ value}
@@ -139,7 +139,7 @@ $$
 
 If the data passed to `exp_stats()` has one or more columns containing expected termination rates, A/E ratios can be calculated by passing the names of these columns to the `expected` argument.
 
-Let's assume we have two sets of expected rates. The first set is a vector that varies by policy year. The second set is either 1.5% or 3.0% depending on whether the policy has a guaranteed income benefit. First, we need to attach these assumptions to our exposure data, and we will use the names `expected_1` and `expected_1`. Then we pass these names to the `expected` argument when we call `exp_stats()`.
+Let's assume we have two sets of expected rates. The first set is a vector that varies by policy year. The second set is either 1.5% or 3.0% depending on whether the policy has a guaranteed income benefit. First, we need to attach these assumptions to our exposure data. We will use the names `expected_1` and `expected_2`. Then we pass these names to the `expected` argument when we call `exp_stats()`.
 
 In the output, 4 new columns are created for expected rates and A/E ratios.
 
@@ -148,7 +148,7 @@ In the output, 4 new columns are created for expected rates and A/E ratios.
 
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
-# using 2 different expected termination rates
+# using 2 different expected termination assumption sets
 exposed_data2 <- exposed_data |>
   mutate(expected_1 = expected_table[pol_yr],
          expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
@@ -164,7 +164,7 @@ exp_res |>
 
 ```
 
-As noted above if weights are passed to `exp_stats()` then A/E ratios will also be weighted.
+As noted above, if weights are passed to `exp_stats()` then A/E ratios will also be weighted.
 
 ```{r act-exp-wt}
 
@@ -226,7 +226,7 @@ exposed_data2 |>
 
 As noted above, the result of `exp_stats()` is an `exp_df` object. If the `summary()` function is applied to an `exp_df` object, the data will be summarized again and return a higher level `exp_df` object.
 
-If not additional arguments are passed, `summary()` returns a single row of aggregate results.
+If no additional arguments are passed, `summary()` returns a single row of aggregate results.
 
 ```{r summary1}
 summary(exp_res)

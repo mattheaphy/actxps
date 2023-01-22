@@ -36,7 +36,7 @@ To get started, we're going to use a toy census data frame from the actxps packa
 - `term_date`: termination date, if any. Otherwise `NA`
 
 
-```{r packages, warning=FALSE}
+```{r packages, message=FALSE}
 library(actxps)
 library(dplyr)
 
@@ -49,8 +49,8 @@ toy_census
 Let's assume we're performing an experience study as of 2022-12-31 and we're interested in policy year exposures. Here's what we should expect for our 3 policies.
 
 - Policy 1 was issued on January 1, 2010 and has not terminated. Therefore we expect 13 exposure years.
-- Policy 2 was issued on May 27, 2011 and was terminated in 2020 due to death. The death occurred after the 9th policy anniversary, therefore we expect 10 fully exposed years and a partial exposure in the 10th year.
-- Policy 3 was issued on November 19, 2009 and was terminated in 2022 due to surrender The surrender occurred after the 11th policy anniversary, therefore we expect 11 fully exposed years and a partial exposure in the 12th year.
+- Policy 2 was issued on May 27, 2011 and was terminated in 2020 due to death. The death occurred after the 9th policy anniversary, therefore we expect 9 fully exposed years and a partial exposure in the 10th year.
+- Policy 3 was issued on November 10, 2009 and was terminated in 2022 due to surrender. The surrender occurred after the 12th policy anniversary, therefore we expect 12 fully exposed years and a partial exposure in the 13th year.
 
 To calculate exposures, we pass our data to the `expose()` function and we specify a study `end_date`. 
 
@@ -77,7 +77,7 @@ When the data is printed, additional attributes from the `exposed_df` class are 
 exposed_data |> filter(pol_num == 1)
 ```
 
-**Policy 2**: There are 10 rows for this policy. The first 9 periods show the policy in an active `status` and the termination date (`term_date`) is set to `NA`. The last period includes the final status of "Death" and the actual termination date. The last exposure is less than one because the roughly a third of a year elapsed between the last anniversary date on 2020-05-27 and the termination date on 2020-09-14.
+**Policy 2**: There are 10 rows for this policy. The first 9 periods show the policy in an active `status` and the termination date (`term_date`) is set to `NA`. The last period includes the final status of "Death" and the actual termination date. The last exposure is less than one because roughly a third of a year elapsed between the last anniversary date on 2020-05-27 and the termination date on 2020-09-14.
 
 ```{r expose-pol-2}
 exposed_data |> filter(pol_num == 2)
@@ -127,7 +127,7 @@ exposed_data2 <- expose(toy_census, end_date = "2022-12-31",
                         target = "Surrender")
 ```
 
-Verify that the exposure on the surrendered policy increased to 100% in the last exposure period.
+Now let's verify that the exposure on the surrendered policy increased to 100% in the last exposure period.
 
 ```{r expose-targ-check}
 exposed_data2 |> 
@@ -144,7 +144,7 @@ The default exposure basis used by `expose()` is policy years. Using the argumen
 
 If `cal_expo` is set to `TRUE`, calendar year exposures will be calculated. 
 
-Looking at the second policy, we can see that the first year is left-censored because the policy was issued 2/5 of the way through the year, and the last period is right-censored because the policy terminated roughly 7/10 of the way through the year.
+Looking at the second policy, we can see that the first year is left-censored because the policy was issued two-fifths of the way through the year, and the last period is right-censored because the policy terminated roughly seven-tenths of the way through the year.
 
 ```{r expo-cal}
 
@@ -157,7 +157,7 @@ toy_census[2, ] |>
 
 ### Quarters, months, and weeks
 
-The length of the exposure period can be decreased by passing "quarter", "month", or "week" to the `expo_length` argument. This can be used with policy or calendar-based exposures.
+The length of the exposure period can be decreased by passing `"quarter"`, `"month"`, or `"week"` to the `expo_length` argument. This can be used with policy or calendar-based exposures.
 
 ```{r expo-mth}
 toy_census[2, ] |> 
@@ -179,6 +179,28 @@ The following functions are convenience wrappers around `expose()` that can be u
 - `expose_cq` = exposures by calendar quarter
 - `expose_cm` = exposures by calendar month
 - `expose_cw` = exposures by calendar week
+
+## Tidymodels recipe step
+
+For machine learning feature engineering, the actxps package contains a function called `step_expose()` that is compatible with the recipes package from tidymodels. This function can be used to apply the `expose()` function within a recipe.
+
+```{r rec-expose}
+
+library(recipes)
+
+expo_rec <- recipe(status ~ ., toy_census) |>
+  step_expose(end_date = "2022-12-31", target_status = "Surrender",
+              options = list(expo_length = "month")) |>
+  prep()
+
+expo_rec
+
+tidy(expo_rec, number = 1)
+
+bake(expo_rec, new_data = NULL)
+
+```
+
 
 ## Miscellaneous
 
