@@ -30,7 +30,7 @@ Depends:
     R (>= 4.1)
 Imports: 
     lubridate,
-    dplyr,
+    dplyr (>= 1.1.0),
     ggplot2,
     tibble,
     rlang,
