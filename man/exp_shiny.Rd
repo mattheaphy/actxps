@@ -108,8 +108,7 @@ if (interactive()) {
   set.seed(123)
   study_py <- study_py |>
   dplyr::mutate(expected_1 = expected_table[pol_yr],
-                expected_2 = ifelse(inc_guar, 0.015, 0.03),
-                weights = rnorm(nrow(study_py), 100, 50) |> abs())
+                expected_2 = ifelse(inc_guar, 0.015, 0.03))
 
   exp_shiny(study_py)
 }

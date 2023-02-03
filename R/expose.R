@@ -73,6 +73,7 @@
 #' @references Atkinson and McGarry (2016). Experience Study Calculations.
 #' <https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf>
 #'
+#' @importFrom lubridate %m+%
 #'
 #' @export
 expose <- function(.data,
@@ -88,13 +89,13 @@ expose <- function(.data,
                    default_status) {
 
   # helper functions
-  rename_col <- function(x, prefix) {
+  rename_col <- function(x, prefix, suffix = "") {
     res <- switch(expo_length,
            "year" = "_yr",
            "quarter" = "_qtr",
            "month" = "_mth",
            'week' = "_wk")
-    paste0(prefix, res)
+    paste0(prefix, res, suffix)
   }
 
 
@@ -174,7 +175,8 @@ expose <- function(.data,
   if (cal_expo) {
     res <- res |>
       dplyr::mutate(first_per = .time == 1,
-                    .time = cal_b + expo_step * (.time - 1),
+                    cal_e = cal_b %m+% (expo_step * .time) - 1,
+                    cal_b = cal_b %m+% (expo_step * (.time - 1)),
                     exposure = dplyr::case_when(
                       status %in% target_status ~ 1,
                       first_per & last_per ~ cal_frac(last_date) - cal_frac(first_date, 1),
@@ -183,12 +185,16 @@ expose <- function(.data,
                       TRUE ~ 1)
       ) |>
       dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
-                    -cal_b, -tot_per) |>
-      dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "cal")
+                    -.time, -tot_per) |>
+      dplyr::relocate(cal_e, .after = cal_b) |>
+      dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "cal") |>
+      dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "cal",
+                         suffix = "_end")
   } else {
     res <- res |>
       dplyr::mutate(
-        cal_b = issue_date + expo_step * (.time - 1),
+        cal_b = issue_date %m+% (expo_step * (.time - 1)),
+        cal_e = issue_date %m+% (expo_step * .time) - 1,
         exposure = dplyr::if_else(last_per & !status %in% target_status,
                                   tot_per %% 1, 1),
         # exposure = 0 is possible if exactly 1 period has elapsed. replace these with 1's
@@ -197,7 +203,9 @@ expose <- function(.data,
       dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
       dplyr::filter(cal_b >= start_date) |>
       dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "pol") |>
-      dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date")
+      dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date") |>
+      dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "pol_date",
+                         suffix = "_end")
 
   }
 
