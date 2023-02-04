@@ -70,7 +70,9 @@ expose_cw(...)
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include all existing columns in
-\code{.data} plus new columns for exposures and observation periods.
+\code{.data} plus new columns for exposures and observation periods. Observation
+periods include counters for policy exposures, start dates, and end dates.
+Both start dates and end dates are inclusive bounds.
 
 For policy year exposures, two observation period columns are returned.
 Columns beginning with (\code{pol_}) are integer policy periods. Columns

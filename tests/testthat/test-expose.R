@@ -43,3 +43,24 @@ test_that("Period start and end dates roll", {
   expect_equal(check_period_end_pol, 0)
   expect_equal(check_period_end_cal, 0)
 })
+
+leap_day <- data.frame(pol_num = 1L,
+                       status = 'Active',
+                       issue_date = as.Date("2020-02-29"),
+                       term_date = NA)
+
+leap_expose <- expose_pm(leap_day, end_date = "2021-02-28")
+
+
+
+march_1 <- data.frame(pol_num = 1L,
+                      status = 'Active',
+                      issue_date = as.Date("2019-03-01"),
+                      term_date = NA)
+march_1_expose <- expose_pm(march_1, end_date = "2020-02-29")
+
+
+test_that("Test leap day stability.", {
+  expect_equal(nrow(leap_expose), 12)
+  expect_equal(nrow(march_1_expose), 12)
+})

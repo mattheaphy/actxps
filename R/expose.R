@@ -58,7 +58,9 @@
 #'
 #' @return A tibble with class `exposed_df`, `tbl_df`, `tbl`,
 #' and `data.frame`. The results include all existing columns in
-#' `.data` plus new columns for exposures and observation periods.
+#' `.data` plus new columns for exposures and observation periods. Observation
+#' periods include counters for policy exposures, start dates, and end dates.
+#' Both start dates and end dates are inclusive bounds.
 #'
 #' For policy year exposures, two observation period columns are returned.
 #' Columns beginning with (`pol_`) are integer policy periods. Columns
@@ -87,6 +89,8 @@ expose <- function(.data,
                    col_issue_date = "issue_date",
                    col_term_date = "term_date",
                    default_status) {
+
+  end_date <- as.Date(end_date)
 
   # helper functions
   rename_col <- function(x, prefix, suffix = "") {
@@ -201,11 +205,12 @@ expose <- function(.data,
         exposure = dplyr::if_else(exposure == 0, 1, exposure)
       ) |>
       dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
-      dplyr::filter(cal_b >= start_date) |>
+      dplyr::filter(dplyr::between(cal_b, start_date, end_date)) |>
       dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "pol") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "pol_date",
                          suffix = "_end")
+
 
   }
 
