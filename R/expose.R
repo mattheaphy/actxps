@@ -91,6 +91,7 @@ expose <- function(.data,
                    default_status) {
 
   end_date <- as.Date(end_date)
+  start_date <- as.Date(start_date)
 
   # helper functions
   rename_col <- function(x, prefix, suffix = "") {
