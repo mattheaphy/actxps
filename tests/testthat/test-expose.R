@@ -64,3 +64,14 @@ test_that("Test leap day stability.", {
   expect_equal(nrow(leap_expose), 12)
   expect_equal(nrow(march_1_expose), 12)
 })
+
+
+with_start_date <- expose_py(census_dat,
+                             "2019-12-31",
+                             start_date = "2018-12-31",
+                             target_status = "Surrender")
+
+test_that("Start and end dates work.", {
+  expect_gte(min(with_start_date$pol_date_yr), as.Date("2018-12-31"))
+  expect_lte(max(with_start_date$pol_date_yr), as.Date("2019-12-31"))
+})
