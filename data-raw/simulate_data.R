@@ -83,7 +83,7 @@ sim_data <- function(n_pol = 1) {
     product = draw(product_dist),
     gender = draw(gender_dist),
     wd_age = draw(wd_time_dist) |> pmax(age),
-    pol_val = round(1000 * exp(rnorm(n_pol, 0, 0.75)), 0)
+    premium = round(1000 * exp(rnorm(n_pol, 0, 0.75)), 0)
   )
 
 }
@@ -183,10 +183,10 @@ expand_sim <- function(dat) {
       prod_mult = prod_mult[product],
       gender_mult = gender_mult[gender],
       wd_time_mult = wd_time_mult(exercised, age, inc_guar),
-      size_mult = size_mult(pol_val),
+      size_mult = size_mult(premium),
       q_w = pmin(qual_mult * age_mult * prod_mult * base_rate *
                    wd_time_mult * size_mult,
-                   0.99),
+                 0.99),
       cal_yr = year(issue_date) + pol_yr - 1,
       qx = qx * (1 - mi) ^ (cal_yr - 2012),
       exposure = ifelse(last_yr,
@@ -259,3 +259,94 @@ census_dat <- census_dat |>
   select(-pol_yr) |>
   inner_join(final_status, by = "pol_num") |>
   select(pol_num, status, everything())
+
+
+
+
+# transactions and account values -----------------------------------------
+
+source("R/expose.R")
+source("R/exposed_df_helpers.R")
+
+# create a random date betwen x and y
+rand_between <- function(x, y) {
+  n <- as.integer(y - x + 1)
+  x + as.integer(runif(length(n), 0, n))
+}
+
+# expose census data
+expo_dat <- census_dat |> expose_py("2019-12-31")
+
+n <- nrow(expo_dat)
+
+# interest rates for AV roll-forwards
+i <- c("a" = 0.05, "b" = 0.04, c = 0.045)
+
+# create random withdrawal dates and rates, then generate AV roll-forwards
+expo_dat <- expo_dat |>
+  mutate(
+    age = age + pol_yr - 1,
+    wd_flag = age >= wd_age,
+    trx_date = if_else(wd_flag,
+                      rand_between(pol_date_yr, pol_date_yr_end),
+                      NA_Date_),
+    # withdrawal types - income guarantee if wd_flag and an age threshold
+    #   has been reached depending on the product. Base withdrawal if wd_flag,
+    #   otherwise NA.
+    trx_type = case_when(
+      .default = "Base",
+      !wd_flag ~ NA,
+      inc_guar ~ case_when(
+        product == "a" & age >= 70 ~ "Rider",
+        product == "b" & age >= 50 ~ "Rider",
+        product == "c" & age >= 60 ~ "Rider",
+        .default = "Base"
+      )
+    ) |> factor(),
+    wd_pct = case_when(
+      !wd_flag ~ 0,
+      trx_type == "Rider" ~ rbeta(n, 1, (100-age) * 38 / 60),
+      .default = rbeta(n, 1, 39)
+    )
+  ) |>
+  group_by(pol_num) |>
+  mutate(
+    i = i[product],
+    av_end = premium * (1 + i) ^ pol_yr * cumprod(1 - wd_pct),
+    av_beg = lag(av_end, default = premium[[1]]),
+    trx_amt = av_beg * wd_pct) |>
+  ungroup()
+
+# break withdrawals into multiple pieces per policy yera
+wd_freq_dist <- tribble(~value, ~prob,
+                        1, 0.5,
+                        2, 0.1,
+                        4, 0.2,
+                        12, 0.1)
+
+stopifnot(sum(wd_freq_dist$prob) <= 1)
+
+
+freq <- expo_dat |>
+  filter(trx_amt > 0) |>
+  select(pol_num) |>
+  distinct()
+
+freq <- freq |>
+  mutate(freq = sample(wd_freq_dist$value,
+                       nrow(freq), replace = TRUE,
+                       prob = wd_freq_dist$prob))
+
+withdrawals <- expo_dat |>
+  left_join(freq, by = "pol_num") |>
+  mutate(trx_amt = trx_amt / freq) |>
+  filter(trx_amt > 0) |>
+  slice(rep(row_number(), freq)) |>
+  mutate(trx_date = rand_between(pol_date_yr, pol_date_yr_end),
+         trx_amt = round(trx_amt)) |>
+  select(pol_num, trx_date, trx_type, trx_amt)
+
+# pull account values into a separate data frame
+account_vals <- expo_dat |>
+  select(pol_num, pol_date_yr, av_beg, av_end) |>
+  mutate(across(av_beg:av_end, round))

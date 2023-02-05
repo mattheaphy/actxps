@@ -118,13 +118,13 @@ exposed_data |>
 
 Experience studies often weight output by key policy values. Examples include account values, cash values, face amount, premiums, and more. Weighting can be accomplished by passing the name of a weighting column to the `wt` argument of `exp_stats()`.
 
-Our sample data contains a column called `pol_val` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
+Our sample data contains a column called `premium` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
 
 ```{r weight-res}
 
 exposed_data |> 
-  group_by(pol_yr) |> 
-  exp_stats(wt = 'pol_val')
+  group_by(premium) |> 
+  exp_stats(wt = 'premium')
 
 ```
 
@@ -171,7 +171,7 @@ As noted above, if weights are passed to `exp_stats()` then A/E ratios will also
 exposed_data2 |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"), 
-            wt = "pol_val") |> 
+            wt = "premium") |> 
   select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
          ae_expected_1, ae_expected_2)
 
