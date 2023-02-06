@@ -305,8 +305,9 @@ expo_dat <- expo_dat |>
     ) |> factor(),
     wd_pct = case_when(
       !wd_flag ~ 0,
-      trx_type == "Rider" ~ rbeta(n, 1, (100-age) * 38 / 60),
-      .default = rbeta(n, 1, 39)
+      trx_type == "Rider" ~ rbeta(n, 1, (100-age) * 38 / 60) |>
+        pmax(1 / premium),
+      .default = rbeta(n, 1, 39) |> pmax(1 / premium)
     )
   ) |>
   group_by(pol_num) |>
@@ -317,14 +318,13 @@ expo_dat <- expo_dat |>
     trx_amt = av_beg * wd_pct) |>
   ungroup()
 
-# break withdrawals into multiple pieces per policy yera
+# break withdrawals into multiple pieces per policy year
 wd_freq_dist <- tribble(~value, ~prob,
                         1, 0.5,
-                        2, 0.1,
-                        4, 0.2,
-                        12, 0.1)
+                        2, 0.15,
+                        4, 0.35)
 
-stopifnot(sum(wd_freq_dist$prob) <= 1)
+stopifnot(near(sum(wd_freq_dist$prob), 1))
 
 
 freq <- expo_dat |>
@@ -344,9 +344,10 @@ withdrawals <- expo_dat |>
   slice(rep(row_number(), freq)) |>
   mutate(trx_date = rand_between(pol_date_yr, pol_date_yr_end),
          trx_amt = round(trx_amt)) |>
-  select(pol_num, trx_date, trx_type, trx_amt)
+  select(pol_num, trx_date, trx_type, trx_amt) |>
+  filter(trx_amt > 0)
 
 # pull account values into a separate data frame
 account_vals <- expo_dat |>
-  select(pol_num, pol_date_yr, av_beg, av_end) |>
-  mutate(across(av_beg:av_end, round))
+  select(pol_num, pol_date_yr, av_anniv = av_beg) |>
+  mutate(av_anniv = round(av_anniv))

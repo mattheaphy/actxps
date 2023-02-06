@@ -14,9 +14,9 @@ withrawal transactions (\code{withdrawals}), and historical account values
 
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 20000 rows and 11 columns.
 
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 225778 rows and 4 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 160130 rows and 4 columns.
 
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 141252 rows and 4 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 141252 rows and 3 columns.
 }
 \usage{
 census_dat
@@ -59,8 +59,7 @@ does not represent the experience on any specific product.
 \describe{
 \item{pol_num}{policy number}
 \item{pol_date_yr}{policy anniversary date (beginning of year)}
-\item{av_beg}{account value at the beginning of the policy year}
-\item{av_end}{account value at the end of the policy ear}
+\item{av_anniv}{account value on the policy anniversary date}
 }
 }
 

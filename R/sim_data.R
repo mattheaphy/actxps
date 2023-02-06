@@ -40,8 +40,7 @@
 #' \describe{
 #'   \item{pol_num}{policy number}
 #'   \item{pol_date_yr}{policy anniversary date (beginning of year)}
-#'   \item{av_beg}{account value at the beginning of the policy year}
-#'   \item{av_end}{account value at the end of the policy ear}
+#'   \item{av_anniv}{account value on the policy anniversary date}
 #' }
 #'
 
