@@ -34,3 +34,18 @@ test_that("Experience study summary method checks", {
                          credibility = TRUE, wt = "weights"),
                summary(exp_res_weighted))
 })
+
+
+toy_expo <- toy_census |> expose("2022-12-31", target_status = "Surrender") |>
+  dplyr::rename(a = exposure, b = status)
+
+renamer <- c("pol_num" = "a",
+             "status" = "b",
+             "issue_date" = "c",
+             "term_date" = "d")
+toy_census2 <- toy_census |> dplyr::rename_with(\(x) renamer[x])
+
+test_that("Renaming works", {
+  expect_error(exp_stats(toy_expo))
+  expect_no_error(exp_stats(toy_expo, col_exposure = "a", col_status = "b"))
+})

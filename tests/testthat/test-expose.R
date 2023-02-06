@@ -75,3 +75,26 @@ test_that("Start and end dates work.", {
   expect_gte(min(with_start_date$pol_date_yr), as.Date("2018-12-31"))
   expect_lte(max(with_start_date$pol_date_yr), as.Date("2019-12-31"))
 })
+
+exposed_strings <- expose(toy_census, "2020-12-31", "2016-04-01")
+exposed_dates <- expose(toy_census, as.Date("2020-12-31"),
+                        as.Date("2016-04-01"))
+
+test_that("Expose date arguments can be passed strings.", {
+  expect_identical(exposed_strings, exposed_dates)
+})
+
+renamer <- c("pol_num" = "a",
+             "status" = "b",
+             "issue_date" = "c",
+             "term_date" = "d")
+toy_census2 <- toy_census |> dplyr::rename_with(\(x) renamer[x])
+
+test_that("Renaming works", {
+  expect_error(expose(toy_census2, "2020-12-31"))
+  expect_no_error(expose(toy_census2, "2020-12-31",
+                         col_pol_num = "a",
+                         col_status = "b",
+                         col_issue_date = "c",
+                         col_term_date = "d"))
+})
