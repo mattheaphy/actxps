@@ -95,12 +95,8 @@ expose <- function(.data,
 
   # helper functions
   rename_col <- function(x, prefix, suffix = "") {
-    res <- switch(expo_length,
-           "year" = "_yr",
-           "quarter" = "_qtr",
-           "month" = "_mth",
-           'week' = "_wk")
-    paste0(prefix, res, suffix)
+    res <- abbr_period(expo_length)
+    paste0(prefix, "_", res, suffix)
   }
 
 
@@ -291,12 +287,13 @@ week_frac <- function(x, .offset = 0) {
 # helper function to handle name conflicts
 .expo_name_conflict <- function(.data, cal_expo, expo_length) {
 
-  abbrevs <- c(year = "yr", quarter = "qtr", month = "mth", week = "wk")
+  abbrev <- abbr_period(expo_length)
 
   x <- c(
     "exposure",
-    paste0(if (cal_expo) "cal_" else "pol_", abbrevs[expo_length]),
-    if (!cal_expo) paste0("pol_date_", abbrevs[expo_length])
+    paste0(if (cal_expo) "cal_" else "pol_", abbrev),
+    if (!cal_expo) paste0("pol_date_", abbrev),
+    paste0(if (cal_expo) "cal_" else "pol_date_", abbrev, "_end")
   )
 
   x <- x[x %in% names(.data)]
@@ -316,4 +313,13 @@ print.exposed_df <- function(x, ...) {
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n\n")
   NextMethod()
+}
+
+# helper function - do not export
+abbr_period <- function(x) {
+  switch(x,
+         "year" = "yr",
+         "quarter" = "qtr",
+         "month" = "mth",
+         'week' = "wk")
 }

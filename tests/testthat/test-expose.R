@@ -90,11 +90,17 @@ renamer <- c("pol_num" = "a",
              "term_date" = "d")
 toy_census2 <- toy_census |> dplyr::rename_with(\(x) renamer[x])
 
-test_that("Renaming works", {
+test_that("Renaming and name conflict warnings work", {
   expect_error(expose(toy_census2, "2020-12-31"))
   expect_no_error(expose(toy_census2, "2020-12-31",
                          col_pol_num = "a",
                          col_status = "b",
                          col_issue_date = "c",
                          col_term_date = "d"))
+  expect_warning(expose(toy_census |> mutate(exposure = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> mutate(pol_yr = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> mutate(pol_date_yr = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> mutate(pol_date_yr_end = 1), "2020-12-31"))
+  expect_warning(expose_cy(toy_census |> mutate(cal_yr = 1), "2020-12-31"))
+  expect_warning(expose_cy(toy_census |> mutate(cal_yr_end = 1), "2020-12-31"))
 })
