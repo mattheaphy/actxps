@@ -17,7 +17,7 @@
 #'
 #' @export
 is_exposed_df <- function(x) {
-  "exposed_df" %in% class(x)
+  inherits(x, "exposed_df")
 }
 
 #' @rdname is_exposed_df
