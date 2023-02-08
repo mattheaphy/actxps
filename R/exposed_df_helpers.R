@@ -30,10 +30,17 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     rlang::abort("`x` must be a data frame.")
   }
 
+  abbrev <- abbr_period(expo_length)
+  date_cols <- c(
+    paste0(if (cal_expo) "cal_" else "pol_date_", abbrev),
+    paste0(if (cal_expo) "cal_" else "pol_date_", abbrev, "_end")
+  )
+
   structure(x, class = c("exposed_df", class(x)),
             target_status = target_status,
             exposure_type = glue::glue("{if(cal_expo) 'calendar' else 'policy'}_{expo_length}"),
             start_date = start_date,
-            end_date = end_date)
+            end_date = end_date,
+            date_cols = date_cols)
 
 }
