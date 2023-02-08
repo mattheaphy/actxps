@@ -97,10 +97,10 @@ test_that("Renaming and name conflict warnings work", {
                          col_status = "b",
                          col_issue_date = "c",
                          col_term_date = "d"))
-  expect_warning(expose(toy_census |> mutate(exposure = 1), "2020-12-31"))
-  expect_warning(expose(toy_census |> mutate(pol_yr = 1), "2020-12-31"))
-  expect_warning(expose(toy_census |> mutate(pol_date_yr = 1), "2020-12-31"))
-  expect_warning(expose(toy_census |> mutate(pol_date_yr_end = 1), "2020-12-31"))
-  expect_warning(expose_cy(toy_census |> mutate(cal_yr = 1), "2020-12-31"))
-  expect_warning(expose_cy(toy_census |> mutate(cal_yr_end = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> dplyr::mutate(exposure = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> dplyr::mutate(pol_yr = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> dplyr::mutate(pol_date_yr = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> dplyr::mutate(pol_date_yr_end = 1), "2020-12-31"))
+  expect_warning(expose_cy(toy_census |> dplyr::mutate(cal_yr = 1), "2020-12-31"))
+  expect_warning(expose_cy(toy_census |> dplyr::mutate(cal_yr_end = 1), "2020-12-31"))
 })
