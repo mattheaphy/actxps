@@ -21,7 +21,12 @@
 #' @export
 add_transactions <- function(.data, trx_data) {
 
-  # what if .data isn't an exposed_df?
+  if(!is_exposed_df(.data)) {
+    rlang::abort(c(x = "`.data` must be an `exposed_df` object.",
+                   i = "Hint: Use `as_exposed_df()` to convert your data to the required format.."
+    ))
+  }
+
   date_cols <- attr(.data, "date_cols") |> rlang::parse_exprs()
 
   # select a subset of columns - change dat to .data
