@@ -7,7 +7,7 @@
 exp_shiny(
   dat,
   predictors = names(dat),
-  expected = stringr::str_subset(names(dat), "expected"),
+  expected = names(dat)[grepl("expected", names(dat))],
   distinct_max = 25L
 )
 }

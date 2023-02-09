@@ -47,7 +47,7 @@
 #' @param end_date experience study end date
 #' @param start_date experience study start date. Default value = 1900-01-01.
 #' @param target_status character vector of target status values. Default value = `NULL`.
-#' @param cal_expo set to TRUE for calendar year exposures. Otherwise policy year exposures are used.
+#' @param cal_expo set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.
 #' @param expo_length exposure period length
 #' @param col_pol_num name of the column in `.data` containing the policy number
 #' @param col_status name of the column in `.data` containing the policy status
@@ -212,8 +212,8 @@ expose <- function(.data,
   }
 
   # set up S3 object
-  as_exposed_df(res, end_date, start_date,
-                target_status, cal_expo, expo_length)
+  new_exposed_df(res, end_date, start_date,
+                 target_status, cal_expo, expo_length)
 
 }
 
@@ -299,7 +299,7 @@ week_frac <- function(x, .offset = 0) {
   x <- x[x %in% names(.data)]
   .data[x] <- NULL
   if (length(x > 0)) {
-    rlang::warn(c(x = glue::glue(".data contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}. If you don't want this to happen, please rename these columns prior to calling the applicable expose function.")))
+    rlang::warn(c(x = glue::glue("`.data` contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}. If you don't want this to happen, please rename these columns prior to calling the applicable expose function.")))
   }
   .data
 }

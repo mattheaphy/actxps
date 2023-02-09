@@ -13,11 +13,16 @@ as_exposed_df(
   start_date = as.Date("1900-01-01"),
   target_status = NULL,
   cal_expo = FALSE,
-  expo_length = "year"
+  expo_length = c("year", "quarter", "month", "week"),
+  col_pol_num,
+  col_status,
+  col_exposure,
+  col_pol_per,
+  cols_dates
 )
 }
 \arguments{
-\item{x}{an object. \code{x} must be a data frame when calling \code{as_exposed_df()}}
+\item{x}{an object. For \code{as_exposed_df()}, \code{x} must be a data frame.}
 
 \item{end_date}{experience study end date}
 
@@ -25,9 +30,29 @@ as_exposed_df(
 
 \item{target_status}{character vector of target status values. Default value = \code{NULL}.}
 
-\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are used.}
+\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
 
 \item{expo_length}{exposure period length}
+
+\item{col_pol_num}{Optional. Name of the column in \code{x} containing the policy
+number. The assumed default is "pol_num".}
+
+\item{col_status}{Optional. Name of the column in \code{x} containing the policy
+status. The assumed default is "status".}
+
+\item{col_exposure}{Optional. Name of the column in \code{x} containing exposures.
+The assumed default is "exposure".}
+
+\item{col_pol_per}{Optional. Name of the column in \code{x} containing policy
+exposure periods. Only necessary if \code{cal_expo} is \code{FALSE}. The assumed
+default is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk" depending on
+the value of \code{expo_length}.}
+
+\item{cols_dates}{Optional. Names of the column in \code{x} containing exposure
+start and end dates. Both date ranges are assumed to be exclusive. The
+assumed default is of the form \emph{A}_\emph{B}. \emph{A} is "cal" if \code{cal_expo} is \code{TRUE}
+or "pol" otherwise. \emph{B} is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"
+depending on the value of \code{expo_length}.}
 }
 \value{
 For \code{is_exposed_df()}, a length-1 logical vector. For
@@ -42,5 +67,7 @@ by users.
 
 \code{is_exposed_df()} will return \code{TRUE} if \code{x} is an \code{exposed_df} object.
 
-\code{as_exposed_df()} will coerce a data frame to an \code{exposed_df} object.
+\code{as_exposed_df()} will coerce a data frame to an \code{exposed_df} object if that
+data frame has columns for policy numbers, statuses, exposures,
+policy periods (for policy exposures only), and exposure start / end dates.
 }
