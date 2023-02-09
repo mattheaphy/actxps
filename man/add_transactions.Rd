@@ -7,8 +7,9 @@
 add_transactions(.data, trx_data)
 }
 \arguments{
-\item{.data}{a data frame with exposure-level records, ideally of type
-\code{exposed_df}}
+\item{.data}{a data frame with exposure-level records of type
+\code{exposed_df}. Use \code{\link[=as_exposed_df]{as_exposed_df()}} to convert a data frame to an
+\code{exposed_df} object if necessary.}
 
 \item{trx_data}{a data frame containing transactions details}
 }

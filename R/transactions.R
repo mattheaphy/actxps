@@ -5,8 +5,9 @@
 #'
 #' @details UPDATE ME
 #'
-#' @param .data a data frame with exposure-level records, ideally of type
-#' `exposed_df`
+#' @param .data a data frame with exposure-level records of type
+#' `exposed_df`. Use [as_exposed_df()] to convert a data frame to an
+#' `exposed_df` object if necessary.
 #' @param trx_data a data frame containing transactions details
 #'
 #' @examples

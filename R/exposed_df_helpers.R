@@ -2,9 +2,6 @@
 #'
 #' Test for and coerce to the `exposed_df` class.
 #'
-#' These are behind-the-scenes functions that will generally not be called
-#' by users.
-#'
 #' `is_exposed_df()` will return `TRUE` if `x` is an `exposed_df` object.
 #'
 #' `as_exposed_df()` will coerce a data frame to an `exposed_df` object if that
