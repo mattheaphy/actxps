@@ -45,6 +45,7 @@ Imports:
     shiny (>= 1.6),
     bslib,
     thematic,
-    readr
+    readr,
+    tidyr
 LazyData: true
 VignetteBuilder: knitr

@@ -32,15 +32,19 @@ add_transactions <- function(.data, trx_data) {
   trx_data <- dplyr::left_join(
     trx_data, date_lookup, multiple = "error",
     dplyr::join_by(pol_num,
-                   between(trx_date, !!date_cols[[1]], !!date_cols[[2]])))
+                   between(trx_date, !!date_cols[[1]], !!date_cols[[2]]))) |>
+    dplyr::mutate(trx_n = 1) |>
+    tidyr::pivot_wider(
+      names_from = trx_type,
+      id_cols = c(pol_num, !!date_cols[[1]]),
+      values_from = c(trx_amt, trx_n),
+      values_fn = \(x) sum(x, na.rm = TRUE))
 
-  trx_data <- trx_data |>
-    dplyr::group_by(pol_num, trx_type, !!date_cols[[1]]) |>
-    dplyr::summarize(trx_n = dplyr::n(),
-                     trx_amt = sum(trx_amt, na.rm = TRUE),
-                     .groups = "drop")
+  # update exposed_df structure to document transaction types
 
   .data |>
-    dplyr::left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]]))
+    dplyr::left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]])) |>
+    dplyr::mutate(dplyr::across(dplyr::starts_with("trx_"), \(x)
+                                dplyr::coalesce(x, 0)))
 
 }
