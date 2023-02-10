@@ -45,7 +45,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                              rename_cols = rlang::list2(...),
                              ...) {
 
-  x <- RColorBrewer::brewer.pal(3, "GnBu")
+  rlang::check_installed("RColorBrewer")
 
   expected <- attr(object, "expected")
   target_status <- attr(object, "target_status")

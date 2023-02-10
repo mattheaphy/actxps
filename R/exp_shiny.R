@@ -91,7 +91,7 @@
 #' @export
 exp_shiny <- function(dat,
                       predictors = names(dat),
-                      expected = stringr::str_subset(names(dat), "expected"),
+                      expected = names(dat)[grepl("expected", names(dat))],
                       distinct_max = 25L) {
 
   if (!is_exposed_df(dat)) {
