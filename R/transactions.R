@@ -47,11 +47,7 @@ add_transactions <- function(.data, trx_data,
                              col_trx_type = "trx_type",
                              col_trx_amt = "trx_amt") {
 
-  if(!is_exposed_df(.data)) {
-    rlang::abort(c(x = "`.data` must be an `exposed_df` object.",
-                   i = "Hint: Use `as_exposed_df()` to convert your data to the required format.."
-    ))
-  }
+  verify_exposed_df(.data)
 
   if(!is.data.frame(trx_data)) {
     rlang::abort(c(x = "`trx_data` must be a data frame."))

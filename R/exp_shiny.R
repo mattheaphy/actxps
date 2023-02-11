@@ -94,9 +94,7 @@ exp_shiny <- function(dat,
                       expected = names(dat)[grepl("expected", names(dat))],
                       distinct_max = 25L) {
 
-  if (!is_exposed_df(dat)) {
-    rlang::abort("`dat` is not an `exposed_df` object. Try converting `dat` to an `exposed_df` using `as_exposed_df`.")
-  }
+  verify_exposed_df(dat)
 
   if (any(!c(predictors, expected) %in% names(dat))) {
     rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values will be removed.")

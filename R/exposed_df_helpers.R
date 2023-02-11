@@ -7,6 +7,8 @@
 #' `as_exposed_df()` will coerce a data frame to an `exposed_df` object if that
 #' data frame has columns for policy numbers, statuses, exposures,
 #' policy periods (for policy exposures only), and exposure start / end dates.
+#' Optionally, if `x` has transaction counts and amounts by type, these can
+#' be specified without calling [add_transactions()].
 #'
 #' @param x an object. For `as_exposed_df()`, `x` must be a data frame.
 #' @param trx_types Optional. Character vector containing unique transaction
@@ -170,4 +172,12 @@ make_date_col_names <- function(cal_expo, expo_length) {
     paste0(if (cal_expo) "cal_" else "pol_date_", abbrev),
     paste0(if (cal_expo) "cal_" else "pol_date_", abbrev, "_end")
   )
+}
+
+verify_exposed_df <- function(.data) {
+  if(!is_exposed_df(.data)) {
+    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be an `exposed_df` object."),
+                   i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
+    ))
+  }
 }
