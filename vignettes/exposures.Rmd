@@ -69,7 +69,8 @@ is_exposed_df(exposed_data)
 
 Let's examine what happened to each policy.
 
-**Policy 1**: As expected, there are 13 rows for this policy. New columns were added for the policy year (`pol_yr`), anniversary (`pol_date_yr`), and exposure. All exposures are 100% since this policy was active for all 13 years.
+**Policy 1**: As expected, there are 13 rows for this policy. New columns were added for the policy year (`pol_yr`), date ranges (`pol_date_yr`, `pol_date_yr_end`), and
+exposure. All exposures are 100% since this policy was active for all 13 years.
 
 When the data is printed, additional attributes from the `exposed_df` class are displayed.
 
