@@ -47,7 +47,7 @@
 #' @param end_date experience study end date
 #' @param start_date experience study start date. Default value = 1900-01-01.
 #' @param target_status character vector of target status values. Default value = `NULL`.
-#' @param cal_expo set to TRUE for calendar year exposures. Otherwise policy year exposures are used.
+#' @param cal_expo set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.
 #' @param expo_length exposure period length
 #' @param col_pol_num name of the column in `.data` containing the policy number
 #' @param col_status name of the column in `.data` containing the policy status
@@ -58,7 +58,9 @@
 #'
 #' @return A tibble with class `exposed_df`, `tbl_df`, `tbl`,
 #' and `data.frame`. The results include all existing columns in
-#' `.data` plus new columns for exposures and observation periods.
+#' `.data` plus new columns for exposures and observation periods. Observation
+#' periods include counters for policy exposures, start dates, and end dates.
+#' Both start dates and end dates are inclusive bounds.
 #'
 #' For policy year exposures, two observation period columns are returned.
 #' Columns beginning with (`pol_`) are integer policy periods. Columns
@@ -73,6 +75,7 @@
 #' @references Atkinson and McGarry (2016). Experience Study Calculations.
 #' <https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf>
 #'
+#' @importFrom lubridate %m+%
 #'
 #' @export
 expose <- function(.data,
@@ -87,14 +90,13 @@ expose <- function(.data,
                    col_term_date = "term_date",
                    default_status) {
 
+  end_date <- as.Date(end_date)
+  start_date <- as.Date(start_date)
+
   # helper functions
-  rename_col <- function(x, prefix) {
-    res <- switch(expo_length,
-           "year" = "_yr",
-           "quarter" = "_qtr",
-           "month" = "_mth",
-           'week' = "_wk")
-    paste0(prefix, res)
+  rename_col <- function(x, prefix, suffix = "") {
+    res <- abbr_period(expo_length)
+    paste0(prefix, "_", res, suffix)
   }
 
 
@@ -174,7 +176,8 @@ expose <- function(.data,
   if (cal_expo) {
     res <- res |>
       dplyr::mutate(first_per = .time == 1,
-                    .time = cal_b + expo_step * (.time - 1),
+                    cal_e = cal_b %m+% (expo_step * .time) - 1,
+                    cal_b = cal_b %m+% (expo_step * (.time - 1)),
                     exposure = dplyr::case_when(
                       status %in% target_status ~ 1,
                       first_per & last_per ~ cal_frac(last_date) - cal_frac(first_date, 1),
@@ -183,21 +186,28 @@ expose <- function(.data,
                       TRUE ~ 1)
       ) |>
       dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
-                    -cal_b, -tot_per) |>
-      dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "cal")
+                    -.time, -tot_per) |>
+      dplyr::relocate(cal_e, .after = cal_b) |>
+      dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "cal") |>
+      dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "cal",
+                         suffix = "_end")
   } else {
     res <- res |>
       dplyr::mutate(
-        cal_b = issue_date + expo_step * (.time - 1),
+        cal_b = issue_date %m+% (expo_step * (.time - 1)),
+        cal_e = issue_date %m+% (expo_step * .time) - 1,
         exposure = dplyr::if_else(last_per & !status %in% target_status,
                                   tot_per %% 1, 1),
         # exposure = 0 is possible if exactly 1 period has elapsed. replace these with 1's
         exposure = dplyr::if_else(exposure == 0, 1, exposure)
       ) |>
       dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
-      dplyr::filter(cal_b >= start_date) |>
+      dplyr::filter(dplyr::between(cal_b, start_date, end_date)) |>
       dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "pol") |>
-      dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date")
+      dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date") |>
+      dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "pol_date",
+                         suffix = "_end")
+
 
   }
 
@@ -277,18 +287,19 @@ week_frac <- function(x, .offset = 0) {
 # helper function to handle name conflicts
 .expo_name_conflict <- function(.data, cal_expo, expo_length) {
 
-  abbrevs <- c(year = "yr", quarter = "qtr", month = "mth", week = "wk")
+  abbrev <- abbr_period(expo_length)
 
   x <- c(
     "exposure",
-    paste0(if (cal_expo) "cal_" else "pol_", abbrevs[expo_length]),
-    if (!cal_expo) paste0("pol_date_", abbrevs[expo_length])
+    paste0(if (cal_expo) "cal_" else "pol_", abbrev),
+    if (!cal_expo) paste0("pol_date_", abbrev),
+    paste0(if (cal_expo) "cal_" else "pol_date_", abbrev, "_end")
   )
 
   x <- x[x %in% names(.data)]
   .data[x] <- NULL
   if (length(x > 0)) {
-    rlang::warn(c(x = glue::glue(".data contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}. If you don't want this to happen, please rename these columns prior to calling the applicable expose function.")))
+    rlang::warn(c(x = glue::glue("`.data` contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}. If you don't want this to happen, please rename these columns prior to calling the applicable expose function.")))
   }
   .data
 }
@@ -302,4 +313,13 @@ print.exposed_df <- function(x, ...) {
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n\n")
   NextMethod()
+}
+
+# helper function - do not export
+abbr_period <- function(x) {
+  switch(x,
+         "year" = "yr",
+         "quarter" = "qtr",
+         "month" = "mth",
+         'week' = "wk")
 }

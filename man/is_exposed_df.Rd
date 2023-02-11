@@ -25,7 +25,7 @@ as_exposed_df(
 
 \item{target_status}{character vector of target status values. Default value = \code{NULL}.}
 
-\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are used.}
+\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
 
 \item{expo_length}{exposure period length}
 }
