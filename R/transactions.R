@@ -49,10 +49,18 @@ add_transactions <- function(.data, trx_data,
   date_lookup <- .data |>
     dplyr::select(pol_num, !!!date_cols)
 
+  # # column renames
+  trx_data <- trx_data |>
+    dplyr::rename(pol_num = {{col_pol_num}},
+                  trx_date = {{col_trx_date}},
+                  trx_type = {{col_trx_type}},
+                  trx_amt = {{col_trx_amt}})
+
+
   # check for conflicting transaction types
   existing_trx_types <- attr(.data, "trx_types")
   new_trx_types <- unique(trx_data$trx_type)
-  conflict_trx_types <- new_trx_types[new_trx_types %in% existing_trx_types]
+  conflict_trx_types <- intersect(new_trx_types, existing_trx_types)
   if (length(conflict_trx_types) > 0) {
     rlang::abort(c(x = glue::glue("`trx_data` contains transaction types that have already been attached to `.data`: {paste(conflict_trx_types, collapse = ', ')}."),
                    i = "Update `trx_data` with unique transaction types."))
@@ -60,11 +68,6 @@ add_transactions <- function(.data, trx_data,
 
   # add dates to transaction data
   trx_data <- trx_data |>
-    # column renames
-    dplyr::rename(pol_num = {{col_pol_num}},
-                  trx_date = {{col_trx_date}},
-                  trx_type = {{col_trx_type}},
-                  trx_amt = {{col_trx_amt}}) |>
     # between-join by transaction date falling within exposures windows
     dplyr::inner_join(
       date_lookup, multiple = "error",
