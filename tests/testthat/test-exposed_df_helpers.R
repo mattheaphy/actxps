@@ -5,9 +5,11 @@ test_that("is_exposed_df works", {
   expect_false(is_exposed_df(mtcars))
 })
 
+expo2 <- as.data.frame(expo)
+
 test_that("as_exposed_df works", {
 
-  expo2 <- as.data.frame(expo)
+
   expo3 <- as_exposed_df(expo2, end_date = "2022-12-31")
   expo4 <- expo2 |>
     dplyr::rename(pnum = pol_num)
@@ -37,7 +39,28 @@ test_that("as_exposed_df works", {
                                 col_pol_per = "py",
                                 cols_dates = c("start", "end")))
 
-  #expect_true(is_exposed_df(x))
   expect_error(as_exposed_df(1))
+
+})
+
+test_that("as_exposed_df works with transactions", {
+
+  expo6 <- expo2 |>
+    dplyr::mutate(
+      trx_n_A = 1,
+      trx_amt_A = 2,
+      trx_n_B = 3,
+      trx_amt_B = 4)
+
+  expect_no_error(as_exposed_df(expo6, "2022-12-31", trx_types = c("A", "B")))
+  expect_error(as_exposed_df(expo6, "2022-12-31", trx_types = c("A", "C")))
+
+  expo7 <- expo6 |>
+    dplyr::rename(n_A = trx_n_A, n_B = trx_n_B,
+                  amt_A = trx_amt_A, amt_B = trx_amt_B)
+  expect_error(as_exposed_df(expo7, "2022-12-31", trx_types = c("A", "B")))
+  expect_no_error(as_exposed_df(expo7, "2022-12-31", trx_types = c("A", "B"),
+                                col_trx_n_ = "n_",
+                                col_trx_amt_ = "amt_"))
 
 })

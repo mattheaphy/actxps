@@ -9,6 +9,12 @@
 #' policy periods (for policy exposures only), and exposure start / end dates.
 #'
 #' @param x an object. For `as_exposed_df()`, `x` must be a data frame.
+#' @param trx_types Optional. Character vector containing unique transaction
+#' types that have been attached to `x`. For each value in `trx_types`,
+#' `as_exposed_df` requires that columns exist in `x` named `trx_n_{*}` and
+#' `trx_amt_{*}` containing transaction counts and amounts, respectively. The
+#' prefixes "trx_n_" and "trx_amt_" can be overridden using the `col_trx_n_`
+#' and `col_trx_amt_` arguments.
 #' @param col_pol_num Optional. Name of the column in `x` containing the policy
 #' number. The assumed default is "pol_num".
 #' @param col_status Optional. Name of the column in `x` containing the policy
@@ -24,6 +30,10 @@
 #' assumed default is of the form *A*_*B*. *A* is "cal" if `cal_expo` is `TRUE`
 #' or "pol" otherwise. *B* is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"
 #' depending on the value of `expo_length`.
+#' @param col_trx_n_ Optional. Prefix to use for columns containing transaction
+#' counts.
+#' @param col_trx_amt_ Optional. Prefix to use for columns containing transaction
+#' amount.
 #' @inheritParams expose
 #'
 #' @return For `is_exposed_df()`, a length-1 logical vector. For
@@ -39,11 +49,14 @@ is_exposed_df <- function(x) {
 as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
                           target_status = NULL, cal_expo = FALSE,
                           expo_length = c("year", "quarter", "month", "week"),
+                          trx_types = NULL,
                           col_pol_num,
                           col_status,
                           col_exposure,
                           col_pol_per,
-                          cols_dates) {
+                          cols_dates,
+                          col_trx_n_ = "trx_n_",
+                          col_trx_amt_ = "trx_amt_") {
 
   if(is_exposed_df(x)) return(x)
 
@@ -82,23 +95,36 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
                             !!q_exp_cols_dates[[2]] := !!q_cols_dates[[2]])
   }
 
+  # check transaction types
+  exp_cols_trx <- if(!is.null(trx_types)) {
+
+    trx_renamer <- function(x) {
+      x <- gsub(paste0("^", col_trx_n_), "trx_n_", x)
+      gsub(paste0("^", col_trx_amt_), "trx_amt_", x)
+    }
+
+    x <- dplyr::rename_with(x, trx_renamer)
+
+    trx_types <- unique(trx_types)
+    exp_cols_trx <- outer(c("trx_n_", "trx_amt_"), trx_types, paste0) |>
+      as.character()
+  }
+
   # check required columns
   # pol_num, status, exposure, 2 date cols, policy period (policy expo only)
   unmatched <- c("pol_num", "status", "exposure",
                  exp_col_pol_per,
-                 exp_cols_dates
-  )
-  unmatched <- unmatched[!unmatched %in% names(x)]
+                 exp_cols_dates,
+                 exp_cols_trx)
+  unmatched <- setdiff(unmatched, names(x))
 
   if(length(unmatched) > 0) {
     rlang::abort(c(x = glue::glue("The following columns are missing from `x`: {paste(unmatched, collapse = ', ')}."),
-                   i = "Hint: use the `cols_*` arguments to specify existing columns that should be mapped to these elements."))
+                   i = "Hint: create these columns or use use the `cols_*` arguments to specify existing columns that should be mapped to these elements."))
   }
 
-
-
   new_exposed_df(x, end_date, start_date, target_status, cal_expo,
-                 expo_length)
+                 expo_length, trx_types)
 
 }
 

@@ -4,7 +4,14 @@
 \alias{add_transactions}
 \title{Add transactions to an experience study}
 \usage{
-add_transactions(.data, trx_data)
+add_transactions(
+  .data,
+  trx_data,
+  col_pol_num = "pol_num",
+  col_trx_date = "trx_date",
+  col_trx_type = "trx_type",
+  col_trx_amt = "trx_amt"
+)
 }
 \arguments{
 \item{.data}{a data frame with exposure-level records of type
@@ -12,6 +19,18 @@ add_transactions(.data, trx_data)
 \code{exposed_df} object if necessary.}
 
 \item{trx_data}{a data frame containing transactions details}
+
+\item{col_pol_num}{name of the column in \code{trx_data} containing the policy
+number}
+
+\item{col_trx_date}{name of the column in \code{trx_data} containing the
+transaction date}
+
+\item{col_trx_type}{name of the column in \code{trx_data} containing the
+transaction type}
+
+\item{col_trx_amt}{name of the column in \code{trx_data} containing the
+transaction amount}
 }
 \value{
 UPDATE ME

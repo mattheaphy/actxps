@@ -14,11 +14,14 @@ as_exposed_df(
   target_status = NULL,
   cal_expo = FALSE,
   expo_length = c("year", "quarter", "month", "week"),
+  trx_types = NULL,
   col_pol_num,
   col_status,
   col_exposure,
   col_pol_per,
-  cols_dates
+  cols_dates,
+  col_trx_n_ = "trx_n_",
+  col_trx_amt_ = "trx_amt_"
 )
 }
 \arguments{
@@ -33,6 +36,13 @@ as_exposed_df(
 \item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
 
 \item{expo_length}{exposure period length}
+
+\item{trx_types}{Optional. Character vector containing unique transaction
+types that have been attached to \code{x}. For each value in \code{trx_types},
+\code{as_exposed_df} requires that columns exist in \code{x} named \verb{trx_n_\{*\}} and
+\verb{trx_amt_\{*\}} containing transaction counts and amounts, respectively. The
+prefixes "trx_n_" and "trx_amt_" can be overridden using the \code{col_trx_n_}
+and \code{col_trx_amt_} arguments.}
 
 \item{col_pol_num}{Optional. Name of the column in \code{x} containing the policy
 number. The assumed default is "pol_num".}
@@ -53,6 +63,12 @@ start and end dates. Both date ranges are assumed to be exclusive. The
 assumed default is of the form \emph{A}_\emph{B}. \emph{A} is "cal" if \code{cal_expo} is \code{TRUE}
 or "pol" otherwise. \emph{B} is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"
 depending on the value of \code{expo_length}.}
+
+\item{col_trx_n_}{Optional. Prefix to use for columns containing transaction
+counts.}
+
+\item{col_trx_amt_}{Optional. Prefix to use for columns containing transaction
+amount.}
 }
 \value{
 For \code{is_exposed_df()}, a length-1 logical vector. For
