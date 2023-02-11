@@ -1,6 +1,14 @@
 # actxps 0.2.1
 
+`expose()` functions now include a new column for period end dates.
 
+Fixed issues with `expose()` dropping records: 
+
+- Handling of leap days / years
+- Correction to date addition to always rollback dates to the last day of the 
+month.
+
+Fixed 2 R CMD check problems.
 
 # actxps 0.2.0
 
