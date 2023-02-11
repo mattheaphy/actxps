@@ -18,7 +18,9 @@ add_transactions(
 \code{exposed_df}. Use \code{\link[=as_exposed_df]{as_exposed_df()}} to convert a data frame to an
 \code{exposed_df} object if necessary.}
 
-\item{trx_data}{a data frame containing transactions details}
+\item{trx_data}{a data frame containing transactions details. This data
+frame must have columns for policy numbers, transaction dates, transaction
+types, and transaction amounts.}
 
 \item{col_pol_num}{name of the column in \code{trx_data} containing the policy
 number}
@@ -33,17 +35,30 @@ transaction type}
 transaction amount}
 }
 \value{
-UPDATE ME
+An \code{exposed_df} object with two new columns containing transaction
+counts and amounts for each transaction type found in \code{trx_data}. The
+\code{exposed_df}'s \code{trx_types} attributes will be updated to include the new
+transaction types found in \code{trx_data.}
 }
 \description{
 Attach summarized transactions to a data frame with
 exposure-level records.
 }
 \details{
-UPDATE ME
+This function attaches transactions to an \code{exposed_df} object.
+Transactions are grouped and summarized such that the number of rows in
+the \code{exposed_df} object does not change. Two columns are added to the output
+for each transaction type. These columns have names of the pattern
+\verb{trx_n_\{*\}} (transaction counts) and \verb{trx_amt_\{*\}} (transaction_amounts).
+
+Transactions are associated with the \code{exposed_df} object by matching
+transactions dates with exposure dates ranges found in \code{exposed_df}.
 }
 \examples{
 expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
 add_transactions(expo, withdrawals)
 
+}
+\seealso{
+\code{\link[=expose]{expose()}}, \code{\link[=as_exposed_df]{as_exposed_df()}}
 }

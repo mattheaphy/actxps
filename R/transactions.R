@@ -3,12 +3,21 @@
 #' @description Attach summarized transactions to a data frame with
 #' exposure-level records.
 #'
-#' @details UPDATE ME
+#' @details This function attaches transactions to an `exposed_df` object.
+#' Transactions are grouped and summarized such that the number of rows in
+#' the `exposed_df` object does not change. Two columns are added to the output
+#' for each transaction type. These columns have names of the pattern
+#' `trx_n_{*}` (transaction counts) and `trx_amt_{*}` (transaction_amounts).
+#'
+#' Transactions are associated with the `exposed_df` object by matching
+#' transactions dates with exposure dates ranges found in `exposed_df`.
 #'
 #' @param .data a data frame with exposure-level records of type
 #' `exposed_df`. Use [as_exposed_df()] to convert a data frame to an
 #' `exposed_df` object if necessary.
-#' @param trx_data a data frame containing transactions details
+#' @param trx_data a data frame containing transactions details. This data
+#' frame must have columns for policy numbers, transaction dates, transaction
+#' types, and transaction amounts.
 #' @param col_pol_num name of the column in `trx_data` containing the policy
 #' number
 #' @param col_trx_date name of the column in `trx_data` containing the
@@ -22,9 +31,14 @@
 #' expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
 #' add_transactions(expo, withdrawals)
 #'
-#' @returns UPDATE ME
+#' @returns An `exposed_df` object with two new columns containing transaction
+#' counts and amounts for each transaction type found in `trx_data`. The
+#' `exposed_df`'s `trx_types` attributes will be updated to include the new
+#' transaction types found in `trx_data.`
 #'
 #' @importFrom dplyr between
+#'
+#' @seealso [expose()], [as_exposed_df()]
 #'
 #' @export
 add_transactions <- function(.data, trx_data,
