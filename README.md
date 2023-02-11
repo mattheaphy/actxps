@@ -53,7 +53,7 @@ library(dplyr)
 
 census_dat
 #> # A tibble: 20,000 × 11
-#>    pol_num status   issue_date inc_g…¹ qual    age product gender wd_age pol_val
+#>    pol_num status   issue_date inc_g…¹ qual    age product gender wd_age premium
 #>      <int> <fct>    <date>     <lgl>   <lgl> <int> <fct>   <fct>   <int>   <dbl>
 #>  1       1 Active   2014-12-17 TRUE    FALSE    56 b       F          77     370
 #>  2       2 Surrend… 2007-09-24 FALSE   FALSE    71 a       F          71     708
@@ -83,8 +83,8 @@ exposed_data
 #>  Target status: Surrender 
 #>  Study range: 1900-01-01 to 2019-12-31 
 #> 
-#> # A tibble: 141,233 × 14
-#>    pol_num status issue_date inc_guar qual    age product gender wd_age pol_val
+#> # A tibble: 141,252 × 15
+#>    pol_num status issue_date inc_guar qual    age product gender wd_age premium
 #>  *   <int> <fct>  <date>     <lgl>    <lgl> <int> <fct>   <fct>   <int>   <dbl>
 #>  1       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370
 #>  2       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370
@@ -96,8 +96,8 @@ exposed_data
 #>  8       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708
 #>  9       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708
 #> 10       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708
-#> # … with 141,223 more rows, and 4 more variables: term_date <date>,
-#> #   pol_yr <int>, pol_date_yr <date>, exposure <dbl>
+#> # … with 141,242 more rows, and 5 more variables: term_date <date>,
+#> #   pol_yr <int>, pol_date_yr <date>, pol_date_yr_end <date>, exposure <dbl>
 ```
 
 Create a summary grouped by policy year and the presence of a guaranteed
@@ -121,12 +121,12 @@ exp_res
 #>  *  <int> <lgl>       <int>  <int>    <dbl>   <dbl>
 #>  1      1 FALSE          56     56    7720. 0.00725
 #>  2      1 TRUE           46     46   11532. 0.00399
-#>  3      2 FALSE          92     92    7101. 0.0130 
-#>  4      2 TRUE           67     67   10609. 0.00632
-#>  5      3 FALSE          67     67    6445. 0.0104 
-#>  6      3 TRUE           57     57    9648. 0.00591
-#>  7      4 FALSE         123    123    5797. 0.0212 
-#>  8      4 TRUE           45     45    8735. 0.00515
+#>  3      2 FALSE          92     92    7103. 0.0130 
+#>  4      2 TRUE           68     68   10612. 0.00641
+#>  5      3 FALSE          67     67    6447. 0.0104 
+#>  6      3 TRUE           57     57    9650. 0.00591
+#>  7      4 FALSE         123    123    5799. 0.0212 
+#>  8      4 TRUE           45     45    8737. 0.00515
 #>  9      5 FALSE          97     97    5106. 0.0190 
 #> 10      5 TRUE           67     67    7810. 0.00858
 #> # … with 20 more rows
@@ -164,12 +164,12 @@ exp_res
 #>  *  <int> <lgl>     <int>  <int>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
 #>  1      1 FALSE        56     56   7720. 0.00725 0.005     0.03    1.45    0.242
 #>  2      1 TRUE         46     46  11532. 0.00399 0.005     0.015   0.798   0.266
-#>  3      2 FALSE        92     92   7101. 0.0130  0.00778   0.03    1.67    0.432
-#>  4      2 TRUE         67     67  10609. 0.00632 0.00778   0.015   0.812   0.421
-#>  5      3 FALSE        67     67   6445. 0.0104  0.0106    0.03    0.985   0.347
-#>  6      3 TRUE         57     57   9648. 0.00591 0.0106    0.015   0.560   0.394
-#>  7      4 FALSE       123    123   5797. 0.0212  0.0133    0.03    1.59    0.707
-#>  8      4 TRUE         45     45   8735. 0.00515 0.0133    0.015   0.386   0.343
+#>  3      2 FALSE        92     92   7103. 0.0130  0.00778   0.03    1.67    0.432
+#>  4      2 TRUE         68     68  10612. 0.00641 0.00778   0.015   0.824   0.427
+#>  5      3 FALSE        67     67   6447. 0.0104  0.0106    0.03    0.985   0.346
+#>  6      3 TRUE         57     57   9650. 0.00591 0.0106    0.015   0.560   0.394
+#>  7      4 FALSE       123    123   5799. 0.0212  0.0133    0.03    1.59    0.707
+#>  8      4 TRUE         45     45   8737. 0.00515 0.0133    0.015   0.386   0.343
 #>  9      5 FALSE        97     97   5106. 0.0190  0.0161    0.03    1.18    0.633
 #> 10      5 TRUE         67     67   7810. 0.00858 0.0161    0.015   0.532   0.572
 #> # … with 20 more rows, and abbreviated variable names ¹​inc_guar, ²​n_claims,
