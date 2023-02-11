@@ -306,24 +306,6 @@ week_frac <- function(x, .offset = 0) {
   .data
 }
 
-
-#' @export
-print.exposed_df <- function(x, ...) {
-  cat("Exposure data\n\n",
-      "Exposure type:", attr(x, "exposure_type"), "\n",
-      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
-      "Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")))
-
-  trx_types <- attr(x, "trx_types")
-  if (!is.null(trx_types)) {
-    cat("\n", "Transaction types:", paste(trx_types, collapse = ", "), "\n")
-  }
-
-  cat("\n\n")
-  NextMethod()
-}
-
 # helper function - do not export
 abbr_period <- function(x) {
   switch(x,

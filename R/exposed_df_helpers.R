@@ -145,6 +145,24 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
 
 }
 
+#' @export
+print.exposed_df <- function(x, ...) {
+  cat("Exposure data\n\n",
+      "Exposure type:", attr(x, "exposure_type"), "\n",
+      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
+      "Study range:", as.character(attr(x, "start_date")), "to",
+      as.character(attr(x, "end_date")))
+
+  trx_types <- attr(x, "trx_types")
+  if (!is.null(trx_types)) {
+    cat("\n", "Transaction types:", paste(trx_types, collapse = ", "), "\n")
+  }
+
+  cat("\n\n")
+  NextMethod()
+}
+
+
 # helper for determining date columns
 make_date_col_names <- function(cal_expo, expo_length) {
   abbrev <- abbr_period(expo_length)
