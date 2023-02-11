@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="actxps-development-version">actxps (development version)<a class="anchor" aria-label="anchor" href="#actxps-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.1" id="actxps-021">actxps 0.2.1<a class="anchor" aria-label="anchor" href="#actxps-021"></a></h2>
+<p><code><a href="../reference/expose.html">expose()</a></code> functions now include a new column for period end dates.</p>
+<p>Fixed issues with <code><a href="../reference/expose.html">expose()</a></code> dropping records:</p>
+<ul><li>Handling of leap days / years</li>
+<li>Correction to date addition to always rollback dates to the last day of the month.</li>
+</ul><p>Fixed 2 R CMD check problems.</p>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="actxps-020">actxps 0.2.0<a class="anchor" aria-label="anchor" href="#actxps-020"></a></h2><p class="text-muted">CRAN release: 2022-08-31</p>
