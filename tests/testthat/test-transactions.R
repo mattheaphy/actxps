@@ -28,3 +28,15 @@ test_that("Type checks work", {
   expect_error(add_transactions(1, withdrawals))
   expect_error(add_transactions(expo, 1))
 })
+
+withdrawals4 <- withdrawals |> setNames(letters[1:4])
+
+test_that("Renaming works and name conflicts work", {
+  expect_error(add_transactions(expo |> head(), withdrawals4))
+  expect_no_error(add_transactions(expo, withdrawals4,
+                                   col_pol_num = "a",
+                                   col_trx_date = "b",
+                                   col_trx_type = "c",
+                                   col_trx_amt = "d"))
+  expect_error(add_transactions(expo_trx, withdrawals))
+})

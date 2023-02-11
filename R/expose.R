@@ -213,7 +213,8 @@ expose <- function(.data,
 
   # set up S3 object
   new_exposed_df(res, end_date, start_date,
-                 target_status, cal_expo, expo_length)
+                 target_status, cal_expo, expo_length,
+                 trx_types = NULL)
 
 }
 
@@ -299,7 +300,8 @@ week_frac <- function(x, .offset = 0) {
   x <- x[x %in% names(.data)]
   .data[x] <- NULL
   if (length(x > 0)) {
-    rlang::warn(c(x = glue::glue("`.data` contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}. If you don't want this to happen, please rename these columns prior to calling the applicable expose function.")))
+    rlang::warn(c(x = glue::glue("`.data` contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}."),
+                  i = "If you don't want this to happen, rename these columns prior to calling the applicable expose function."))
   }
   .data
 }
@@ -311,7 +313,14 @@ print.exposed_df <- function(x, ...) {
       "Exposure type:", attr(x, "exposure_type"), "\n",
       "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
       "Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")), "\n\n")
+      as.character(attr(x, "end_date")))
+
+  trx_types <- attr(x, "trx_types")
+  if (!is.null(trx_types)) {
+    cat("\n", "Transaction types:", paste(trx_types, collapse = ", "), "\n")
+  }
+
+  cat("\n\n")
   NextMethod()
 }
 

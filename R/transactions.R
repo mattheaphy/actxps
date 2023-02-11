@@ -49,19 +49,30 @@ add_transactions <- function(.data, trx_data,
   date_lookup <- .data |>
     dplyr::select(pol_num, !!!date_cols)
 
-  # add dates to transaction data and pivot / summarize to match the grain
-  #   of exposure data
+  # check for conflicting transaction types
+  existing_trx_types <- attr(.data, "trx_types")
+  new_trx_types <- unique(trx_data$trx_type)
+  conflict_trx_types <- new_trx_types[new_trx_types %in% existing_trx_types]
+  if (length(conflict_trx_types) > 0) {
+    rlang::abort(c(x = glue::glue("`trx_data` contains transaction types that have already been attached to `.data`: {paste(conflict_trx_types, collapse = ', ')}."),
+                   i = "Update `trx_data` with unique transaction types."))
+  }
+
+  # add dates to transaction data
   trx_data <- trx_data |>
     # column renames
     dplyr::rename(pol_num = {{col_pol_num}},
                   trx_date = {{col_trx_date}},
                   trx_type = {{col_trx_type}},
                   trx_amt = {{col_trx_amt}}) |>
-    # between join by transaction date falling within exposures windows
-    dplyr::left_join(
+    # between-join by transaction date falling within exposures windows
+    dplyr::inner_join(
       date_lookup, multiple = "error",
       dplyr::join_by(pol_num,
-                     between(trx_date, !!date_cols[[1]], !!date_cols[[2]]))) |>
+                     between(trx_date, !!date_cols[[1]], !!date_cols[[2]])))
+
+  # pivot / summarize to match the grain of exposure data
+  trx_data <- trx_data |>
     dplyr::mutate(trx_n = 1) |>
     tidyr::pivot_wider(
       names_from = trx_type,
@@ -69,8 +80,10 @@ add_transactions <- function(.data, trx_data,
       values_from = c(trx_amt, trx_n),
       values_fn = \(x) sum(x, na.rm = TRUE))
 
-  # update exposed_df structure to document transaction types
+  # add new transaction types
+  attr(.data, "trx_types") <- c(existing_trx_types, as.character(new_trx_types))
 
+  # update exposed_df structure to document transaction types
   .data |>
     dplyr::left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]])) |>
     dplyr::mutate(dplyr::across(dplyr::starts_with("trx_"), \(x)

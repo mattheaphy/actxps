@@ -104,7 +104,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
 
 # low-level class constructor
 new_exposed_df <- function(x, end_date, start_date, target_status,
-                           cal_expo, expo_length) {
+                           cal_expo, expo_length, trx_types = NULL) {
 
 
   date_cols <- make_date_col_names(cal_expo, expo_length)
@@ -114,7 +114,8 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
             exposure_type = glue::glue("{if(cal_expo) 'calendar' else 'policy'}_{expo_length}"),
             start_date = start_date,
             end_date = end_date,
-            date_cols = date_cols)
+            date_cols = date_cols,
+            trx_types = trx_types)
 
 }
 
