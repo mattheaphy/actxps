@@ -51,7 +51,7 @@ expose_cw(...)
 
 \item{target_status}{character vector of target status values. Default value = \code{NULL}.}
 
-\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are used.}
+\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
 
 \item{expo_length}{exposure period length}
 
@@ -70,7 +70,9 @@ expose_cw(...)
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include all existing columns in
-\code{.data} plus new columns for exposures and observation periods.
+\code{.data} plus new columns for exposures and observation periods. Observation
+periods include counters for policy exposures, start dates, and end dates.
+Both start dates and end dates are inclusive bounds.
 
 For policy year exposures, two observation period columns are returned.
 Columns beginning with (\code{pol_}) are integer policy periods. Columns
