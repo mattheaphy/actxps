@@ -39,6 +39,10 @@ add_transactions <- function(.data, trx_data,
     ))
   }
 
+  if(!is.data.frame(trx_data)) {
+    rlang::abort(c(x = "`trx_data` must be a data frame."))
+  }
+
   date_cols <- attr(.data, "date_cols") |> rlang::parse_exprs()
 
   # select a minimum subset of columns
