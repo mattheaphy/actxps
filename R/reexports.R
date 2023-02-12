@@ -2,9 +2,11 @@
 #' @export
 ggplot2::autoplot
 
-#' @importFrom dplyr groups
+#' @importFrom dplyr groups group_by
 #' @export
 dplyr::groups
+#' @export
+dplyr::group_by
 
 #' @importFrom recipes prep bake
 #' @export

@@ -164,6 +164,12 @@ print.exposed_df <- function(x, ...) {
   NextMethod()
 }
 
+#' @export
+group_by.exposed_df <- function(x, ...) {
+  x <- NextMethod()
+  class(x) <- c("exposed_df", class(x))
+  x
+}
 
 # helper for determining date columns
 make_date_col_names <- function(cal_expo, expo_length) {

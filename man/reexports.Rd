@@ -5,6 +5,7 @@
 \alias{reexports}
 \alias{autoplot}
 \alias{groups}
+\alias{group_by}
 \alias{prep}
 \alias{bake}
 \alias{tidy}
@@ -15,7 +16,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr:group_data]{groups}}}
+  \item{dplyr}{\code{\link[dplyr]{group_by}}, \code{\link[dplyr:group_data]{groups}}}
 
   \item{generics}{\code{\link[generics]{tidy}}}
 
