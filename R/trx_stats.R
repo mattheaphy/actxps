@@ -17,10 +17,13 @@
 #' @param full_exposures If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
 #'
+#' @param object an `trx_df` object
+#' @param ... groups to retain after `summary()` is called
+#'
 #' @return UPDATE ME
 #'
 #' @examples
-#' UPDATE ME
+#' #UPDATE ME
 #'
 #' @export
 trx_stats <- function(.data,
@@ -62,12 +65,11 @@ trx_stats <- function(.data,
   trx_cols <- trx_cols[grepl(paste(trx_types, collapse = "|"), trx_cols)]
 
   .data <- .data |>
-    dplyr::select(pol_num, dplyr::all_of(trx_cols)) |> #TODO missing grouping variable message
+    dplyr::select(pol_num, exposure, !!!.groups, dplyr::all_of(trx_cols)) |>
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),
                         names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
-    dplyr::mutate(trx_flag = abs(trx_n) > 0,
-                  n_obs = 1L)
+    dplyr::mutate(trx_flag = abs(trx_n) > 0)
 
   finish_trx_stats(.data, trx_types, #TODO pct_of, #expected,
                    .groups, start_date, end_date)
@@ -112,7 +114,6 @@ summary.trx_df <- function(object, ...) {
   end_date <- attr(object, "end_date")
   # TODO expected <- attr(object, "expected")
 
-  # TODO trx_freq and trx_util are wrong
   finish_trx_stats(res, trx_types, #TODO expected,
                    .groups, start_date, end_date)
 
@@ -139,12 +140,12 @@ finish_trx_stats <- function(.data, trx_types, #TODO pct_of, #expected,
     dplyr::summarize(trx_n = sum(trx_n),
                      trx_amt = sum(trx_amt),
                      trx_flag = sum(trx_flag),
-                     n_obs = sum(n_obs),
+                     exposure = sum(exposure),
                      avg_nz = trx_amt / trx_flag,
                      avg_nz_each = trx_amt / trx_n,
-                     avg_all = trx_amt / n_obs,
-                     trx_freq  = trx_n / n_obs,
-                     trx_util = trx_flag / n_obs,
+                     avg_all = trx_amt / exposure,
+                     trx_freq  = trx_n / exposure,
+                     trx_util = trx_flag / exposure,
                      !!!ex_ae,
                      .groups = "drop")
 

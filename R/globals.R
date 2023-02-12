@@ -4,4 +4,4 @@ utils::globalVariables(c("issue_date", "term_date", "last_date",
                          "rep_n", "last_per", "first_per", ".time",
                          "q_obs", ".weight", ".weight_n", ".weight_sq",
                          "ex_wt", "ex2_wt", "is_number", "n_unique",
-                         "trx_date", "trx_type", "trx_amt", "trx_n"))
+                         "trx_date", "trx_type", "trx_amt", "trx_n", "trx_flag"))

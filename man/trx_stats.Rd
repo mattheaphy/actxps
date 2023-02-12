@@ -21,6 +21,10 @@ will be used.}
 
 \item{full_exposures}{If \code{TRUE} (default), partially exposed records will
 be excluded from \code{data}.}
+
+\item{object}{an \code{trx_df} object}
+
+\item{...}{groups to retain after \code{summary()} is called}
 }
 \value{
 UPDATE ME
@@ -33,6 +37,6 @@ and utilization rates.
 UPDATE ME
 }
 \examples{
-UPDATE ME
+#UPDATE ME
 
 }

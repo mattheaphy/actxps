@@ -165,7 +165,7 @@ print.exposed_df <- function(x, ...) {
 }
 
 #' @export
-group_by.exposed_df <- function(x, ...) {
+group_by.exposed_df <- function(.data, ..., .add, .drop) {
   x <- NextMethod()
   class(x) <- c("exposed_df", class(x))
   x
