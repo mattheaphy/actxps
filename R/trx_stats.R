@@ -5,6 +5,17 @@
 #'
 #' @details UPDATE ME
 #'
+#' As a default, partial exposures are removed from `.data` before summarizing
+#' results. This is done to avoid complexity associated with a lopsided skew
+#' in the timing of transactions. For example, if transactions can occur on a
+#' monthly basis or annually at the beginning of each policy year, partial
+#' exposures may not be appropriate. If a policy had an exposure of 0.5 years
+#' and was taking withdrawals annually at the beginning of the year, an
+#' argument could be made that the exposure should instead be 1 complete year.
+#' If the same policy was expected to take withdrawals 9 months into the year,
+#' it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
+#' To override this treatment, set `full_exposures_only` to `FALSE`.
+#'
 #' @param .data a data frame with exposure-level records of type
 #' `exposed_df` with transaction data attached. If necessary, use
 #' [as_exposed_df()] to convert a data frame to an `exposed_df` object, and use
@@ -14,7 +25,10 @@
 #' output. If none is provided, all available transaction types in `.data`
 #' will be used.
 #'
-#' @param full_exposures If `TRUE` (default), partially exposed records will
+#' @param expected a character vector containing column names in `.data`
+#' with expected values
+#'
+#' @param full_exposures_only If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
 #'
 #' @param object an `trx_df` object
@@ -30,7 +44,7 @@ trx_stats <- function(.data,
                       trx_types,
                       # TODO % of base amount,
                       #expected,
-                      full_exposures = TRUE) {
+                      full_exposures_only = TRUE) {
 
   verify_exposed_df(.data)
 
@@ -54,7 +68,7 @@ trx_stats <- function(.data,
   end_date <- attr(.data, "end_date")
 
   # remove partial exposures
-  if(full_exposures) {
+  if(full_exposures_only) {
     .data <- dplyr::filter(.data, dplyr::near(exposure, 1))
   }
 

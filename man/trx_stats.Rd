@@ -5,7 +5,7 @@
 \alias{summary.trx_df}
 \title{Summarize transactions and utilization rates}
 \usage{
-trx_stats(.data, trx_types, full_exposures = TRUE)
+trx_stats(.data, trx_types, full_exposures_only = TRUE)
 
 \method{summary}{trx_df}(object, ...)
 }
@@ -19,12 +19,15 @@ trx_stats(.data, trx_types, full_exposures = TRUE)
 output. If none is provided, all available transaction types in \code{.data}
 will be used.}
 
-\item{full_exposures}{If \code{TRUE} (default), partially exposed records will
+\item{full_exposures_only}{If \code{TRUE} (default), partially exposed records will
 be excluded from \code{data}.}
 
 \item{object}{an \code{trx_df} object}
 
 \item{...}{groups to retain after \code{summary()} is called}
+
+\item{expected}{a character vector containing column names in \code{.data}
+with expected values}
 }
 \value{
 UPDATE ME
@@ -35,6 +38,17 @@ and utilization rates.
 }
 \details{
 UPDATE ME
+
+As a default, partial exposures are removed from \code{.data} before summarizing
+results. This is done to avoid complexity associated with a lopsided skew
+in the timing of transactions. For example, if transactions can occur on a
+monthly basis or annually at the beginning of each policy year, partial
+exposures may not be appropriate. If a policy had an exposure of 0.5 years
+and was taking withdrawals annually at the beginning of the year, an
+argument could be made that the exposure should instead be 1 complete year.
+If the same policy was expected to take withdrawals 9 months into the year,
+it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
+To override this treatment, set \code{full_exposures_only} to \code{FALSE}.
 }
 \examples{
 #UPDATE ME
