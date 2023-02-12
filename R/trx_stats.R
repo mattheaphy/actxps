@@ -50,16 +50,15 @@ trx_stats <- function(.data,
     }
   }
 
+  start_date <- attr(.data, "start_date")
+  end_date <- attr(.data, "end_date")
+
   # remove partial exposures
   if(full_exposures) {
     .data <- dplyr::filter(.data, dplyr::near(exposure, 1))
   }
 
   .groups <- dplyr::groups(.data)
-
-  # TODO KEEP???
-  start_date <- attr(.data, "start_date")
-  end_date <- attr(.data, "end_date")
 
   trx_cols <- names(.data)[grepl("trx_(n|amt)_", names(.data))]
   trx_cols <- trx_cols[grepl(paste(trx_types, collapse = "|"), trx_cols)]
@@ -137,6 +136,7 @@ finish_trx_stats <- function(.data, trx_types, #TODO pct_of, #expected,
   # }
 
   res <- .data |>
+    dplyr::group_by(trx_type, .add = TRUE) |>
     dplyr::summarize(trx_n = sum(trx_n),
                      trx_amt = sum(trx_amt),
                      trx_flag = sum(trx_flag),
