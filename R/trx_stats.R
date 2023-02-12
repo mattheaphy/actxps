@@ -25,8 +25,9 @@
 #' output. If none is provided, all available transaction types in `.data`
 #' will be used.
 #'
-#' @param expected a character vector containing column names in `.data`
-#' with expected values
+#' @param pct_of A optional character vector containing column names in `.data`
+#' to use as denominators in the calculation of utilization rates or
+#' actual-to-expected ratios.
 #'
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
@@ -42,8 +43,7 @@
 #' @export
 trx_stats <- function(.data,
                       trx_types,
-                      # TODO % of base amount,
-                      #expected,
+                      pct_of,
                       full_exposures_only = TRUE) {
 
   verify_exposed_df(.data)
@@ -78,27 +78,28 @@ trx_stats <- function(.data,
   trx_cols <- trx_cols[grepl(paste(trx_types, collapse = "|"), trx_cols)]
 
   .data <- .data |>
-    dplyr::select(pol_num, exposure, !!!.groups, dplyr::all_of(trx_cols)) |>
+    dplyr::select(pol_num, exposure, !!!.groups,
+                  dplyr::all_of(trx_cols), dplyr::all_of(pct_of)) |>
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),
                         names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
     dplyr::mutate(trx_flag = abs(trx_n) > 0)
 
-  finish_trx_stats(.data, trx_types, #TODO pct_of, #expected,
+  finish_trx_stats(.data, trx_types, pct_of,
                    .groups, start_date, end_date)
 
 }
 
 #' @export
 print.trx_df <- function(x, ...) {
-  # TODO
+
   cat("Transaction study results\n\n",
       "Groups:", paste(groups(x), collapse = ", "), "\n",
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n",
       "Transaction types:", paste(attr(x, "trx_types"), collapse = ", "), "\n")
-  if (!is.null(attr(x, "expected"))) {
-    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n")
+  if (!is.null(attr(x, "pct_of"))) {
+    cat(" Transactions as % of:", paste(attr(x, "pct_of"), collapse = ", "), "\n")
   }
   if (is.null(attr(x, "wt"))) {
     cat("\n")
@@ -125,9 +126,9 @@ summary.trx_df <- function(object, ...) {
   trx_types <- attr(object, "trx_types")
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
-  # TODO expected <- attr(object, "expected")
+  pct_of <- attr(object, "pct_of")
 
-  finish_trx_stats(res, trx_types, #TODO expected,
+  finish_trx_stats(res, trx_types, pct_of,
                    .groups, start_date, end_date)
 
 }
@@ -136,18 +137,17 @@ summary.trx_df <- function(object, ...) {
 # support functions -------------------------------------------------------
 
 
-finish_trx_stats <- function(.data, trx_types, #TODO pct_of, #expected,
+finish_trx_stats <- function(.data, trx_types, pct_of,
                              .groups, start_date, end_date) {
 
-  # expected value formulas. these are already weighted if applicable
-  # if (!missing(expected)) {
-  #   ex_mean <- exp_form("weighted.mean({expected}, exposure)",
-  #                       "{expected}", expected)
-  #   ex_ae <- exp_form("q_obs / {expected}",
-  #                     "ae_{expected}", expected)
-  # } else {
-  ex_ae <- ex_mean <- expected <- NULL
-  # }
+  if (!missing(pct_of)) {
+    pct_vals <- exp_form("sum({expected})",
+                         "{expected}", pct_of)
+    pct_form <- exp_form("trx_amt / {expected}",
+                        "pct_of_{expected}", pct_of)
+  } else {
+    pct_vals <- pct_form <- pct_of <- NULL
+  }
 
   res <- .data |>
     dplyr::group_by(trx_type, .add = TRUE) |>
@@ -160,12 +160,13 @@ finish_trx_stats <- function(.data, trx_types, #TODO pct_of, #expected,
                      avg_all = trx_amt / exposure,
                      trx_freq  = trx_n / exposure,
                      trx_util = trx_flag / exposure,
-                     !!!ex_ae,
+                     !!!pct_vals,
+                     !!!pct_form,
                      .groups = "drop")
 
   structure(res, class = c("trx_df", class(res)),
             groups = .groups, trx_types = trx_types,
             start_date = start_date,
-            # TODO expected = expected,
+            pct_of = pct_of,
             end_date = end_date)
 }
