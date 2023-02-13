@@ -3,7 +3,34 @@
 #' @description Create a summary data frame of transaction counts, amounts,
 #' and utilization rates.
 #'
-#' @details UPDATE ME
+#' @details Unlike [exp_stats()], this function requires `data` to be an
+#' `exposed_df` object.
+#'
+#' If `.data` is grouped, the resulting data frame will contain
+#' one row per transaction type per group.
+#'
+#' Any number of transaction types can be passed to the `trx_types` argument,
+#' however each transaction type **must** appear in the `trx_types` attribute of
+#' `.data`. In addition, `trx_stats()` expects to see columns named `trx_n_{*}`
+#' (for transaction counts) and `trx_amt_{*}` for (transaction amounts) for each
+#' transaction type. To ensure `.data` is in the appropriate format, use the
+#' functions [as_exposed_df()] to convert an existing data frame with
+#' transactions or [add_transactions()] to attach transactions to an existing
+#' `exposed_df` object.
+#'
+#' # "Percentage of" calculations
+#'
+#' The `percent_of` argument is optional. If provided, this argument must
+#' be a character vector with values corresponding to columns in `.data`
+#' containing values to use as denominators in the calculation of utilization
+#' rates or actual-to-expected ratios. Examples of usage include:
+#'
+#' - In a study of partial withdrawal transactions, if `percent_of` refers to
+#'  account values, observed withdrawal rates can be determined.
+#' - In a study of recurring claims, if `percent_of` refers to a column
+#' containing a maximum benefit amount, utilization rates can be determined.
+#'
+#' # Default removal of partial exposures
 #'
 #' As a default, partial exposures are removed from `.data` before summarizing
 #' results. This is done to avoid complexity associated with a lopsided skew
@@ -16,6 +43,12 @@
 #' it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
 #' To override this treatment, set `full_exposures_only` to `FALSE`.
 #'
+#' # `summary()` Method
+#'
+#' Applying `summary()` to a `trx_df` object will re-summarize the
+#' data while retaining any grouping variables passed to the "dots"
+#' (`...`).
+#'
 #' @param .data a data frame with exposure-level records of type
 #' `exposed_df` with transaction data attached. If necessary, use
 #' [as_exposed_df()] to convert a data frame to an `exposed_df` object, and use
@@ -25,8 +58,8 @@
 #' output. If none is provided, all available transaction types in `.data`
 #' will be used.
 #'
-#' @param percent_of A optional character vector containing column names in `.data`
-#' to use as denominators in the calculation of utilization rates or
+#' @param percent_of A optional character vector containing column names in
+#' `.data` to use as denominators in the calculation of utilization rates or
 #' actual-to-expected ratios.
 #'
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
@@ -35,7 +68,27 @@
 #' @param object an `trx_df` object
 #' @param ... groups to retain after `summary()` is called
 #'
-#' @return UPDATE ME
+#' @return A tibble with class `trx_df`, `tbl_df`, `tbl`,
+#' and `data.frame`. The results include columns for any grouping
+#' variables and transaction types, plus the following:
+#'
+#' - `trx_n`: the number of unique transactions.
+#' - `trx_amt`: total transaction amount
+#' - `trx_flag`: the number of observation periods with non-zero transaction amounts.
+#' - `exposure`: total exposures
+#' - `avg_trx`: mean transaction amount (`trx_amt / trx_flag`)
+#' - `avg_all`: mean transaction amount over all records (`trx_amt / exposure`)
+#' - `trx_freq`: transaction frequency per exposure period (`trx_n / exposure`)
+#' - `trx_utilization`: transaction utilization per observation period (`trx_flag / exposure`)
+#'
+#' If `percent_of` is provided, the results will also include:
+#'
+#' - The sum of any columns passed to `percent_of`
+#' - The sum of any columns passed to `percent_of` with non-zero transactions.
+#' These columns include the suffix `_w_trx`.
+#' - `pct_of_{*}_all`: total transactions as a percentage of column `{*}`
+#' - `pct_of_{*}_w_trx`: total transactions as a percentage of column
+#' `{*}_w_trx`
 #'
 #' @examples
 #' expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>

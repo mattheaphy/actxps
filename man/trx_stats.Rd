@@ -5,7 +5,7 @@
 \alias{summary.trx_df}
 \title{Summarize transactions and utilization rates}
 \usage{
-trx_stats(.data, trx_types, full_exposures_only = TRUE)
+trx_stats(.data, trx_types, percent_of = NULL, full_exposures_only = TRUE)
 
 \method{summary}{trx_df}(object, ...)
 }
@@ -19,26 +19,76 @@ trx_stats(.data, trx_types, full_exposures_only = TRUE)
 output. If none is provided, all available transaction types in \code{.data}
 will be used.}
 
+\item{percent_of}{A optional character vector containing column names in
+\code{.data} to use as denominators in the calculation of utilization rates or
+actual-to-expected ratios.}
+
 \item{full_exposures_only}{If \code{TRUE} (default), partially exposed records will
 be excluded from \code{data}.}
 
 \item{object}{an \code{trx_df} object}
 
 \item{...}{groups to retain after \code{summary()} is called}
-
-\item{expected}{a character vector containing column names in \code{.data}
-with expected values}
 }
 \value{
-UPDATE ME
+A tibble with class \code{trx_df}, \code{tbl_df}, \code{tbl},
+and \code{data.frame}. The results include columns for any grouping
+variables and transaction types, plus the following:
+\itemize{
+\item \code{trx_n}: the number of unique transactions.
+\item \code{trx_amt}: total transaction amount
+\item \code{trx_flag}: the number of observation periods with non-zero transaction amounts.
+\item \code{exposure}: total exposures
+\item \code{avg_trx}: mean transaction amount (\code{trx_amt / trx_flag})
+\item \code{avg_all}: mean transaction amount over all records (\code{trx_amt / exposure})
+\item \code{trx_freq}: transaction frequency per exposure period (\code{trx_n / exposure})
+\item \code{trx_utilization}: transaction utilization per observation period (\code{trx_flag / exposure})
+}
+
+If \code{percent_of} is provided, the results will also include:
+\itemize{
+\item The sum of any columns passed to \code{percent_of}
+\item The sum of any columns passed to \code{percent_of} with non-zero transactions.
+These columns include the suffix \verb{_w_trx}.
+\item \verb{pct_of_\{*\}_all}: total transactions as a percentage of column \verb{\{*\}}
+\item \verb{pct_of_\{*\}_w_trx}: total transactions as a percentage of column
+\verb{\{*\}_w_trx}
+}
 }
 \description{
 Create a summary data frame of transaction counts, amounts,
 and utilization rates.
 }
 \details{
-UPDATE ME
+Unlike \code{\link[=exp_stats]{exp_stats()}}, this function requires \code{data} to be an
+\code{exposed_df} object.
 
+If \code{.data} is grouped, the resulting data frame will contain
+one row per transaction type per group.
+
+Any number of transaction types can be passed to the \code{trx_types} argument,
+however each transaction type \strong{must} appear in the \code{trx_types} attribute of
+\code{.data}. In addition, \code{trx_stats()} expects to see columns named \verb{trx_n_\{*\}}
+(for transaction counts) and \verb{trx_amt_\{*\}} for (transaction amounts) for each
+transaction type. To ensure \code{.data} is in the appropriate format, use the
+functions \code{\link[=as_exposed_df]{as_exposed_df()}} to convert an existing data frame with
+transactions or \code{\link[=add_transactions]{add_transactions()}} to attach transactions to an existing
+\code{exposed_df} object.
+}
+\section{"Percentage of" calculations}{
+The \code{percent_of} argument is optional. If provided, this argument must
+be a character vector with values corresponding to columns in \code{.data}
+containing values to use as denominators in the calculation of utilization
+rates or actual-to-expected ratios. Examples of usage include:
+\itemize{
+\item In a study of partial withdrawal transactions, if \code{percent_of} refers to
+account values, observed withdrawal rates can be determined.
+\item In a study of recurring claims, if \code{percent_of} refers to a column
+containing a maximum benefit amount, utilization rates can be determined.
+}
+}
+
+\section{Default removal of partial exposures}{
 As a default, partial exposures are removed from \code{.data} before summarizing
 results. This is done to avoid complexity associated with a lopsided skew
 in the timing of transactions. For example, if transactions can occur on a
@@ -50,7 +100,20 @@ If the same policy was expected to take withdrawals 9 months into the year,
 it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
 To override this treatment, set \code{full_exposures_only} to \code{FALSE}.
 }
+
+\section{\code{summary()} Method}{
+Applying \code{summary()} to a \code{trx_df} object will re-summarize the
+data while retaining any grouping variables passed to the "dots"
+(\code{...}).
+}
+
 \examples{
-#UPDATE ME
+expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
+  add_transactions(withdrawals)
+
+res <- expo |> dplyr::group_by(inc_guar) |> trx_stats()
+res
+
+summary(res)
 
 }
