@@ -43,4 +43,19 @@ test_that("trx_stats works", {
   expect_true(all(trx_stats(expo)$exposure <=
                     trx_stats(expo, full_exposures_only = FALSE)$exposure))
 
+  expect_equal(expo |> trx_stats(combine_trx = TRUE, trx_types = "Rider") |>
+                 dplyr::select(-trx_type),
+               expo |> trx_stats(trx_types = "Rider") |>
+                 dplyr::select(-trx_type))
+
+  res2 <- expo |> trx_stats(combine_trx = TRUE) |> as.data.frame()
+  attr(res2, "trx_types") <- NULL
+  res3 <- no_trx |> add_transactions(
+    withdrawals |> dplyr::mutate(trx_type = "All")) |>
+    trx_stats() |>
+    as.data.frame()
+  attr(res3, "trx_types") <- NULL
+
+  expect_equal(res2, res3)
+
 })

@@ -62,6 +62,10 @@
 #' `.data` to use as denominators in the calculation of utilization rates or
 #' actual-to-expected ratios.
 #'
+#' @param combine_trx If `FALSE` (default), the results will contain output rows
+#' for each transaction type. If `TRUE`, the results will contains aggregated
+#' results across all transaction types.
+#'
 #' @param col_exposure name of the column in `.data` containing exposures
 #'
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
@@ -96,15 +100,19 @@
 #' expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
 #'   add_transactions(withdrawals)
 #'
-#' res <- expo |> dplyr::group_by(inc_guar) |> trx_stats()
+#' res <- expo |> dplyr::group_by(inc_guar) |> trx_stats(percent_of = "premium")
 #' res
 #'
 #' summary(res)
+#'
+#' expo |> dplyr::group_by(inc_guar) |>
+#'   trx_stats(percent_of = "premium", combine_trx = TRUE)
 #'
 #' @export
 trx_stats <- function(.data,
                       trx_types,
                       percent_of = NULL,
+                      combine_trx = FALSE,
                       col_exposure = "exposure",
                       full_exposures_only = TRUE) {
 
@@ -140,6 +148,15 @@ trx_stats <- function(.data,
 
   trx_cols <- names(.data)[grepl("trx_(n|amt)_", names(.data))]
   trx_cols <- trx_cols[grepl(paste(trx_types, collapse = "|"), trx_cols)]
+
+  if (combine_trx) {
+    trx_n_cols <- trx_cols[grepl("_n_", trx_cols)]
+    trx_amt_cols <- trx_cols[grepl("_amt_", trx_cols)]
+    .data <- .data |> dplyr::mutate(
+      trx_n_All = !!rlang::parse_expr(paste(trx_n_cols, collapse = "+")),
+      trx_amt_All = !!rlang::parse_expr(paste(trx_amt_cols, collapse = "+")))
+    trx_cols <- c("trx_n_All", "trx_amt_All")
+  }
 
   pct_nz <- if (!is.null(percent_of)) {
     exp_form("{.col} * trx_flag", "{.col}_w_trx", percent_of)

@@ -9,6 +9,7 @@ trx_stats(
   .data,
   trx_types,
   percent_of = NULL,
+  combine_trx = FALSE,
   col_exposure = "exposure",
   full_exposures_only = TRUE
 )
@@ -28,6 +29,10 @@ will be used.}
 \item{percent_of}{A optional character vector containing column names in
 \code{.data} to use as denominators in the calculation of utilization rates or
 actual-to-expected ratios.}
+
+\item{combine_trx}{If \code{FALSE} (default), the results will contain output rows
+for each transaction type. If \code{TRUE}, the results will contains aggregated
+results across all transaction types.}
 
 \item{col_exposure}{name of the column in \code{.data} containing exposures}
 
@@ -119,9 +124,12 @@ data while retaining any grouping variables passed to the "dots"
 expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
   add_transactions(withdrawals)
 
-res <- expo |> dplyr::group_by(inc_guar) |> trx_stats()
+res <- expo |> dplyr::group_by(inc_guar) |> trx_stats(percent_of = "premium")
 res
 
 summary(res)
+
+expo |> dplyr::group_by(inc_guar) |>
+  trx_stats(percent_of = "premium", combine_trx = TRUE)
 
 }
