@@ -83,13 +83,17 @@ trx_stats <- function(.data,
   trx_cols <- names(.data)[grepl("trx_(n|amt)_", names(.data))]
   trx_cols <- trx_cols[grepl(paste(trx_types, collapse = "|"), trx_cols)]
 
+  pct_nz <- if (!is.null(percent_of)) {
+    exp_form("{.col} * trx_flag", "{.col}_w_trx", percent_of)
+  }
+
   .data <- .data |>
     dplyr::select(pol_num, exposure, !!!.groups,
                   dplyr::all_of(trx_cols), dplyr::all_of(percent_of)) |>
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),
                         names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
-    dplyr::mutate(trx_flag = abs(trx_n) > 0)
+    dplyr::mutate(trx_flag = abs(trx_n) > 0, !!!pct_nz)
 
   finish_trx_stats(.data, trx_types, percent_of,
                    .groups, start_date, end_date)
@@ -147,12 +151,15 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                              .groups, start_date, end_date) {
 
   if (!is.null(percent_of)) {
-    pct_vals <- exp_form("sum({.col})",
-                         "{.col}", percent_of)
-    pct_form <- exp_form("trx_amt / {.col}",
-                        "pct_of_{.col}", percent_of)
+    percent_of_nz <- paste0(percent_of, "_w_trx")
+    pct_vals <- exp_form("sum({.col})", "{.col}", percent_of)
+    pct_vals_trx <- exp_form("sum({.col})", "{.col}", percent_of_nz)
+    pct_form_all <- exp_form("trx_amt / {.col}", "pct_of_{.col}_all",
+                             percent_of)
+    pct_form_trx <- exp_form("trx_amt / {.col}", "pct_of_{.col}",
+                             percent_of_nz)
   } else {
-    pct_vals <- pct_form <- percent_of <- NULL
+    pct_vals <- pct_vals_trx <- pct_form_all <- pct_form_trx <- percent_of <- NULL
   }
 
   res <- .data |>
@@ -161,13 +168,14 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      trx_amt = sum(trx_amt),
                      trx_flag = sum(trx_flag),
                      exposure = sum(exposure),
-                     avg_nz = trx_amt / trx_flag,
-                     avg_nz_each = trx_amt / trx_n,
+                     avg_trx = trx_amt / trx_flag,
                      avg_all = trx_amt / exposure,
                      trx_freq  = trx_n / exposure,
                      trx_util = trx_flag / exposure,
                      !!!pct_vals,
-                     !!!pct_form,
+                     !!!pct_vals_trx,
+                     !!!pct_form_all,
+                     !!!pct_form_trx,
                      .groups = "drop")
 
   structure(res, class = c("trx_df", class(res)),
