@@ -147,10 +147,10 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                              .groups, start_date, end_date) {
 
   if (!is.null(percent_of)) {
-    pct_vals <- exp_form("sum({expected})",
-                         "{expected}", percent_of)
-    pct_form <- exp_form("trx_amt / {expected}",
-                        "percent_of_{expected}", percent_of)
+    pct_vals <- exp_form("sum({.col})",
+                         "{.col}", percent_of)
+    pct_form <- exp_form("trx_amt / {.col}",
+                        "pct_of_{.col}", percent_of)
   } else {
     pct_vals <- pct_form <- percent_of <- NULL
   }

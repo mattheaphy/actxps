@@ -176,10 +176,10 @@ finish_exp_stats <- function(.data, target_status, expected,
 
   # expected value formulas. these are already weighted if applicable
   if (!missing(expected)) {
-    ex_mean <- exp_form("weighted.mean({expected}, exposure)",
-                        "{expected}", expected)
-    ex_ae <- exp_form("q_obs / {expected}",
-                      "ae_{expected}", expected)
+    ex_mean <- exp_form("weighted.mean({.col}, exposure)",
+                        "{.col}", expected)
+    ex_ae <- exp_form("q_obs / {.col}",
+                      "ae_{.col}", expected)
   } else {
     ex_ae <- ex_mean <- expected <- NULL
   }
@@ -217,8 +217,8 @@ finish_exp_stats <- function(.data, target_status, expected,
     }
 
     if(!is.null(expected)) {
-      adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {expected}",
-                            "adj_{expected}", expected)
+      adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {.col}",
+                            "adj_{.col}", expected)
 
       cred <- append(cred, adj_q_exp)
     }
@@ -256,9 +256,13 @@ finish_exp_stats <- function(.data, target_status, expected,
                               cred_p = cred_p, cred_r = cred_r))
 }
 
-exp_form <- function(form, col_names, expected) {
+# this function is used to create formula specifications passed to dplyr::mutate
+# or dplyr::summarize using a common formula applied across several columns with
+# a common naming structure.
+# Note - this could be handled using across, but is not due to performance on
+# grouped data frames
+exp_form <- function(form, new_col, .col) {
   glue::glue(form) |>
-    purrr::set_names(glue::glue(col_names)) |>
+    purrr::set_names(glue::glue(new_col)) |>
     rlang::parse_exprs()
-
 }
