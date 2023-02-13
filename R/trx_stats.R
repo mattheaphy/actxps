@@ -62,6 +62,8 @@
 #' `.data` to use as denominators in the calculation of utilization rates or
 #' actual-to-expected ratios.
 #'
+#' @param col_exposure name of the column in `.data` containing exposures
+#'
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
 #'
@@ -103,6 +105,7 @@
 trx_stats <- function(.data,
                       trx_types,
                       percent_of = NULL,
+                      col_exposure = "exposure",
                       full_exposures_only = TRUE) {
 
   verify_exposed_df(.data)
@@ -125,6 +128,8 @@ trx_stats <- function(.data,
 
   start_date <- attr(.data, "start_date")
   end_date <- attr(.data, "end_date")
+
+  .data <- .data |> dplyr::rename(exposure = {{col_exposure}})
 
   # remove partial exposures
   if(full_exposures_only) {

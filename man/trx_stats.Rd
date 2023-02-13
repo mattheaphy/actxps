@@ -5,7 +5,13 @@
 \alias{summary.trx_df}
 \title{Summarize transactions and utilization rates}
 \usage{
-trx_stats(.data, trx_types, percent_of = NULL, full_exposures_only = TRUE)
+trx_stats(
+  .data,
+  trx_types,
+  percent_of = NULL,
+  col_exposure = "exposure",
+  full_exposures_only = TRUE
+)
 
 \method{summary}{trx_df}(object, ...)
 }
@@ -22,6 +28,8 @@ will be used.}
 \item{percent_of}{A optional character vector containing column names in
 \code{.data} to use as denominators in the calculation of utilization rates or
 actual-to-expected ratios.}
+
+\item{col_exposure}{name of the column in \code{.data} containing exposures}
 
 \item{full_exposures_only}{If \code{TRUE} (default), partially exposed records will
 be excluded from \code{data}.}
