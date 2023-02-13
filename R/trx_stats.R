@@ -25,7 +25,7 @@
 #' output. If none is provided, all available transaction types in `.data`
 #' will be used.
 #'
-#' @param pct_of A optional character vector containing column names in `.data`
+#' @param percent_of A optional character vector containing column names in `.data`
 #' to use as denominators in the calculation of utilization rates or
 #' actual-to-expected ratios.
 #'
@@ -38,12 +38,18 @@
 #' @return UPDATE ME
 #'
 #' @examples
-#' #UPDATE ME
+#' expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
+#'   add_transactions(withdrawals)
+#'
+#' res <- expo |> dplyr::group_by(inc_guar) |> trx_stats()
+#' res
+#'
+#' summary(res)
 #'
 #' @export
 trx_stats <- function(.data,
                       trx_types,
-                      pct_of,
+                      percent_of = NULL,
                       full_exposures_only = TRUE) {
 
   verify_exposed_df(.data)
@@ -79,13 +85,13 @@ trx_stats <- function(.data,
 
   .data <- .data |>
     dplyr::select(pol_num, exposure, !!!.groups,
-                  dplyr::all_of(trx_cols), dplyr::all_of(pct_of)) |>
+                  dplyr::all_of(trx_cols), dplyr::all_of(percent_of)) |>
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),
                         names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
     dplyr::mutate(trx_flag = abs(trx_n) > 0)
 
-  finish_trx_stats(.data, trx_types, pct_of,
+  finish_trx_stats(.data, trx_types, percent_of,
                    .groups, start_date, end_date)
 
 }
@@ -98,8 +104,8 @@ print.trx_df <- function(x, ...) {
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n",
       "Transaction types:", paste(attr(x, "trx_types"), collapse = ", "), "\n")
-  if (!is.null(attr(x, "pct_of"))) {
-    cat(" Transactions as % of:", paste(attr(x, "pct_of"), collapse = ", "), "\n")
+  if (!is.null(attr(x, "percent_of"))) {
+    cat(" Transactions as % of:", paste(attr(x, "percent_of"), collapse = ", "), "\n")
   }
   if (is.null(attr(x, "wt"))) {
     cat("\n")
@@ -126,9 +132,9 @@ summary.trx_df <- function(object, ...) {
   trx_types <- attr(object, "trx_types")
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
-  pct_of <- attr(object, "pct_of")
+  percent_of <- attr(object, "percent_of")
 
-  finish_trx_stats(res, trx_types, pct_of,
+  finish_trx_stats(res, trx_types, percent_of,
                    .groups, start_date, end_date)
 
 }
@@ -137,16 +143,16 @@ summary.trx_df <- function(object, ...) {
 # support functions -------------------------------------------------------
 
 
-finish_trx_stats <- function(.data, trx_types, pct_of,
+finish_trx_stats <- function(.data, trx_types, percent_of,
                              .groups, start_date, end_date) {
 
-  if (!missing(pct_of)) {
+  if (!is.null(percent_of)) {
     pct_vals <- exp_form("sum({expected})",
-                         "{expected}", pct_of)
+                         "{expected}", percent_of)
     pct_form <- exp_form("trx_amt / {expected}",
-                        "pct_of_{expected}", pct_of)
+                        "percent_of_{expected}", percent_of)
   } else {
-    pct_vals <- pct_form <- pct_of <- NULL
+    pct_vals <- pct_form <- percent_of <- NULL
   }
 
   res <- .data |>
@@ -167,6 +173,6 @@ finish_trx_stats <- function(.data, trx_types, pct_of,
   structure(res, class = c("trx_df", class(res)),
             groups = .groups, trx_types = trx_types,
             start_date = start_date,
-            pct_of = pct_of,
+            percent_of = percent_of,
             end_date = end_date)
 }
