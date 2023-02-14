@@ -240,8 +240,8 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
   res <- .data |>
     dplyr::group_by(trx_type, .add = TRUE) |>
     dplyr::summarize(trx_n = sum(trx_n),
-                     trx_amt = sum(trx_amt),
                      trx_flag = sum(trx_flag),
+                     trx_amt = sum(trx_amt),
                      exposure = sum(exposure),
                      avg_trx = trx_amt / trx_flag,
                      avg_all = trx_amt / exposure,
@@ -249,8 +249,8 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      trx_util = trx_flag / exposure,
                      !!!pct_vals,
                      !!!pct_vals_trx,
-                     !!!pct_form_all,
                      !!!pct_form_trx,
+                     !!!pct_form_all,
                      .groups = "drop")
 
   structure(res, class = c("trx_df", class(res)),

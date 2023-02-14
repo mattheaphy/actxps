@@ -122,6 +122,81 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
 
 }
 
+#' @rdname autotable
+#' @export
+autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
+                             colorful = TRUE,
+                             color_q_obs = "RColorBrewer::GnBu",
+                             color_ae_ = "RColorBrewer::RdBu",
+                             rename_cols = rlang::list2(...),
+                             ...) {
+
+  rlang::check_installed("RColorBrewer")
+
+  percent_of <- attr(object, "percent_of")
+  trx_types <- attr(object, "trx_types")
+
+  tab <- object |>
+    dplyr::select(-dplyr::all_of(percent_of),
+                  -dplyr::all_of(paste0(percent_of, "_w_trx")),
+                  -exposure) |>
+    dplyr::arrange(trx_type) |>
+    # gt::gt(..., groupname_col = "trx_type") |>
+    gt::gt(groupname_col = "trx_type") |>
+    gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
+                   decimals = 0) |>
+    gt::fmt_number(trx_freq, decimals = 1) |>
+    gt::fmt_percent(c(trx_util, starts_with("pct_of_")),
+                    decimals = decimals) |>
+    gt::sub_missing() |>
+    gt::tab_options(table.font.size = gt::pct(fontsize),
+                    row.striping.include_table_body = TRUE) |>
+    gt::tab_style(list(gt::cell_text(weight = "bold")),
+                  locations = gt::cells_column_labels()) |>
+    gt::tab_spanner(gt::md("**Counts**"), c("trx_n", "trx_flag")) |>
+    gt::tab_spanner(gt::md("**Averages**"), c("avg_trx", "avg_all")) |>
+    gt::cols_label(trx_n = "Total",
+                   trx_flag = "Periods",
+                   trx_amt = "Amount",
+                   avg_trx = gt::md("*w/ trx*"),
+                   avg_all = gt::md("*all*"),
+                   trx_freq = "Frequency",
+                   trx_util = "Utilization") |>
+    gt::cols_label(.list = rename_cols) |>
+    gt::tab_header(title = "Transaction Study Results",
+                   subtitle = glue::glue("Transaction type{ifelse(length(trx_types) > 1,'s','')}: {paste(trx_types, collapse = ', ')}")) |>
+    gt::tab_source_note(glue::glue("Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"))
+
+  for (i in percent_of) {
+    tab <- tab |> span_percent_of(i)
+  }
+
+  # if (colorful) {
+  #   tab <- tab |>
+  #     gt::data_color(
+  #       columns = q_obs,
+  #       colors = scales::col_numeric(
+  #         palette = paletteer::paletteer_d(palette = color_q_obs) |>
+  #           as.character(),
+  #         domain = NULL
+  #       )
+  #     ) |>
+  #     gt::data_color(
+  #       columns = dplyr::starts_with("ae_"),
+  #       colors = scales::col_numeric(
+  #         palette = paletteer::paletteer_d(palette = color_ae_) |>
+  #           as.character(),
+  #         domain = NULL,
+  #         reverse = TRUE
+  #       )
+  #     )
+  # }
+
+  tab
+
+}
+
+
 span_expected <- function(tab, ex, cred) {
 
   force(ex)
@@ -136,5 +211,17 @@ span_expected <- function(tab, ex, cred) {
 
   tab |> gt::cols_label(
     !!rlang::sym(paste0("adj_", ex)) := gt::md("*q<sup>adj</sup>*"))
+
+}
+
+span_percent_of <- function(tab, pct_of) {
+
+  pct_names <- paste0("pct_of_", pct_of, c("_w_trx", "_all"))
+
+  tab <- tab |>
+    gt::tab_spanner(glue::glue("**% of {pct_of}**") |> gt::md(),
+                    pct_names) |>
+    gt::cols_label(!!rlang::sym(pct_names[[1]]) := gt::md("*all*"),
+                   !!rlang::sym(pct_names[[2]]) := gt::md("*w/ trx*"))
 
 }
