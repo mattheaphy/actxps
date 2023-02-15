@@ -6,20 +6,26 @@
 #'
 #' `autotable.exp_df()` is used to convert experience study results to a
 #' presentation-friendly format.
-
+#'
+#' `autotable.trx_df()` is used to convert transaction study results to a
+#' presentation-friendly format.
 #'
 #' @param object An object of class `exp_df` usually created by the
-#' function [exp_stats()].
+#' function [exp_stats()] or an object of class `trx_df` created by the
+#' [trx_stats()] function.
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
 #' @param colorful If `TRUE`, color will be added to the the observed
 #' decrement rate and actual-to-expected columns.
 #' @param color_q_obs Color palette used for the observed decrement rate.
 #' @param color_ae_ Color palette used for actual-to-expected rates.
+#' @param color_util Color palette used for utilization rates.
+#' @param color_percent_of Color palette used for "percentage of" columns.
 #' @param rename_cols An optional list consisting of key-value pairs. This
-#' can be used to relabel columns on the output table. Names are column names
-#' in `object` and values are new labels. See [gt::cols_label()] for
-#' more information.
+#' can be used to relabel columns on the output table. This parameter is most
+#' useful for renaming grouping variables that will appear under their original
+#' variable names if left unchanged. See [gt::cols_label()] for more
+#' information.
 #' @param ... Additional arguments passed to [gt::gt()].
 #'
 #' @details
@@ -98,6 +104,13 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                     locations = gt::cells_column_spanners())
   }
   if (colorful) {
+
+    domain_ae <- if(any(grepl('^ae_', names(object)))) {
+      object |>
+        dplyr::select(dplyr::starts_with('ae_')) |>
+        range(na.rm = TRUE)
+    }
+
     tab <- tab |>
       gt::data_color(
         columns = q_obs,
@@ -112,7 +125,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
         colors = scales::col_numeric(
           palette = paletteer::paletteer_d(palette = color_ae_) |>
             as.character(),
-          domain = NULL,
+          domain = domain_ae,
           reverse = TRUE
         )
       )
@@ -126,8 +139,8 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
 #' @export
 autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
                              colorful = TRUE,
-                             color_q_obs = "RColorBrewer::GnBu",
-                             color_ae_ = "RColorBrewer::RdBu",
+                             color_util = "RColorBrewer::GnBu",
+                             color_pct_of = "RColorBrewer::RdBu",
                              rename_cols = rlang::list2(...),
                              ...) {
 
@@ -136,10 +149,15 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   percent_of <- attr(object, "percent_of")
   trx_types <- attr(object, "trx_types")
 
+  # remove unnecessary columns
+  if (!is.null(percent_of)) {
+    object <- object |>
+      dplyr::select(-dplyr::all_of(percent_of),
+                    -dplyr::all_of(paste0(percent_of, "_w_trx")))
+  }
+
   tab <- object |>
-    dplyr::select(-dplyr::all_of(percent_of),
-                  -dplyr::all_of(paste0(percent_of, "_w_trx")),
-                  -exposure) |>
+    dplyr::select(-exposure) |>
     dplyr::arrange(trx_type) |>
     # gt::gt(..., groupname_col = "trx_type") |>
     gt::gt(groupname_col = "trx_type") |>
@@ -171,26 +189,33 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
     tab <- tab |> span_percent_of(i)
   }
 
-  # if (colorful) {
-  #   tab <- tab |>
-  #     gt::data_color(
-  #       columns = q_obs,
-  #       colors = scales::col_numeric(
-  #         palette = paletteer::paletteer_d(palette = color_q_obs) |>
-  #           as.character(),
-  #         domain = NULL
-  #       )
-  #     ) |>
-  #     gt::data_color(
-  #       columns = dplyr::starts_with("ae_"),
-  #       colors = scales::col_numeric(
-  #         palette = paletteer::paletteer_d(palette = color_ae_) |>
-  #           as.character(),
-  #         domain = NULL,
-  #         reverse = TRUE
-  #       )
-  #     )
-  # }
+  if (colorful) {
+
+    domain_pct <- if(any(grepl('^pct_of', names(object)))) {
+      object |>
+        dplyr::select(dplyr::starts_with('pct_of')) |>
+        range(na.rm = TRUE)
+    }
+
+    tab <- tab |>
+      gt::data_color(
+        columns = trx_util,
+        colors = scales::col_numeric(
+          palette = paletteer::paletteer_d(palette = color_util) |>
+            as.character(),
+          domain = NULL
+        )
+      ) |>
+      gt::data_color(
+        columns = dplyr::starts_with("pct_of"),
+        colors = scales::col_numeric(
+          palette = paletteer::paletteer_d(palette = color_pct_of) |>
+            as.character(),
+          domain = domain_pct,
+          reverse = TRUE
+        )
+      )
+  }
 
   tab
 
@@ -221,7 +246,7 @@ span_percent_of <- function(tab, pct_of) {
   tab <- tab |>
     gt::tab_spanner(glue::glue("**% of {pct_of}**") |> gt::md(),
                     pct_names) |>
-    gt::cols_label(!!rlang::sym(pct_names[[1]]) := gt::md("*all*"),
-                   !!rlang::sym(pct_names[[2]]) := gt::md("*w/ trx*"))
+    gt::cols_label(!!rlang::sym(pct_names[[1]]) := gt::md("*w/ trx*"),
+                   !!rlang::sym(pct_names[[2]]) := gt::md("*all*"))
 
 }

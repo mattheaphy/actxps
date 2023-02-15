@@ -60,12 +60,12 @@ variables and transaction types, plus the following:
 
 If \code{percent_of} is provided, the results will also include:
 \itemize{
-\item The sum of any columns passed to \code{percent_of}
 \item The sum of any columns passed to \code{percent_of} with non-zero transactions.
 These columns include the suffix \verb{_w_trx}.
-\item \verb{pct_of_\{*\}_all}: total transactions as a percentage of column \verb{\{*\}}
+\item The sum of any columns passed to \code{percent_of}
 \item \verb{pct_of_\{*\}_w_trx}: total transactions as a percentage of column
 \verb{\{*\}_w_trx}
+\item \verb{pct_of_\{*\}_all}: total transactions as a percentage of column \verb{\{*\}}
 }
 }
 \description{

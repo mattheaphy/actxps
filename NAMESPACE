@@ -2,6 +2,7 @@
 
 S3method(autoplot,exp_df)
 S3method(autotable,exp_df)
+S3method(autotable,trx_df)
 S3method(bake,step_expose)
 S3method(group_by,exposed_df)
 S3method(groups,exp_df)

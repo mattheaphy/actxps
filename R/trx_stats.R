@@ -89,12 +89,12 @@
 #'
 #' If `percent_of` is provided, the results will also include:
 #'
-#' - The sum of any columns passed to `percent_of`
 #' - The sum of any columns passed to `percent_of` with non-zero transactions.
 #' These columns include the suffix `_w_trx`.
-#' - `pct_of_{*}_all`: total transactions as a percentage of column `{*}`
+#' - The sum of any columns passed to `percent_of`
 #' - `pct_of_{*}_w_trx`: total transactions as a percentage of column
 #' `{*}_w_trx`
+#' - `pct_of_{*}_all`: total transactions as a percentage of column `{*}`
 #'
 #' @examples
 #' expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
@@ -247,8 +247,8 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      avg_all = trx_amt / exposure,
                      trx_freq  = trx_n / exposure,
                      trx_util = trx_flag / exposure,
-                     !!!pct_vals,
                      !!!pct_vals_trx,
+                     !!!pct_vals,
                      !!!pct_form_trx,
                      !!!pct_form_all,
                      .groups = "drop")
