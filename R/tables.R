@@ -105,7 +105,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   }
   if (colorful) {
 
-    domain_ae <- if(any(grepl('^ae_', names(object)))) {
+    domain_ae <- if (length(expected > 0)) {
       object |>
         dplyr::select(dplyr::starts_with('ae_')) |>
         range(na.rm = TRUE)
@@ -191,7 +191,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
 
   if (colorful) {
 
-    domain_pct <- if(any(grepl('^pct_of', names(object)))) {
+    domain_pct <- if(!is.null(percent_of)) {
       object |>
         dplyr::select(dplyr::starts_with('pct_of')) |>
         range(na.rm = TRUE)
