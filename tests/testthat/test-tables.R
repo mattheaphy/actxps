@@ -1,7 +1,7 @@
 expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
   add_transactions(withdrawals) |>
   dplyr::mutate(q_exp = ifelse(inc_guar, 0.015, 0.03)) |>
-  dplyr::group_by(inc_guar, pol_yr)
+  dplyr::group_by(pol_yr, inc_guar)
 
 exp_res <- expo |> exp_stats()
 trx_res <- expo |> trx_stats()

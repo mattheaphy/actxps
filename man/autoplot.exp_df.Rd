@@ -7,6 +7,9 @@
 \method{autoplot}{exp_df}(
   object,
   ...,
+  x = NULL,
+  y = NULL,
+  color = NULL,
   mapping,
   scales = "fixed",
   geoms = c("lines", "bars"),
@@ -19,7 +22,19 @@ function \code{\link[=exp_stats]{exp_stats()}}.}
 
 \item{...}{Faceting variables passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
-\item{mapping}{Aesthetic mapping passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}.}
+\item{x}{An unquoted column name in \code{object} or expression to use as the \code{x}
+variable.}
+
+\item{y}{An unquoted column name in \code{object} or expression to use as the
+\code{y} variable. If unspecified, \code{y} will default to the observed termination
+(\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
+(\code{trx_util}) for \code{trx_df} objects.}
+
+\item{color}{An unquoted column name in \code{object} or expression to use as the
+\code{color} and \code{fill} variables.}
+
+\item{mapping}{Aesthetic mapping passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}. NOTE: If
+\code{mapping} is supplied, the \code{x}, \code{y}, and \code{color} arguments will be ignored.}
 
 \item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
