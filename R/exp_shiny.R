@@ -136,8 +136,8 @@ exp_shiny <- function(dat,
 
   yVar_exp <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
   if (has_trx) {
-    yVar_trx <- c("trx_n", "trx_flag", "trx_amt", "avg_trx",
-                  "avg_all", "trx_freq", "trx_util")
+    yVar_trx <- c("trx_util", "trx_freq", "trx_n", "trx_flag",
+                  "trx_amt", "avg_trx", "avg_all")
     available_studies <- c("Termination study" = "exp",
                            "Transaction study" = "trx")
   } else {
@@ -392,7 +392,7 @@ exp_shiny <- function(dat,
 
     thematic::thematic_shiny()
 
-    # update y variable selections in response to expected value outputs
+    # update y variable selections in response to inputs
     shiny::observe(
       shiny::updateSelectInput(
         session, "yVar", choices =
@@ -448,6 +448,7 @@ exp_shiny <- function(dat,
         rdat() |>
           dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
           trx_stats(percent_of = input$pct_checks,
+                    trx_types = input$trx_types_checks,
                     combine_trx = input$trx_combine)
       }
 
