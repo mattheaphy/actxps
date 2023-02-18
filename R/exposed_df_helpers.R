@@ -174,7 +174,7 @@ group_by.exposed_df <- function(.data, ..., .add, .drop) {
 #' @export
 ungroup.exposed_df <- function(x, ...) {
 
-  hold_attr <- attributes(expo)[!names(attributes(expo)) %in%
+  hold_attr <- attributes(x)[!names(attributes(x)) %in%
                                   c("row.names", "names", "groups", "class")]
   reclass <- dplyr::is_grouped_df(x)
 
