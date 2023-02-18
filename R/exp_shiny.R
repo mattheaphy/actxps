@@ -268,7 +268,12 @@ exp_shiny <- function(dat,
                           all_trx_types, selected = all_trx_types),
         selectPred("pct_checks", "Transactions as % of:", 4,
                    choices = percent_of_choices, multiple = TRUE),
-
+        shiny::column(
+          width = 4,
+          shiny::checkboxInput("trx_combine",
+                               shiny::strong("Combine transactions?"),
+                               value = FALSE)
+        )
       )
     )
 
@@ -442,7 +447,8 @@ exp_shiny <- function(dat,
       } else {
         rdat() |>
           dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
-          trx_stats(percent_of = input$pct_checks)
+          trx_stats(percent_of = input$pct_checks,
+                    combine_trx = input$trx_combine)
       }
 
     })
