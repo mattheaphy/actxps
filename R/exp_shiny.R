@@ -134,10 +134,10 @@ exp_shiny <- function(dat,
 
   preds_small <- dplyr::filter(preds, n_unique <= distinct_max)$predictors
 
-  yVar_basic <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
+  yVar_exp <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
   if (has_trx) {
-    yVar_basic <- c(yVar_basic, "trx_n", "trx_flag", "trx_amt", "avg_trx",
-                    "avg_all", "trx_freq", "trx_util")
+    yVar_trx <- c("trx_n", "trx_flag", "trx_amt", "avg_trx",
+                  "avg_all", "trx_freq", "trx_util")
     available_studies <- c("Termination study" = "exp",
                            "Transaction study" = "trx")
   } else {
@@ -322,7 +322,7 @@ exp_shiny <- function(dat,
             "Plot",
             shiny::br(),
             shiny::fluidRow(
-              selectPred("yVar", "y:", 4, choices = yVar_basic),
+              selectPred("yVar", "y:", 4, choices = yVar_exp),
               shiny::column(
                 width = 4,
                 shiny::radioButtons("plotGeom",
@@ -375,17 +375,22 @@ exp_shiny <- function(dat,
     # update y variable selections in response to expected value outputs
     shiny::observe(
       shiny::updateSelectInput(
-        session, "yVar", choices = c(yVar_basic,
-                                     input$ex_checks,
-                                     glue::glue("ae_{input$ex_checks}"),
-                                     glue::glue("adj_{input$ex_checks}"),
-                                     input$pct_checks,
-                                     glue::glue("{input$pct_checks}_w_trx"),
-                                     glue::glue("{input$pct_checks}_all")
-        )
+        session, "yVar", choices =
+          if(input$study_type == "exp") {
+            c(yVar_exp,
+              input$ex_checks,
+              glue::glue("ae_{input$ex_checks}"),
+              glue::glue("adj_{input$ex_checks}"))
+          } else {
+            c(yVar_trx,
+              glue::glue("pct_of_{input$pct_checks}_w_trx"),
+              glue::glue("pct_of_{input$pct_checks}_all"),
+              input$pct_checks,
+              glue::glue("{input$pct_checks}_w_trx"))
+          }
       )
     ) |>
-      shiny::bindEvent(input$ex_checks, input$pct_checks)
+      shiny::bindEvent(input$ex_checks, input$pct_checks, input$study_type)
 
     # reactive data
     rdat <- shiny::reactive({
@@ -415,9 +420,16 @@ exp_shiny <- function(dat,
         input$ex_checks
       }
 
-      rdat() |>
-        dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
-        exp_stats(wt = wt, credibility = TRUE, expected = ex)
+      if (input$study_type == "exp") {
+        rdat() |>
+          dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
+          exp_stats(wt = wt, credibility = TRUE, expected = ex)
+      } else {
+        rdat() |>
+          dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
+          trx_stats(percent_of = input$pct_checks)
+      }
+
     })
 
     output$xpPlot <- shiny::renderPlot({
@@ -441,8 +453,14 @@ exp_shiny <- function(dat,
                               fill = !!color, group = !!color)
 
       # y labels
-      if (input$yVar %in% c("claims", "n_claims", "exposure")) {
+      if (input$yVar %in% c("claims", "n_claims", "exposure",
+                            "trx_n", "trx_flag", "trx_amt",
+                            "avg_trx", "avg_all",
+                            input$pct_checks,
+                            paste0(input$pct_checks, "_w_trx"))) {
         y_labels <- scales::label_comma(accuracy = 1)
+      } else if (input$yVar == "trx_freq") {
+        y_labels <- scales::label_comma(accuracy = 0.1)
       } else {
         y_labels <- scales::label_percent(accuracy = 0.1)
       }
@@ -451,7 +469,12 @@ exp_shiny <- function(dat,
         p <- dat |> autoplot(mapping = mapping, geoms = input$plotGeom,
                              y_labels = y_labels)
       } else {
+
         facets <- rlang::syms(input$facetVar)
+        if (input$study_type == "trx") {
+          facets <- append(facets, rlang::sym("trx_type"))
+        }
+
         p <- dat |> autoplot(!!!facets, mapping = mapping,
                              geoms = input$plotGeom,
                              y_labels = y_labels,
