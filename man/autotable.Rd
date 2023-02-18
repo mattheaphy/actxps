@@ -56,7 +56,7 @@ information.}
 
 \item{color_util}{Color palette used for utilization rates.}
 
-\item{color_percent_of}{Color palette used for "percentage of" columns.}
+\item{color_pct_of}{Color palette used for "percentage of" columns.}
 }
 \value{
 a \code{gt} object

@@ -20,7 +20,7 @@
 #' @param color_q_obs Color palette used for the observed decrement rate.
 #' @param color_ae_ Color palette used for actual-to-expected rates.
 #' @param color_util Color palette used for utilization rates.
-#' @param color_percent_of Color palette used for "percentage of" columns.
+#' @param color_pct_of Color palette used for "percentage of" columns.
 #' @param rename_cols An optional list consisting of key-value pairs. This
 #' can be used to relabel columns on the output table. This parameter is most
 #' useful for renaming grouping variables that will appear under their original
@@ -164,7 +164,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
     gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
                    decimals = 0) |>
     gt::fmt_number(trx_freq, decimals = 1) |>
-    gt::fmt_percent(c(trx_util, starts_with("pct_of_")),
+    gt::fmt_percent(c(trx_util, dplyr::starts_with("pct_of_")),
                     decimals = decimals) |>
     gt::sub_missing() |>
     gt::tab_options(table.font.size = gt::pct(fontsize),
