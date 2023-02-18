@@ -225,27 +225,29 @@ exp_shiny <- function(dat,
 
   }
 
-  selectPred <- function(inputId, label, width,
-                         choices = c("None", preds$predictors), ...) {
-    shiny::column(
-      width = width,
-      shiny::selectInput(inputId, shiny::strong(label),
-                         choices = choices, ...)
-    )
+  widgetPred <- function(fun) {
+    function(inputId, label, width,
+             choices = c("None", preds$predictors), ...) {
+      shiny::column(
+        width = width,
+        fun(inputId, shiny::strong(label),
+            choices = choices, ...)
+      )
+    }
   }
+
+  selectPred <- widgetPred(shiny::selectInput)
+  checkboxGroupPred <- widgetPred(shiny::checkboxGroupInput)
 
   # expected values set up
   if (length(expected) > 0) {
 
     has_expected <- TRUE
 
-    expected_widget <-
-      shiny::column(
-        width = 4,
-        shiny::checkboxGroupInput("ex_checks",
-                                  shiny::strong("Expected values:"),
-                                  choices = expected)
-      )
+    expected_widget <- checkboxGroupPred("ex_checks", "Expected values:", 4,
+                                         choices = expected,
+                                         selected = expected)
+
   } else {
     has_expected <- FALSE
     expected_widget <- NULL
@@ -258,12 +260,20 @@ exp_shiny <- function(dat,
       dplyr::filter(class1 %in% c("integer", "numeric", "double")) |>
       dplyr::pull(predictors)
 
-    percent_widget <- selectPred("pct_checks", "Transactions as % of:",
-                                 4, choices = percent_of_choices,
-                                 multiple = TRUE)
+    trx_tab <- shiny::tabPanel(
+      "Transaction study",
+      value = "trx",
+      shiny::fluidRow(
+        checkboxGroupPred("trx_types_checks", "Transaction types:", 4,
+                          all_trx_types, selected = all_trx_types),
+        selectPred("pct_checks", "Transactions as % of:", 4,
+                   choices = percent_of_choices, multiple = TRUE),
+
+      )
+    )
 
   } else {
-    percent_widget <- NULL
+    trx_tab <- NULL
   }
 
   ui <- shiny::fluidPage(
@@ -301,7 +311,7 @@ exp_shiny <- function(dat,
                        choices = preds_small)
           ),
 
-          shiny::h4("Study type variables"),
+          shiny::h4("Study type"),
           shiny::tabsetPanel(
             id = "study_type",
             type = "pills",
@@ -314,10 +324,7 @@ exp_shiny <- function(dat,
                                          choices = c("None",
                                                      dplyr::filter(preds, is_number)$predictors))
                             )),
-
-            shiny::tabPanel("Transaction study",
-                            value = "trx",
-                            percent_widget)
+            trx_tab
 
           )
         ),
@@ -398,7 +405,7 @@ exp_shiny <- function(dat,
           }
       )
     ) |>
-      shiny::bindEvent(input$ex_checks, input$pct_checks, input$study_type)
+      shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks)
 
     # reactive data
     rdat <- shiny::reactive({
