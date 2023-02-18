@@ -31,6 +31,8 @@
 #'
 #' @return a `ggplot` object
 #'
+#' @name autoplot_exp
+#' @rdname autoplot_exp
 #' @export
 autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
                             mapping, scales = "fixed",
@@ -45,6 +47,7 @@ autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
                   y_labels, rlang::enquos(...))
 }
 
+#' @rdname autoplot_exp
 #' @export
 autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
                             mapping, scales = "fixed",
