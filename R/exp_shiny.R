@@ -258,14 +258,10 @@ exp_shiny <- function(dat,
       dplyr::filter(class1 %in% c("integer", "numeric", "double")) |>
       dplyr::pull(predictors)
 
-    percent_widget <-
-      shiny::column(
-        width = 4,
-        shiny::selectInput("pct_checks",
-                           shiny::strong("Transactions as % of:"),
-                           multiple = TRUE,
-                           choices = percent_of_choices)
-      )
+    percent_widget <- selectPred("pct_checks", "Transactions as % of:",
+                                 4, choices = percent_of_choices,
+                                 multiple = TRUE)
+
   } else {
     percent_widget <- NULL
   }
@@ -292,12 +288,10 @@ exp_shiny <- function(dat,
       shiny::mainPanel(
 
         shiny::wellPanel(
+
           shiny::h3("Study options"),
-          shiny::fluidRow(
-            shiny::radioButtons("study_type", shiny::strong("Study type"),
-                                choices = available_studies,
-                                inline = TRUE)
-          ),
+
+          shiny::h4("Grouping variables"),
           shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
           shiny::fluidRow(
             selectPred("xVar", "x:", 4),
@@ -306,13 +300,27 @@ exp_shiny <- function(dat,
             selectPred("facetVar", "Facets:", 4, multiple = TRUE,
                        choices = preds_small)
           ),
-          shiny::fluidRow(
-            expected_widget,
-            selectPred("weightVar", "Weight by:", 4,
-                       choices = c("None",
-                                   dplyr::filter(preds, is_number)$predictors)),
-            percent_widget
-          )),
+
+          shiny::h4("Study type variables"),
+          shiny::tabsetPanel(
+            id = "study_type",
+            type = "pills",
+
+            shiny::tabPanel("Termination study",
+                            value = "exp",
+                            shiny::fluidRow(
+                              expected_widget,
+                              selectPred("weightVar", "Weight by:", 4,
+                                         choices = c("None",
+                                                     dplyr::filter(preds, is_number)$predictors))
+                            )),
+
+            shiny::tabPanel("Transaction study",
+                            value = "trx",
+                            percent_widget)
+
+          )
+        ),
 
         shiny::h3("Output"),
 
