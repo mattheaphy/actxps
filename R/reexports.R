@@ -2,11 +2,13 @@
 #' @export
 ggplot2::autoplot
 
-#' @importFrom dplyr groups group_by
+#' @importFrom dplyr groups group_by ungroup
 #' @export
 dplyr::groups
 #' @export
 dplyr::group_by
+#' @export
+dplyr::ungroup
 
 #' @importFrom recipes prep bake
 #' @export

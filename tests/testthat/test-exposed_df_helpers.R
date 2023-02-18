@@ -64,3 +64,10 @@ test_that("as_exposed_df works with transactions", {
                                 col_trx_amt_ = "amt_"))
 
 })
+
+test_that("exposed_df class persists after grouping and ungrouping", {
+  expect_s3_class(expo, "exposed_df")
+  expect_s3_class(expo |> group_by(pol_num), "exposed_df")
+  expect_s3_class(expo |> group_by(pol_num) |> ungroup(), "exposed_df")
+  expect_identical(expo, ungroup(expo))
+})

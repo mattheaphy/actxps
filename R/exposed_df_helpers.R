@@ -171,6 +171,24 @@ group_by.exposed_df <- function(.data, ..., .add, .drop) {
   x
 }
 
+#' @export
+ungroup.exposed_df <- function(x, ...) {
+
+  hold_attr <- attributes(expo)[!names(attributes(expo)) %in%
+                                  c("row.names", "names", "groups", "class")]
+  reclass <- dplyr::is_grouped_df(x)
+
+  x <- NextMethod()
+
+  for (a in names(hold_attr)) {
+    attr(x, a) <- hold_attr[[a]]
+  }
+  if (reclass) class(x) <- c("exposed_df", class(x))
+
+  x
+}
+
+
 # helper for determining date columns
 make_date_col_names <- function(cal_expo, expo_length) {
   abbrev <- abbr_period(expo_length)
