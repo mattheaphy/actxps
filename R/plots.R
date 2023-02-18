@@ -1,13 +1,14 @@
 #' Plot experience study results
 #'
-#' @param object An object of class `exp_df` usually created by the
-#' function [exp_stats()].
+#' @param object An object of class `exp_df` created by the
+#' function [exp_stats()] or an object of class `trx_df` created by the function
+#' [trx_stats()].
 #' @param ... Faceting variables passed to [ggplot2::facet_wrap()].
 #' @param x An unquoted column name in `object` or expression to use as the `x`
 #' variable.
 #' @param y An unquoted column name in `object` or expression to use as the
 #' `y` variable. If unspecified, `y` will default to the observed termination
-#' (`q_obs`) for `exp_df` objects and the observed utilization rate
+#' rate (`q_obs`) for `exp_df` objects and the observed utilization rate
 #' (`trx_util`) for `trx_df` objects.
 #' @param color An unquoted column name in `object` or expression to use as the
 #' `color` and `fill` variables.
@@ -25,7 +26,8 @@
 #'
 #' If no faceting variables are supplied, the plot will use grouping
 #' variables 3 and up as facets. These variables are passed into
-#' [ggplot2::facet_wrap()].
+#' [ggplot2::facet_wrap()]. Specific to `trx_df` objects, transaction
+#' type (`trx_type`) will also be added as a faceting variable.
 #'
 #' @return a `ggplot` object
 #'
@@ -52,9 +54,14 @@ autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
   y <- rlang::enexpr(y)
   y <- if (is.null(y)) rlang::expr(trx_util) else y
 
+  facets <- rlang::enquos(...)
+  if (length(facets) == 0) {
+    facets <- c(rlang::expr(trx_type), groups(object)[-(1:2)])
+  }
+
   plot_experience(object, rlang::enexpr(x), y,
                   rlang::enexpr(color), mapping, scales, geoms,
-                  y_labels, rlang::enquos(...))
+                  y_labels, facets)
 }
 
 plot_experience <- function(
