@@ -175,7 +175,7 @@ group_by.exposed_df <- function(.data, ..., .add, .drop) {
 ungroup.exposed_df <- function(x, ...) {
 
   hold_attr <- attributes(x)[!names(attributes(x)) %in%
-                                  c("row.names", "names", "groups", "class")]
+                               c("row.names", "names", "groups", "class")]
   reclass <- dplyr::is_grouped_df(x)
 
   x <- NextMethod()
@@ -204,4 +204,19 @@ verify_exposed_df <- function(.data) {
                    i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
     ))
   }
+}
+
+# verify transactions exist and return all unique transaction types.
+# If no transactions and required = TRUE, an error is thrown. Otherwise NULL
+# if returned
+verify_get_trx_types <- function(.data, required = TRUE) {
+  trx_types <- attr(.data, "trx_types")
+  if(is.null(trx_types)) {
+    if (required) {
+      rlang::abort(c(x = "No transactions have been attached to `.data`.",
+                     i = "Add transaction data using `add_transactions()` before calling this function."))
+    }
+    return(NULL)
+  }
+  trx_types
 }

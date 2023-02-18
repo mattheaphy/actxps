@@ -119,11 +119,7 @@ trx_stats <- function(.data,
   verify_exposed_df(.data)
 
   # verify transaction types
-  all_trx_types <- attr(.data, "trx_types")
-  if(is.null(all_trx_types)) {
-    rlang::abort(c(x = "No transactions have been attached to `.data`.",
-                   i = "Add transaction data using `add_transactions()` before calling this function."))
-  }
+  all_trx_types <- verify_get_trx_types(.data)
 
   if(missing(trx_types)) {
     trx_types <- all_trx_types
