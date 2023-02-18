@@ -256,9 +256,7 @@ exp_shiny <- function(dat,
   # transactions set up
   if (has_trx) {
 
-    percent_of_choices <- preds |>
-      dplyr::filter(class1 %in% c("integer", "numeric", "double")) |>
-      dplyr::pull(predictors)
+    percent_of_choices <- dplyr::filter(preds, is_number)$predictors
 
     trx_tab <- shiny::tabPanel(
       "Transaction study",
