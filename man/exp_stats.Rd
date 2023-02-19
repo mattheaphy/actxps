@@ -58,8 +58,8 @@ for partial credibility and credibility-weighted decrement rates
 (assuming values are passed to \code{expected}).
 }
 \description{
-Create a summary data frame of experience for a given target
-status.
+Create a summary data frame of termination experience for a
+given target status.
 }
 \details{
 If \code{.data} is grouped, the resulting data frame will contain

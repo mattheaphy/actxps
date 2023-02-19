@@ -4,11 +4,13 @@
 #' experience.
 #'
 #' `dat` must be an `exposed_df` object. An error will be thrown is any other
-#' object type is passed.
+#' object type is passed. If `dat` has transactions attached, the app will
+#' contain features for both termination and transaction studies. Otherwise,
+#' the app will only support termination studies.
 #'
 #' If nothing is passed to `predictors`, all columns names in `dat` will be
-#' used (excluding the policy number, status, termination date, and exposure
-#' columns).
+#' used (excluding the policy number, status, termination date, exposure,
+#' transaction counts, and transaction amounts columns).
 #'
 #' The `expected` argument is optional. As a default, any column names
 #' containing the word "expected" are used.
@@ -20,7 +22,9 @@
 #' The sidebar contains filtering widgets for all variables passed
 #' to the `predictors` argument.
 #'
-#' ## Variable Selection
+#' ## Study options
+#'
+#' ### Grouping variables
 #'
 #' This box includes widgets to select grouping variables for summarizing
 #' experience. The "x" widget is also used as the x variable in the plot output.
@@ -29,12 +33,30 @@
 #' "x", "Color", and "Facets" have no particular meaning beyond the order in
 #' which of grouping variables are displayed.
 #'
+#' ### Study type
+#'
+#' This box also includes a toggle to switch between termination studies and
+#' transaction studies (if available).
+#'
+#' #### Termination studies
+#'
 #' The expected values checkboxes are used to activate and deactivate expected
 #' values passed to the `expected` argument. This impacts the table output
-#' directly and the available "y" variables in the plot. If there are no
+#' directly and the available "y" variables for the plot. If there are no
 #' expected values available, this widget will not appear. The "Weight by"
 #' widget is used to specify which column, if any, contains weights for
 #' summarizing experience.
+#'
+#' #### Transaction studies
+#'
+#' The transaction types checkboxes are used to activate and deactivate
+#' transaction types that appear in the plot and table outputs. The available
+#' transaction types are taken from the `trx_types` attribute of `dat`.
+#' In the plot output, transaction type will always appear as a faceting
+#' variable. The "Transactions as % of" selector will expand the list of
+#' available "y" variables for the plot and impact the table output directly.
+#' Lastly, a checkbox exists that allows for all transaction types to be
+#' aggregated into a single group.
 #'
 #' ## Output
 #'
@@ -80,11 +102,11 @@
 #'   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
 #'   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 #'
-#'   set.seed(123)
 #'   study_py <- study_py |>
 #'   dplyr::mutate(expected_1 = expected_table[pol_yr],
 #'                 expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
-#'   add_transactions(withdrawals)
+#'   add_transactions(withdrawals) |>
+#'   dplyr::left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 #'
 #'   exp_shiny(study_py)
 #' }
@@ -141,6 +163,7 @@ exp_shiny <- function(dat,
     available_studies <- c("Termination study" = "exp",
                            "Transaction study" = "trx")
   } else {
+    yVar_trx <- NULL
     available_studies <- c("Termination study" = "exp")
   }
 
@@ -390,21 +413,29 @@ exp_shiny <- function(dat,
 
     thematic::thematic_shiny()
 
+    yVar_exp2 <- shiny::reactive({
+      c(yVar_exp,
+        input$ex_checks,
+        glue::glue("ae_{input$ex_checks}"),
+        glue::glue("adj_{input$ex_checks}"))
+    })
+
+    yVar_trx2 <- shiny::reactive({
+      c(yVar_trx,
+        glue::glue("pct_of_{input$pct_checks}_w_trx"),
+        glue::glue("pct_of_{input$pct_checks}_all"),
+        input$pct_checks,
+        glue::glue("{input$pct_checks}_w_trx"))
+    })
+
     # update y variable selections in response to inputs
     shiny::observe(
       shiny::updateSelectInput(
         session, "yVar", choices =
           if(input$study_type == "exp") {
-            c(yVar_exp,
-              input$ex_checks,
-              glue::glue("ae_{input$ex_checks}"),
-              glue::glue("adj_{input$ex_checks}"))
+            yVar_exp2()
           } else {
-            c(yVar_trx,
-              glue::glue("pct_of_{input$pct_checks}_w_trx"),
-              glue::glue("pct_of_{input$pct_checks}_all"),
-              input$pct_checks,
-              glue::glue("{input$pct_checks}_w_trx"))
+            yVar_trx2()
           }
       )
     ) |>
@@ -454,8 +485,8 @@ exp_shiny <- function(dat,
 
     output$xpPlot <- shiny::renderPlot({
 
-      if (input$study_type == "exp" && input$yVar == yVar_trx[[1]]) return()
-      if (input$study_type == "trx" && input$yVar == yVar_exp[[1]]) return()
+      if (input$study_type == "exp" && input$yVar %in% yVar_trx2()) return()
+      if (input$study_type == "trx" && input$yVar %in% yVar_exp2()) return()
 
       dat <- rxp()
 

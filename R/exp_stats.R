@@ -1,7 +1,7 @@
 #' Summarize experience study records
 #'
-#' @description Create a summary data frame of experience for a given target
-#' status.
+#' @description Create a summary data frame of termination experience for a
+#' given target status.
 #'
 #' @details If `.data` is grouped, the resulting data frame will contain
 #' one row per group.
