@@ -1,3 +1,5 @@
+# actxps 1.0.0
+
 # actxps 0.2.1
 
 `expose()` functions now include a new column for period end dates.
