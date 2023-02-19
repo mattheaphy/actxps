@@ -1,5 +1,31 @@
 # actxps 1.0.0
 
+The actxps package now contains support for transaction studies.
+
+- The `add_transactions()` function adds transactions to `exposed_df` objects.
+- The `trx_stats()` function summarizes transaction results and returns a 
+`trx_df` object.
+- New transaction summary (`trx_df`) S3 methods were added for for `autoplot()` 
+and `autotable()`.
+- The `exp_shiny()` function was updated to support transaction studies.
+- New sample data sets were added with transactions (`withdrawals`) and 
+sample policy values (`account_vals`). These are meant to be paired with 
+`census_dat`.
+- Added `vignette("transactions")`.
+
+Other changes
+
+- Several updates were made to the `as_exposed_df()` function to include 
+stricter input requirements and helpful error messages.
+- S3 methods for `dplyr::group_by()` and ``dplyr::ungroup()` were added for 
+`exposed_df` objects to ensure class persistence.
+- A new family of functions were added to calculate policy durations. These
+include `pol_interval()` (a generic version), `pol_yr()`, `pol_qtr()`, 
+`pol_mth()`, and `pol_wk()`. See `vignette("policy_duration")`.
+- The conditional formatting for color in `autotable.exp_df()` was updated to 
+be consistent across like columns.
+- The `pol_val` column in `census_dat` was renamed to `premium`.
+
 # actxps 0.2.1
 
 `expose()` functions now include a new column for period end dates.
