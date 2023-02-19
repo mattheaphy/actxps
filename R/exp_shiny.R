@@ -454,6 +454,9 @@ exp_shiny <- function(dat,
 
     output$xpPlot <- shiny::renderPlot({
 
+      if (input$study_type == "exp" && input$yVar == yVar_trx[[1]]) return()
+      if (input$study_type == "trx" && input$yVar == yVar_exp[[1]]) return()
+
       dat <- rxp()
 
       x <- if (input$xVar != "None") {
