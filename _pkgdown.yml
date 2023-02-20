@@ -8,3 +8,12 @@ footer:
     right: [built_with, logo_attr]
   components:
     logo_attr: Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&position=7&from_view=search&track=sph">image by macrovector</a> on Freepik
+articles:
+- title: Get started
+  navbar: ~
+  contents:
+  - actxps
+  - exposures
+  - exp_summary
+  - transactions
+  - misc

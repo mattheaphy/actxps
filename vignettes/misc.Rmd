@@ -2,7 +2,7 @@
 title: "Other functions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Policy durations}
+  %\VignetteIndexEntry{Other functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
