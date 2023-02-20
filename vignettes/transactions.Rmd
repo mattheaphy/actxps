@@ -189,7 +189,7 @@ trx_res |>
   autotable()
 ```
 
-<center><img src="../man/figures/trx_gt.png" width="55%" height="55%" /></center>
+<center><img src="../man/figures/trx_gt.png" width="65%" height="65%" /></center>
 
 
 ## Miscellaneous

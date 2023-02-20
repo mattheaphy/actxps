@@ -9,11 +9,11 @@
 #' are used for policy quarters, policy months, and policy weeks.
 #'
 #' The [pol_interval()] function can be used to determine any arbitrary
-#' duration passed to the `expo_length` argument.
+#' duration passed to the `dur_length` argument.
 #'
 #' @param x A vector of dates
 #' @param issue_date A vector of issue dates
-#' @param expo_length A period object. See [lubridate::period()].
+#' @param dur_length A period object. See [lubridate::period()].
 #'
 #' @return An integer vector
 #'
@@ -49,7 +49,7 @@ pol_wk <- function(x, issue_date) {
 
 #' @rdname pol_yr
 #' @export
-pol_interval <- function(x, issue_date, expo_length) {
-  ceiling(lubridate::interval(as.Date(issue_date) - 1, x) / expo_length)
+pol_interval <- function(x, issue_date, dur_length) {
+  ceiling(lubridate::interval(as.Date(issue_date) - 1, x) / dur_length)
 }
 
