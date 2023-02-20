@@ -30,7 +30,7 @@ An integer vector
 }
 \description{
 Given a vector of dates and a vector of issue dates, calculate
-policy years, quarters, months, weeks, or other duration.
+policy years, quarters, months, weeks, or other durations.
 }
 \details{
 These functions assume the first day of each policy year is the
