@@ -27,7 +27,7 @@
 #' exposure periods. Only necessary if `cal_expo` is `FALSE`. The assumed
 #' default is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk" depending on
 #' the value of `expo_length`.
-#' @param cols_dates Optional. Names of the column in `x` containing exposure
+#' @param cols_dates Optional. Names of the columns in `x` containing exposure
 #' start and end dates. Both date ranges are assumed to be exclusive. The
 #' assumed default is of the form *A*_*B*. *A* is "cal" if `cal_expo` is `TRUE`
 #' or "pol" otherwise. *B* is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"

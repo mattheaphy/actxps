@@ -14,6 +14,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+This article is based on creating a termination study using sample data that 
+comes with the actxps package. For information on transaction studies, see 
+`vignette("transactions")`.
+
 ## Simulated data set
 
 The actxps package includes a data frame containing simulated census data for a theoretical deferred annuity product with an optional guaranteed income rider. The grain of this data is one row per policy.

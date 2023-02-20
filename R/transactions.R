@@ -12,7 +12,7 @@
 #' Transactions are associated with the `exposed_df` object by matching
 #' transactions dates with exposure dates ranges found in `exposed_df`.
 #'
-#' @param .data a data frame with exposure-level records of type
+#' @param .data a data frame with exposure-level records with the class
 #' `exposed_df`. Use [as_exposed_df()] to convert a data frame to an
 #' `exposed_df` object if necessary.
 #' @param trx_data a data frame containing transactions details. This data

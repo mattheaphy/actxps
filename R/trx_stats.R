@@ -23,7 +23,7 @@
 #' The `percent_of` argument is optional. If provided, this argument must
 #' be a character vector with values corresponding to columns in `.data`
 #' containing values to use as denominators in the calculation of utilization
-#' rates or actual-to-expected ratios. Examples of usage include:
+#' rates or actual-to-expected ratios. Example usage:
 #'
 #' - In a study of partial withdrawal transactions, if `percent_of` refers to
 #'  account values, observed withdrawal rates can be determined.
@@ -84,7 +84,7 @@
 #' - `exposure`: total exposures
 #' - `avg_trx`: mean transaction amount (`trx_amt / trx_flag`)
 #' - `avg_all`: mean transaction amount over all records (`trx_amt / exposure`)
-#' - `trx_freq`: transaction frequency per exposure period (`trx_n / exposure`)
+#' - `trx_freq`: transaction frequency when a transaction occurs (`trx_n / trx_flag`)
 #' - `trx_utilization`: transaction utilization per observation period (`trx_flag / exposure`)
 #'
 #' If `percent_of` is provided, the results will also include:
@@ -241,7 +241,7 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      exposure = sum(exposure),
                      avg_trx = trx_amt / trx_flag,
                      avg_all = trx_amt / exposure,
-                     trx_freq  = trx_n / exposure,
+                     trx_freq = trx_n / trx_flag,
                      trx_util = trx_flag / exposure,
                      !!!pct_vals_trx,
                      !!!pct_vals,

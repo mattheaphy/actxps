@@ -14,7 +14,7 @@ add_transactions(
 )
 }
 \arguments{
-\item{.data}{a data frame with exposure-level records of type
+\item{.data}{a data frame with exposure-level records with the class
 \code{exposed_df}. Use \code{\link[=as_exposed_df]{as_exposed_df()}} to convert a data frame to an
 \code{exposed_df} object if necessary.}
 

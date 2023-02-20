@@ -54,7 +54,7 @@ variables and transaction types, plus the following:
 \item \code{exposure}: total exposures
 \item \code{avg_trx}: mean transaction amount (\code{trx_amt / trx_flag})
 \item \code{avg_all}: mean transaction amount over all records (\code{trx_amt / exposure})
-\item \code{trx_freq}: transaction frequency per exposure period (\code{trx_n / exposure})
+\item \code{trx_freq}: transaction frequency when a transaction occurs (\code{trx_n / trx_flag})
 \item \code{trx_utilization}: transaction utilization per observation period (\code{trx_flag / exposure})
 }
 
@@ -92,7 +92,7 @@ transactions or \code{\link[=add_transactions]{add_transactions()}} to attach tr
 The \code{percent_of} argument is optional. If provided, this argument must
 be a character vector with values corresponding to columns in \code{.data}
 containing values to use as denominators in the calculation of utilization
-rates or actual-to-expected ratios. Examples of usage include:
+rates or actual-to-expected ratios. Example usage:
 \itemize{
 \item In a study of partial withdrawal transactions, if \code{percent_of} refers to
 account values, observed withdrawal rates can be determined.

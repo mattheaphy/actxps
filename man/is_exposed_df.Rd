@@ -58,7 +58,7 @@ exposure periods. Only necessary if \code{cal_expo} is \code{FALSE}. The assumed
 default is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk" depending on
 the value of \code{expo_length}.}
 
-\item{cols_dates}{Optional. Names of the column in \code{x} containing exposure
+\item{cols_dates}{Optional. Names of the columns in \code{x} containing exposure
 start and end dates. Both date ranges are assumed to be exclusive. The
 assumed default is of the form \emph{A}_\emph{B}. \emph{A} is "cal" if \code{cal_expo} is \code{TRUE}
 or "pol" otherwise. \emph{B} is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"

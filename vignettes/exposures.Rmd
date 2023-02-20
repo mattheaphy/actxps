@@ -23,6 +23,9 @@ A common step in experience studies is converting census-level data into exposur
 - Calculates partial exposures for left-censored and right-censored records using exact day counts
 - For terminated policies, sets the policy status to an active state for all observation periods except the last. Similarly, the termination date is set to `NA` for all periods except the last.
 - Adds identifier columns for observation periods
+- Converts the data to the `exposed_df` class, which is a format expected by several actxps functions.
+
+If you already have exposure-level data available, the `expose()` functions are not necessary. However, we recommend converting your data to the `exposed_df` format using the function `as_exposed_df()`.
 
 ## Toy census data
 
