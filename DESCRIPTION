@@ -46,6 +46,7 @@ Imports:
     bslib,
     thematic,
     readr,
-    tidyr
+    tidyr,
+    vctrs
 LazyData: true
 VignetteBuilder: knitr

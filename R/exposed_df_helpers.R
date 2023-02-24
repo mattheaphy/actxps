@@ -41,6 +41,8 @@
 #' @return For `is_exposed_df()`, a length-1 logical vector. For
 #' `as_exposed_df()`, an `exposed_df` object.
 #'
+#' @importFrom vctrs vec_ptype2 vec_cast
+#'
 #' @export
 is_exposed_df <- function(x) {
   inherits(x, "exposed_df")
@@ -137,13 +139,15 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
 
   date_cols <- make_date_col_names(cal_expo, expo_length)
 
-  structure(x, class = c("exposed_df", class(x)),
-            target_status = target_status,
-            exposure_type = glue::glue("{if(cal_expo) 'calendar' else 'policy'}_{expo_length}"),
-            start_date = start_date,
-            end_date = end_date,
-            date_cols = date_cols,
-            trx_types = trx_types)
+  tibble::new_tibble(x,
+                     class = "exposed_df",
+                     target_status = target_status,
+                     exposure_type = glue::glue("{if(cal_expo) 'calendar' else 'policy'}_{expo_length}") |>
+                       as.character(),
+                     start_date = start_date,
+                     end_date = end_date,
+                     date_cols = date_cols,
+                     trx_types = trx_types)
 
 }
 
@@ -186,6 +190,128 @@ ungroup.exposed_df <- function(x, ...) {
   if (reclass) class(x) <- c("exposed_df", class(x))
 
   x
+}
+
+# NULL coalesce function
+`%||%` <- function(x, y) if(is.null(x)) y else x
+
+has_compatible_expo <- function(x, y) {
+  x <- attr(x, "exposure_type")
+  y <- attr(y, "exposure_type")
+  x <- x %||% y
+  y <- y %||% x
+  x == y
+}
+
+exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+  out <- vctrs::tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
+
+  # send message about unmatched start dates?
+  end_date <- max(attr(x, "end_date"), attr(y, "end_date"))
+  start_date <- min(attr(x, "start_date"), attr(y, "start_date"))
+  target_status <- c(attr(x, "target_status"), attr(y, "target_status")) |>
+    unique()
+  trx_types <- c(attr(x, "trx_types"), attr(y, "trx_types")) |> unique()
+
+  if (!has_compatible_expo(x, y)) {
+    vctrs::stop_incompatible_type(
+      x,
+      y,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      details = "Two different exposure period types cannot be combined."
+    )
+  }
+
+  expo_type <- attr(x, "exposure_type") %||% attr(y, "exposure_type")
+
+  split_type <- strsplit(expo_type, "_")[[1]]
+  cal_expo <- split_type[[1]] == "calendar"
+  expo_length <- split_type[[2]]
+
+  new_exposed_df(out, end_date, start_date, target_status, cal_expo,
+                 expo_length, trx_types)
+}
+
+
+exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+  out <- vctrs::tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
+
+  # send message about unmatched start dates?
+  end_date <- max(attr(x, "end_date"), attr(to, "end_date"))
+  start_date <- min(attr(x, "start_date"), attr(to, "start_date"))
+  target_status <- c(attr(x, "target_status"), attr(to, "target_status")) |>
+    unique()
+  trx_types <- c(attr(x, "trx_types"), attr(to, "trx_types")) |> unique()
+
+  if (!has_compatible_expo(x, to)) {
+    vctrs::stop_incompatible_cast(
+      x,
+      to,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      details = "Two different exposure period types cannot be combined."
+    )
+  }
+
+  expo_type <- attr(x, "exposure_type") %||% attr(to, "exposure_type")
+  split_type <- strsplit(expo_type, "_")[[1]]
+  cal_expo <- split_type[[1]] == "calendar"
+  expo_length <- split_type[[2]]
+
+  new_exposed_df(out, end_date, start_date, target_status, cal_expo,
+                 expo_length, trx_types)
+}
+
+
+#' @export
+vec_ptype2.exposed_df.exposed_df <- function(x, y, ...) {
+  exposed_df_ptype2(x, y, ...)
+}
+
+#' @export
+vec_cast.exposed_df.exposed_df <- function(x, to, ...) {
+  exposed_df_cast(x, to, ...)
+}
+
+#' @export
+vec_ptype2.exposed_df.tbl_df <- function(x, y, ...) {
+  exposed_df_ptype2(x, y, ...)
+}
+
+#' @export
+vec_ptype2.tbl_df.exposed_df <- function(x, y, ...) {
+  exposed_df_ptype2(x, y, ...)
+}
+
+#' @export
+vec_cast.exposed_df.tbl_df <- function(x, to, ...) {
+  exposed_df_cast(x, to, ...)
+}
+
+#' @export
+vec_cast.tbl_df.exposed_df <- function(x, to, ...) {
+  vctrs::tib_cast(x, to, ...)
+}
+
+#' @export
+vec_ptype2.exposed_df.data.frame <- function(x, y, ...) {
+  exposed_df_ptype2(x, y, ...)
+}
+
+#' @export
+vec_ptype2.data.frame.exposed_df <- function(x, y, ...) {
+  exposed_df_ptype2(x, y, ...)
+}
+
+#' @export
+vec_cast.exposed_df.data.frame <- function(x, to, ...) {
+  exposed_df_cast(x, to, ...)
+}
+
+#' @export
+vec_cast.data.frame.exposed_df <- function(x, to, ...) {
+  vctrs::df_cast(x, to, ...)
 }
 
 

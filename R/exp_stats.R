@@ -206,14 +206,14 @@ finish_exp_stats <- function(.data, target_status, expected,
       cred <- rlang::exprs(
         credibility = pmin(1, sqrt(
           n_claims / (y * (1 - q_obs))
-          )))
+        )))
     } else {
       cred <- rlang::exprs(
         credibility = pmin(1, sqrt(
           n_claims /
             (y * ((ex2_wt - ex_wt ^ 2) * .weight_n / (.weight_n - 1) /
                     ex_wt ^ 2 + 1 - q_obs))
-          )))
+        )))
     }
 
     if(!is.null(expected)) {
@@ -246,14 +246,16 @@ finish_exp_stats <- function(.data, target_status, expected,
                       .after = dplyr::last_col())
   }
 
-  structure(res, class = c("exp_df", class(res)),
-            groups = .groups, target_status = target_status,
-            start_date = start_date,
-            expected = expected,
-            end_date = end_date,
-            wt = wt,
-            exp_params = list(credibility = credibility,
-                              cred_p = cred_p, cred_r = cred_r))
+  tibble::new_tibble(res,
+                     class = "exp_df",
+                     groups = .groups,
+                     target_status = target_status,
+                     start_date = start_date,
+                     expected = expected,
+                     end_date = end_date,
+                     wt = wt,
+                     exp_params = list(credibility = credibility,
+                                       cred_p = cred_p, cred_r = cred_r))
 }
 
 # this function is used to create formula specifications passed to dplyr::mutate
