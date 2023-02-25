@@ -1,4 +1,4 @@
-expo <- expose(toy_census, "2020-12-31")
+expo <- expose(toy_census, "2020-12-31", target_status = "Surrender")
 
 test_that("is_exposed_df works", {
   expect_true(is_exposed_df(expo))
@@ -70,4 +70,26 @@ test_that("exposed_df class persists after grouping and ungrouping", {
   expect_s3_class(expo |> group_by(pol_num), "exposed_df")
   expect_s3_class(expo |> group_by(pol_num) |> ungroup(), "exposed_df")
   expect_identical(expo, ungroup(expo))
+})
+
+test_that("exposed_df casting and coercion works with tibble and data.frame", {
+  expect_s3_class(dplyr::bind_rows(expo, data.frame(x = 1)), "exposed_df")
+  expect_s3_class(dplyr::bind_rows(expo, tibble::tibble(x = 1)), "exposed_df")
+
+  expo8 <- dplyr::bind_rows(expo, expo)
+  expect_s3_class(expo8, "exposed_df")
+  expect_identical(attr(expo8, "target_status"), attr(expo8, "target_status") |> unique())
+
+  expo9 <- vctrs::vec_rbind(
+    expo,
+    expose(toy_census, "2022-12-31", start_date = "1890-01-01",
+           target_status = "Death"))
+
+  expect_identical(attr(expo9, "end_date"), as.Date("2022-12-31"))
+  expect_identical(attr(expo9, "start_date"), as.Date("1890-01-01"))
+  expect_identical(attr(expo9, "target_status"), c("Surrender", "Death"))
+
+  expo10 <- expose_cy(toy_census, "2020-12-31")
+  expect_error(dplyr::bind_rows(expo, expo10))
+
 })
