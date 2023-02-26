@@ -25,7 +25,10 @@ Suggests:
     knitr,
     RColorBrewer,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    shiny (>= 1.6),
+    bslib,
+    thematic
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
@@ -42,9 +45,6 @@ Imports:
     paletteer,
     recipes,
     generics,
-    shiny (>= 1.6),
-    bslib,
-    thematic,
     readr,
     tidyr
 LazyData: true

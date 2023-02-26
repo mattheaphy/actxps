@@ -117,6 +117,10 @@ exp_shiny <- function(dat,
                       expected = names(dat)[grepl("expected", names(dat))],
                       distinct_max = 25L) {
 
+  rlang::check_installed("shiny")
+  rlang::check_installed("bslib")
+  rlang::check_installed("thematic")
+
   verify_exposed_df(dat)
   # check for presence of transactions
   all_trx_types <- verify_get_trx_types(dat, required = FALSE)
