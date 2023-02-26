@@ -193,6 +193,12 @@ arrange.exposed_df <- function(.data, ..., .by_group) {
   vctrs::vec_cast(x, .data)
 }
 
+#' @export
+mutate.exposed_df <- function(.data, ...) {
+  x <- NextMethod()
+  vctrs::vec_cast(x, vctrs::vec_ptype2(.data, x))
+}
+
 # NULL coalesce function
 `%||%` <- function(x, y) if(is.null(x)) y else x
 
