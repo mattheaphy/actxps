@@ -177,19 +177,20 @@ group_by.exposed_df <- function(.data, ..., .add, .drop) {
 
 #' @export
 ungroup.exposed_df <- function(x, ...) {
+  res <- NextMethod()
+  vctrs::vec_cast(res, x)
+}
 
-  hold_attr <- attributes(x)[!names(attributes(x)) %in%
-                               c("row.names", "names", "groups", "class")]
-  reclass <- dplyr::is_grouped_df(x)
-
+#' @export
+filter.exposed_df <- function(.data, ..., .by, .preserve) {
   x <- NextMethod()
+  vctrs::vec_cast(x, .data)
+}
 
-  for (a in names(hold_attr)) {
-    attr(x, a) <- hold_attr[[a]]
-  }
-  if (reclass) class(x) <- c("exposed_df", class(x))
-
-  x
+#' @export
+arrange.exposed_df <- function(.data, ..., .by_group) {
+  x <- NextMethod()
+  vctrs::vec_cast(x, .data)
 }
 
 # NULL coalesce function
@@ -204,16 +205,8 @@ has_compatible_expo <- function(x, y) {
 }
 
 exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  out <- vctrs::tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 
-  # send message about unmatched start dates?
-  end_date <- max(as.Date(attr(x, "end_date")),
-                  as.Date(attr(y, "end_date")))
-  start_date <- min(as.Date(attr(x, "start_date")),
-                    as.Date(attr(y, "start_date")))
-  target_status <- c(attr(x, "target_status"), attr(y, "target_status")) |>
-    unique()
-  trx_types <- c(attr(x, "trx_types"), attr(y, "trx_types")) |> unique()
+  out <- vctrs::tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 
   if (!has_compatible_expo(x, y)) {
     vctrs::stop_incompatible_type(
@@ -224,6 +217,13 @@ exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
       details = "Two different exposure period types cannot be combined."
     )
   }
+
+  end_date <- max(as.Date(attr(x, "end_date")),
+                  as.Date(attr(y, "end_date")))
+  start_date <- min(as.Date(attr(x, "start_date")),
+                    as.Date(attr(y, "start_date")))
+  target_status <- union(attr(x, "target_status"), attr(y, "target_status"))
+  trx_types <- union(attr(x, "trx_types"), attr(y, "trx_types"))
 
   expo_type <- attr(x, "exposure_type") %||% attr(y, "exposure_type")
 
@@ -237,16 +237,8 @@ exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 
 
 exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  out <- vctrs::tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 
-  # send message about unmatched start dates?
-  end_date <- max(as.Date(attr(x, "end_date")),
-                  as.Date(attr(to, "end_date")))
-  start_date <- min(as.Date(attr(x, "start_date")),
-                    as.Date(attr(to, "start_date")))
-  target_status <- c(attr(x, "target_status"), attr(to, "target_status")) |>
-    unique()
-  trx_types <- c(attr(x, "trx_types"), attr(to, "trx_types")) |> unique()
+  out <- vctrs::tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 
   if (!has_compatible_expo(x, to)) {
     vctrs::stop_incompatible_cast(
@@ -258,7 +250,12 @@ exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     )
   }
 
-  expo_type <- attr(x, "exposure_type") %||% attr(to, "exposure_type")
+  end_date <- attr(to, "end_date")
+  start_date <- attr(to, "start_date")
+  target_status <- attr(to, "target_status")
+  trx_types <- attr(to, "trx_types")
+
+  expo_type <- attr(to, "exposure_type")
   split_type <- strsplit(expo_type, "_")[[1]]
   cal_expo <- split_type[[1]] == "calendar"
   expo_length <- split_type[[2]]
@@ -267,7 +264,7 @@ exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
                  expo_length, trx_types)
 }
 
-
+# exposed_df | exposed_df
 #' @export
 vec_ptype2.exposed_df.exposed_df <- function(x, y, ...) {
   exposed_df_ptype2(x, y, ...)
@@ -278,6 +275,7 @@ vec_cast.exposed_df.exposed_df <- function(x, to, ...) {
   exposed_df_cast(x, to, ...)
 }
 
+# exposed_df | tbl_df
 #' @export
 vec_ptype2.exposed_df.tbl_df <- function(x, y, ...) {
   exposed_df_ptype2(x, y, ...)
@@ -298,6 +296,7 @@ vec_cast.tbl_df.exposed_df <- function(x, to, ...) {
   vctrs::tib_cast(x, to, ...)
 }
 
+# exposed_df | data.frame
 #' @export
 vec_ptype2.exposed_df.data.frame <- function(x, y, ...) {
   exposed_df_ptype2(x, y, ...)
@@ -316,6 +315,34 @@ vec_cast.exposed_df.data.frame <- function(x, to, ...) {
 #' @export
 vec_cast.data.frame.exposed_df <- function(x, to, ...) {
   vctrs::df_cast(x, to, ...)
+}
+
+
+# exposed_df | grouped_df
+#' @export
+vec_ptype2.exposed_df.grouped_df <- function(x, y, ...) {
+  g <- union(dplyr::group_vars(x), dplyr::group_vars(y))
+  exposed_df_ptype2(x, y, ...) |>
+    group_by(dplyr::across(g))
+}
+
+#' @export
+vec_ptype2.grouped_df.exposed_df <- function(x, y, ...) {
+  g <- union(dplyr::group_vars(x), dplyr::group_vars(y))
+  exposed_df_ptype2(x, y, ...) |>
+    group_by(dplyr::across(g))
+}
+
+#' @export
+vec_cast.exposed_df.grouped_df <- function(x, to, ...) {
+  exposed_df_cast(x, to, ...) |>
+    group_by(!!!groups(to))
+}
+
+#' @export
+vec_cast.grouped_df.exposed_df <- function(x, to, ...) {
+  vctrs::tib_cast(x, to, ...) |>
+    group_by(!!!groups(to))
 }
 
 
