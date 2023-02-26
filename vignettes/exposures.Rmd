@@ -255,6 +255,33 @@ exposed_data |>
 
 ```
 
+### Stacking `exposed_df` objects
+
+If you need to stack two `exposed_df` objects, `vctrs::vec_rbind()` is recommended over `rbind()` or `dplyr::bind_rows()`. The advantage of `vctrs::vec_rbind()` is that it will combine attributes across all `exposed_df` objects passed to the function. The study end date will be updated to maximum study end date. Similarly, the study start date will be set to the earliest study start date. Target statuses and transactions types will become a super set of all observed values. The other two functions will retain attributes from only the first object passed to them.
+
+For example, below `exposed_data2` contains study start and end dates that are before and after the study range in `exposed_data`. In addition, this object contains a target status of "Surrender" whereas `exposed_data` has none. 
+
+When `vctrs::vec_rbind()` is used to combine `exposed_data` and `exposed_data2`, the result combines attributes across both objects.
+
+```{r combine-1}
+
+exposed_data2 <- expose(toy_census, 
+                        end_date = "2023-12-31", 
+                        start_date = "1890-01-01",
+                        target_status = "Surrender")
+
+vctrs::vec_rbind(exposed_data, exposed_data2)
+```
+
+If `dplyr::bind_rows()` were used instead, the attributes of `exposed_data` only are shown, which is likely incorrect.
+
+```{r combine-2}
+dplyr::bind_rows(exposed_data, exposed_data2)
+```
+
+In order to stack `exposed_df` objects, the exposure period types and lengths must match. If they do not, an error will be thrown. For example, policy year exposure records cannot be combined with calendar month records.
+
+Ordinary data frames can be stacked with `exposed_df` objects using `dplyr::bind_rows()` and `rbind()` (assuming all column names match). If the `exposed_df` object is the first argument, the `exposed_df` class will be preserved with its original attributes.
 
 
 ### Limitations
