@@ -207,8 +207,10 @@ exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   out <- vctrs::tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 
   # send message about unmatched start dates?
-  end_date <- max(attr(x, "end_date"), attr(y, "end_date"))
-  start_date <- min(attr(x, "start_date"), attr(y, "start_date"))
+  end_date <- max(as.Date(attr(x, "end_date")),
+                  as.Date(attr(y, "end_date")))
+  start_date <- min(as.Date(attr(x, "start_date")),
+                    as.Date(attr(y, "start_date")))
   target_status <- c(attr(x, "target_status"), attr(y, "target_status")) |>
     unique()
   trx_types <- c(attr(x, "trx_types"), attr(y, "trx_types")) |> unique()
@@ -238,8 +240,10 @@ exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   out <- vctrs::tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 
   # send message about unmatched start dates?
-  end_date <- max(attr(x, "end_date"), attr(to, "end_date"))
-  start_date <- min(attr(x, "start_date"), attr(to, "start_date"))
+  end_date <- max(as.Date(attr(x, "end_date")),
+                  as.Date(attr(to, "end_date")))
+  start_date <- min(as.Date(attr(x, "start_date")),
+                    as.Date(attr(to, "start_date")))
   target_status <- c(attr(x, "target_status"), attr(to, "target_status")) |>
     unique()
   trx_types <- c(attr(x, "trx_types"), attr(to, "trx_types")) |> unique()
