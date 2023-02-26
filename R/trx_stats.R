@@ -249,9 +249,10 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      !!!pct_form_all,
                      .groups = "drop")
 
-  structure(res, class = c("trx_df", class(res)),
-            groups = .groups, trx_types = trx_types,
-            start_date = start_date,
-            percent_of = percent_of,
-            end_date = end_date)
+  tibble::new_tibble(res,
+                     class = "trx_df",
+                     groups = .groups, trx_types = trx_types,
+                     start_date = start_date,
+                     percent_of = percent_of,
+                     end_date = end_date)
 }
