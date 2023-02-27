@@ -199,6 +199,19 @@ mutate.exposed_df <- function(.data, ...) {
   vctrs::vec_cast(x, vctrs::vec_ptype2(.data, x))
 }
 
+#' @export
+select.exposed_df <- function(.data, ...) {
+  x <- NextMethod()
+  if (dplyr::is_grouped_df(.data)) {
+    g <- groups(.data)
+    vctrs::vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
+  } else {
+    vctrs::vec_cast(x, .data[, names(x)])
+  }
+
+}
+
+
 # NULL coalesce function
 `%||%` <- function(x, y) if(is.null(x)) y else x
 

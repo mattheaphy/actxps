@@ -2,7 +2,7 @@
 #' @export
 ggplot2::autoplot
 
-#' @importFrom dplyr groups group_by ungroup filter arrange mutate
+#' @importFrom dplyr groups group_by ungroup filter arrange mutate select
 #' @export
 dplyr::groups
 #' @export
