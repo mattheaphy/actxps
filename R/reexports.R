@@ -9,6 +9,14 @@ dplyr::groups
 dplyr::group_by
 #' @export
 dplyr::ungroup
+#' @export
+dplyr::filter
+#' @export
+dplyr::arrange
+#' @export
+dplyr::mutate
+#' @export
+dplyr::select
 
 #' @importFrom recipes prep bake
 #' @export

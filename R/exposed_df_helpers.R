@@ -182,7 +182,7 @@ ungroup.exposed_df <- function(x, ...) {
 }
 
 #' @export
-filter.exposed_df <- function(.data, ..., .by, .preserve) {
+filter.exposed_df <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   x <- NextMethod()
   vctrs::vec_cast(x, .data)
 }
