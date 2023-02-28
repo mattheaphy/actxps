@@ -196,7 +196,13 @@ arrange.exposed_df <- function(.data, ..., .by_group) {
 #' @export
 mutate.exposed_df <- function(.data, ...) {
   x <- NextMethod()
-  vctrs::vec_cast(x, vctrs::vec_ptype2(.data, x))
+  if (dplyr::is_grouped_df(.data)) {
+    g <- groups(.data)
+    ptype <- vctrs::vec_ptype2(ungroup(.data), x)
+    vctrs::vec_cast(x, ptype |> group_by(!!!g))
+  } else {
+    vctrs::vec_cast(x, vctrs::vec_ptype2(.data, x))
+  }
 }
 
 #' @export
@@ -209,6 +215,17 @@ select.exposed_df <- function(.data, ...) {
     vctrs::vec_cast(x, .data[, names(x)])
   }
 
+}
+
+#' @export
+slice.exposed_df <- function (.data, ..., .by = NULL, .preserve = FALSE)  {
+  x <- NextMethod()
+  if (dplyr::is_grouped_df(.data)) {
+    g <- groups(.data)
+    vctrs::vec_cast(x, ungroup(.data) |> group_by(!!!g))
+  } else {
+    vctrs::vec_cast(x, .data)
+  }
 }
 
 
