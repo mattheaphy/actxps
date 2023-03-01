@@ -93,3 +93,38 @@ test_that("exposed_df casting and coercion works with tibble and data.frame", {
   expect_error(dplyr::bind_rows(expo, expo10))
 
 })
+
+test_that("exposed_df persists in a grouped and ungrouped context after using dplyr verbs", {
+
+  # rename, relocate
+  grouped <- expo |> mutate(x = if_else(pol_num == 1, "A", "B")) |> group_by(x)
+
+  expect_s3_class(grouped, "exposed_df")
+  expect_s3_class(ungroup(expo), "exposed_df")
+  expect_s3_class(ungroup(grouped), "exposed_df")
+  expect_s3_class(filter(expo, pol_num == 1), "exposed_df")
+  expect_s3_class(filter(grouped, pol_num == 1), "exposed_df")
+  expect_s3_class(mutate(expo, z = 1), "exposed_df")
+  expect_s3_class(mutate(grouped, z = 1), "exposed_df")
+  expect_s3_class(select(expo, pol_num), "exposed_df")
+  expect_s3_class(select(grouped, pol_num, x), "exposed_df")
+  expect_s3_class(slice(expo, 1:2), "exposed_df")
+  expect_s3_class(slice(grouped, 1:2), "exposed_df")
+  expect_s3_class(dplyr::slice_head(expo, n = 2), "exposed_df")
+  expect_s3_class(dplyr::slice_head(grouped, n = 2), "exposed_df")
+  expect_s3_class(dplyr::slice_tail(expo, n = 2), "exposed_df")
+  expect_s3_class(dplyr::slice_tail(grouped, n = 2), "exposed_df")
+  expect_s3_class(dplyr::slice_sample(expo, n = 2), "exposed_df")
+  expect_s3_class(dplyr::slice_sample(grouped, n = 2), "exposed_df")
+  expect_s3_class(dplyr::slice_min(expo, pol_yr), "exposed_df")
+  expect_s3_class(dplyr::slice_min(grouped, pol_yr), "exposed_df")
+  expect_s3_class(dplyr::slice_max(expo, pol_yr), "exposed_df")
+  expect_s3_class(dplyr::slice_max(grouped, pol_yr), "exposed_df")
+  expect_s3_class(arrange(expo, pol_yr), "exposed_df")
+  expect_s3_class(arrange(grouped, pol_yr), "exposed_df")
+  expect_s3_class(rename(expo, abc = pol_num), "exposed_df")
+  expect_s3_class(rename(grouped, abc = pol_num), "exposed_df")
+  expect_s3_class(relocate(expo, pol_num, .after = status), "exposed_df")
+  expect_s3_class(relocate(grouped, pol_num, .after = status), "exposed_df")
+
+})
