@@ -123,7 +123,7 @@ Our sample data contains a column called `premium` that we can weight by. When w
 ```{r weight-res}
 
 exposed_data |> 
-  group_by(premium) |> 
+  group_by(pol_yr) |> 
   exp_stats(wt = 'premium')
 
 ```
