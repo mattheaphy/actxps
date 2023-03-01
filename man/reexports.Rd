@@ -12,6 +12,8 @@
 \alias{mutate}
 \alias{select}
 \alias{slice}
+\alias{rename}
+\alias{relocate}
 \alias{prep}
 \alias{bake}
 \alias{tidy}
@@ -22,7 +24,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr]{arrange}}, \code{\link[dplyr]{filter}}, \code{\link[dplyr]{group_by}}, \code{\link[dplyr:group_data]{groups}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{select}}, \code{\link[dplyr]{slice}}, \code{\link[dplyr:group_by]{ungroup}}}
+  \item{dplyr}{\code{\link[dplyr]{arrange}}, \code{\link[dplyr]{filter}}, \code{\link[dplyr]{group_by}}, \code{\link[dplyr:group_data]{groups}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{relocate}}, \code{\link[dplyr]{rename}}, \code{\link[dplyr]{select}}, \code{\link[dplyr]{slice}}, \code{\link[dplyr:group_by]{ungroup}}}
 
   \item{generics}{\code{\link[generics]{tidy}}}
 

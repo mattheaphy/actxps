@@ -214,7 +214,6 @@ select.exposed_df <- function(.data, ...) {
   } else {
     x
   }
-
 }
 
 #' @export
@@ -226,6 +225,27 @@ slice.exposed_df <- function (.data, ..., .by = NULL, .preserve = FALSE)  {
   }
 }
 
+#' @export
+rename.exposed_df <- function(.data, ..., .by_group) {
+  x <- NextMethod()
+  if (dplyr::is_grouped_df(.data)) {
+    g <- groups(.data)
+    vctrs::vec_cast(x, setNames(ungroup(.data), names(x)) |> group_by(!!!g))
+  } else {
+    x
+  }
+}
+
+#' @export
+relocate.exposed_df <- function(.data, ..., .by_group) {
+  x <- NextMethod()
+  if (dplyr::is_grouped_df(.data)) {
+    g <- groups(.data)
+    vctrs::vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
+  } else {
+    x
+  }
+}
 
 # NULL coalesce function
 `%||%` <- function(x, y) if(is.null(x)) y else x

@@ -2,7 +2,7 @@
 #' @export
 ggplot2::autoplot
 
-#' @importFrom dplyr groups group_by ungroup filter arrange mutate select slice
+#' @importFrom dplyr groups group_by ungroup filter arrange mutate select slice rename relocate
 #' @export
 dplyr::groups
 #' @export
@@ -19,6 +19,10 @@ dplyr::mutate
 dplyr::select
 #' @export
 dplyr::slice
+#' @export
+dplyr::rename
+#' @export
+dplyr::relocate
 
 #' @importFrom recipes prep bake
 #' @export
