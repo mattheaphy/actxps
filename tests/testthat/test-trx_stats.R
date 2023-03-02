@@ -22,7 +22,7 @@ test_that("Experience study summary method checks", {
                summary(res))
 })
 
-expo2 <- head(expo) |> dplyr::rename(ex = exposure)
+expo2 <- head(expo) |> rename(ex = exposure)
 
 test_that("Renaming works", {
   expect_error(trx_stats(expo2))

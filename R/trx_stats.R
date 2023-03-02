@@ -133,7 +133,7 @@ trx_stats <- function(.data,
   start_date <- attr(.data, "start_date")
   end_date <- attr(.data, "end_date")
 
-  .data <- .data |> dplyr::rename(exposure = {{col_exposure}})
+  .data <- .data |> rename(exposure = {{col_exposure}})
 
   # remove partial exposures
   if(full_exposures_only) {

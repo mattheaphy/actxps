@@ -12,9 +12,9 @@ test_that("as_exposed_df works", {
 
   expo3 <- as_exposed_df(expo2, end_date = "2022-12-31")
   expo4 <- expo2 |>
-    dplyr::rename(pnum = pol_num)
+    rename(pnum = pol_num)
   expo5 <- expo4 |>
-    dplyr::rename(pstat = status,
+    rename(pstat = status,
                   expo = exposure,
                   py = pol_yr,
                   start = pol_date_yr,
@@ -56,7 +56,7 @@ test_that("as_exposed_df works with transactions", {
   expect_error(as_exposed_df(expo6, "2022-12-31", trx_types = c("A", "C")))
 
   expo7 <- expo6 |>
-    dplyr::rename(n_A = trx_n_A, n_B = trx_n_B,
+    rename(n_A = trx_n_A, n_B = trx_n_B,
                   amt_A = trx_amt_A, amt_B = trx_amt_B)
   expect_error(as_exposed_df(expo7, "2022-12-31", trx_types = c("A", "B")))
   expect_no_error(as_exposed_df(expo7, "2022-12-31", trx_types = c("A", "B"),

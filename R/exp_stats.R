@@ -95,13 +95,13 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   }
 
   res <- .data |>
-    dplyr::rename(exposure = {{col_exposure}},
+    rename(exposure = {{col_exposure}},
                   status = {{col_status}}) |>
     mutate(n_claims = status %in% target_status)
 
   if (!is.null(wt)) {
     res <- res |>
-      dplyr::rename(.weight = {{wt}}) |>
+      rename(.weight = {{wt}}) |>
       mutate(
         claims = n_claims * .weight,
         exposure = exposure * .weight,
@@ -237,12 +237,12 @@ finish_exp_stats <- function(.data, target_status, expected,
                      !!!wt_forms,
                      !!!cred,
                      .groups = "drop") |>
-    dplyr::relocate(exposure, q_obs, .after = claims)
+    relocate(exposure, q_obs, .after = claims)
 
   if (!is.null(wt)) {
     res <- res |>
       dplyr::select(-ex_wt, -ex2_wt) |>
-      dplyr::relocate(.weight, .weight_sq, .weight_n,
+      relocate(.weight, .weight_sq, .weight_n,
                       .after = dplyr::last_col())
   }
 

@@ -61,7 +61,7 @@ add_transactions <- function(.data, trx_data,
 
   # # column renames
   trx_data <- trx_data |>
-    dplyr::rename(pol_num = {{col_pol_num}},
+    rename(pol_num = {{col_pol_num}},
                   trx_date = {{col_trx_date}},
                   trx_type = {{col_trx_type}},
                   trx_amt = {{col_trx_amt}})

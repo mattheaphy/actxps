@@ -116,7 +116,7 @@ expose <- function(.data,
 
   # column renames and name conflicts
   .data <- .data |>
-    dplyr::rename(pol_num = {{col_pol_num}},
+    rename(pol_num = {{col_pol_num}},
                   status = {{col_status}},
                   issue_date = {{col_issue_date}},
                   term_date = {{col_term_date}}) |>
@@ -187,7 +187,7 @@ expose <- function(.data,
       ) |>
       dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
                     -.time, -tot_per) |>
-      dplyr::relocate(cal_e, .after = cal_b) |>
+      relocate(cal_e, .after = cal_b) |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "cal") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "cal",
                          suffix = "_end")

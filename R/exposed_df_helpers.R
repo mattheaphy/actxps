@@ -71,9 +71,9 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
   }
 
   # column name alignment
-  if(!missing(col_pol_num)) x <- x |> dplyr::rename(pol_num = {{col_pol_num}})
-  if(!missing(col_status)) x <- x |> dplyr::rename(status = {{col_status}})
-  if(!missing(col_exposure)) x <- x |> dplyr::rename(exposure = {{col_exposure}})
+  if(!missing(col_pol_num)) x <- x |> rename(pol_num = {{col_pol_num}})
+  if(!missing(col_status)) x <- x |> rename(status = {{col_status}})
+  if(!missing(col_exposure)) x <- x |> rename(exposure = {{col_exposure}})
 
   # column name alignment - policy exposure periods
   exp_col_pol_per <- if (!cal_expo) {
@@ -81,7 +81,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     paste0("pol_", abbrev)
   }
   if(!missing(col_pol_per) && !cal_expo) {
-    x <- x |> dplyr::rename({{exp_col_pol_per}} := {{col_pol_per}})
+    x <- x |> rename({{exp_col_pol_per}} := {{col_pol_per}})
   }
 
   # column name alignment - period start and end dates
@@ -95,7 +95,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     q_exp_cols_dates <- rlang::syms(exp_cols_dates)
     q_cols_dates <- rlang::syms(cols_dates)
 
-    x <- x |> dplyr::rename(!!q_exp_cols_dates[[1]] := !!q_cols_dates[[1]],
+    x <- x |> rename(!!q_exp_cols_dates[[1]] := !!q_cols_dates[[1]],
                             !!q_exp_cols_dates[[2]] := !!q_cols_dates[[2]])
   }
 

@@ -37,7 +37,7 @@ test_that("Experience study summary method checks", {
 
 
 toy_expo <- toy_census |> expose("2022-12-31", target_status = "Surrender") |>
-  dplyr::rename(a = exposure, b = status)
+  rename(a = exposure, b = status)
 
 renamer <- c("pol_num" = "a",
              "status" = "b",
