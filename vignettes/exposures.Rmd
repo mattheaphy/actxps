@@ -283,6 +283,30 @@ In order to stack `exposed_df` objects, the exposure period types and lengths mu
 
 Ordinary data frames can be stacked with `exposed_df` objects using `dplyr::bind_rows()` and `rbind()` (assuming all column names match). If the `exposed_df` object is the first argument, the `exposed_df` class will be preserved with its original attributes.
 
+### dplyr verb methods and `exposed_df` class persistence
+
+The actxps package includes `exposed_df` methods for the dplyr verbs listed below. These methods ensure that the functions below will always return an `exposed_df` object.
+
+- `dplyr::select()`
+- `dplyr::mutate()`
+- `dplyr::filter()`
+- `dplyr::arrange()`
+- `dplyr::group_by()`
+- `dplyr::ungroup()`
+- `dplyr::slice()`
+- `dplyr::rename()`
+- `dplyr::relocate()`
+- `dplyr::left_join()`
+- `dplyr::right_join()`
+- `dplyr::inner_join()`
+- `dplyr::full_join()`
+- `dplyr::semi_join()`
+- `dplyr::anti_join()`
+
+Generally speaking, any dplyr verbs that aren't listed that return data frames will preserve the `exposed_df` class **as long as the data is not grouped.** If the data is grouped, the `exposed_df` class may not persist. If this creates problems with your code, there are two options:
+
+- If groups don't matter when the function is applied to the data, `ungroup()` the data, call the function, and restore the groups with `group_by()`.
+- If groups do matter when the function is applied to the data, convert the data to an ordinary data frame or tibble, call the function, and convert the data to an `exposed_df` using `as_exposed_df()`.
 
 ### Limitations
 
