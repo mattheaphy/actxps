@@ -164,10 +164,10 @@ expose <- function(.data,
 
   # apply exposures
   res <- res |>
-    dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
+    slice(rep(dplyr::row_number(), rep_n)) |>
     group_by(pol_num) |>
     mutate(.time = dplyr::row_number()) |>
-    dplyr::ungroup() |>
+    ungroup() |>
     mutate(
       last_per = .time == rep_n,
       status = dplyr::if_else(last_per, status, default_status),
