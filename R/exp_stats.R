@@ -80,7 +80,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       credibility = FALSE,
                       cred_p = 0.95, cred_r = 0.05) {
 
-  .groups <- dplyr::groups(.data)
+  .groups <- groups(.data)
   start_date <- attr(.data, "start_date")
   end_date <- attr(.data, "end_date")
 
@@ -150,7 +150,7 @@ summary.exp_df <- function(object, ...) {
 
   res <- group_by(object, !!!rlang::enquos(...))
 
-  .groups <- dplyr::groups(res)
+  .groups <- groups(res)
   target_status <- attr(object, "target_status")
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")

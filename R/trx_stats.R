@@ -140,7 +140,7 @@ trx_stats <- function(.data,
     .data <- filter(.data, dplyr::near(exposure, 1))
   }
 
-  .groups <- dplyr::groups(.data)
+  .groups <- groups(.data)
 
   trx_cols <- names(.data)[grepl("trx_(n|amt)_", names(.data))]
   trx_cols <- trx_cols[grepl(paste(trx_types, collapse = "|"), trx_cols)]
@@ -203,7 +203,7 @@ summary.trx_df <- function(object, ...) {
 
   res <- group_by(object, !!!rlang::enquos(...))
 
-  .groups <- dplyr::groups(res)
+  .groups <- groups(res)
   trx_types <- attr(object, "trx_types")
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
