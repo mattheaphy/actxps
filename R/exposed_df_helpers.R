@@ -178,19 +178,19 @@ group_by.exposed_df <- function(.data, ..., .add, .drop) {
 #' @export
 ungroup.exposed_df <- function(x, ...) {
   res <- NextMethod()
-  vctrs::vec_cast(res, x)
+  vec_cast(res, x)
 }
 
 #' @export
 filter.exposed_df <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   x <- NextMethod()
-  vctrs::vec_cast(x, .data)
+  vec_cast(x, .data)
 }
 
 #' @export
 arrange.exposed_df <- function(.data, ..., .by_group) {
   x <- NextMethod()
-  vctrs::vec_cast(x, .data)
+  vec_cast(x, .data)
 }
 
 #' @export
@@ -198,8 +198,8 @@ mutate.exposed_df <- function(.data, ...) {
   x <- NextMethod()
   if (dplyr::is_grouped_df(.data)) {
     g <- groups(.data)
-    ptype <- vctrs::vec_ptype2(ungroup(.data), x)
-    vctrs::vec_cast(x, ptype |> group_by(!!!g))
+    ptype <- vec_ptype2(ungroup(.data), x)
+    vec_cast(x, ptype |> group_by(!!!g))
   } else {
     x
   }
@@ -210,7 +210,7 @@ select.exposed_df <- function(.data, ...) {
   x <- NextMethod()
   if (dplyr::is_grouped_df(.data)) {
     g <- groups(.data)
-    vctrs::vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
+    vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
   } else {
     x
   }
@@ -219,7 +219,7 @@ select.exposed_df <- function(.data, ...) {
 #' @export
 slice.exposed_df <- function (.data, ..., .by = NULL, .preserve = FALSE)  {
   if (dplyr::is_grouped_df(.data)) {
-    NextMethod(.by = NULL) |> vctrs::vec_cast(.data)
+    NextMethod(.by = NULL) |> vec_cast(.data)
   } else {
     NextMethod()
   }
@@ -230,7 +230,7 @@ rename.exposed_df <- function(.data, ..., .by_group) {
   x <- NextMethod()
   if (dplyr::is_grouped_df(.data)) {
     g <- groups(.data)
-    vctrs::vec_cast(x, stats::setNames(ungroup(.data), names(x)) |> group_by(!!!g))
+    vec_cast(x, stats::setNames(ungroup(.data), names(x)) |> group_by(!!!g))
   } else {
     x
   }
@@ -241,7 +241,7 @@ relocate.exposed_df <- function(.data, ..., .by_group) {
   x <- NextMethod()
   if (dplyr::is_grouped_df(.data)) {
     g <- groups(.data)
-    vctrs::vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
+    vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
   } else {
     x
   }
