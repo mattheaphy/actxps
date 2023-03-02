@@ -1,7 +1,7 @@
 no_trx <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
 expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
   add_transactions(withdrawals) |>
-  dplyr::left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+  left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 
 res <- expo |>
   group_by(pol_yr, inc_guar) |>

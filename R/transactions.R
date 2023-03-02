@@ -79,7 +79,7 @@ add_transactions <- function(.data, trx_data,
   # add dates to transaction data
   trx_data <- trx_data |>
     # between-join by transaction date falling within exposures windows
-    dplyr::inner_join(
+    inner_join(
       date_lookup, multiple = "error",
       dplyr::join_by(pol_num,
                      between(trx_date, !!date_cols[[1]], !!date_cols[[2]])))
@@ -98,7 +98,7 @@ add_transactions <- function(.data, trx_data,
 
   # update exposed_df structure to document transaction types
   .data |>
-    dplyr::left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]])) |>
+    left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]])) |>
     mutate(dplyr::across(dplyr::starts_with("trx_"), \(x)
                                 dplyr::coalesce(x, 0)))
 

@@ -106,7 +106,7 @@
 #'   mutate(expected_1 = expected_table[pol_yr],
 #'                 expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
 #'   add_transactions(withdrawals) |>
-#'   dplyr::left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+#'   left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 #'
 #'   exp_shiny(study_py)
 #' }
