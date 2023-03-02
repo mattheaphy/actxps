@@ -40,3 +40,9 @@ test_that("Renaming works and name conflicts work", {
                                    col_trx_amt = "d"))
   expect_error(add_transactions(expo_trx, withdrawals))
 })
+
+test_that("exposed_df persists after adding transactions", {
+  expect_s3_class(expo_trx, "exposed_df")
+  expect_s3_class(add_transactions(expo |> group_by(pol_yr), withdrawals),
+                  "exposed_df")
+})

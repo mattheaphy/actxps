@@ -56,7 +56,7 @@ add_transactions <- function(.data, trx_data,
   date_cols <- attr(.data, "date_cols") |> rlang::parse_exprs()
 
   # select a minimum subset of columns
-  date_lookup <- .data |>
+  date_lookup <- ungroup(.data) |>
     select(pol_num, !!!date_cols)
 
   # # column renames

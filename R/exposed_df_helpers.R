@@ -96,7 +96,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     q_cols_dates <- rlang::syms(cols_dates)
 
     x <- x |> rename(!!q_exp_cols_dates[[1]] := !!q_cols_dates[[1]],
-                            !!q_exp_cols_dates[[2]] := !!q_cols_dates[[2]])
+                     !!q_exp_cols_dates[[2]] := !!q_cols_dates[[2]])
   }
 
   # check transaction types
@@ -196,24 +196,22 @@ arrange.exposed_df <- function(.data, ..., .by_group) {
 #' @export
 mutate.exposed_df <- function(.data, ...) {
   x <- NextMethod()
+  rebuild_mutate_join(.data, x)
+}
+
+rebuild_select_relocate <- function(.data, res) {
   if (dplyr::is_grouped_df(.data)) {
     g <- groups(.data)
-    ptype <- vec_ptype2(ungroup(.data), x)
-    vec_cast(x, ptype |> group_by(!!!g))
+    vec_cast(res, ungroup(.data)[, names(res)] |> group_by(!!!g))
   } else {
-    x
+    res
   }
 }
 
 #' @export
 select.exposed_df <- function(.data, ...) {
   x <- NextMethod()
-  if (dplyr::is_grouped_df(.data)) {
-    g <- groups(.data)
-    vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
-  } else {
-    x
-  }
+  rebuild_select_relocate(.data, x)
 }
 
 #' @export
@@ -239,12 +237,45 @@ rename.exposed_df <- function(.data, ..., .by_group) {
 #' @export
 relocate.exposed_df <- function(.data, ..., .by_group) {
   x <- NextMethod()
+  rebuild_select_relocate(.data, x)
+}
+
+rebuild_mutate_join <- function(.data, res) {
   if (dplyr::is_grouped_df(.data)) {
     g <- groups(.data)
-    vec_cast(x, ungroup(.data)[, names(x)] |> group_by(!!!g))
+    ptype <- vec_ptype2(ungroup(.data), res)
+    vec_cast(res, ptype |> group_by(!!!g))
   } else {
-    x
+    res
   }
+}
+
+#' @export
+left_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
+                                 suffix = c(".x", ".y"), ..., keep = NULL) {
+  res <- NextMethod()
+  rebuild_mutate_join(x, res)
+}
+
+#' @export
+right_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
+                                  suffix = c(".x", ".y"), ..., keep = NULL) {
+  res <- NextMethod()
+  rebuild_mutate_join(x, res)
+}
+
+#' @export
+inner_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
+                                  suffix = c(".x", ".y"), ..., keep = NULL) {
+  res <- NextMethod()
+  rebuild_mutate_join(x, res)
+}
+
+#' @export
+full_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
+                                 suffix = c(".x", ".y"), ..., keep = NULL) {
+  res <- NextMethod()
+  rebuild_mutate_join(x, res)
 }
 
 # NULL coalesce function

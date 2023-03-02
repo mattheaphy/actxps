@@ -117,4 +117,14 @@ test_that("exposed_df persists in a grouped and ungrouped context after using dp
   expect_s3_class(relocate(expo, pol_num, .after = status), "exposed_df")
   expect_s3_class(relocate(grouped, pol_num, .after = status), "exposed_df")
 
+  join_frame <- data.frame(pol_num = 1, zzz = 2L)
+  expect_s3_class(left_join(expo, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(left_join(grouped, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(right_join(expo, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(right_join(grouped, join_frame, by = "pol_num", multiple = "all"), "exposed_df")
+  expect_s3_class(inner_join(expo, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(inner_join(grouped, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(full_join(expo, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(full_join(grouped, join_frame, by = "pol_num"), "exposed_df")
+
 })
