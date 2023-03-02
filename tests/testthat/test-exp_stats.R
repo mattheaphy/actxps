@@ -9,12 +9,12 @@ study_py <- study_py |>
                 weights = rnorm(nrow(study_py), 100, 50) |> abs())
 
 exp_res <- study_py |>
-  dplyr::group_by(pol_yr, inc_guar) |>
+  group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"),
             credibility = TRUE)
 
 exp_res_weighted <- study_py |>
-  dplyr::group_by(pol_yr, inc_guar) |>
+  group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"),
             credibility = TRUE, wt = "weights")
 

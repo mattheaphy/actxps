@@ -475,11 +475,11 @@ exp_shiny <- function(dat,
 
       if (input$study_type == "exp") {
         rdat() |>
-          dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
+          group_by(dplyr::across(dplyr::all_of(.groups))) |>
           exp_stats(wt = wt, credibility = TRUE, expected = ex)
       } else {
         rdat() |>
-          dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
+          group_by(dplyr::across(dplyr::all_of(.groups))) |>
           trx_stats(percent_of = input$pct_checks,
                     trx_types = input$trx_types_checks,
                     combine_trx = input$trx_combine)

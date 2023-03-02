@@ -4,7 +4,7 @@ expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
   dplyr::left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 
 res <- expo |>
-  dplyr::group_by(pol_yr, inc_guar) |>
+  group_by(pol_yr, inc_guar) |>
   trx_stats(percent_of = c("av_anniv", "premium"))
 
 test_that("trx_stats error checks work", {

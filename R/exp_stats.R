@@ -63,7 +63,7 @@
 #'
 #' exp_res <- census_dat |>
 #'            expose("2019-12-31", target_status = "Surrender") |>
-#'            dplyr::group_by(pol_yr, inc_guar) |>
+#'            group_by(pol_yr, inc_guar) |>
 #'            exp_stats()
 #'
 #' exp_res
@@ -148,7 +148,7 @@ groups.exp_df <- function(x) {
 #' @rdname exp_stats
 summary.exp_df <- function(object, ...) {
 
-  res <- dplyr::group_by(object, !!!rlang::enquos(...))
+  res <- group_by(object, !!!rlang::enquos(...))
 
   .groups <- dplyr::groups(res)
   target_status <- attr(object, "target_status")

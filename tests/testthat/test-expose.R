@@ -20,7 +20,7 @@ test_that("Calendar year exposure checks", {
 check_period_end_pol <- expose_pw(toy_census, "2020-12-31",
                                   target_status = "Surrender") |>
   dplyr::select(pol_num, pol_date_wk, pol_date_wk_end) |>
-  dplyr::group_by(pol_num) |>
+  group_by(pol_num) |>
   dplyr::mutate(x = dplyr::lead(pol_date_wk)) |>
   dplyr::ungroup() |>
   na.omit() |>
@@ -30,7 +30,7 @@ check_period_end_pol <- expose_pw(toy_census, "2020-12-31",
 check_period_end_cal <- expose_cm(toy_census, "2020-12-31",
                                   target_status = "Surrender") |>
   dplyr::select(pol_num, cal_mth, cal_mth_end) |>
-  dplyr::group_by(pol_num) |>
+  group_by(pol_num) |>
   dplyr::mutate(x = dplyr::lead(cal_mth)) |>
   dplyr::ungroup() |>
   na.omit() |>

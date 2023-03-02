@@ -165,7 +165,7 @@ expose <- function(.data,
   # apply exposures
   res <- res |>
     dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
-    dplyr::group_by(pol_num) |>
+    group_by(pol_num) |>
     dplyr::mutate(.time = dplyr::row_number()) |>
     dplyr::ungroup() |>
     dplyr::mutate(

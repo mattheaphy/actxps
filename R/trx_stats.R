@@ -100,12 +100,12 @@
 #' expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
 #'   add_transactions(withdrawals)
 #'
-#' res <- expo |> dplyr::group_by(inc_guar) |> trx_stats(percent_of = "premium")
+#' res <- expo |> group_by(inc_guar) |> trx_stats(percent_of = "premium")
 #' res
 #'
 #' summary(res)
 #'
-#' expo |> dplyr::group_by(inc_guar) |>
+#' expo |> group_by(inc_guar) |>
 #'   trx_stats(percent_of = "premium", combine_trx = TRUE)
 #'
 #' @export
@@ -201,7 +201,7 @@ groups.trx_df <- function(x) {
 #' @rdname trx_stats
 summary.trx_df <- function(object, ...) {
 
-  res <- dplyr::group_by(object, !!!rlang::enquos(...))
+  res <- group_by(object, !!!rlang::enquos(...))
 
   .groups <- dplyr::groups(res)
   trx_types <- attr(object, "trx_types")
@@ -234,7 +234,7 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
   }
 
   res <- .data |>
-    dplyr::group_by(trx_type, .add = TRUE) |>
+    group_by(trx_type, .add = TRUE) |>
     dplyr::summarize(trx_n = sum(trx_n),
                      trx_flag = sum(trx_flag),
                      trx_amt = sum(trx_amt),
