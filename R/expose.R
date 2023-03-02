@@ -137,7 +137,7 @@ expose <- function(.data,
 
   # pre-exposure updates
   res <- .data |>
-    dplyr::filter(issue_date < end_date,
+    filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
     dplyr::mutate(
       term_date = dplyr::if_else(term_date > end_date,
@@ -202,7 +202,7 @@ expose <- function(.data,
         exposure = dplyr::if_else(exposure == 0, 1, exposure)
       ) |>
       dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
-      dplyr::filter(dplyr::between(cal_b, start_date, end_date)) |>
+      filter(between(cal_b, start_date, end_date)) |>
       dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "pol") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "pol_date",

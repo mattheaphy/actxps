@@ -24,7 +24,7 @@ check_period_end_pol <- expose_pw(toy_census, "2020-12-31",
   dplyr::mutate(x = dplyr::lead(pol_date_wk)) |>
   dplyr::ungroup() |>
   na.omit() |>
-  dplyr::filter(x != pol_date_wk_end + 1) |>
+  filter(x != pol_date_wk_end + 1) |>
   nrow()
 
 check_period_end_cal <- expose_cm(toy_census, "2020-12-31",
@@ -34,7 +34,7 @@ check_period_end_cal <- expose_cm(toy_census, "2020-12-31",
   dplyr::mutate(x = dplyr::lead(cal_mth)) |>
   dplyr::ungroup() |>
   na.omit() |>
-  dplyr::filter(x != cal_mth_end + 1) |>
+  filter(x != cal_mth_end + 1) |>
   nrow()
 
 test_that("Period start and end dates roll", {

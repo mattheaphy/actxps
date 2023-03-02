@@ -137,7 +137,7 @@ trx_stats <- function(.data,
 
   # remove partial exposures
   if(full_exposures_only) {
-    .data <- dplyr::filter(.data, dplyr::near(exposure, 1))
+    .data <- filter(.data, dplyr::near(exposure, 1))
   }
 
   .groups <- dplyr::groups(.data)

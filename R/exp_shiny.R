@@ -141,7 +141,7 @@ exp_shiny <- function(dat,
   # organize predictors
   preds <- data.frame(predictors = predictors) |>
     # drop non-predictors (if any)
-    dplyr::filter(!predictors %in% c("pol_num", "status",
+    filter(!predictors %in% c("pol_num", "status",
                                      "term_date","exposure", trx_cols)) |>
     dplyr::mutate(class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
                   order = dplyr::case_when(
@@ -155,10 +155,10 @@ exp_shiny <- function(dat,
                                              ~ is.numeric(dat[[.x]])),
                   n_unique = purrr::map_int(predictors,
                                             ~ dplyr::n_distinct(dat[[.x]]))) |>
-    dplyr::arrange(order) |>
+    arrange(order) |>
     dplyr::select(-order)
 
-  preds_small <- dplyr::filter(preds, n_unique <= distinct_max)$predictors
+  preds_small <- filter(preds, n_unique <= distinct_max)$predictors
 
   yVar_exp <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
   if (has_trx) {
@@ -241,7 +241,7 @@ exp_shiny <- function(dat,
 
     res <- if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
       # numeric or date
-      glue::glue("dplyr::between({x}, input${inputId}[[1]], input${inputId}[[2]])")
+      glue::glue("between({x}, input${inputId}[[1]], input${inputId}[[2]])")
     } else {
       # categorical
       glue::glue("{x} %in% input${inputId}")
@@ -283,7 +283,7 @@ exp_shiny <- function(dat,
   # transactions set up
   if (has_trx) {
 
-    percent_of_choices <- dplyr::filter(preds, is_number)$predictors
+    percent_of_choices <- filter(preds, is_number)$predictors
 
     trx_tab <- shiny::tabPanel(
       "Transaction study",
@@ -352,7 +352,7 @@ exp_shiny <- function(dat,
                               expected_widget,
                               selectPred("weightVar", "Weight by:", 4,
                                          choices = c("None",
-                                                     dplyr::filter(preds, is_number)$predictors))
+                                                     filter(preds, is_number)$predictors))
                             )),
             trx_tab
 
@@ -451,7 +451,7 @@ exp_shiny <- function(dat,
       filters <- purrr::map(preds$predictors, expr_filter)
 
       dat |>
-        dplyr::filter(!!!filters)
+        filter(!!!filters)
     })
 
     # experience study
