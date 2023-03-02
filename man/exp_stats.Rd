@@ -96,7 +96,7 @@ toy_census |> expose("2020-12-31", target_status = "Surrender") |>
 
 exp_res <- census_dat |>
            expose("2019-12-31", target_status = "Surrender") |>
-           dplyr::group_by(pol_yr, inc_guar) |>
+           group_by(pol_yr, inc_guar) |>
            exp_stats()
 
 exp_res

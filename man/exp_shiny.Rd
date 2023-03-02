@@ -132,7 +132,7 @@ if (interactive()) {
   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
   study_py <- study_py |>
-  dplyr::mutate(expected_1 = expected_table[pol_yr],
+  mutate(expected_1 = expected_table[pol_yr],
                 expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
   add_transactions(withdrawals) |>
   dplyr::left_join(account_vals, by = c("pol_num", "pol_date_yr"))

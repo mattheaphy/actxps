@@ -124,12 +124,12 @@ data while retaining any grouping variables passed to the "dots"
 expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
   add_transactions(withdrawals)
 
-res <- expo |> dplyr::group_by(inc_guar) |> trx_stats(percent_of = "premium")
+res <- expo |> group_by(inc_guar) |> trx_stats(percent_of = "premium")
 res
 
 summary(res)
 
-expo |> dplyr::group_by(inc_guar) |>
+expo |> group_by(inc_guar) |>
   trx_stats(percent_of = "premium", combine_trx = TRUE)
 
 }
