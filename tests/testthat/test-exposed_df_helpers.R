@@ -126,5 +126,9 @@ test_that("exposed_df persists in a grouped and ungrouped context after using dp
   expect_s3_class(inner_join(grouped, join_frame, by = "pol_num"), "exposed_df")
   expect_s3_class(full_join(expo, join_frame, by = "pol_num"), "exposed_df")
   expect_s3_class(full_join(grouped, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(semi_join(expo, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(semi_join(grouped, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(anti_join(expo, join_frame, by = "pol_num"), "exposed_df")
+  expect_s3_class(anti_join(grouped, join_frame, by = "pol_num"), "exposed_df")
 
 })

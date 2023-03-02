@@ -278,6 +278,17 @@ full_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
   rebuild_mutate_join(x, res)
 }
 
+#' @export
+semi_join.exposed_df <- function (x, y, by = NULL, copy = FALSE, ...) {
+  NextMethod() |> vec_cast(x)
+}
+
+#' @export
+anti_join.exposed_df <- function (x, y, by = NULL, copy = FALSE, ...) {
+  NextMethod() |> vec_cast(x)
+}
+
+
 # NULL coalesce function
 `%||%` <- function(x, y) if(is.null(x)) y else x
 
