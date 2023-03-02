@@ -103,7 +103,7 @@
 #'   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 #'
 #'   study_py <- study_py |>
-#'   dplyr::mutate(expected_1 = expected_table[pol_yr],
+#'   mutate(expected_1 = expected_table[pol_yr],
 #'                 expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
 #'   add_transactions(withdrawals) |>
 #'   dplyr::left_join(account_vals, by = c("pol_num", "pol_date_yr"))
@@ -143,7 +143,7 @@ exp_shiny <- function(dat,
     # drop non-predictors (if any)
     filter(!predictors %in% c("pol_num", "status",
                                      "term_date","exposure", trx_cols)) |>
-    dplyr::mutate(class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
+    mutate(class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
                   order = dplyr::case_when(
                     class1 == "Date" ~ 1,
                     class1 == "logical" ~ 2,

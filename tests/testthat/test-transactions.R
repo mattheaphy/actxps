@@ -11,8 +11,8 @@ test_that("add_transactions works", {
 test_that("multiple calls to add_transactions works", {
 
   withdrawals2 <- withdrawals |>
-    dplyr::mutate(trx_type = ifelse(trx_type == "Base", "A", "B"))
-  withdrawals3 <- withdrawals |> dplyr::mutate(trx_type = "something")
+    mutate(trx_type = ifelse(trx_type == "Base", "A", "B"))
+  withdrawals3 <- withdrawals |> mutate(trx_type = "something")
 
   expect_equal(
     nrow(expo),

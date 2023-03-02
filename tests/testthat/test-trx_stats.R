@@ -51,7 +51,7 @@ test_that("trx_stats works", {
   res2 <- expo |> trx_stats(combine_trx = TRUE) |> as.data.frame()
   attr(res2, "trx_types") <- NULL
   res3 <- no_trx |> add_transactions(
-    withdrawals |> dplyr::mutate(trx_type = "All")) |>
+    withdrawals |> mutate(trx_type = "All")) |>
     trx_stats() |>
     as.data.frame()
   attr(res3, "trx_types") <- NULL

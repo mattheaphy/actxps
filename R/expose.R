@@ -139,7 +139,7 @@ expose <- function(.data,
   res <- .data |>
     filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
-    dplyr::mutate(
+    mutate(
       term_date = dplyr::if_else(term_date > end_date,
                                  lubridate::NA_Date_, term_date),
       status = dplyr::if_else(is.na(term_date), default_status, status),
@@ -147,7 +147,7 @@ expose <- function(.data,
 
   if (cal_expo) {
     res <- res |>
-      dplyr::mutate(
+      mutate(
         first_date = pmax(issue_date, start_date),
         cal_b = lubridate::floor_date(first_date, expo_length),
         tot_per = lubridate::interval(
@@ -157,7 +157,7 @@ expose <- function(.data,
         rep_n = ceiling(tot_per) + 1)
   } else {
     res <- res |>
-      dplyr::mutate(
+      mutate(
         tot_per = lubridate::interval(issue_date - 1, last_date) / expo_step,
         rep_n = ceiling(tot_per))
   }
@@ -166,16 +166,16 @@ expose <- function(.data,
   res <- res |>
     dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
     group_by(pol_num) |>
-    dplyr::mutate(.time = dplyr::row_number()) |>
+    mutate(.time = dplyr::row_number()) |>
     dplyr::ungroup() |>
-    dplyr::mutate(
+    mutate(
       last_per = .time == rep_n,
       status = dplyr::if_else(last_per, status, default_status),
       term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_))
 
   if (cal_expo) {
     res <- res |>
-      dplyr::mutate(first_per = .time == 1,
+      mutate(first_per = .time == 1,
                     cal_e = cal_b %m+% (expo_step * .time) - 1,
                     cal_b = cal_b %m+% (expo_step * (.time - 1)),
                     exposure = dplyr::case_when(
@@ -193,7 +193,7 @@ expose <- function(.data,
                          suffix = "_end")
   } else {
     res <- res |>
-      dplyr::mutate(
+      mutate(
         cal_b = issue_date %m+% (expo_step * (.time - 1)),
         cal_e = issue_date %m+% (expo_step * .time) - 1,
         exposure = dplyr::if_else(last_per & !status %in% target_status,

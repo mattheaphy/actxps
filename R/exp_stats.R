@@ -97,12 +97,12 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   res <- .data |>
     dplyr::rename(exposure = {{col_exposure}},
                   status = {{col_status}}) |>
-    dplyr::mutate(n_claims = status %in% target_status)
+    mutate(n_claims = status %in% target_status)
 
   if (!is.null(wt)) {
     res <- res |>
       dplyr::rename(.weight = {{wt}}) |>
-      dplyr::mutate(
+      mutate(
         claims = n_claims * .weight,
         exposure = exposure * .weight,
         .weight_sq = .weight ^ 2,

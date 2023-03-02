@@ -86,7 +86,7 @@ add_transactions <- function(.data, trx_data,
 
   # pivot / summarize to match the grain of exposure data
   trx_data <- trx_data |>
-    dplyr::mutate(trx_n = 1) |>
+    mutate(trx_n = 1) |>
     tidyr::pivot_wider(
       names_from = trx_type,
       id_cols = c(pol_num, !!date_cols[[1]]),
@@ -99,7 +99,7 @@ add_transactions <- function(.data, trx_data,
   # update exposed_df structure to document transaction types
   .data |>
     dplyr::left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]])) |>
-    dplyr::mutate(dplyr::across(dplyr::starts_with("trx_"), \(x)
+    mutate(dplyr::across(dplyr::starts_with("trx_"), \(x)
                                 dplyr::coalesce(x, 0)))
 
 }

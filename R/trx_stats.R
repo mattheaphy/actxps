@@ -148,7 +148,7 @@ trx_stats <- function(.data,
   if (combine_trx) {
     trx_n_cols <- trx_cols[grepl("_n_", trx_cols)]
     trx_amt_cols <- trx_cols[grepl("_amt_", trx_cols)]
-    .data <- .data |> dplyr::mutate(
+    .data <- .data |> mutate(
       trx_n_All = !!rlang::parse_expr(paste(trx_n_cols, collapse = "+")),
       trx_amt_All = !!rlang::parse_expr(paste(trx_amt_cols, collapse = "+")))
     trx_cols <- c("trx_n_All", "trx_amt_All")
@@ -164,7 +164,7 @@ trx_stats <- function(.data,
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),
                         names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
-    dplyr::mutate(trx_flag = abs(trx_n) > 0, !!!pct_nz)
+    mutate(trx_flag = abs(trx_n) > 0, !!!pct_nz)
 
   finish_trx_stats(.data, trx_types, percent_of,
                    .groups, start_date, end_date)

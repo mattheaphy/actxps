@@ -46,7 +46,7 @@ test_that("as_exposed_df works", {
 test_that("as_exposed_df works with transactions", {
 
   expo6 <- expo2 |>
-    dplyr::mutate(
+    mutate(
       trx_n_A = 1,
       trx_amt_A = 2,
       trx_n_B = 3,

@@ -21,7 +21,7 @@ check_period_end_pol <- expose_pw(toy_census, "2020-12-31",
                                   target_status = "Surrender") |>
   dplyr::select(pol_num, pol_date_wk, pol_date_wk_end) |>
   group_by(pol_num) |>
-  dplyr::mutate(x = dplyr::lead(pol_date_wk)) |>
+  mutate(x = dplyr::lead(pol_date_wk)) |>
   dplyr::ungroup() |>
   na.omit() |>
   filter(x != pol_date_wk_end + 1) |>
@@ -31,7 +31,7 @@ check_period_end_cal <- expose_cm(toy_census, "2020-12-31",
                                   target_status = "Surrender") |>
   dplyr::select(pol_num, cal_mth, cal_mth_end) |>
   group_by(pol_num) |>
-  dplyr::mutate(x = dplyr::lead(cal_mth)) |>
+  mutate(x = dplyr::lead(cal_mth)) |>
   dplyr::ungroup() |>
   na.omit() |>
   filter(x != cal_mth_end + 1) |>
@@ -97,10 +97,10 @@ test_that("Renaming and name conflict warnings work", {
                          col_status = "b",
                          col_issue_date = "c",
                          col_term_date = "d"))
-  expect_warning(expose(toy_census |> dplyr::mutate(exposure = 1), "2020-12-31"))
-  expect_warning(expose(toy_census |> dplyr::mutate(pol_yr = 1), "2020-12-31"))
-  expect_warning(expose(toy_census |> dplyr::mutate(pol_date_yr = 1), "2020-12-31"))
-  expect_warning(expose(toy_census |> dplyr::mutate(pol_date_yr_end = 1), "2020-12-31"))
-  expect_warning(expose_cy(toy_census |> dplyr::mutate(cal_yr = 1), "2020-12-31"))
-  expect_warning(expose_cy(toy_census |> dplyr::mutate(cal_yr_end = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> mutate(exposure = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> mutate(pol_yr = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> mutate(pol_date_yr = 1), "2020-12-31"))
+  expect_warning(expose(toy_census |> mutate(pol_date_yr_end = 1), "2020-12-31"))
+  expect_warning(expose_cy(toy_census |> mutate(cal_yr = 1), "2020-12-31"))
+  expect_warning(expose_cy(toy_census |> mutate(cal_yr_end = 1), "2020-12-31"))
 })

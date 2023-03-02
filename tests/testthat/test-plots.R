@@ -1,6 +1,6 @@
 expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
   add_transactions(withdrawals) |>
-  dplyr::mutate(q_exp = ifelse(inc_guar, 0.015, 0.03))
+  mutate(q_exp = ifelse(inc_guar, 0.015, 0.03))
 
 exp_stats2 <- function(dat) exp_stats(dat, wt = "premium", credibility = TRUE,
                                       expected = "q_exp")
