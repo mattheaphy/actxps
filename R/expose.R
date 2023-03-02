@@ -185,7 +185,7 @@ expose <- function(.data,
                       last_per ~ cal_frac(last_date),
                       TRUE ~ 1)
       ) |>
-      dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
+      select(-rep_n, -first_date, -last_date, -first_per, -last_per,
                     -.time, -tot_per) |>
       relocate(cal_e, .after = cal_b) |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "cal") |>
@@ -201,7 +201,7 @@ expose <- function(.data,
         # exposure = 0 is possible if exactly 1 period has elapsed. replace these with 1's
         exposure = dplyr::if_else(exposure == 0, 1, exposure)
       ) |>
-      dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
+      select(-last_per, -last_date, -tot_per, -rep_n) |>
       filter(between(cal_b, start_date, end_date)) |>
       dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "pol") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date") |>

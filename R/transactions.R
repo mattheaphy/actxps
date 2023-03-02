@@ -57,7 +57,7 @@ add_transactions <- function(.data, trx_data,
 
   # select a minimum subset of columns
   date_lookup <- .data |>
-    dplyr::select(pol_num, !!!date_cols)
+    select(pol_num, !!!date_cols)
 
   # # column renames
   trx_data <- trx_data |>

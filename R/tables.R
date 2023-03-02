@@ -59,7 +59,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   cred <- attr(object, "exp_params")$credibility
 
   tab <- object |>
-    dplyr::select(-dplyr::starts_with(".weight")) |>
+    select(-dplyr::starts_with(".weight")) |>
     gt::gt(...) |>
     gt::fmt_number(c(claims, exposure), decimals = 0) |>
     gt::fmt_percent(c(q_obs,
@@ -107,7 +107,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
 
     domain_ae <- if (length(expected > 0)) {
       object |>
-        dplyr::select(dplyr::starts_with('ae_')) |>
+        select(dplyr::starts_with('ae_')) |>
         range(na.rm = TRUE)
     }
 
@@ -152,12 +152,12 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   # remove unnecessary columns
   if (!is.null(percent_of)) {
     object <- object |>
-      dplyr::select(-dplyr::all_of(percent_of),
+      select(-dplyr::all_of(percent_of),
                     -dplyr::all_of(paste0(percent_of, "_w_trx")))
   }
 
   tab <- object |>
-    dplyr::select(-exposure) |>
+    select(-exposure) |>
     arrange(trx_type) |>
     # gt::gt(..., groupname_col = "trx_type") |>
     gt::gt(groupname_col = "trx_type") |>
@@ -193,7 +193,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
 
     domain_pct <- if(!is.null(percent_of)) {
       object |>
-        dplyr::select(dplyr::starts_with('pct_of')) |>
+        select(dplyr::starts_with('pct_of')) |>
         range(na.rm = TRUE)
     }
 

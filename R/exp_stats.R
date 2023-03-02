@@ -241,7 +241,7 @@ finish_exp_stats <- function(.data, target_status, expected,
 
   if (!is.null(wt)) {
     res <- res |>
-      dplyr::select(-ex_wt, -ex2_wt) |>
+      select(-ex_wt, -ex2_wt) |>
       relocate(.weight, .weight_sq, .weight_n,
                       .after = dplyr::last_col())
   }

@@ -44,9 +44,9 @@ test_that("trx_stats works", {
                     trx_stats(expo, full_exposures_only = FALSE)$exposure))
 
   expect_equal(expo |> trx_stats(combine_trx = TRUE, trx_types = "Rider") |>
-                 dplyr::select(-trx_type),
+                 select(-trx_type),
                expo |> trx_stats(trx_types = "Rider") |>
-                 dplyr::select(-trx_type))
+                 select(-trx_type))
 
   res2 <- expo |> trx_stats(combine_trx = TRUE) |> as.data.frame()
   attr(res2, "trx_types") <- NULL

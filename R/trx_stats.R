@@ -159,7 +159,7 @@ trx_stats <- function(.data,
   }
 
   .data <- .data |>
-    dplyr::select(pol_num, exposure, !!!.groups,
+    select(pol_num, exposure, !!!.groups,
                   dplyr::all_of(trx_cols), dplyr::all_of(percent_of)) |>
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),

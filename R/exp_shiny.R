@@ -156,7 +156,7 @@ exp_shiny <- function(dat,
                   n_unique = purrr::map_int(predictors,
                                             ~ dplyr::n_distinct(dat[[.x]]))) |>
     arrange(order) |>
-    dplyr::select(-order)
+    select(-order)
 
   preds_small <- filter(preds, n_unique <= distinct_max)$predictors
 
