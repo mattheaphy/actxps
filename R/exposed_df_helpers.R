@@ -377,14 +377,14 @@ vec_cast.data.frame.exposed_df <- function(x, to, ...) {
 vec_ptype2.exposed_df.grouped_df <- function(x, y, ...) {
   g <- union(dplyr::group_vars(x), dplyr::group_vars(y))
   exposed_df_ptype2(x, y, ...) |>
-    group_by(dplyr::across(g))
+    group_by(dplyr::across(dplyr::all_of(g)))
 }
 
 #' @export
 vec_ptype2.grouped_df.exposed_df <- function(x, y, ...) {
   g <- union(dplyr::group_vars(x), dplyr::group_vars(y))
   exposed_df_ptype2(x, y, ...) |>
-    group_by(dplyr::across(g))
+    group_by(dplyr::across(dplyr::all_of(g)))
 }
 
 #' @export
