@@ -33,11 +33,13 @@ Launch a shiny application to interactively explore drivers of
 experience.
 
 \code{dat} must be an \code{exposed_df} object. An error will be thrown is any other
-object type is passed.
+object type is passed. If \code{dat} has transactions attached, the app will
+contain features for both termination and transaction studies. Otherwise,
+the app will only support termination studies.
 
 If nothing is passed to \code{predictors}, all columns names in \code{dat} will be
-used (excluding the policy number, status, termination date, and exposure
-columns).
+used (excluding the policy number, status, termination date, exposure,
+transaction counts, and transaction amounts columns).
 
 The \code{expected} argument is optional. As a default, any column names
 containing the word "expected" are used.
@@ -49,7 +51,8 @@ The sidebar contains filtering widgets for all variables passed
 to the \code{predictors} argument.
 }
 
-\subsection{Variable Selection}{
+\subsection{Study options}{
+\subsection{Grouping variables}{
 
 This box includes widgets to select grouping variables for summarizing
 experience. The "x" widget is also used as the x variable in the plot output.
@@ -57,13 +60,36 @@ Similarly, the "Color" and "Facets" widgets are used for color and facets in
 the plot. Multiple faceting variables are allowed. For the table output,
 "x", "Color", and "Facets" have no particular meaning beyond the order in
 which of grouping variables are displayed.
+}
+
+\subsection{Study type}{
+
+This box also includes a toggle to switch between termination studies and
+transaction studies (if available).
+\subsection{Termination studies}{
 
 The expected values checkboxes are used to activate and deactivate expected
 values passed to the \code{expected} argument. This impacts the table output
-directly and the available "y" variables in the plot. If there are no
+directly and the available "y" variables for the plot. If there are no
 expected values available, this widget will not appear. The "Weight by"
 widget is used to specify which column, if any, contains weights for
 summarizing experience.
+}
+
+\subsection{Transaction studies}{
+
+The transaction types checkboxes are used to activate and deactivate
+transaction types that appear in the plot and table outputs. The available
+transaction types are taken from the \code{trx_types} attribute of \code{dat}.
+In the plot output, transaction type will always appear as a faceting
+variable. The "Transactions as \% of" selector will expand the list of
+available "y" variables for the plot and impact the table output directly.
+Lastly, a checkbox exists that allows for all transaction types to be
+aggregated into a single group.
+}
+
+}
+
 }
 
 \subsection{Output}{
@@ -105,10 +131,11 @@ if (interactive()) {
   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
-  set.seed(123)
   study_py <- study_py |>
-  dplyr::mutate(expected_1 = expected_table[pol_yr],
-                expected_2 = ifelse(inc_guar, 0.015, 0.03))
+  mutate(expected_1 = expected_table[pol_yr],
+                expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+  add_transactions(withdrawals) |>
+  left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 
   exp_shiny(study_py)
 }

@@ -1,9 +1,19 @@
 #' Plot experience study results
 #'
-#' @param object An object of class `exp_df` usually created by the
-#' function [exp_stats()].
+#' @param object An object of class `exp_df` created by the
+#' function [exp_stats()] or an object of class `trx_df` created by the function
+#' [trx_stats()].
 #' @param ... Faceting variables passed to [ggplot2::facet_wrap()].
-#' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()].
+#' @param x An unquoted column name in `object` or expression to use as the `x`
+#' variable.
+#' @param y An unquoted column name in `object` or expression to use as the
+#' `y` variable. If unspecified, `y` will default to the observed termination
+#' rate (`q_obs`) for `exp_df` objects and the observed utilization rate
+#' (`trx_util`) for `trx_df` objects.
+#' @param color An unquoted column name in `object` or expression to use as the
+#' `color` and `fill` variables.
+#' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()]. NOTE: If
+#' `mapping` is supplied, the `x`, `y`, and `color` arguments will be ignored.
 #' @param scales The `scales` argument passed to [ggplot2::facet_wrap()].
 #' @param geoms Type of geometry. If "points" is passed, the plot will
 #' display lines and points. If "bars", the plot will display bars.
@@ -16,15 +26,53 @@
 #'
 #' If no faceting variables are supplied, the plot will use grouping
 #' variables 3 and up as facets. These variables are passed into
-#' [ggplot2::facet_wrap()].
+#' [ggplot2::facet_wrap()]. Specific to `trx_df` objects, transaction
+#' type (`trx_type`) will also be added as a faceting variable.
 #'
 #' @return a `ggplot` object
 #'
+#' @name autoplot_exp
+#' @rdname autoplot_exp
 #' @export
-autoplot.exp_df <- function(
-    object, ..., mapping, scales = "fixed",
+autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
+                            mapping, scales = "fixed",
+                            geoms = c("lines", "bars"),
+                            y_labels = scales::label_percent(accuracy = 0.1)) {
+
+  y <- rlang::enexpr(y)
+  y <- if (is.null(y)) rlang::expr(q_obs) else y
+
+  plot_experience(object, rlang::enexpr(x), y,
+                  rlang::enexpr(color), mapping, scales, geoms,
+                  y_labels, rlang::enquos(...))
+}
+
+#' @rdname autoplot_exp
+#' @export
+autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
+                            mapping, scales = "fixed",
+                            geoms = c("lines", "bars"),
+                            y_labels = scales::label_percent(accuracy = 0.1)) {
+
+  y <- rlang::enexpr(y)
+  y <- if (is.null(y)) rlang::expr(trx_util) else y
+
+  facets <- rlang::enquos(...)
+  if (length(facets) == 0) {
+    facets <- c(rlang::expr(trx_type), groups(object)[-(1:2)])
+  }
+
+  plot_experience(object, rlang::enexpr(x), y,
+                  rlang::enexpr(color), mapping, scales, geoms,
+                  y_labels, facets)
+}
+
+plot_experience <- function(
+    object, x = NULL, y = NULL, color = NULL,
+    mapping, scales = "fixed",
     geoms = c("lines", "bars"),
-    y_labels = scales::label_percent(accuracy = 0.1)) {
+    y_labels = scales::label_percent(accuracy = 0.1),
+    facets) {
 
   .groups <- groups(object)
   if(length(.groups) == 0) {
@@ -32,24 +80,27 @@ autoplot.exp_df <- function(
     object[["All"]] <- ""
   }
 
-  defaultNULL <- function(x) if (length(.groups) < x) NULL else .groups[[x]]
+  auto_aes <- function(.var, default) {
+    if(length(.var) == 0) {
+      if (length(.groups) < default) NULL else .groups[[default]]
+    } else {
+      .var
+    }
+  }
 
   geoms <- match.arg(geoms)
 
   # set up aesthetics
   if(missing(mapping)) {
-    x <- .groups[[1]]
-    color <- defaultNULL(2)
-    fill <- defaultNULL(2)
-    mapping <- ggplot2::aes(!!x, q_obs, color = !!color,
+    x <- auto_aes(x, 1)
+    color <- auto_aes(color, 2)
+    mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                             fill = !!color, group = !!color)
   }
 
-  if(missing(...)) {
-    facet <- .groups[-(1:2)]
-    if (length(facet) == 0) facet <- NULL
-  } else {
-    facet <- rlang::enquos(...)
+  if(length(facets) == 0) {
+    facets <- .groups[-(1:2)]
+    if (length(facets) == 0) facets <- NULL
   }
 
   p <- ggplot2::ggplot(object, mapping) +
@@ -62,7 +113,7 @@ autoplot.exp_df <- function(
   }
 
 
-  if (is.null(facet)) return(p)
-  p + ggplot2::facet_wrap(ggplot2::vars(!!!facet), scales = scales)
+  if (is.null(facets)) return(p)
+  p + ggplot2::facet_wrap(ggplot2::vars(!!!facets), scales = scales)
 
 }

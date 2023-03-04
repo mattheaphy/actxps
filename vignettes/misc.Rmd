@@ -1,0 +1,62 @@
+---
+title: "Other functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Other functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+This vignette features functions that are not covered in other vignettes.
+
+```{r packages}
+library(actxps)
+library(lubridate)
+```
+
+## Policy duration functions
+
+The `pol_()` family of functions can be used to calculate policy years, months, quarters, weeks, or any other arbitrary duration. Each function accepts a vector of dates and a vector of issue dates.
+
+**Example**: assume a policy was issued on 2022-05-10 and we are interested in calculating various policy duration values at the end of calendar years 2022-2032.
+
+```{r pol-dur1}
+
+
+dates <- ymd("2022-12-31") + years(0:10)
+
+# policy years
+pol_yr(dates, "2022-05-10")
+
+# policy quarters
+pol_qtr(dates, "2022-05-10")
+
+# policy months
+pol_mth(dates, "2022-05-10")
+
+# policy weeks
+pol_wk(dates, "2022-05-10")
+
+
+```
+
+The more general `pol_interval()` function can be used to calculate any arbitrary duration. This function has a third argument where the length of the policy duration can be specified. This argument must be a period object. See `lubridate::period()` for more information.
+
+```{r pol-dur2}
+
+# days
+pol_interval(dates, "2022-05-10", days(1))
+
+# fortnights
+pol_interval(dates, "2022-05-10", weeks(2))
+
+```
+

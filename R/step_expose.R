@@ -122,7 +122,7 @@ bake.step_expose <- function(object, new_data, ...) {
               !!!object$options)
 
   if (object$drop_pol_num) {
-    new_data |> dplyr::select(-pol_num)
+    new_data |> select(-pol_num)
   } else {
     new_data
   }

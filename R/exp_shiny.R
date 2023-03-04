@@ -4,11 +4,13 @@
 #' experience.
 #'
 #' `dat` must be an `exposed_df` object. An error will be thrown is any other
-#' object type is passed.
+#' object type is passed. If `dat` has transactions attached, the app will
+#' contain features for both termination and transaction studies. Otherwise,
+#' the app will only support termination studies.
 #'
 #' If nothing is passed to `predictors`, all columns names in `dat` will be
-#' used (excluding the policy number, status, termination date, and exposure
-#' columns).
+#' used (excluding the policy number, status, termination date, exposure,
+#' transaction counts, and transaction amounts columns).
 #'
 #' The `expected` argument is optional. As a default, any column names
 #' containing the word "expected" are used.
@@ -20,7 +22,9 @@
 #' The sidebar contains filtering widgets for all variables passed
 #' to the `predictors` argument.
 #'
-#' ## Variable Selection
+#' ## Study options
+#'
+#' ### Grouping variables
 #'
 #' This box includes widgets to select grouping variables for summarizing
 #' experience. The "x" widget is also used as the x variable in the plot output.
@@ -29,12 +33,30 @@
 #' "x", "Color", and "Facets" have no particular meaning beyond the order in
 #' which of grouping variables are displayed.
 #'
+#' ### Study type
+#'
+#' This box also includes a toggle to switch between termination studies and
+#' transaction studies (if available).
+#'
+#' #### Termination studies
+#'
 #' The expected values checkboxes are used to activate and deactivate expected
 #' values passed to the `expected` argument. This impacts the table output
-#' directly and the available "y" variables in the plot. If there are no
+#' directly and the available "y" variables for the plot. If there are no
 #' expected values available, this widget will not appear. The "Weight by"
 #' widget is used to specify which column, if any, contains weights for
 #' summarizing experience.
+#'
+#' #### Transaction studies
+#'
+#' The transaction types checkboxes are used to activate and deactivate
+#' transaction types that appear in the plot and table outputs. The available
+#' transaction types are taken from the `trx_types` attribute of `dat`.
+#' In the plot output, transaction type will always appear as a faceting
+#' variable. The "Transactions as % of" selector will expand the list of
+#' available "y" variables for the plot and impact the table output directly.
+#' Lastly, a checkbox exists that allows for all transaction types to be
+#' aggregated into a single group.
 #'
 #' ## Output
 #'
@@ -80,10 +102,11 @@
 #'   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
 #'   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 #'
-#'   set.seed(123)
 #'   study_py <- study_py |>
-#'   dplyr::mutate(expected_1 = expected_table[pol_yr],
-#'                 expected_2 = ifelse(inc_guar, 0.015, 0.03))
+#'   mutate(expected_1 = expected_table[pol_yr],
+#'                 expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+#'   add_transactions(withdrawals) |>
+#'   left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 #'
 #'   exp_shiny(study_py)
 #' }
@@ -94,9 +117,18 @@ exp_shiny <- function(dat,
                       expected = names(dat)[grepl("expected", names(dat))],
                       distinct_max = 25L) {
 
-  if (!is_exposed_df(dat)) {
-    rlang::abort("`dat` is not an `exposed_df` object. Try converting `dat` to an `exposed_df` using `as_exposed_df`.")
-  }
+  rlang::check_installed("shiny")
+  rlang::check_installed("bslib")
+  rlang::check_installed("thematic")
+
+  verify_exposed_df(dat)
+  # check for presence of transactions
+  all_trx_types <- verify_get_trx_types(dat, required = FALSE)
+  has_trx <- !is.null(all_trx_types)
+  trx_cols <- names(dat)[grepl("^trx_(n|amt)_", names(dat))]
+
+  # ungroup data if needed
+  dat <- ungroup(dat)
 
   if (any(!c(predictors, expected) %in% names(dat))) {
     rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values will be removed.")
@@ -109,9 +141,9 @@ exp_shiny <- function(dat,
   # organize predictors
   preds <- data.frame(predictors = predictors) |>
     # drop non-predictors (if any)
-    dplyr::filter(!predictors %in% c("pol_num", "status",
-                                     "term_date","exposure")) |>
-    dplyr::mutate(class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
+    filter(!predictors %in% c("pol_num", "status",
+                                     "term_date","exposure", trx_cols)) |>
+    mutate(class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
                   order = dplyr::case_when(
                     class1 == "Date" ~ 1,
                     class1 == "logical" ~ 2,
@@ -123,12 +155,21 @@ exp_shiny <- function(dat,
                                              ~ is.numeric(dat[[.x]])),
                   n_unique = purrr::map_int(predictors,
                                             ~ dplyr::n_distinct(dat[[.x]]))) |>
-    dplyr::arrange(order) |>
-    dplyr::select(-order)
+    arrange(order) |>
+    select(-order)
 
-  preds_small <- dplyr::filter(preds, n_unique <= distinct_max)$predictors
+  preds_small <- filter(preds, n_unique <= distinct_max)$predictors
 
-  yVar_basic <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
+  yVar_exp <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
+  if (has_trx) {
+    yVar_trx <- c("trx_util", "trx_freq", "trx_n", "trx_flag",
+                  "trx_amt", "avg_trx", "avg_all")
+    available_studies <- c("Termination study" = "exp",
+                           "Transaction study" = "trx")
+  } else {
+    yVar_trx <- NULL
+    available_studies <- c("Termination study" = "exp")
+  }
 
   # function to make input widgets
   widget <- function(x,
@@ -200,7 +241,7 @@ exp_shiny <- function(dat,
 
     res <- if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
       # numeric or date
-      glue::glue("dplyr::between({x}, input${inputId}[[1]], input${inputId}[[2]])")
+      glue::glue("between({x}, input${inputId}[[1]], input${inputId}[[2]])")
     } else {
       # categorical
       glue::glue("{x} %in% input${inputId}")
@@ -211,30 +252,58 @@ exp_shiny <- function(dat,
 
   }
 
-  selectPred <- function(inputId, label, width,
-                         choices = c("None", preds$predictors), ...) {
-    shiny::column(
-      width = width,
-      shiny::selectInput(inputId, shiny::strong(label),
-                         choices = choices, ...)
-    )
+  widgetPred <- function(fun) {
+    function(inputId, label, width,
+             choices = c("None", preds$predictors), ...) {
+      shiny::column(
+        width = width,
+        fun(inputId, shiny::strong(label),
+            choices = choices, ...)
+      )
+    }
   }
+
+  selectPred <- widgetPred(shiny::selectInput)
+  checkboxGroupPred <- widgetPred(shiny::checkboxGroupInput)
 
   # expected values set up
   if (length(expected) > 0) {
 
     has_expected <- TRUE
 
-    expected_widget <-
-      shiny::column(
-        width = 4,
-        shiny::checkboxGroupInput("ex_checks",
-                                  shiny::strong("Expected values:"),
-                                  choices = expected)
-      )
+    expected_widget <- checkboxGroupPred("ex_checks", "Expected values:", 4,
+                                         choices = expected,
+                                         selected = expected)
+
   } else {
     has_expected <- FALSE
     expected_widget <- NULL
+  }
+
+  # transactions set up
+  if (has_trx) {
+
+    percent_of_choices <- filter(preds, is_number)$predictors
+
+    trx_tab <- shiny::tabPanel(
+      "Transaction study",
+      value = "trx",
+      shiny::fluidRow(
+        checkboxGroupPred("trx_types_checks", "Transaction types:", 4,
+                          all_trx_types, selected = all_trx_types),
+        selectPred("pct_checks", "Transactions as % of:", 4,
+                   choices = percent_of_choices, multiple = TRUE),
+        shiny::column(
+          width = 4,
+          shiny::checkboxInput("trx_combine",
+                               shiny::strong("Combine transactions?"),
+                               value = FALSE)
+        )
+      )
+    )
+
+  } else {
+    trx_tab <- NULL
   }
 
   ui <- shiny::fluidPage(
@@ -242,7 +311,9 @@ exp_shiny <- function(dat,
     theme = bslib::bs_theme(bootswatch = "flatly"),
 
     shiny::titlePanel(paste(attr(dat, "target_status"), collapse = "/") |>
-                        paste("Experience Study")),
+                        paste("Experience Study",
+                              if(has_trx) {
+                                glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})),
 
     shiny::sidebarLayout(
       shiny::sidebarPanel(
@@ -257,7 +328,10 @@ exp_shiny <- function(dat,
       shiny::mainPanel(
 
         shiny::wellPanel(
-          shiny::h3("Variable Selection"),
+
+          shiny::h3("Study options"),
+
+          shiny::h4("Grouping variables"),
           shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
           shiny::fluidRow(
             selectPred("xVar", "x:", 4),
@@ -266,12 +340,24 @@ exp_shiny <- function(dat,
             selectPred("facetVar", "Facets:", 4, multiple = TRUE,
                        choices = preds_small)
           ),
-          shiny::fluidRow(
-            expected_widget,
-            selectPred("weightVar", "Weight by:", 4,
-                       choices = c("None",
-                                   dplyr::filter(preds, is_number)$predictors))
-          )),
+
+          shiny::h4("Study type"),
+          shiny::tabsetPanel(
+            id = "study_type",
+            type = "pills",
+
+            shiny::tabPanel("Termination study",
+                            value = "exp",
+                            shiny::fluidRow(
+                              expected_widget,
+                              selectPred("weightVar", "Weight by:", 4,
+                                         choices = c("None",
+                                                     filter(preds, is_number)$predictors))
+                            )),
+            trx_tab
+
+          )
+        ),
 
         shiny::h3("Output"),
 
@@ -281,7 +367,7 @@ exp_shiny <- function(dat,
             "Plot",
             shiny::br(),
             shiny::fluidRow(
-              selectPred("yVar", "y:", 4, choices = yVar_basic),
+              selectPred("yVar", "y:", 4, choices = yVar_exp),
               shiny::column(
                 width = 4,
                 shiny::radioButtons("plotGeom",
@@ -331,16 +417,33 @@ exp_shiny <- function(dat,
 
     thematic::thematic_shiny()
 
-    # update y variable selections in response to expected value outputs
+    yVar_exp2 <- shiny::reactive({
+      c(yVar_exp,
+        input$ex_checks,
+        glue::glue("ae_{input$ex_checks}"),
+        glue::glue("adj_{input$ex_checks}"))
+    })
+
+    yVar_trx2 <- shiny::reactive({
+      c(yVar_trx,
+        glue::glue("pct_of_{input$pct_checks}_w_trx"),
+        glue::glue("pct_of_{input$pct_checks}_all"),
+        input$pct_checks,
+        glue::glue("{input$pct_checks}_w_trx"))
+    })
+
+    # update y variable selections in response to inputs
     shiny::observe(
       shiny::updateSelectInput(
-        session, "yVar", choices = c(yVar_basic,
-                                     input$ex_checks,
-                                     glue::glue("ae_{input$ex_checks}"),
-                                     glue::glue("adj_{input$ex_checks}"))
+        session, "yVar", choices =
+          if(input$study_type == "exp") {
+            yVar_exp2()
+          } else {
+            yVar_trx2()
+          }
       )
     ) |>
-      shiny::bindEvent(input$ex_checks)
+      shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks)
 
     # reactive data
     rdat <- shiny::reactive({
@@ -348,7 +451,7 @@ exp_shiny <- function(dat,
       filters <- purrr::map(preds$predictors, expr_filter)
 
       dat |>
-        dplyr::filter(!!!filters)
+        filter(!!!filters)
     })
 
     # experience study
@@ -370,12 +473,24 @@ exp_shiny <- function(dat,
         input$ex_checks
       }
 
-      rdat() |>
-        dplyr::group_by(dplyr::across(dplyr::all_of(.groups))) |>
-        exp_stats(wt = wt, credibility = TRUE, expected = ex)
+      if (input$study_type == "exp") {
+        rdat() |>
+          group_by(dplyr::across(dplyr::all_of(.groups))) |>
+          exp_stats(wt = wt, credibility = TRUE, expected = ex)
+      } else {
+        rdat() |>
+          group_by(dplyr::across(dplyr::all_of(.groups))) |>
+          trx_stats(percent_of = input$pct_checks,
+                    trx_types = input$trx_types_checks,
+                    combine_trx = input$trx_combine)
+      }
+
     })
 
     output$xpPlot <- shiny::renderPlot({
+
+      if (input$study_type == "exp" && input$yVar %in% yVar_trx2()) return()
+      if (input$study_type == "trx" && input$yVar %in% yVar_exp2()) return()
 
       dat <- rxp()
 
@@ -396,8 +511,14 @@ exp_shiny <- function(dat,
                               fill = !!color, group = !!color)
 
       # y labels
-      if (input$yVar %in% c("claims", "n_claims", "exposure")) {
+      if (input$yVar %in% c("claims", "n_claims", "exposure",
+                            "trx_n", "trx_flag", "trx_amt",
+                            "avg_trx", "avg_all",
+                            input$pct_checks,
+                            paste0(input$pct_checks, "_w_trx"))) {
         y_labels <- scales::label_comma(accuracy = 1)
+      } else if (input$yVar == "trx_freq") {
+        y_labels <- scales::label_comma(accuracy = 0.1)
       } else {
         y_labels <- scales::label_percent(accuracy = 0.1)
       }
@@ -406,7 +527,12 @@ exp_shiny <- function(dat,
         p <- dat |> autoplot(mapping = mapping, geoms = input$plotGeom,
                              y_labels = y_labels)
       } else {
+
         facets <- rlang::syms(input$facetVar)
+        if (input$study_type == "trx") {
+          facets <- append(facets, rlang::sym("trx_type"))
+        }
+
         p <- dat |> autoplot(!!!facets, mapping = mapping,
                              geoms = input$plotGeom,
                              y_labels = y_labels,
@@ -422,7 +548,7 @@ exp_shiny <- function(dat,
         ggplot2::theme(axis.text = ggplot2::element_text(size = ggplot2::rel(0.95)),
                        strip.text = ggplot2::element_text(size = ggplot2::rel(1)),
                        strip.background = ggplot2::element_rect(fill = "#43536b")
-                       )
+        )
 
     }, res = 92)
 
@@ -439,7 +565,7 @@ exp_shiny <- function(dat,
 
     output$xpDownload <- shiny::downloadHandler(
       filename = function() {
-        file.path(tempdir(), paste0("exp-data-", Sys.Date(), ".csv"))
+        file.path(tempdir(), paste0(input$study_type, "-data-", Sys.Date(), ".csv"))
       },
       content = function(file) {
         readr::write_csv(rxp(), file)

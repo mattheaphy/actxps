@@ -1,7 +1,7 @@
 #' Summarize experience study records
 #'
-#' @description Create a summary data frame of experience for a given target
-#' status.
+#' @description Create a summary data frame of termination experience for a
+#' given target status.
 #'
 #' @details If `.data` is grouped, the resulting data frame will contain
 #' one row per group.
@@ -63,7 +63,7 @@
 #'
 #' exp_res <- census_dat |>
 #'            expose("2019-12-31", target_status = "Surrender") |>
-#'            dplyr::group_by(pol_yr, inc_guar) |>
+#'            group_by(pol_yr, inc_guar) |>
 #'            exp_stats()
 #'
 #' exp_res
@@ -80,7 +80,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       credibility = FALSE,
                       cred_p = 0.95, cred_r = 0.05) {
 
-  .groups <- dplyr::groups(.data)
+  .groups <- groups(.data)
   start_date <- attr(.data, "start_date")
   end_date <- attr(.data, "end_date")
 
@@ -95,14 +95,14 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   }
 
   res <- .data |>
-    dplyr::rename(exposure = {{col_exposure}},
+    rename(exposure = {{col_exposure}},
                   status = {{col_status}}) |>
-    dplyr::mutate(n_claims = status %in% target_status)
+    mutate(n_claims = status %in% target_status)
 
   if (!is.null(wt)) {
     res <- res |>
-      dplyr::rename(.weight = {{wt}}) |>
-      dplyr::mutate(
+      rename(.weight = {{wt}}) |>
+      mutate(
         claims = n_claims * .weight,
         exposure = exposure * .weight,
         .weight_sq = .weight ^ 2,
@@ -148,9 +148,9 @@ groups.exp_df <- function(x) {
 #' @rdname exp_stats
 summary.exp_df <- function(object, ...) {
 
-  res <- dplyr::group_by(object, !!!rlang::enquos(...))
+  res <- group_by(object, !!!rlang::enquos(...))
 
-  .groups <- dplyr::groups(res)
+  .groups <- groups(res)
   target_status <- attr(object, "target_status")
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
@@ -176,10 +176,10 @@ finish_exp_stats <- function(.data, target_status, expected,
 
   # expected value formulas. these are already weighted if applicable
   if (!missing(expected)) {
-    ex_mean <- exp_form("weighted.mean({expected}, exposure)",
-                        "{expected}", expected)
-    ex_ae <- exp_form("q_obs / {expected}",
-                      "ae_{expected}", expected)
+    ex_mean <- exp_form("weighted.mean({.col}, exposure)",
+                        "{.col}", expected)
+    ex_ae <- exp_form("q_obs / {.col}",
+                      "ae_{.col}", expected)
   } else {
     ex_ae <- ex_mean <- expected <- NULL
   }
@@ -206,19 +206,19 @@ finish_exp_stats <- function(.data, target_status, expected,
       cred <- rlang::exprs(
         credibility = pmin(1, sqrt(
           n_claims / (y * (1 - q_obs))
-          )))
+        )))
     } else {
       cred <- rlang::exprs(
         credibility = pmin(1, sqrt(
           n_claims /
             (y * ((ex2_wt - ex_wt ^ 2) * .weight_n / (.weight_n - 1) /
                     ex_wt ^ 2 + 1 - q_obs))
-          )))
+        )))
     }
 
     if(!is.null(expected)) {
-      adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {expected}",
-                            "adj_{expected}", expected)
+      adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {.col}",
+                            "adj_{.col}", expected)
 
       cred <- append(cred, adj_q_exp)
     }
@@ -237,28 +237,34 @@ finish_exp_stats <- function(.data, target_status, expected,
                      !!!wt_forms,
                      !!!cred,
                      .groups = "drop") |>
-    dplyr::relocate(exposure, q_obs, .after = claims)
+    relocate(exposure, q_obs, .after = claims)
 
   if (!is.null(wt)) {
     res <- res |>
-      dplyr::select(-ex_wt, -ex2_wt) |>
-      dplyr::relocate(.weight, .weight_sq, .weight_n,
+      select(-ex_wt, -ex2_wt) |>
+      relocate(.weight, .weight_sq, .weight_n,
                       .after = dplyr::last_col())
   }
 
-  structure(res, class = c("exp_df", class(res)),
-            groups = .groups, target_status = target_status,
-            start_date = start_date,
-            expected = expected,
-            end_date = end_date,
-            wt = wt,
-            exp_params = list(credibility = credibility,
-                              cred_p = cred_p, cred_r = cred_r))
+  tibble::new_tibble(res,
+                     class = "exp_df",
+                     groups = .groups,
+                     target_status = target_status,
+                     start_date = start_date,
+                     expected = expected,
+                     end_date = end_date,
+                     wt = wt,
+                     exp_params = list(credibility = credibility,
+                                       cred_p = cred_p, cred_r = cred_r))
 }
 
-exp_form <- function(form, col_names, expected) {
+# this function is used to create formula specifications passed to dplyr::mutate
+# or dplyr::summarize using a common formula applied across several columns with
+# a common naming structure.
+# Note - this could be handled using across, but is not due to performance on
+# grouped data frames
+exp_form <- function(form, new_col, .col) {
   glue::glue(form) |>
-    purrr::set_names(glue::glue(col_names)) |>
+    purrr::set_names(glue::glue(new_col)) |>
     rlang::parse_exprs()
-
 }

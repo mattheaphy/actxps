@@ -19,18 +19,18 @@ After experience data has been prepared for analysis, the next step is to summar
 
 At a minimum, an `exp_df` includes:
 
-- The number of claims (termination events)
-- The amount of claims (weighted by a variable of the user's choice; more on this below)
-- The total exposure
-- The observed termination rate
+- The number of claims (termination events, `n_claims`)
+- The amount of claims (weighted by a variable of the user's choice; more on this below, `claims`)
+- The total exposure (`exposure`)
+- The observed termination rate (`q_obs`)
 
 Optionally, an `exp_df` can also include:
 
 - Any grouping variables attached to the input data
-- Expected termination rates and actual-to-expected (A/E) ratios
-- Limited fluctuation credibility estimates and credibility-adjusted expected termination rates
+- Expected termination rates and actual-to-expected (A/E) ratios (`ae_*`)
+- Limited fluctuation credibility estimates (`credibility`) and credibility-adjusted expected termination rates (`adj_*`)
 
-To demonstrate this function, we're going to use a data frame containing simulated census data for a theoretical deferred annuity product that has an optional guaranteed income rider. Before `exp_stats()` can be used, we must convert our census data into exposure records using the `expose()` function^[ See `vignette('exposures')` for more information on exposures.]. In addition, let's assume we're interested in studying surrender rates, so we'll pass the argument `target_status = 'Surrender'` to `expose()`.
+To demonstrate this function, we're going to use a data frame containing simulated census data for a theoretical deferred annuity product that has an optional guaranteed income rider. Before `exp_stats()` can be used, we must convert our census data into exposure records using the `expose()` function^[See `vignette('exposures')` for more information on creating exposure records.]. In addition, let's assume we're interested in studying surrender rates, so we'll pass the argument `target_status = 'Surrender'` to `expose()`.
 
 
 ```{r packages, message=FALSE}
@@ -50,7 +50,7 @@ To use `exp_stats()`, pass it a data frame of exposure-level records, ideally of
 exp_stats(exposed_data)
 ```
 
-The results show us that we specified no groups, which is why the output data is a single row. In addition, we can see that we're looking at surrender rates through the end of 2019, which `exp_stats` inferred from `exposed_data`. 
+The results show us that we specified no groups, which is why the output data is a single row. In addition, we can see that we're looking at surrender rates through the end of 2019, which `exp_stats()` inferred from `exposed_data`. 
 
 The number of claims (`n_claims`) is equal to the number of "Surrender" statuses in `exposed_data`. Since we didn't specify any weighting variable, the amount of claims (`claims`) equals the number of claims.
 
@@ -118,13 +118,13 @@ exposed_data |>
 
 Experience studies often weight output by key policy values. Examples include account values, cash values, face amount, premiums, and more. Weighting can be accomplished by passing the name of a weighting column to the `wt` argument of `exp_stats()`.
 
-Our sample data contains a column called `pol_val` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
+Our sample data contains a column called `premium` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
 
 ```{r weight-res}
 
 exposed_data |> 
   group_by(pol_yr) |> 
-  exp_stats(wt = 'pol_val')
+  exp_stats(wt = 'premium')
 
 ```
 
@@ -171,7 +171,7 @@ As noted above, if weights are passed to `exp_stats()` then A/E ratios will also
 exposed_data2 |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"), 
-            wt = "pol_val") |> 
+            wt = "premium") |> 
   select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
          ae_expected_1, ae_expected_2)
 
@@ -283,4 +283,4 @@ exp_stats(not_exposed_df, target_status = "Surrender")
 
 ### Limitations
 
-The `exp_stats()` function only supports termination studies. It does not contain support for transaction studies or studies with multiple changes from an active to an inactive status.
+The `exp_stats()` function only supports termination studies. It does not contain support for transaction studies or studies with multiple changes from an active to an inactive status. For information on transaction studies, see `vignette("transactions")`.

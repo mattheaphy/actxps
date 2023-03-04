@@ -1,6 +1,6 @@
 Package: actxps
 Title: Create Actuarial Experience Studies: Prepare Data, Summarize Results, and Create Reports
-Version: 0.2.1
+Version: 1.0.0
 Authors@R: 
     person("Matt", "Heaphy", email = "mattrmattrs@gmail.com", role = c("aut", "cre"))
 Maintainer: Matt Heaphy <mattrmattrs@gmail.com>
@@ -23,15 +23,18 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
-    RColorBrewer,    
+    RColorBrewer,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    shiny (>= 1.6),
+    bslib,
+    thematic
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
 Imports: 
     lubridate,
-    dplyr,
+    dplyr (>= 1.1.0),
     ggplot2,
     tibble,
     rlang,
@@ -42,9 +45,8 @@ Imports:
     paletteer,
     recipes,
     generics,
-    shiny (>= 1.6),
-    bslib,
-    thematic,
-    readr
+    readr,
+    tidyr,
+    vctrs
 LazyData: true
 VignetteBuilder: knitr

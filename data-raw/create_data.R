@@ -21,3 +21,5 @@ usethis::use_data(scale_g2, overwrite = TRUE)
 source("data-raw/simulate_data.R")
 
 usethis::use_data(census_dat, overwrite = TRUE)
+usethis::use_data(withdrawals, overwrite = TRUE)
+usethis::use_data(account_vals, overwrite = TRUE)

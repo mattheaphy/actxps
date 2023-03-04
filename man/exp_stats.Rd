@@ -58,8 +58,8 @@ for partial credibility and credibility-weighted decrement rates
 (assuming values are passed to \code{expected}).
 }
 \description{
-Create a summary data frame of experience for a given target
-status.
+Create a summary data frame of termination experience for a
+given target status.
 }
 \details{
 If \code{.data} is grouped, the resulting data frame will contain
@@ -96,7 +96,7 @@ toy_census |> expose("2020-12-31", target_status = "Surrender") |>
 
 exp_res <- census_dat |>
            expose("2019-12-31", target_status = "Surrender") |>
-           dplyr::group_by(pol_yr, inc_guar) |>
+           group_by(pol_yr, inc_guar) |>
            exp_stats()
 
 exp_res

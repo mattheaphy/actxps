@@ -19,6 +19,12 @@ to inform assumption setting for projection models.
   containing observed termination rates and claims. Optionally, expected
   termination rates, actual-to-expected ratios, and limited fluctuation
   credibility estimates can also be returned.
+- The `add_transactions()` function attaches summarized transactions to
+  a data frame with exposure-level records.
+- The `trx_stats()` function creates transaction summary data frames
+  containing transaction counts, amounts, frequencies, and utilization.
+  Optionally, transaction amounts can be expressed as a percentage of
+  one or more variables to calculate rates or actual-to-expected ratios.
 - The `autoplot()` and `autotable()` functions creates plots and tables
   for reporting.
 - The `exp_shiny()` function launches a Shiny app that allows for
@@ -81,7 +87,7 @@ exposed_data
 #> 
 #>  Exposure type: policy_year 
 #>  Target status: Surrender 
-#>  Study range: 1900-01-01 to 2019-12-31 
+#>  Study range: 1900-01-01 to 2019-12-31
 #> 
 #> # A tibble: 141,252 × 15
 #>    pol_num status issue_date inc_guar qual    age product gender wd_age premium

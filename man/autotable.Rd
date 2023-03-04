@@ -3,6 +3,7 @@
 \name{autotable}
 \alias{autotable}
 \alias{autotable.exp_df}
+\alias{autotable.trx_df}
 \title{Tabular experience study summary}
 \usage{
 autotable(object, ...)
@@ -17,10 +18,22 @@ autotable(object, ...)
   rename_cols = rlang::list2(...),
   ...
 )
+
+\method{autotable}{trx_df}(
+  object,
+  fontsize = 100,
+  decimals = 1,
+  colorful = TRUE,
+  color_util = "RColorBrewer::GnBu",
+  color_pct_of = "RColorBrewer::RdBu",
+  rename_cols = rlang::list2(...),
+  ...
+)
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} usually created by the
-function \code{\link[=exp_stats]{exp_stats()}}.}
+function \code{\link[=exp_stats]{exp_stats()}} or an object of class \code{trx_df} created by the
+\code{\link[=trx_stats]{trx_stats()}} function.}
 
 \item{...}{Additional arguments passed to \code{\link[gt:gt]{gt::gt()}}.}
 
@@ -36,9 +49,14 @@ decrement rate and actual-to-expected columns.}
 \item{color_ae_}{Color palette used for actual-to-expected rates.}
 
 \item{rename_cols}{An optional list consisting of key-value pairs. This
-can be used to relabel columns on the output table. Names are column names
-in \code{object} and values are new labels. See \code{\link[gt:cols_label]{gt::cols_label()}} for
-more information.}
+can be used to relabel columns on the output table. This parameter is most
+useful for renaming grouping variables that will appear under their original
+variable names if left unchanged. See \code{\link[gt:cols_label]{gt::cols_label()}} for more
+information.}
+
+\item{color_util}{Color palette used for utilization rates.}
+
+\item{color_pct_of}{Color palette used for "percentage of" columns.}
 }
 \value{
 a \code{gt} object
@@ -49,6 +67,9 @@ from an object of a particular class. Tables are constructed using the
 \code{gt} package.
 
 \code{autotable.exp_df()} is used to convert experience study results to a
+presentation-friendly format.
+
+\code{autotable.trx_df()} is used to convert transaction study results to a
 presentation-friendly format.
 }
 \details{

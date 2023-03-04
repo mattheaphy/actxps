@@ -116,7 +116,7 @@ expose <- function(.data,
 
   # column renames and name conflicts
   .data <- .data |>
-    dplyr::rename(pol_num = {{col_pol_num}},
+    rename(pol_num = {{col_pol_num}},
                   status = {{col_status}},
                   issue_date = {{col_issue_date}},
                   term_date = {{col_term_date}}) |>
@@ -137,9 +137,9 @@ expose <- function(.data,
 
   # pre-exposure updates
   res <- .data |>
-    dplyr::filter(issue_date < end_date,
+    filter(issue_date < end_date,
                   is.na(term_date) | term_date > start_date) |>
-    dplyr::mutate(
+    mutate(
       term_date = dplyr::if_else(term_date > end_date,
                                  lubridate::NA_Date_, term_date),
       status = dplyr::if_else(is.na(term_date), default_status, status),
@@ -147,7 +147,7 @@ expose <- function(.data,
 
   if (cal_expo) {
     res <- res |>
-      dplyr::mutate(
+      mutate(
         first_date = pmax(issue_date, start_date),
         cal_b = lubridate::floor_date(first_date, expo_length),
         tot_per = lubridate::interval(
@@ -157,25 +157,25 @@ expose <- function(.data,
         rep_n = ceiling(tot_per) + 1)
   } else {
     res <- res |>
-      dplyr::mutate(
+      mutate(
         tot_per = lubridate::interval(issue_date - 1, last_date) / expo_step,
         rep_n = ceiling(tot_per))
   }
 
   # apply exposures
   res <- res |>
-    dplyr::slice(rep(dplyr::row_number(), rep_n)) |>
-    dplyr::group_by(pol_num) |>
-    dplyr::mutate(.time = dplyr::row_number()) |>
-    dplyr::ungroup() |>
-    dplyr::mutate(
+    slice(rep(dplyr::row_number(), rep_n)) |>
+    group_by(pol_num) |>
+    mutate(.time = dplyr::row_number()) |>
+    ungroup() |>
+    mutate(
       last_per = .time == rep_n,
       status = dplyr::if_else(last_per, status, default_status),
       term_date = dplyr::if_else(last_per, term_date, lubridate::NA_Date_))
 
   if (cal_expo) {
     res <- res |>
-      dplyr::mutate(first_per = .time == 1,
+      mutate(first_per = .time == 1,
                     cal_e = cal_b %m+% (expo_step * .time) - 1,
                     cal_b = cal_b %m+% (expo_step * (.time - 1)),
                     exposure = dplyr::case_when(
@@ -185,15 +185,15 @@ expose <- function(.data,
                       last_per ~ cal_frac(last_date),
                       TRUE ~ 1)
       ) |>
-      dplyr::select(-rep_n, -first_date, -last_date, -first_per, -last_per,
+      select(-rep_n, -first_date, -last_date, -first_per, -last_per,
                     -.time, -tot_per) |>
-      dplyr::relocate(cal_e, .after = cal_b) |>
+      relocate(cal_e, .after = cal_b) |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "cal") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "cal",
                          suffix = "_end")
   } else {
     res <- res |>
-      dplyr::mutate(
+      mutate(
         cal_b = issue_date %m+% (expo_step * (.time - 1)),
         cal_e = issue_date %m+% (expo_step * .time) - 1,
         exposure = dplyr::if_else(last_per & !status %in% target_status,
@@ -201,8 +201,8 @@ expose <- function(.data,
         # exposure = 0 is possible if exactly 1 period has elapsed. replace these with 1's
         exposure = dplyr::if_else(exposure == 0, 1, exposure)
       ) |>
-      dplyr::select(-last_per, -last_date, -tot_per, -rep_n) |>
-      dplyr::filter(dplyr::between(cal_b, start_date, end_date)) |>
+      select(-last_per, -last_date, -tot_per, -rep_n) |>
+      filter(between(cal_b, start_date, end_date)) |>
       dplyr::rename_with(.fn = rename_col, .cols = .time, prefix = "pol") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "pol_date") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "pol_date",
@@ -212,8 +212,9 @@ expose <- function(.data,
   }
 
   # set up S3 object
-  as_exposed_df(res, end_date, start_date,
-                target_status, cal_expo, expo_length)
+  new_exposed_df(res, end_date, start_date,
+                 target_status, cal_expo, expo_length,
+                 trx_types = NULL)
 
 }
 
@@ -299,20 +300,10 @@ week_frac <- function(x, .offset = 0) {
   x <- x[x %in% names(.data)]
   .data[x] <- NULL
   if (length(x > 0)) {
-    rlang::warn(c(x = glue::glue("`.data` contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}. If you don't want this to happen, please rename these columns prior to calling the applicable expose function.")))
+    rlang::warn(c(x = glue::glue("`.data` contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}."),
+                  i = "If you don't want this to happen, rename these columns prior to calling the applicable expose function."))
   }
   .data
-}
-
-
-#' @export
-print.exposed_df <- function(x, ...) {
-  cat("Exposure data\n\n",
-      "Exposure type:", attr(x, "exposure_type"), "\n",
-      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
-      "Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")), "\n\n")
-  NextMethod()
 }
 
 # helper function - do not export

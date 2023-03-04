@@ -23,6 +23,9 @@ A common step in experience studies is converting census-level data into exposur
 - Calculates partial exposures for left-censored and right-censored records using exact day counts
 - For terminated policies, sets the policy status to an active state for all observation periods except the last. Similarly, the termination date is set to `NA` for all periods except the last.
 - Adds identifier columns for observation periods
+- Converts the data to the `exposed_df` class, which is a format expected by several actxps functions.
+
+If you already have exposure-level data available, the `expose()` functions are not necessary. However, we recommend converting your data to the `exposed_df` format using the function `as_exposed_df()`.
 
 ## Toy census data
 
@@ -69,7 +72,8 @@ is_exposed_df(exposed_data)
 
 Let's examine what happened to each policy.
 
-**Policy 1**: As expected, there are 13 rows for this policy. New columns were added for the policy year (`pol_yr`), anniversary (`pol_date_yr`), and exposure. All exposures are 100% since this policy was active for all 13 years.
+**Policy 1**: As expected, there are 13 rows for this policy. New columns were added for the policy year (`pol_yr`), date ranges (`pol_date_yr`, `pol_date_yr_end`), and
+exposure. All exposures are 100% since this policy was active for all 13 years.
 
 When the data is printed, additional attributes from the `exposed_df` class are displayed.
 
@@ -251,7 +255,58 @@ exposed_data |>
 
 ```
 
+### Stacking `exposed_df` objects
 
+If you need to stack two `exposed_df` objects, `vctrs::vec_rbind()` is recommended over `rbind()` or `dplyr::bind_rows()`. The advantage of `vctrs::vec_rbind()` is that it will combine attributes across all `exposed_df` objects passed to the function. The study end date will be updated to maximum study end date. Similarly, the study start date will be set to the earliest study start date. Target statuses and transactions types will become a super set of all observed values. The other two functions will retain attributes from only the first object passed to them.
+
+For example, below `exposed_data2` contains study start and end dates that are before and after the study range in `exposed_data`. In addition, this object contains a target status of "Surrender" whereas `exposed_data` has none. 
+
+When `vctrs::vec_rbind()` is used to combine `exposed_data` and `exposed_data2`, the result combines attributes across both objects.
+
+```{r combine-1}
+
+exposed_data2 <- expose(toy_census, 
+                        end_date = "2023-12-31", 
+                        start_date = "1890-01-01",
+                        target_status = "Surrender")
+
+vctrs::vec_rbind(exposed_data, exposed_data2)
+```
+
+If `dplyr::bind_rows()` were used instead, the attributes of `exposed_data` only are shown, which is likely incorrect.
+
+```{r combine-2}
+dplyr::bind_rows(exposed_data, exposed_data2)
+```
+
+In order to stack `exposed_df` objects, the exposure period types and lengths must match. If they do not, an error will be thrown. For example, policy year exposure records cannot be combined with calendar month records.
+
+Ordinary data frames can be stacked with `exposed_df` objects using `dplyr::bind_rows()` and `rbind()` (assuming all column names match). If the `exposed_df` object is the first argument, the `exposed_df` class will be preserved with its original attributes.
+
+### dplyr verb methods and `exposed_df` class persistence
+
+The actxps package includes `exposed_df` methods for the dplyr verbs listed below. These methods ensure that the functions below will always return an `exposed_df` object.
+
+- `dplyr::select()`
+- `dplyr::mutate()`
+- `dplyr::filter()`
+- `dplyr::arrange()`
+- `dplyr::group_by()`
+- `dplyr::ungroup()`
+- `dplyr::slice()`
+- `dplyr::rename()`
+- `dplyr::relocate()`
+- `dplyr::left_join()`
+- `dplyr::right_join()`
+- `dplyr::inner_join()`
+- `dplyr::full_join()`
+- `dplyr::semi_join()`
+- `dplyr::anti_join()`
+
+Generally speaking, any dplyr verbs that aren't listed that return data frames will preserve the `exposed_df` class **as long as the data is not grouped.** If the data is grouped, the `exposed_df` class may not persist. If this creates problems with your code, there are two options:
+
+- If groups don't matter when the function is applied to the data, `ungroup()` the data, call the function, and restore the groups with `group_by()`.
+- If groups do matter when the function is applied to the data, convert the data to an ordinary data frame or tibble, call the function, and convert the data to an `exposed_df` using `as_exposed_df()`.
 
 ### Limitations
 
