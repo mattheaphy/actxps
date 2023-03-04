@@ -15,13 +15,16 @@ sample policy values (`account_vals`). These are meant to be paired with
 
 Other changes
 
-- Several updates were made to the `as_exposed_df()` function to include 
-stricter input requirements and helpful error messages.
-- S3 methods for `dplyr::group_by()` and ``dplyr::ungroup()` were added for 
-`exposed_df` objects to ensure class persistence.
 - A new family of functions were added to calculate policy durations. These
 include `pol_interval()` (a generic version), `pol_yr()`, `pol_qtr()`, 
 `pol_mth()`, and `pol_wk()`. See `vignette("policy_duration")`.
+- Several updates were made to the `as_exposed_df()` function to include 
+stricter input requirements and helpful error messages.
+- S3 methods for several dplyr functions were added for `exposed_df` objects to 
+ensure class persistence, especially on grouped data frames. These include:
+`group_by()` and `ungroup()`, `filter()`, `arrange()`, `mutate()`, `select()`, 
+`slice()`, `rename()`, `relocate()`, `left_join()`, `right_join()`, 
+`inner_join()`, `full_join()`, `semi_join()`, and `anti_join()`.
 - The conditional formatting for color in `autotable.exp_df()` was updated to 
 be consistent across like columns.
 - The `pol_val` column in `census_dat` was renamed to `premium`.
