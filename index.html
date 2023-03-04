@@ -51,7 +51,7 @@
     
     <a class="navbar-brand me-2" href="index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +69,10 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="articles/exposures.html">Exposure calculations</a>
+    <a class="dropdown-item" href="articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="articles/misc.html">Other functions</a>
   </div>
 </li>
 <li class="nav-item">
@@ -107,6 +109,8 @@
 <ul>
 <li>The <code><a href="reference/expose.html">expose()</a></code> family of functions convert census-level records into policy or calendar year exposure records.</li>
 <li>The <code><a href="reference/exp_stats.html">exp_stats()</a></code> function creates experience summary data frames containing observed termination rates and claims. Optionally, expected termination rates, actual-to-expected ratios, and limited fluctuation credibility estimates can also be returned.</li>
+<li>The <code><a href="reference/add_transactions.html">add_transactions()</a></code> function attaches summarized transactions to a data frame with exposure-level records.</li>
+<li>The <code><a href="reference/trx_stats.html">trx_stats()</a></code> function creates transaction summary data frames containing transaction counts, amounts, frequencies, and utilization. Optionally, transaction amounts can be expressed as a percentage of one or more variables to calculate rates or actual-to-expected ratios.</li>
 <li>The <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="reference/autotable.html">autotable()</a></code> functions creates plots and tables for reporting.</li>
 <li>The <code><a href="reference/exp_shiny.html">exp_shiny()</a></code> function launches a Shiny app that allows for interactive exploration of experience drivers.</li>
 </ul>
@@ -155,7 +159,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Exposure type: policy_year </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
+<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # A tibble: 141,252 × 15</span></span>
 <span><span class="co">#&gt;    pol_num status issue_date inc_guar qual    age product gender wd_age premium</span></span>

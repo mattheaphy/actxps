@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,8 +27,10 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
+    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
 <li class="nav-item">
@@ -66,7 +68,12 @@
 
       <dl><dt>
           
-          <code><a href="autoplot.exp_df.html">autoplot(<i>&lt;exp_df&gt;</i>)</a></code> 
+          <code><a href="add_transactions.html">add_transactions()</a></code> 
+        </dt>
+        <dd>Add transactions to an experience study</dd>
+      </dl><dl><dt>
+          
+          <code><a href="autoplot_exp.html">autoplot(<i>&lt;exp_df&gt;</i>)</a></code> <code><a href="autoplot_exp.html">autoplot(<i>&lt;trx_df&gt;</i>)</a></code> 
         </dt>
         <dd>Plot experience study results</dd>
       </dl><dl><dt>
@@ -74,11 +81,6 @@
           <code><a href="autotable.html">autotable()</a></code> 
         </dt>
         <dd>Tabular experience study summary</dd>
-      </dl><dl><dt>
-          
-          <code><a href="census_dat.html">census_dat</a></code> 
-        </dt>
-        <dd>Simulated census data</dd>
       </dl><dl><dt>
           
           <code><a href="exp_shiny.html">exp_shiny()</a></code> 
@@ -101,9 +103,19 @@
         <dd>Exposed data frame helper functions</dd>
       </dl><dl><dt>
           
+          <code><a href="pol_yr.html">pol_yr()</a></code> <code><a href="pol_yr.html">pol_qtr()</a></code> <code><a href="pol_yr.html">pol_mth()</a></code> <code><a href="pol_yr.html">pol_wk()</a></code> <code><a href="pol_yr.html">pol_interval()</a></code> 
+        </dt>
+        <dd>Calculate policy duration</dd>
+      </dl><dl><dt>
+          
           <code><a href="qx_iamb.html">qx_iamb</a></code> <code><a href="qx_iamb.html">scale_g2</a></code> 
         </dt>
         <dd>2012 Individual Annuity Mortality Table and Projection Scale G2</dd>
+      </dl><dl><dt>
+          
+          <code><a href="sim_data.html">census_dat</a></code> <code><a href="sim_data.html">withdrawals</a></code> <code><a href="sim_data.html">account_vals</a></code> 
+        </dt>
+        <dd>Simulated annuity data</dd>
       </dl><dl><dt>
           
           <code><a href="step_expose.html">step_expose()</a></code> 
@@ -114,6 +126,11 @@
           <code><a href="toy_census.html">toy_census</a></code> 
         </dt>
         <dd>Toy policy census data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="trx_stats.html">trx_stats()</a></code> <code><a href="trx_stats.html">summary(<i>&lt;trx_df&gt;</i>)</a></code> 
+        </dt>
+        <dd>Summarize transactions and utilization rates</dd>
       </dl></div>
   </main></div>
 

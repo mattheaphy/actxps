@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,8 +51,10 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
+    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
 <li class="nav-item">
@@ -91,6 +93,9 @@
 
     
     
+<p>This article is based on creating a termination study using sample
+data that comes with the actxps package. For information on transaction
+studies, see <code><a href="../articles/transactions.html">vignette("transactions")</a></code>.</p>
 <div class="section level2">
 <h2 id="simulated-data-set">Simulated data set<a class="anchor" aria-label="anchor" href="#simulated-data-set"></a>
 </h2>
@@ -104,7 +109,7 @@ policy.</p>
 <span></span>
 <span><span class="va">census_dat</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 20,000 × 11</span></span></span>
-<span><span class="co">#&gt;    pol_num status   issue_date inc_g…¹ qual    age product gender wd_age pol_val</span></span>
+<span><span class="co">#&gt;    pol_num status   issue_date inc_g…¹ qual    age product gender wd_age premium</span></span>
 <span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>       1 Active   2014-12-17 TRUE    FALSE    56 b       F          77     370</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>       2 Surrend… 2007-09-24 FALSE   FALSE    71 a       F          71     708</span></span>
@@ -153,11 +158,11 @@ transformation.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Exposure type: policy_year </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
+<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 141,252 × 15</span></span></span>
-<span><span class="co">#&gt;    pol_num status issue_date inc_guar qual    age product gender wd_age pol_val</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;    pol_num status issue_date inc_guar qual    age product gender wd_age premium</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>       1 Active 2014-12-17 TRUE     FALSE    56 b       F          77     370</span></span>
@@ -217,7 +222,7 @@ object.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
 <span><span class="co">#&gt;   n_claims claims exposure  q_obs</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     <span style="text-decoration: underline;">2</span>869   <span style="text-decoration: underline;">2</span>869  <span style="text-decoration: underline;">132</span>634. 0.021<span style="text-decoration: underline;">6</span></span></span></code></pre></div>
 <p>See <code><a href="../articles/exp_summary.html">vignette("exp_summary")</a></code> for further details on
 exposure calculations.</p>
@@ -243,7 +248,7 @@ one record for each unique group.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 30 × 6</span></span></span>
 <span><span class="co">#&gt;    pol_yr inc_guar n_claims claims exposure   q_obs</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>      1 FALSE          56     56    <span style="text-decoration: underline;">7</span>720. 0.007<span style="text-decoration: underline;">25</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>      1 TRUE           46     46   <span style="text-decoration: underline;">11</span>532. 0.003<span style="text-decoration: underline;">99</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>      2 FALSE          92     92    <span style="text-decoration: underline;">7</span>103. 0.013<span style="text-decoration: underline;">0</span> </span></span>
@@ -286,7 +291,7 @@ column names to the <code>expected</code> argument of
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 30 × 10</span></span></span>
 <span><span class="co">#&gt;    pol_yr inc_g…¹ n_cla…² claims expos…³   q_obs expec…⁴ expec…⁵ ae_ex…⁶ ae_ex…⁷</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>      1 FALSE        56     56   <span style="text-decoration: underline;">7</span>720. 0.007<span style="text-decoration: underline;">25</span> 0.005     0.03    1.45    0.242</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>      1 TRUE         46     46  <span style="text-decoration: underline;">11</span>532. 0.003<span style="text-decoration: underline;">99</span> 0.005     0.015   0.798   0.266</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>      2 FALSE        92     92   <span style="text-decoration: underline;">7</span>103. 0.013<span style="text-decoration: underline;">0</span>  0.007<span style="text-decoration: underline;">78</span>   0.03    1.67    0.432</span></span>
@@ -342,7 +347,7 @@ object re-summarizes experience results. This also produces an
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 8</span></span></span>
 <span><span class="co">#&gt;   n_claims claims exposure  q_obs expected_1 expected_2 ae_expected_1 ae_expec…¹</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     <span style="text-decoration: underline;">2</span>869   <span style="text-decoration: underline;">2</span>869  <span style="text-decoration: underline;">132</span>634. 0.021<span style="text-decoration: underline;">6</span>     0.024<span style="text-decoration: underline;">2</span>     0.020<span style="text-decoration: underline;">9</span>         0.892       1.04</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable name ¹​ae_expected_2</span></span></span></code></pre></div>
 <p>If additional variables are passed to <code>...</code>, these
@@ -359,7 +364,7 @@ object.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 9</span></span></span>
 <span><span class="co">#&gt;   inc_guar n_claims claims exposure  q_obs expected_1 expected_2 ae_ex…¹ ae_ex…²</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> FALSE        <span style="text-decoration: underline;">1</span>601   <span style="text-decoration: underline;">1</span>601   <span style="text-decoration: underline;">52</span>123. 0.030<span style="text-decoration: underline;">7</span>     0.023<span style="text-decoration: underline;">5</span>      0.03    1.31     1.02</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE         <span style="text-decoration: underline;">1</span>268   <span style="text-decoration: underline;">1</span>268   <span style="text-decoration: underline;">80</span>511. 0.015<span style="text-decoration: underline;">7</span>     0.024<span style="text-decoration: underline;">7</span>      0.015   0.637    1.05</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable names ¹​ae_expected_1, ²​ae_expected_2</span></span></span></code></pre></div>

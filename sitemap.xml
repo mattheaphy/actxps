@@ -22,6 +22,12 @@
     <loc>https://mattheaphy.github.io/actxps/articles/index.html</loc>
   </url>
   <url>
+    <loc>https://mattheaphy.github.io/actxps/articles/misc.html</loc>
+  </url>
+  <url>
+    <loc>https://mattheaphy.github.io/actxps/articles/transactions.html</loc>
+  </url>
+  <url>
     <loc>https://mattheaphy.github.io/actxps/authors.html</loc>
   </url>
   <url>
@@ -31,13 +37,13 @@
     <loc>https://mattheaphy.github.io/actxps/news/index.html</loc>
   </url>
   <url>
-    <loc>https://mattheaphy.github.io/actxps/reference/autoplot.exp_df.html</loc>
+    <loc>https://mattheaphy.github.io/actxps/reference/add_transactions.html</loc>
+  </url>
+  <url>
+    <loc>https://mattheaphy.github.io/actxps/reference/autoplot_exp.html</loc>
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/reference/autotable.html</loc>
-  </url>
-  <url>
-    <loc>https://mattheaphy.github.io/actxps/reference/census_dat.html</loc>
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/reference/exp_shiny.html</loc>
@@ -55,15 +61,24 @@
     <loc>https://mattheaphy.github.io/actxps/reference/is_exposed_df.html</loc>
   </url>
   <url>
+    <loc>https://mattheaphy.github.io/actxps/reference/pol_yr.html</loc>
+  </url>
+  <url>
     <loc>https://mattheaphy.github.io/actxps/reference/qx_iamb.html</loc>
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/reference/reexports.html</loc>
   </url>
   <url>
+    <loc>https://mattheaphy.github.io/actxps/reference/sim_data.html</loc>
+  </url>
+  <url>
     <loc>https://mattheaphy.github.io/actxps/reference/step_expose.html</loc>
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/reference/toy_census.html</loc>
+  </url>
+  <url>
+    <loc>https://mattheaphy.github.io/actxps/reference/trx_stats.html</loc>
   </url>
 </urlset>

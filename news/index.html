@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,8 +27,10 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
+    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -54,6 +56,22 @@
       <small>Source: <a href="https://github.com/mattheaphy/actxps/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.0" id="actxps-100">actxps 1.0.0<a class="anchor" aria-label="anchor" href="#actxps-100"></a></h2>
+<p>The actxps package now contains support for transaction studies.</p>
+<ul><li>The <code><a href="../reference/add_transactions.html">add_transactions()</a></code> function adds transactions to <code>exposed_df</code> objects.</li>
+<li>The <code><a href="../reference/trx_stats.html">trx_stats()</a></code> function summarizes transaction results and returns a <code>trx_df</code> object.</li>
+<li>New transaction summary (<code>trx_df</code>) S3 methods were added for for <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="../reference/autotable.html">autotable()</a></code>.</li>
+<li>The <code><a href="../reference/exp_shiny.html">exp_shiny()</a></code> function was updated to support transaction studies.</li>
+<li>New sample data sets were added with transactions (<code>withdrawals</code>) and sample policy values (<code>account_vals</code>). These are meant to be paired with <code>census_dat</code>.</li>
+<li>Added <code><a href="../articles/transactions.html">vignette("transactions")</a></code>.</li>
+</ul><p>Other changes</p>
+<ul><li>A new family of functions were added to calculate policy durations. These include <code><a href="../reference/pol_yr.html">pol_interval()</a></code> (a generic version), <code><a href="../reference/pol_yr.html">pol_yr()</a></code>, <code><a href="../reference/pol_yr.html">pol_qtr()</a></code>, <code><a href="../reference/pol_yr.html">pol_mth()</a></code>, and <code><a href="../reference/pol_yr.html">pol_wk()</a></code>. See <code><a href="../articles/misc.html">vignette("misc")</a></code>.</li>
+<li>Several updates were made to the <code><a href="../reference/is_exposed_df.html">as_exposed_df()</a></code> function to include stricter input requirements and helpful error messages.</li>
+<li>S3 methods for several dplyr functions were added for <code>exposed_df</code> objects to ensure class persistence, especially on grouped data frames. These include: <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">right_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">full_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter-joins.html" class="external-link">semi_join()</a></code>, and <code><a href="https://dplyr.tidyverse.org/reference/filter-joins.html" class="external-link">anti_join()</a></code>.</li>
+<li>The conditional formatting for color in <code><a href="../reference/autotable.html">autotable.exp_df()</a></code> was updated to be consistent across like columns.</li>
+<li>The <code>pol_val</code> column in <code>census_dat</code> was renamed to <code>premium</code>.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.1" id="actxps-021">actxps 0.2.1<a class="anchor" aria-label="anchor" href="#actxps-021"></a></h2><p class="text-muted">CRAN release: 2023-02-11</p>
 <p><code><a href="../reference/expose.html">expose()</a></code> functions now include a new column for period end dates.</p>

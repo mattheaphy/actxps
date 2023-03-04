@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,8 +27,10 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
+    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
+    <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
 <li class="nav-item">
@@ -69,14 +71,22 @@
 <span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"1900-01-01"</span><span class="op">)</span>,</span>
 <span>  target_status <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cal_expo <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  expo_length <span class="op">=</span> <span class="st">"year"</span></span>
+<span>  expo_length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span>, <span class="st">"quarter"</span>, <span class="st">"month"</span>, <span class="st">"week"</span><span class="op">)</span>,</span>
+<span>  trx_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">col_pol_num</span>,</span>
+<span>  <span class="va">col_status</span>,</span>
+<span>  <span class="va">col_exposure</span>,</span>
+<span>  <span class="va">col_pol_per</span>,</span>
+<span>  <span class="va">cols_dates</span>,</span>
+<span>  col_trx_n_ <span class="op">=</span> <span class="st">"trx_n_"</span>,</span>
+<span>  col_trx_amt_ <span class="op">=</span> <span class="st">"trx_amt_"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>an object. <code>x</code> must be a data frame when calling <code>as_exposed_df()</code></p></dd>
+<dd><p>an object. For <code>as_exposed_df()</code>, <code>x</code> must be a data frame.</p></dd>
 
 
 <dt>end_date</dt>
@@ -98,6 +108,55 @@
 <dt>expo_length</dt>
 <dd><p>exposure period length</p></dd>
 
+
+<dt>trx_types</dt>
+<dd><p>Optional. Character vector containing unique transaction
+types that have been attached to <code>x</code>. For each value in <code>trx_types</code>,
+<code>as_exposed_df</code> requires that columns exist in <code>x</code> named <code>trx_n_{*}</code> and
+<code>trx_amt_{*}</code> containing transaction counts and amounts, respectively. The
+prefixes "trx_n_" and "trx_amt_" can be overridden using the <code>col_trx_n_</code>
+and <code>col_trx_amt_</code> arguments.</p></dd>
+
+
+<dt>col_pol_num</dt>
+<dd><p>Optional. Name of the column in <code>x</code> containing the policy
+number. The assumed default is "pol_num".</p></dd>
+
+
+<dt>col_status</dt>
+<dd><p>Optional. Name of the column in <code>x</code> containing the policy
+status. The assumed default is "status".</p></dd>
+
+
+<dt>col_exposure</dt>
+<dd><p>Optional. Name of the column in <code>x</code> containing exposures.
+The assumed default is "exposure".</p></dd>
+
+
+<dt>col_pol_per</dt>
+<dd><p>Optional. Name of the column in <code>x</code> containing policy
+exposure periods. Only necessary if <code>cal_expo</code> is <code>FALSE</code>. The assumed
+default is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk" depending on
+the value of <code>expo_length</code>.</p></dd>
+
+
+<dt>cols_dates</dt>
+<dd><p>Optional. Names of the columns in <code>x</code> containing exposure
+start and end dates. Both date ranges are assumed to be exclusive. The
+assumed default is of the form <em>A</em>_<em>B</em>. <em>A</em> is "cal" if <code>cal_expo</code> is <code>TRUE</code>
+or "pol" otherwise. <em>B</em> is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"
+depending on the value of <code>expo_length</code>.</p></dd>
+
+
+<dt>col_trx_n_</dt>
+<dd><p>Optional. Prefix to use for columns containing transaction
+counts.</p></dd>
+
+
+<dt>col_trx_amt_</dt>
+<dd><p>Optional. Prefix to use for columns containing transaction
+amount.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -108,10 +167,12 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>These are behind-the-scenes functions that will generally not be called
-by users.</p>
-<p><code>is_exposed_df()</code> will return <code>TRUE</code> if <code>x</code> is an <code>exposed_df</code> object.</p>
-<p><code>as_exposed_df()</code> will coerce a data frame to an <code>exposed_df</code> object.</p>
+    <p><code>is_exposed_df()</code> will return <code>TRUE</code> if <code>x</code> is an <code>exposed_df</code> object.</p>
+<p><code>as_exposed_df()</code> will coerce a data frame to an <code>exposed_df</code> object if that
+data frame has columns for policy numbers, statuses, exposures,
+policy periods (for policy exposures only), and exposure start / end dates.
+Optionally, if <code>x</code> has transaction counts and amounts by type, these can
+be specified without calling <code><a href="add_transactions.html">add_transactions()</a></code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
