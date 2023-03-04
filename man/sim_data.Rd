@@ -9,7 +9,7 @@
 \title{Simulated annuity data}
 \format{
 Three data frames containing census records (\code{census_dat}),
-withrawal transactions (\code{withdrawals}), and historical account values
+withdrawal transactions (\code{withdrawals}), and historical account values
 (\code{account_vals}).
 
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 20000 rows and 11 columns.
@@ -49,9 +49,9 @@ does not represent the experience on any specific product.
 \section{Withdrawal data (\code{withdrawals})}{
 \describe{
 \item{pol_num}{policy number}
-\item{trx_date}{withrawal transaction date}
-\item{trx_type}{withrawal transaction type, either Base or Rider}
-\item{trx_amt}{withrawal transaction amount}
+\item{trx_date}{withdrawal transaction date}
+\item{trx_type}{withdrawal transaction type, either Base or Rider}
+\item{trx_amt}{withdrawal transaction amount}
 }
 }
 

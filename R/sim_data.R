@@ -5,7 +5,7 @@
 #' does not represent the experience on any specific product.
 #'
 #' @format Three data frames containing census records (`census_dat`),
-#' withrawal transactions (`withdrawals`), and historical account values
+#' withdrawal transactions (`withdrawals`), and historical account values
 #' (`account_vals`).
 #'
 #' @details
@@ -30,9 +30,9 @@
 #'
 #' \describe{
 #'   \item{pol_num}{policy number}
-#'   \item{trx_date}{withrawal transaction date}
-#'   \item{trx_type}{withrawal transaction type, either Base or Rider}
-#'   \item{trx_amt}{withrawal transaction amount}
+#'   \item{trx_date}{withdrawal transaction date}
+#'   \item{trx_type}{withdrawal transaction type, either Base or Rider}
+#'   \item{trx_amt}{withdrawal transaction amount}
 #' }
 #'
 #' # Account values data (`account_vals`)
