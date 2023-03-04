@@ -17,7 +17,7 @@ Other changes
 
 - A new family of functions were added to calculate policy durations. These
 include `pol_interval()` (a generic version), `pol_yr()`, `pol_qtr()`, 
-`pol_mth()`, and `pol_wk()`. See `vignette("policy_duration")`.
+`pol_mth()`, and `pol_wk()`. See `vignette("misc")`.
 - Several updates were made to the `as_exposed_df()` function to include 
 stricter input requirements and helpful error messages.
 - S3 methods for several dplyr functions were added for `exposed_df` objects to 
