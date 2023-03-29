@@ -122,7 +122,7 @@ For exposure periods:
 \item \code{y} = years
 \item \code{q} = quarters
 \item \code{m} = months
-\item \code{w} = weeks.
+\item \code{w} = weeks
 }
 }
 

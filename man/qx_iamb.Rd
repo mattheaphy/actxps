@@ -13,7 +13,7 @@ For the 2012 IAMB table, a data frame with 242 rows and 3 columns:
 \item{gender}{Female or Male}
 }
 
-For the Project Scale G2 table, a data frame with 242 rows and 3 columns:
+For the Projection Scale G2 table, a data frame with 242 rows and 3 columns:
 \describe{
 \item{age}{attained age}
 \item{mi}{mortality improvement rate}
@@ -33,6 +33,6 @@ scale_g2
 }
 \description{
 Mortality rates and mortality improvement rates from the 2012 Individual
-Annuity Mortality Basic (IAMB) Table and Project Scale G2.
+Annuity Mortality Basic (IAMB) Table and Projection Scale G2.
 }
 \keyword{datasets}

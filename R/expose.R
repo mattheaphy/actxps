@@ -41,7 +41,7 @@
 #' - `y` = years
 #' - `q` = quarters
 #' - `m` = months
-#' - `w` = weeks.
+#' - `w` = weeks
 #'
 #' @param .data a data frame with census-level records
 #' @param end_date experience study end date
