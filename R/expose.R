@@ -34,7 +34,7 @@
 #' For exposures types:
 #'
 #' - `p` refers to policy years
-#' - `c` refers to calendar years.
+#' - `c` refers to calendar years
 #'
 #' For exposure periods:
 #'
