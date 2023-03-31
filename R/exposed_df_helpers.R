@@ -124,7 +124,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
 
   if(length(unmatched) > 0) {
     rlang::abort(c(x = glue::glue("The following columns are missing from `x`: {paste(unmatched, collapse = ', ')}."),
-                   i = "Hint: create these columns or use use the `cols_*` arguments to specify existing columns that should be mapped to these elements."))
+                   i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
   }
 
   new_exposed_df(x, end_date, start_date, target_status, cal_expo,
