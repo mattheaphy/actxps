@@ -91,7 +91,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   }
 
   if (length(wt) > 1) {
-    rlang::abort(c(x = glue::glue("Only 1 column can be passed to wt. You supplied {length(wt)} values.")))
+    rlang::abort(c(x = glue::glue("Only 1 column can be passed to `wt`. You supplied {length(wt)} values.")))
   }
 
   res <- .data |>
