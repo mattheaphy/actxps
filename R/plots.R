@@ -15,8 +15,8 @@
 #' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()]. NOTE: If
 #' `mapping` is supplied, the `x`, `y`, and `color` arguments will be ignored.
 #' @param scales The `scales` argument passed to [ggplot2::facet_wrap()].
-#' @param geoms Type of geometry. If "points" is passed, the plot will
-#' display lines and points. If "bars", the plot will display bars.
+#' @param geoms Type of geometry. If "lines" is passed, the plot will
+#' display lines and points. If "lines", the plot will display bars.
 #' @param y_labels Label function passed to [ggplot2::scale_y_continuous()].
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
