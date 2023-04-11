@@ -1,3 +1,8 @@
+# actxps 1.0.1
+
+- Minor patch to a single test for compatibility with a future relase of the recipes package.
+- Various small documentation typo fixes
+
 # actxps 1.0.0
 
 The actxps package now contains support for transaction studies.
