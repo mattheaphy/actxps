@@ -140,6 +140,10 @@ transactions dates with exposure dates ranges found in <code>exposed_df</code>.<
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">expo</span> <span class="op">&lt;-</span> <span class="fu"><a href="expose.html">expose_py</a></span><span class="op">(</span><span class="va">census_dat</span>, <span class="st">"2019-12-31"</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">add_transactions</span><span class="op">(</span><span class="va">expo</span>, <span class="va">withdrawals</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Specifying `multiple = "error"` was deprecated in dplyr 1.1.1.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `relationship = "many-to-one"` instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">actxps</span> package.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/mattheaphy/actxps/issues&gt;</span>.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Exposure data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Exposure type: policy_year </span>
@@ -161,10 +165,10 @@ transactions dates with exposure dates ranges found in <code>exposed_df</code>.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>       2 Active 2007-09-24 FALSE    FALSE    71 a       F          71     708</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 141,242 more rows, and 9 more variables: term_date &lt;date&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pol_yr &lt;int&gt;, pol_date_yr &lt;date&gt;, pol_date_yr_end &lt;date&gt;, exposure &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   trx_amt_Base &lt;dbl&gt;, trx_amt_Rider &lt;dbl&gt;, trx_n_Base &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   trx_n_Rider &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 141,242 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more variables: term_date &lt;date&gt;, pol_yr &lt;int&gt;, pol_date_yr &lt;date&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pol_date_yr_end &lt;date&gt;, exposure &lt;dbl&gt;, trx_amt_Base &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   trx_amt_Rider &lt;dbl&gt;, trx_n_Base &lt;dbl&gt;, trx_n_Rider &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
