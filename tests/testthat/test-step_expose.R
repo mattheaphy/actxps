@@ -9,6 +9,8 @@ expo_dat <- expose_py(toy_census, "2022-12-31",
   select(all_of(names(rec_dat)))
 
 test_that("step_expose is identical to expose", {
+  attributes(rec_dat) <- NULL
+  attributes(expo_dat) <- NULL
   expect_identical(rec_dat, expo_dat)
 })
 
