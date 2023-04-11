@@ -8,9 +8,8 @@
 #'
 #' If `target_status` isn't provided, [exp_stats()] will use the same
 #' target status from `.data` if it has the class `exposed_df`.
-#' Otherwise, `.data` is not an `exposed_df` object, all status
-#' values except the first level will be assumed. This will produce a
-#' warning message.
+#' Otherwise, all status values except the first level will be assumed.
+#' This will produce a warning message.
 #'
 #' # Expected values
 #'
@@ -91,7 +90,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   }
 
   if (length(wt) > 1) {
-    rlang::abort(c(x = glue::glue("Only 1 column can be passed to wt. You supplied {length(wt)} values.")))
+    rlang::abort(c(x = glue::glue("Only 1 column can be passed to `wt`. You supplied {length(wt)} values.")))
   }
 
   res <- .data |>

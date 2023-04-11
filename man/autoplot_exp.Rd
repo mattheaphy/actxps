@@ -53,8 +53,8 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 
 \item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
-\item{geoms}{Type of geometry. If "points" is passed, the plot will
-display lines and points. If "bars", the plot will display bars.}
+\item{geoms}{Type of geometry. If "lines" is passed, the plot will
+display lines and points. If "lines", the plot will display bars.}
 
 \item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
 }

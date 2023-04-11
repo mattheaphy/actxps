@@ -114,7 +114,7 @@ underscore describe the exposure type and exposure period, respectively.
 For exposures types:
 \itemize{
 \item \code{p} refers to policy years
-\item \code{c} refers to calendar years.
+\item \code{c} refers to calendar years
 }
 
 For exposure periods:
@@ -122,7 +122,7 @@ For exposure periods:
 \item \code{y} = years
 \item \code{q} = quarters
 \item \code{m} = months
-\item \code{w} = weeks.
+\item \code{w} = weeks
 }
 }
 

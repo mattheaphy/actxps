@@ -34,14 +34,14 @@
 #' For exposures types:
 #'
 #' - `p` refers to policy years
-#' - `c` refers to calendar years.
+#' - `c` refers to calendar years
 #'
 #' For exposure periods:
 #'
 #' - `y` = years
 #' - `q` = quarters
 #' - `m` = months
-#' - `w` = weeks.
+#' - `w` = weeks
 #'
 #' @param .data a data frame with census-level records
 #' @param end_date experience study end date

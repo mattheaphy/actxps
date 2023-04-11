@@ -1,7 +1,7 @@
 #' 2012 Individual Annuity Mortality Table and Projection Scale G2
 #'
 #' Mortality rates and mortality improvement rates from the 2012 Individual
-#' Annuity Mortality Basic (IAMB) Table and Project Scale G2.
+#' Annuity Mortality Basic (IAMB) Table and Projection Scale G2.
 #'
 #' @format For the 2012 IAMB table, a data frame with 242 rows and 3 columns:
 #' \describe{
@@ -17,7 +17,7 @@
 
 #' @rdname qx_iamb
 #' @format
-#' For the Project Scale G2 table, a data frame with 242 rows and 3 columns:
+#' For the Projection Scale G2 table, a data frame with 242 rows and 3 columns:
 #' \describe{
 #'   \item{age}{attained age}
 #'   \item{mi}{mortality improvement rate}
