@@ -1,3 +1,7 @@
+# actxps 1.1.0
+
+- New `add_predictions()` function that attaches one or more columns of model predictions to an `exposed_df` object or any other data frame.
+
 # actxps 1.0.1
 
 - Minor patch to a single test for compatibility with a future release of the recipes package.
