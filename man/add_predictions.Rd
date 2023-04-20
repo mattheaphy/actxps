@@ -17,7 +17,7 @@ add_predictions(.data, model, ..., col_expected = NULL)
 each value returned by \code{\link[=predict]{predict()}}}
 }
 \value{
-An data frame or \code{exposed_df} object with one of more new columns
+A data frame or \code{exposed_df} object with one of more new columns
 containing predictions.
 }
 \description{
