@@ -29,7 +29,7 @@
 #' mod <- glm(surrender ~ inc_guar + pol_yr, expo, family = 'binomial')
 #' add_predictions(expo, mod, type = 'response')
 #'
-#' @returns An data frame or `exposed_df` object with one of more new columns
+#' @returns A data frame or `exposed_df` object with one of more new columns
 #' containing predictions.
 #'
 #' @export
