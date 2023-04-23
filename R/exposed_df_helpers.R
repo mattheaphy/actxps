@@ -30,8 +30,8 @@
 #' @param cols_dates Optional. Names of the columns in `x` containing exposure
 #' start and end dates. Both date ranges are assumed to be exclusive. The
 #' assumed default is of the form *A*_*B*. *A* is "cal" if `cal_expo` is `TRUE`
-#' or "pol" otherwise. *B* is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"
-#' depending on the value of `expo_length`.
+#' or "pol" otherwise. *B* is either "yr", "qtr", "mth", or "wk" depending on
+#' the value of `expo_length`.
 #' @param col_trx_n_ Optional. Prefix to use for columns containing transaction
 #' counts.
 #' @param col_trx_amt_ Optional. Prefix to use for columns containing transaction
