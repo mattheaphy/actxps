@@ -100,7 +100,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
   }
 
   # check transaction types
-  exp_cols_trx <- if(!is.null(trx_types)) {
+  if(!is.null(trx_types)) {
 
     trx_renamer <- function(x) {
       x <- gsub(paste0("^", col_trx_n_), "trx_n_", x)
@@ -112,6 +112,8 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     trx_types <- unique(trx_types)
     exp_cols_trx <- outer(c("trx_n_", "trx_amt_"), trx_types, paste0) |>
       as.character()
+  } else {
+    exp_cols_trx <- NULL
   }
 
   # check required columns
