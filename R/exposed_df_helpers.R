@@ -35,7 +35,7 @@
 #' @param col_trx_n_ Optional. Prefix to use for columns containing transaction
 #' counts.
 #' @param col_trx_amt_ Optional. Prefix to use for columns containing transaction
-#' amount.
+#' amounts.
 #' @inheritParams expose
 #'
 #' @return For `is_exposed_df()`, a length-1 logical vector. For

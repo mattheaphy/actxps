@@ -68,7 +68,7 @@ the value of \code{expo_length}.}
 counts.}
 
 \item{col_trx_amt_}{Optional. Prefix to use for columns containing transaction
-amount.}
+amounts.}
 }
 \value{
 For \code{is_exposed_df()}, a length-1 logical vector. For
