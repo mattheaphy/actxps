@@ -184,11 +184,6 @@ print.trx_df <- function(x, ...) {
   if (!is.null(attr(x, "percent_of"))) {
     cat(" Transactions as % of:", paste(attr(x, "percent_of"), collapse = ", "), "\n")
   }
-  if (is.null(attr(x, "wt"))) {
-    cat("\n")
-  } else {
-    cat(" Weighted by:", attr(x, "wt"), "\n\n")
-  }
 
   NextMethod()
 }
