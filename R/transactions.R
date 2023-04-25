@@ -62,9 +62,9 @@ add_transactions <- function(.data, trx_data,
   # # column renames
   trx_data <- trx_data |>
     rename(pol_num = {{col_pol_num}},
-                  trx_date = {{col_trx_date}},
-                  trx_type = {{col_trx_type}},
-                  trx_amt = {{col_trx_amt}})
+           trx_date = {{col_trx_date}},
+           trx_type = {{col_trx_type}},
+           trx_amt = {{col_trx_amt}})
 
 
   # check for conflicting transaction types
@@ -100,6 +100,6 @@ add_transactions <- function(.data, trx_data,
   .data |>
     left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]])) |>
     mutate(dplyr::across(dplyr::starts_with("trx_"), \(x)
-                                dplyr::coalesce(x, 0)))
+                         dplyr::coalesce(x, 0)))
 
 }
