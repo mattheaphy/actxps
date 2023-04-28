@@ -1,6 +1,7 @@
 # actxps 1.1.0
 
 - New `add_predictions()` function that attaches one or more columns of model predictions to an `exposed_df` object or any other data frame.
+- Small updates to `add_transactions()` and `autotable()` functions for compatibility with the dplyr 1.1.1 and gt 0.9.0.
 
 # actxps 1.0.1
 

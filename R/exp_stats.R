@@ -95,7 +95,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   res <- .data |>
     rename(exposure = {{col_exposure}},
-                  status = {{col_status}}) |>
+           status = {{col_status}}) |>
     mutate(n_claims = status %in% target_status)
 
   if (!is.null(wt)) {
@@ -120,9 +120,11 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 #' @export
 print.exp_df <- function(x, ...) {
 
-  cat("Experience study results\n\n",
-      "Groups:", paste(groups(x), collapse = ", "), "\n",
-      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
+  cat("Experience study results\n\n")
+  if (length(groups(x)) > 0) {
+    cat("Groups:", paste(groups(x), collapse = ", "), "\n")
+  }
+  cat(" Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
       "Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n")
   if (!is.null(attr(x, "expected"))) {
@@ -242,7 +244,7 @@ finish_exp_stats <- function(.data, target_status, expected,
     res <- res |>
       select(-ex_wt, -ex2_wt) |>
       relocate(.weight, .weight_sq, .weight_n,
-                      .after = dplyr::last_col())
+               .after = dplyr::last_col())
   }
 
   tibble::new_tibble(res,

@@ -160,7 +160,7 @@ trx_stats <- function(.data,
 
   .data <- .data |>
     select(pol_num, exposure, !!!.groups,
-                  dplyr::all_of(trx_cols), dplyr::all_of(percent_of)) |>
+           dplyr::all_of(trx_cols), dplyr::all_of(percent_of)) |>
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),
                         names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
@@ -174,18 +174,15 @@ trx_stats <- function(.data,
 #' @export
 print.trx_df <- function(x, ...) {
 
-  cat("Transaction study results\n\n",
-      "Groups:", paste(groups(x), collapse = ", "), "\n",
-      "Study range:", as.character(attr(x, "start_date")), "to",
+  cat("Transaction study results\n\n")
+  if (length(groups(x)) > 0) {
+    cat("Groups:", paste(groups(x), collapse = ", "), "\n")
+  }
+  cat(" Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n",
       "Transaction types:", paste(attr(x, "trx_types"), collapse = ", "), "\n")
   if (!is.null(attr(x, "percent_of"))) {
     cat(" Transactions as % of:", paste(attr(x, "percent_of"), collapse = ", "), "\n")
-  }
-  if (is.null(attr(x, "wt"))) {
-    cat("\n")
-  } else {
-    cat(" Weighted by:", attr(x, "wt"), "\n\n")
   }
 
   NextMethod()

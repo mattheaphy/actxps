@@ -30,12 +30,12 @@
 #' @param cols_dates Optional. Names of the columns in `x` containing exposure
 #' start and end dates. Both date ranges are assumed to be exclusive. The
 #' assumed default is of the form *A*_*B*. *A* is "cal" if `cal_expo` is `TRUE`
-#' or "pol" otherwise. *B* is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"
-#' depending on the value of `expo_length`.
+#' or "pol" otherwise. *B* is either "yr", "qtr", "mth", or "wk" depending on
+#' the value of `expo_length`.
 #' @param col_trx_n_ Optional. Prefix to use for columns containing transaction
 #' counts.
 #' @param col_trx_amt_ Optional. Prefix to use for columns containing transaction
-#' amount.
+#' amounts.
 #' @inheritParams expose
 #'
 #' @return For `is_exposed_df()`, a length-1 logical vector. For
@@ -100,7 +100,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
   }
 
   # check transaction types
-  exp_cols_trx <- if(!is.null(trx_types)) {
+  if(!is.null(trx_types)) {
 
     trx_renamer <- function(x) {
       x <- gsub(paste0("^", col_trx_n_), "trx_n_", x)
@@ -112,6 +112,8 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     trx_types <- unique(trx_types)
     exp_cols_trx <- outer(c("trx_n_", "trx_amt_"), trx_types, paste0) |>
       as.character()
+  } else {
+    exp_cols_trx <- NULL
   }
 
   # check required columns

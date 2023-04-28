@@ -61,14 +61,14 @@ the value of \code{expo_length}.}
 \item{cols_dates}{Optional. Names of the columns in \code{x} containing exposure
 start and end dates. Both date ranges are assumed to be exclusive. The
 assumed default is of the form \emph{A}_\emph{B}. \emph{A} is "cal" if \code{cal_expo} is \code{TRUE}
-or "pol" otherwise. \emph{B} is either "pol_yr", "pol_qtr", "pol_mth", or "pol_wk"
-depending on the value of \code{expo_length}.}
+or "pol" otherwise. \emph{B} is either "yr", "qtr", "mth", or "wk" depending on
+the value of \code{expo_length}.}
 
 \item{col_trx_n_}{Optional. Prefix to use for columns containing transaction
 counts.}
 
 \item{col_trx_amt_}{Optional. Prefix to use for columns containing transaction
-amount.}
+amounts.}
 }
 \value{
 For \code{is_exposed_df()}, a length-1 logical vector. For
