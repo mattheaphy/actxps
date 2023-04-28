@@ -142,7 +142,6 @@ functions).</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="va">exposed_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups:  </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -188,7 +187,7 @@ per policy year found in the data.</p>
 <span>  <span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr </span></span>
+<span><span class="co">#&gt; Groups: pol_yr </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -220,7 +219,7 @@ variable.</p>
 <span>  <span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: inc_guar, pol_yr </span></span>
+<span><span class="co">#&gt; Groups: inc_guar, pol_yr </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -266,7 +265,7 @@ the &lt;code&gt;&lt;a href="../reference/expose.html"&gt;expose()&lt;/a&gt;&lt;/
 <span>  <span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span>target_status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Surrender"</span>, <span class="st">"Death"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr </span></span>
+<span><span class="co">#&gt; Groups: pol_yr </span></span>
 <span><span class="co">#&gt;  Target status: Surrender, Death </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -312,7 +311,7 @@ data (see the “Summary method” section on this page).&lt;/p&gt;"><sup>3</sup
 <span>  <span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span>wt <span class="op">=</span> <span class="st">'premium'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr </span></span>
+<span><span class="co">#&gt; Groups: pol_yr </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Weighted by: premium </span></span>
@@ -376,7 +375,7 @@ ratios.</p>
 <span>         <span class="va">ae_expected_1</span>, <span class="va">ae_expected_2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
+<span><span class="co">#&gt; Groups: pol_yr, inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
@@ -407,7 +406,7 @@ then A/E ratios will also be weighted.</p>
 <span>         <span class="va">ae_expected_1</span>, <span class="va">ae_expected_2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
+<span><span class="co">#&gt; Groups: pol_yr, inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
@@ -443,7 +442,7 @@ Theory for more information on Limited Fluctuation Credibility.&lt;/p&gt;"><sup>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span>, <span class="va">claims</span>, <span class="va">q_obs</span>, <span class="va">credibility</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
+<span><span class="co">#&gt; Groups: pol_yr, inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -472,7 +471,7 @@ arguments, respectively.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span>, <span class="va">claims</span>, <span class="va">q_obs</span>, <span class="va">credibility</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
+<span><span class="co">#&gt; Groups: pol_yr, inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -518,7 +517,7 @@ rate</li>
 <span>         <span class="va">expected_1</span>, <span class="va">ae_expected_1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
+<span><span class="co">#&gt; Groups: pol_yr, inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1 </span></span>
@@ -555,7 +554,6 @@ a single row of aggregate results.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups:  </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
@@ -573,7 +571,7 @@ output will contain one row per policy year.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span>, <span class="va">pol_yr</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr </span></span>
+<span><span class="co">#&gt; Groups: pol_yr </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
@@ -604,7 +602,7 @@ value in <code>inc_guar</code>.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span>, <span class="va">inc_guar</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: inc_guar </span></span>
+<span><span class="co">#&gt; Groups: inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
@@ -653,7 +651,6 @@ appear informing what statuses were assumed to be terminated.</p>
 <span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Death, Surrender was assumed.</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups:  </span></span>
 <span><span class="co">#&gt;  Target status: Death, Surrender </span></span>
 <span><span class="co">#&gt;  Study range:  to  </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -667,7 +664,6 @@ appear.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="va">not_exposed_df</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups:  </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range:  to  </span></span>
 <span><span class="co">#&gt; </span></span>
