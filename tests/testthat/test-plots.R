@@ -25,12 +25,6 @@ expo <- expo |> group_by(product, .add = TRUE)
 exp_res4 <- exp_stats2(expo)
 trx_res4 <- trx_stats2(expo)
 
-
-toy_res <- toy_census |>
-  expose_py(end_date = "2022-12-31", target_status = "Surrender") |>
-  dplyr::group_by(pol_yr) |>
-  exp_stats()
-
 test_that("Autoplot works", {
   expect_s3_class(autoplot(exp_res), c("gg", "ggplot"))
   expect_s3_class(autoplot(exp_res2), c("gg", "ggplot"))
