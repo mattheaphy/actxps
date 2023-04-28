@@ -34,14 +34,14 @@ Depends:
     R (>= 4.1)
 Imports: 
     lubridate,
-    dplyr (>= 1.1.0),
+    dplyr (>= 1.1.1),
     ggplot2,
     tibble,
     rlang,
     glue,
     purrr,
     scales,
-    gt,
+    gt (>= 0.9.0),
     paletteer,
     recipes,
     generics,

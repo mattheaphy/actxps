@@ -80,7 +80,7 @@ add_transactions <- function(.data, trx_data,
   trx_data <- trx_data |>
     # between-join by transaction date falling within exposures windows
     inner_join(
-      date_lookup, multiple = "error",
+      date_lookup, relationship = "many-to-one",
       dplyr::join_by(pol_num,
                      between(trx_date, !!date_cols[[1]], !!date_cols[[2]])))
 

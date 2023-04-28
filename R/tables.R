@@ -114,7 +114,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
     tab <- tab |>
       gt::data_color(
         columns = q_obs,
-        colors = scales::col_numeric(
+        fn = scales::col_numeric(
           palette = paletteer::paletteer_d(palette = color_q_obs) |>
             as.character(),
           domain = NULL
@@ -122,7 +122,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
       ) |>
       gt::data_color(
         columns = dplyr::starts_with("ae_"),
-        colors = scales::col_numeric(
+        fn = scales::col_numeric(
           palette = paletteer::paletteer_d(palette = color_ae_) |>
             as.character(),
           domain = domain_ae,
@@ -153,7 +153,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   if (!is.null(percent_of)) {
     object <- object |>
       select(-dplyr::all_of(percent_of),
-                    -dplyr::all_of(paste0(percent_of, "_w_trx")))
+             -dplyr::all_of(paste0(percent_of, "_w_trx")))
   }
 
   tab <- object |>
@@ -200,7 +200,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
     tab <- tab |>
       gt::data_color(
         columns = trx_util,
-        colors = scales::col_numeric(
+        fn = scales::col_numeric(
           palette = paletteer::paletteer_d(palette = color_util) |>
             as.character(),
           domain = NULL
@@ -208,7 +208,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
       ) |>
       gt::data_color(
         columns = dplyr::starts_with("pct_of"),
-        colors = scales::col_numeric(
+        fn = scales::col_numeric(
           palette = paletteer::paletteer_d(palette = color_pct_of) |>
             as.character(),
           domain = domain_pct,
