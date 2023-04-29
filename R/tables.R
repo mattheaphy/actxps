@@ -160,7 +160,6 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   tab <- object |>
     select(-exposure) |>
     arrange(trx_type) |>
-    # gt::gt(..., groupname_col = "trx_type") |>
     gt::gt(groupname_col = "trx_type") |>
     gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
                    decimals = 0) |>
