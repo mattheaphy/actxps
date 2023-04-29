@@ -16,7 +16,8 @@
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
 #' @param colorful If `TRUE`, color will be added to the the observed
-#' decrement rate and actual-to-expected columns.
+#' decrement rate and actual-to-expected columns for termination studies, and
+#' the utilization rate and "percentage of" columns for transaction studies.
 #' @param color_q_obs Color palette used for the observed decrement rate.
 #' @param color_ae_ Color palette used for actual-to-expected rates.
 #' @param color_util Color palette used for utilization rates.
