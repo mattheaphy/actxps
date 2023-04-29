@@ -16,7 +16,8 @@
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
 #' @param colorful If `TRUE`, color will be added to the the observed
-#' decrement rate and actual-to-expected columns.
+#' decrement rate and actual-to-expected columns for termination studies, and
+#' the utilization rate and "percentage of" columns for transaction studies.
 #' @param color_q_obs Color palette used for the observed decrement rate.
 #' @param color_ae_ Color palette used for actual-to-expected rates.
 #' @param color_util Color palette used for utilization rates.
@@ -159,7 +160,6 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   tab <- object |>
     select(-exposure) |>
     arrange(trx_type) |>
-    # gt::gt(..., groupname_col = "trx_type") |>
     gt::gt(groupname_col = "trx_type") |>
     gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
                    decimals = 0) |>
