@@ -575,7 +575,6 @@ exp_shiny <- function(dat,
   }
 
   # Run the application
-  app <- shiny::shinyApp(ui = ui, server = server)
-  shiny::runApp(app)
+  shiny::shinyApp(ui = ui, server = server)
 
 }
