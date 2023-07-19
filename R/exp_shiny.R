@@ -92,6 +92,8 @@
 #' @param distinct_max Maximum number of distinct values allowed for `predictors`
 #' to be included as "Color" and "Facets" grouping variables. This input
 #' prevents the drawing of overly complex plots. Default value = 25.
+#' @param title Optional. Title of the shiny app. If no title is provided,
+#' a descriptive title will be generated based on attributes of `dat`.
 #'
 #' @return No return value. This function is called for the side effect of
 #' launching a shiny application.
@@ -115,7 +117,8 @@
 exp_shiny <- function(dat,
                       predictors = names(dat),
                       expected = names(dat)[grepl("expected", names(dat))],
-                      distinct_max = 25L) {
+                      distinct_max = 25L,
+                      title) {
 
   rlang::check_installed("shiny")
   rlang::check_installed("bslib")
@@ -306,14 +309,18 @@ exp_shiny <- function(dat,
     trx_tab <- NULL
   }
 
+  if (missing(title)) {
+    title <- paste(attr(dat, "target_status"), collapse = "/") |>
+      paste("Experience Study",
+            if(has_trx) {
+              glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})
+  }
+
   ui <- shiny::fluidPage(
 
     theme = bslib::bs_theme(bootswatch = "flatly"),
 
-    shiny::titlePanel(paste(attr(dat, "target_status"), collapse = "/") |>
-                        paste("Experience Study",
-                              if(has_trx) {
-                                glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})),
+    shiny::titlePanel(title),
 
     shiny::sidebarLayout(
       shiny::sidebarPanel(
@@ -406,7 +413,7 @@ exp_shiny <- function(dat,
           )
         ),
 
-        shiny::h3("Filter Information"),
+        shiny::h3("Filter information"),
         shiny::verbatimTextOutput("filterInfo")
 
       )
@@ -560,7 +567,7 @@ exp_shiny <- function(dat,
     output$filterInfo <- shiny::renderPrint({
       glue::glue("Total records = {scales::label_comma()(total_rows)}
                  Remaining records = {scales::label_comma()(nrow(rdat()))}
-                 % Data Remaining = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
+                 % Data remaining = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
     })
 
     output$xpDownload <- shiny::downloadHandler(
