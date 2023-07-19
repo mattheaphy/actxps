@@ -145,19 +145,19 @@ exp_shiny <- function(dat,
   preds <- data.frame(predictors = predictors) |>
     # drop non-predictors (if any)
     filter(!predictors %in% c("pol_num", "status",
-                                     "term_date","exposure", trx_cols)) |>
+                              "term_date","exposure", trx_cols)) |>
     mutate(class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
-                  order = dplyr::case_when(
-                    class1 == "Date" ~ 1,
-                    class1 == "logical" ~ 2,
-                    class1 %in% c("character", "factor") ~ 3,
-                    class1 %in% c("numeric", "integer", "double") ~ 4,
-                    TRUE ~ 5
-                  ),
-                  is_number = purrr::map_lgl(predictors,
-                                             ~ is.numeric(dat[[.x]])),
-                  n_unique = purrr::map_int(predictors,
-                                            ~ dplyr::n_distinct(dat[[.x]]))) |>
+           order = dplyr::case_when(
+             class1 == "Date" ~ 1,
+             class1 == "logical" ~ 2,
+             class1 %in% c("character", "factor") ~ 3,
+             class1 %in% c("numeric", "integer", "double") ~ 4,
+             TRUE ~ 5
+           ),
+           is_number = purrr::map_lgl(predictors,
+                                      ~ is.numeric(dat[[.x]])),
+           n_unique = purrr::map_int(predictors,
+                                     ~ dplyr::n_distinct(dat[[.x]]))) |>
     arrange(order) |>
     select(-order)
 
