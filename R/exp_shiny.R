@@ -462,7 +462,10 @@ exp_shiny <- function(dat,
     # reactive data
     rdat <- shiny::reactive({
 
-      filters <- purrr::map(preds$predictors, expr_filter)
+      keep <- purrr::imap_lgl(preds$predictors,
+                              ~ length(setdiff(preds$scope[[.y]],
+                                               input[[paste0("i_", .x)]])) > 0)
+      filters <- purrr::map(preds$predictors[keep], expr_filter)
 
       dat |>
         filter(!!!filters)
