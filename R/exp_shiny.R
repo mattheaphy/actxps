@@ -157,7 +157,16 @@ exp_shiny <- function(dat,
            is_number = purrr::map_lgl(predictors,
                                       ~ is.numeric(dat[[.x]])),
            n_unique = purrr::map_int(predictors,
-                                     ~ dplyr::n_distinct(dat[[.x]]))) |>
+                                     ~ dplyr::n_distinct(dat[[.x]])),
+           scope = purrr::map2(predictors, class1,
+                               ~ if (.y %in% c("Date", "numeric",
+                                               "integer", "double")) {
+                                 range(dat[[.x]], na.rm = TRUE)
+                               } else {
+                                 unique(dat[[.x]])
+                               }
+           )
+    ) |>
     arrange(order) |>
     select(-order)
 
@@ -179,6 +188,8 @@ exp_shiny <- function(dat,
                      checkbox_limit = 8) {
 
     inputId <- paste("i", x, sep = "_")
+    info <- filter(preds, predictors == x)
+    choices <- info$scope[[1]]
 
     if (is.null(dat[[x]])) {
       rlang::abort(
@@ -190,28 +201,24 @@ exp_shiny <- function(dat,
 
       shiny::sliderInput(
         inputId, shiny::strong(x),
-        min = min(dat[[x]], na.rm = TRUE),
-        max = max(dat[[x]], na.rm = TRUE),
-        value = range(dat[[x]], na.rm = TRUE)
+        min = choices[[1]],
+        max = choices[[2]],
+        value = choices
       )
 
     } else if (lubridate::is.Date(dat[[x]])) {
 
-      date_range <- range(dat[[x]], na.rm = TRUE)
-
       shiny::dateRangeInput(
         inputId, shiny::strong(x),
-        start = date_range[[1]],
-        end = date_range[[2]],
-        min = date_range[[1]],
-        max = date_range[[2]],
+        start = choices[[1]],
+        end = choices[[2]],
+        min = choices[[1]],
+        max = choices[[2]],
         startview = "year"
       )
 
     } else if (is.character(dat[[x]]) || is.logical(dat[[x]]) ||
                is.factor(dat[[x]])) {
-
-      choices <- unique(dat[[x]])
 
       if (length(choices) > checkbox_limit) {
         shiny::selectInput(
@@ -222,7 +229,7 @@ exp_shiny <- function(dat,
       } else {
         shiny::checkboxGroupInput(
           inputId, shiny::strong(x),
-          choices = unique(dat[[x]]), selected = choices
+          choices = choices, selected = choices
         )
       }
 
