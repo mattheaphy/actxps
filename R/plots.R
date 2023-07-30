@@ -31,6 +31,19 @@
 #'
 #' @return a `ggplot` object
 #'
+#' @examples
+#'
+#' study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+#'
+#' study_py <- study_py |>
+#'   add_transactions(withdrawals)
+#'
+#' exp_res <- study_py |> group_by(pol_yr) |> exp_stats()
+#' autoplot(exp_res)
+#'
+#' trx_res <- study_py |> group_by(pol_yr) |> trx_stats()
+#' autoplot(trx_res)
+#'
 #' @name autoplot_exp
 #' @rdname autoplot_exp
 #' @export

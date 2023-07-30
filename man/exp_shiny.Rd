@@ -8,7 +8,8 @@ exp_shiny(
   dat,
   predictors = names(dat),
   expected = names(dat)[grepl("expected", names(dat))],
-  distinct_max = 25L
+  distinct_max = 25L,
+  title
 )
 }
 \arguments{
@@ -23,6 +24,9 @@ in the shiny app.}
 \item{distinct_max}{Maximum number of distinct values allowed for \code{predictors}
 to be included as "Color" and "Facets" grouping variables. This input
 prevents the drawing of overly complex plots. Default value = 25.}
+
+\item{title}{Optional. Title of the shiny app. If no title is provided,
+a descriptive title will be generated based on attributes of \code{dat}.}
 }
 \value{
 No return value. This function is called for the side effect of
@@ -132,10 +136,10 @@ if (interactive()) {
   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
   study_py <- study_py |>
-  mutate(expected_1 = expected_table[pol_yr],
-                expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
-  add_transactions(withdrawals) |>
-  left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+    mutate(expected_1 = expected_table[pol_yr],
+           expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+    add_transactions(withdrawals) |>
+    left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 
   exp_shiny(study_py)
 }
