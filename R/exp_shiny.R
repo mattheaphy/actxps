@@ -105,10 +105,10 @@
 #'   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 #'
 #'   study_py <- study_py |>
-#'   mutate(expected_1 = expected_table[pol_yr],
-#'                 expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
-#'   add_transactions(withdrawals) |>
-#'   left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+#'     mutate(expected_1 = expected_table[pol_yr],
+#'            expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+#'     add_transactions(withdrawals) |>
+#'     left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 #'
 #'   exp_shiny(study_py)
 #' }
