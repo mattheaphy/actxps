@@ -71,3 +71,8 @@ test_that("Autoplot works with mapping overrides", {
                   c("gg", "ggplot"))
 
 })
+
+test_that("Termination plots works", {
+  expect_s3_class(plot_termination_rates(exp_res), c("gg", "ggplot"))
+  expect_error(plot_termination_rates(iris), regexp = "must be an `exp_df`")
+})
