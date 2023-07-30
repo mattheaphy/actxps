@@ -49,7 +49,7 @@ add_transactions <- function(.data, trx_data,
 
   verify_exposed_df(.data)
 
-  if(!is.data.frame(trx_data)) {
+  if (!is.data.frame(trx_data)) {
     rlang::abort(c(x = "`trx_data` must be a data frame."))
   }
 

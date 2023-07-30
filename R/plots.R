@@ -75,13 +75,13 @@ plot_experience <- function(
     facets) {
 
   .groups <- groups(object)
-  if(length(.groups) == 0) {
+  if (length(.groups) == 0) {
     .groups <- list(rlang::parse_expr("All"))
     object[["All"]] <- ""
   }
 
   auto_aes <- function(.var, default) {
-    if(length(.var) == 0) {
+    if (length(.var) == 0) {
       if (length(.groups) < default) NULL else .groups[[default]]
     } else {
       .var
@@ -91,14 +91,14 @@ plot_experience <- function(
   geoms <- match.arg(geoms)
 
   # set up aesthetics
-  if(missing(mapping)) {
+  if (missing(mapping)) {
     x <- auto_aes(x, 1)
     color <- auto_aes(color, 2)
     mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                             fill = !!color, group = !!color)
   }
 
-  if(length(facets) == 0) {
+  if (length(facets) == 0) {
     facets <- .groups[-(1:2)]
     if (length(facets) == 0) facets <- NULL
   }

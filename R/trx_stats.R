@@ -121,7 +121,7 @@ trx_stats <- function(.data,
   # verify transaction types
   all_trx_types <- verify_get_trx_types(.data)
 
-  if(missing(trx_types)) {
+  if (missing(trx_types)) {
     trx_types <- all_trx_types
   } else {
     unmatched <- setdiff(trx_types, all_trx_types)
@@ -136,7 +136,7 @@ trx_stats <- function(.data,
   .data <- .data |> rename(exposure = {{col_exposure}})
 
   # remove partial exposures
-  if(full_exposures_only) {
+  if (full_exposures_only) {
     .data <- filter(.data, dplyr::near(exposure, 1))
   }
 

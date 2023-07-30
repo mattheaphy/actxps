@@ -10,7 +10,7 @@
 #     actxps.option = value,
 #   )
 #   toset <- !(names(op.actxps) %in% names(op))
-#   if(any(toset)) options(op.actxps[toset])
+#   if (any(toset)) options(op.actxps[toset])
 #
 #   invisible()
 # }

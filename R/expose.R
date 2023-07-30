@@ -123,7 +123,7 @@ expose <- function(.data,
     .expo_name_conflict(cal_expo, expo_length)
 
   # set up statuses
-  if(!is.factor(.data$status)) .data$status <- factor(.data$status)
+  if (!is.factor(.data$status)) .data$status <- factor(.data$status)
 
   if (missing(default_status)) {
     default_status <- factor(levels(.data$status)[[1]],

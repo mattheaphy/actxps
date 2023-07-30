@@ -191,7 +191,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
 
   if (colorful) {
 
-    domain_pct <- if(!is.null(percent_of)) {
+    domain_pct <- if (!is.null(percent_of)) {
       object |>
         select(dplyr::starts_with('pct_of')) |>
         range(na.rm = TRUE)

@@ -319,7 +319,7 @@ exp_shiny <- function(dat,
   if (missing(title)) {
     title <- paste(attr(dat, "target_status"), collapse = "/") |>
       paste("Experience Study",
-            if(has_trx) {
+            if (has_trx) {
               glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})
   }
 
@@ -450,7 +450,7 @@ exp_shiny <- function(dat,
     shiny::observe(
       shiny::updateSelectInput(
         session, "yVar", choices =
-          if(input$study_type == "exp") {
+          if (input$study_type == "exp") {
             yVar_exp2()
           } else {
             yVar_trx2()

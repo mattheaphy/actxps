@@ -132,7 +132,7 @@ bake.step_expose <- function(object, new_data, ...) {
 #' @export
 print.step_expose <- function(x, width = max(20, options()$width - 30), ...) {
 
-  title <- glue::glue("Exposed data based on {if (x$options$cal_expo) 'calendar' else 'policy'} {x$options$expo_length}s{if(!is.null(x$target_status)) paste(' for target status', paste(x$target_status, collapse = ', ')) else ''} ")
+  title <- glue::glue("Exposed data based on {if (x$options$cal_expo) 'calendar' else 'policy'} {x$options$expo_length}s{if (!is.null(x$target_status)) paste(' for target status', paste(x$target_status, collapse = ', ')) else ''} ")
 
   recipes::print_step(
     untr_obj = NULL,

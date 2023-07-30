@@ -217,7 +217,7 @@ finish_exp_stats <- function(.data, target_status, expected,
         )))
     }
 
-    if(!is.null(expected)) {
+    if (!is.null(expected)) {
       adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {.col}",
                             "adj_{.col}", expected)
 
