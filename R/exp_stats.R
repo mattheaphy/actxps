@@ -269,3 +269,11 @@ exp_form <- function(form, new_col, .col) {
     purrr::set_names(glue::glue(new_col)) |>
     rlang::parse_exprs()
 }
+
+verify_exp_df <- function(.data) {
+  if (!inherits(.data, "exp_df")) {
+    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be an `exp_df` object."),
+                   i = "Hint: Use `exp_stats()` to create `exp_df` objects."
+    ))
+  }
+}
