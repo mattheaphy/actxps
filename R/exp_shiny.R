@@ -400,6 +400,12 @@ exp_shiny <- function(dat,
             shiny::fluidRow(
               shiny::column(
                 width = 4,
+                shiny::checkboxInput("plot2ndY",
+                                     shiny::strong("Second y-axis?"),
+                                     value = FALSE)
+              ),
+              shiny::column(
+                width = 4,
                 shiny::checkboxInput("plotFreeY",
                                      shiny::strong("Free y Scales?"),
                                      value = FALSE)
@@ -568,7 +574,8 @@ exp_shiny <- function(dat,
 
       if (is.null(input$facetVar)) {
         p <- dat |> plot.fun(mapping = mapping, geoms = input$plotGeom,
-                             y_labels = y_labels)
+                             y_labels = y_labels,
+                             second_axis = input$plot2ndY)
       } else {
 
         facets <- rlang::syms(input$facetVar)
@@ -580,7 +587,8 @@ exp_shiny <- function(dat,
                              geoms = input$plotGeom,
                              y_labels = y_labels,
                              scales =
-                               if (input$plotFreeY) "free_y" else "fixed")
+                               if (input$plotFreeY) "free_y" else "fixed",
+                             second_axis = input$plot2ndY)
       }
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
