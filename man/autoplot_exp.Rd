@@ -13,6 +13,7 @@
   y = NULL,
   color = NULL,
   mapping,
+  second_axis = FALSE,
   scales = "fixed",
   geoms = c("lines", "bars"),
   y_labels = scales::label_percent(accuracy = 0.1)
@@ -25,6 +26,7 @@
   y = NULL,
   color = NULL,
   mapping,
+  second_axis = FALSE,
   scales = "fixed",
   geoms = c("lines", "bars"),
   y_labels = scales::label_percent(accuracy = 0.1)
@@ -50,6 +52,9 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 
 \item{mapping}{Aesthetic mapping passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}. NOTE: If
 \code{mapping} is supplied, the \code{x}, \code{y}, and \code{color} arguments will be ignored.}
+
+\item{second_axis}{Logical. If \code{TRUE}, exposures are plotted on a second
+y-axis using an area geometry.}
 
 \item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 

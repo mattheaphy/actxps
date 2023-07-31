@@ -55,21 +55,28 @@ test_that("Autoplot works with mapping overrides", {
 
   expect_s3_class(autoplot(exp_res4, inc_guar,
                            mapping = ggplot2::aes(x = pol_yr,
-                                                 y = ae_q_exp,
-                                                 fill = product),
+                                                  y = ae_q_exp,
+                                                  fill = product),
                            scales = "free_y",
                            geoms = "bars",
                            y_labels = scales::label_number()),
                   c("gg", "ggplot"))
   expect_s3_class(autoplot(trx_res4, trx_type, inc_guar,
                            mapping = ggplot2::aes(x = pol_yr,
-                                                 y = pct_of_premium_w_trx,
-                                                 fill = product),
+                                                  y = pct_of_premium_w_trx,
+                                                  fill = product),
                            scales = "free_y",
                            geoms = "bars",
                            y_labels = scales::label_number()),
                   c("gg", "ggplot"))
 
+})
+
+test_that("Second axis works", {
+  expect_s3_class(autoplot(exp_res4, second_axis = TRUE),
+                  c("gg", "ggplot"))
+  expect_s3_class(autoplot(trx_res4, second_axis = TRUE),
+                  c("gg", "ggplot"))
 })
 
 test_that("Termination plots works", {
