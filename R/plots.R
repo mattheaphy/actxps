@@ -44,6 +44,8 @@
 #' trx_res <- study_py |> group_by(pol_yr) |> trx_stats()
 #' autoplot(trx_res)
 #'
+#' @seealso [plot_termination_rates()], [plot_actual_to_expected()]
+#'
 #' @name autoplot_exp
 #' @rdname autoplot_exp
 #' @export

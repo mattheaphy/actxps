@@ -89,3 +89,6 @@ trx_res <- study_py |> group_by(pol_yr) |> trx_stats()
 autoplot(trx_res)
 
 }
+\seealso{
+\code{\link[=plot_termination_rates]{plot_termination_rates()}}, \code{\link[=plot_actual_to_expected]{plot_actual_to_expected()}}
+}
