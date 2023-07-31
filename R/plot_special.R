@@ -32,6 +32,8 @@
 #'
 #' plot_actual_to_expected(exp_res)
 #'
+#' @seealso [autoplot.exp_df()]
+#'
 #' @name plot_special
 #' @rdname plot_special
 #' @export

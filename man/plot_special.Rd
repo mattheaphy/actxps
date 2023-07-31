@@ -46,3 +46,6 @@ plot_termination_rates(exp_res)
 plot_actual_to_expected(exp_res)
 
 }
+\seealso{
+\code{\link[=autoplot.exp_df]{autoplot.exp_df()}}
+}
