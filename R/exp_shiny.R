@@ -435,7 +435,9 @@ exp_shiny <- function(dat,
       c(yVar_exp,
         input$ex_checks,
         glue::glue("ae_{input$ex_checks}"),
-        glue::glue("adj_{input$ex_checks}"))
+        glue::glue("adj_{input$ex_checks}"),
+        "All termination rates",
+        if (length(input$ex_checks) > 0) "All A/E ratios")
     })
 
     yVar_trx2 <- shiny::reactive({
@@ -459,6 +461,20 @@ exp_shiny <- function(dat,
     ) |>
       shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks)
 
+    # disable color input when using special plots
+    shiny::observe(
+      if (input$yVar %in% c("All termination rates", "All A/E ratios")) {
+        shiny::updateSelectInput(
+          session, "colorVar", choices = "Series", selected = "Series")
+      } else {
+        shiny::updateSelectInput(
+          session, "colorVar", choices = c("None", preds_small),
+          selected = "None")
+
+      }
+    ) |>
+      shiny::bindEvent(input$yVar, input$colorVar)
+
     # reactive data
     rdat <- shiny::reactive({
 
@@ -475,7 +491,7 @@ exp_shiny <- function(dat,
     rxp <- shiny::reactive({
 
       .groups <- c(input$xVar, input$colorVar, input$facetVar)
-      .groups <- .groups[.groups != "None"]
+      .groups <- .groups[!.groups %in% c("None", "Series")]
 
       if (input$weightVar == "None") {
         wt <- NULL
@@ -522,7 +538,17 @@ exp_shiny <- function(dat,
         rlang::sym(input$colorVar)
       }
 
-      y <- rlang::sym(input$yVar)
+      # set up y-variable and plotting function
+      if (input$yVar == "All termination rates") {
+        y <- rlang::expr(Rate)
+        plot.fun <- plot_termination_rates
+      } else if (input$yVar == "All A/E ratios") {
+        y <- rlang::expr(`A/E ratio`)
+        plot.fun <- plot_actual_to_expected
+      } else {
+        y <- rlang::sym(input$yVar)
+        plot.fun <- autoplot
+      }
 
       mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                               fill = !!color, group = !!color)
@@ -541,7 +567,7 @@ exp_shiny <- function(dat,
       }
 
       if (is.null(input$facetVar)) {
-        p <- dat |> autoplot(mapping = mapping, geoms = input$plotGeom,
+        p <- dat |> plot.fun(mapping = mapping, geoms = input$plotGeom,
                              y_labels = y_labels)
       } else {
 
@@ -550,7 +576,7 @@ exp_shiny <- function(dat,
           facets <- append(facets, rlang::sym("trx_type"))
         }
 
-        p <- dat |> autoplot(!!!facets, mapping = mapping,
+        p <- dat |> plot.fun(!!!facets, mapping = mapping,
                              geoms = input$plotGeom,
                              y_labels = y_labels,
                              scales =
