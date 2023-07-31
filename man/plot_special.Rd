@@ -3,24 +3,31 @@
 \name{plot_special}
 \alias{plot_special}
 \alias{plot_termination_rates}
-\title{Plot observed and expected termination rates}
+\alias{plot_actual_to_expected}
+\title{Additional plotting functions for termination studies}
 \usage{
 plot_termination_rates(object, ...)
+
+plot_actual_to_expected(object, ...)
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} created by the function
 \code{\link[=exp_stats]{exp_stats()}}.}
 
-\item{...}{Additional arguments passed to \code{autoplot.exp_df}.}
+\item{...}{Additional arguments passed to \code{\link[=autoplot.exp_df]{autoplot.exp_df()}}.}
 }
 \value{
 a \code{ggplot} object
 }
 \description{
-Plot observed and expected termination rates
+These functions create additional experience study plots that are not
+available or difficult to produce using the \verb{[autoplot.exp_df()]} function.
 }
 \details{
-Create a plot of all observed and expected termination rates.
+\code{\link[=plot_termination_rates]{plot_termination_rates()}} - Create a plot of observed termination rates
+and any expected termination rates attached to an \code{exp_df} object.
+\code{\link[=plot_actual_to_expected]{plot_actual_to_expected()}} - Create a plot of actual-to-expected termination
+rates attached to an \code{exp_df} object.
 }
 \examples{
 
@@ -33,6 +40,9 @@ study_py <- study_py |>
 
 exp_res <- study_py |> group_by(pol_yr) |>
   exp_stats(expected = c("expected_1", "expected_2"))
+
 plot_termination_rates(exp_res)
+
+plot_actual_to_expected(exp_res)
 
 }

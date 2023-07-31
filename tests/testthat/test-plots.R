@@ -76,3 +76,10 @@ test_that("Termination plots works", {
   expect_s3_class(plot_termination_rates(exp_res), c("gg", "ggplot"))
   expect_error(plot_termination_rates(iris), regexp = "must be an `exp_df`")
 })
+
+test_that("AE plots works", {
+  expect_s3_class(plot_actual_to_expected(exp_res), c("gg", "ggplot"))
+  expect_error(plot_actual_to_expected(iris), regexp = "must be an `exp_df`")
+  expect_error(plot_actual_to_expected(expo |> exp_stats()),
+               regexp = "does not have any actual-to-expected")
+})

@@ -6,4 +6,4 @@ utils::globalVariables(c("issue_date", "term_date", "last_date",
                          "ex_wt", "ex2_wt", "is_number", "n_unique",
                          "trx_date", "trx_type", "trx_amt", "trx_n", "trx_flag",
                          "trx_util", "avg_trx", "avg_all", "trx_freq",
-                         "class1", "Series", "Rate"))
+                         "class1", "Series", "Rate", "A/E ratio"))
