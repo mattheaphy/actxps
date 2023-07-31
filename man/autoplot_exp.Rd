@@ -58,7 +58,7 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 \code{mapping} is supplied, the \code{x}, \code{y}, and \code{color} arguments will be ignored.}
 
 \item{second_axis}{Logical. If \code{TRUE}, the variable specified by
-\code{second_y } (default = exposures) is plotted on a second
+\code{second_y } (default = exposure) is plotted on a second
 y-axis using an area geometry.}
 
 \item{second_y}{An unquoted column name in \code{object} to use as the \code{y}

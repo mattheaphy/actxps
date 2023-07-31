@@ -175,7 +175,7 @@ exp_shiny <- function(dat,
   yVar_exp <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
   if (has_trx) {
     yVar_trx <- c("trx_util", "trx_freq", "trx_n", "trx_flag",
-                  "trx_amt", "avg_trx", "avg_all")
+                  "trx_amt", "avg_trx", "avg_all", "exposure")
     available_studies <- c("Termination study" = "exp",
                            "Transaction study" = "trx")
   } else {
@@ -404,6 +404,8 @@ exp_shiny <- function(dat,
                                      shiny::strong("Second y-axis?"),
                                      value = FALSE)
               ),
+              selectPred("yVar_2nd", "Second axis y:", 4, choices = yVar_exp,
+                         selected = "exposure"),
               shiny::column(
                 width = 4,
                 shiny::checkboxInput("plotFreeY",
@@ -455,7 +457,7 @@ exp_shiny <- function(dat,
     })
 
     # update y variable selections in response to inputs
-    shiny::observe(
+    shiny::observe({
       shiny::updateSelectInput(
         session, "yVar", choices =
           if (input$study_type == "exp") {
@@ -464,7 +466,18 @@ exp_shiny <- function(dat,
             yVar_trx2()
           }
       )
-    ) |>
+
+      shiny::updateSelectInput(
+        session, "yVar_2nd", choices =
+          if (input$study_type == "exp") {
+            yVar_exp2()
+          } else {
+            yVar_trx2()
+          },
+        selected = "exposure"
+      )
+
+    }) |>
       shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks)
 
     # disable color input when using special plots
@@ -475,8 +488,12 @@ exp_shiny <- function(dat,
       } else {
         shiny::updateSelectInput(
           session, "colorVar", choices = c("None", preds_small),
-          selected = "None")
-
+          selected = if (input$colorVar %in% c("None", preds_small)) {
+            input$colorVar
+          } else {
+            "None"
+          }
+        )
       }
     ) |>
       shiny::bindEvent(input$yVar, input$colorVar)
@@ -528,8 +545,10 @@ exp_shiny <- function(dat,
 
     output$xpPlot <- shiny::renderPlot({
 
-      if (input$study_type == "exp" && input$yVar %in% yVar_trx2()) return()
-      if (input$study_type == "trx" && input$yVar %in% yVar_exp2()) return()
+      if (input$study_type == "exp" && input$yVar %in% yVar_trx2() &
+          !input$yVar == "exposure") return()
+      if (input$study_type == "trx" && input$yVar %in% yVar_exp2() &
+          !input$yVar == "exposure") return()
 
       dat <- rxp()
 
@@ -556,6 +575,8 @@ exp_shiny <- function(dat,
         plot.fun <- autoplot
       }
 
+      second_y <- rlang::sym(input$yVar_2nd)
+
       mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                               fill = !!color, group = !!color)
 
@@ -575,7 +596,8 @@ exp_shiny <- function(dat,
       if (is.null(input$facetVar)) {
         p <- dat |> plot.fun(mapping = mapping, geoms = input$plotGeom,
                              y_labels = y_labels,
-                             second_axis = input$plot2ndY)
+                             second_axis = input$plot2ndY,
+                             second_y = !!second_y)
       } else {
 
         facets <- rlang::syms(input$facetVar)

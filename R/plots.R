@@ -15,7 +15,7 @@
 #' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()]. NOTE: If
 #' `mapping` is supplied, the `x`, `y`, and `color` arguments will be ignored.
 #' @param second_axis Logical. If `TRUE`, the variable specified by
-#' `second_y ` (default = exposures) is plotted on a second
+#' `second_y ` (default = exposure) is plotted on a second
 #' y-axis using an area geometry.
 #' @param second_y An unquoted column name in `object` to use as the `y`
 #' variable on the second y-axis. If unspecified, this will default to
@@ -151,7 +151,7 @@ plot_experience <- function(
 
   if (second_axis) {
     adj <- max(object |> dplyr::pull(!!second_y), na.rm = TRUE) /
-      max(object |> dplyr::pull(!!y), na.rm = TRUE)
+      max(object |> dplyr::pull(!!mapping$y), na.rm = TRUE)
     p <- p + ggplot2::geom_area(ggplot2::aes(y = !!second_y),
                                 data = object |>
                                   mutate(!!second_y := !!second_y /
