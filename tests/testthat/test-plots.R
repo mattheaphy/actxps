@@ -77,7 +77,10 @@ test_that("Second axis works", {
                   c("gg", "ggplot"))
   expect_s3_class(autoplot(trx_res4, second_axis = TRUE),
                   c("gg", "ggplot"))
-  expect_s3_class(autoplot(trx_res4, second_axis = TRUE, second_axis_y = trx_n),
+  expect_s3_class(autoplot(trx_res4, second_axis = TRUE, second_y = trx_n),
+                  c("gg", "ggplot"))
+  expect_s3_class(autoplot(trx_res4, second_axis = TRUE, second_y = trx_n,
+                           second_y_labels = scales::comma(0.1)),
                   c("gg", "ggplot"))
 })
 

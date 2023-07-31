@@ -15,15 +15,16 @@
 #' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()]. NOTE: If
 #' `mapping` is supplied, the `x`, `y`, and `color` arguments will be ignored.
 #' @param second_axis Logical. If `TRUE`, the variable specified by
-#' `second_axis_y ` (default = exposures) is plotted on a second
+#' `second_y ` (default = exposures) is plotted on a second
 #' y-axis using an area geometry.
-#' @param second_axis_y An unquoted column name in `object` to use as the `y`
+#' @param second_y An unquoted column name in `object` to use as the `y`
 #' variable on the second y-axis. If unspecified, this will default to
 #' `exposure`.
 #' @param scales The `scales` argument passed to [ggplot2::facet_wrap()].
 #' @param geoms Type of geometry. If "lines" is passed, the plot will
 #' display lines and points. If "lines", the plot will display bars.
 #' @param y_labels Label function passed to [ggplot2::scale_y_continuous()].
+#' @param second_y_labels Same as `y_labels`, but for the second y-axis.
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
 #' grouping variable in `object` on the x axis and `q_obs` on the y
@@ -56,40 +57,44 @@
 #' @rdname autoplot_exp
 #' @export
 autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
-                            mapping, second_axis = FALSE, second_axis_y = NULL,
+                            mapping, second_axis = FALSE, second_y = NULL,
                             scales = "fixed", geoms = c("lines", "bars"),
-                            y_labels = scales::label_percent(accuracy = 0.1)) {
+                            y_labels = scales::label_percent(accuracy = 0.1),
+                            second_y_labels = scales::label_comma(
+                              accuracy = 1)) {
 
   y <- rlang::enexpr(y)
   y <- if (is.null(y)) rlang::expr(q_obs) else y
 
-  second_axis_y <- rlang::enexpr(second_axis_y)
-  second_axis_y <- if (is.null(second_axis_y)) {
+  second_y <- rlang::enexpr(second_y)
+  second_y <- if (is.null(second_y)) {
     rlang::expr(exposure)
   } else {
-    second_axis_y
+    second_y
   }
 
   plot_experience(object, rlang::enexpr(x), y,
-                  rlang::enexpr(color), mapping, second_axis, second_axis_y,
-                  scales, geoms, y_labels, rlang::enquos(...))
+                  rlang::enexpr(color), mapping, second_axis, second_y,
+                  scales, geoms, y_labels, second_y_labels, rlang::enquos(...))
 }
 
 #' @rdname autoplot_exp
 #' @export
 autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
-                            mapping, second_axis = FALSE, second_axis_y = NULL,
+                            mapping, second_axis = FALSE, second_y = NULL,
                             scales = "fixed", geoms = c("lines", "bars"),
-                            y_labels = scales::label_percent(accuracy = 0.1)) {
+                            y_labels = scales::label_percent(accuracy = 0.1),
+                            second_y_labels = scales::label_comma(
+                              accuracy = 1)) {
 
   y <- rlang::enexpr(y)
   y <- if (is.null(y)) rlang::expr(trx_util) else y
 
-  second_axis_y <- rlang::enexpr(second_axis_y)
-  second_axis_y <- if (is.null(second_axis_y)) {
+  second_y <- rlang::enexpr(second_y)
+  second_y <- if (is.null(second_y)) {
     rlang::expr(exposure)
   } else {
-    second_axis_y
+    second_y
   }
 
   facets <- rlang::enquos(...)
@@ -98,18 +103,19 @@ autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
   }
 
   plot_experience(object, rlang::enexpr(x), y,
-                  rlang::enexpr(color), mapping, second_axis, second_axis_y,
-                  scales, geoms, y_labels, facets)
+                  rlang::enexpr(color), mapping, second_axis, second_y,
+                  scales, geoms, y_labels, second_y_labels, facets)
 }
 
 plot_experience <- function(
     object, x = NULL, y = NULL, color = NULL,
     mapping,
     second_axis = FALSE,
-    second_axis_y = NULL,
+    second_y = NULL,
     scales = "fixed",
     geoms = c("lines", "bars"),
     y_labels = scales::label_percent(accuracy = 0.1),
+    second_y_labels = scales::label_comma(accuracy = 1),
     facets) {
 
   .groups <- groups(object)
@@ -144,18 +150,18 @@ plot_experience <- function(
   p <- ggplot2::ggplot(object, mapping)
 
   if (second_axis) {
-    adj <- max(object |> dplyr::pull(!!second_axis_y), na.rm = TRUE) /
+    adj <- max(object |> dplyr::pull(!!second_y), na.rm = TRUE) /
       max(object |> dplyr::pull(!!y), na.rm = TRUE)
-    p <- p + ggplot2::geom_area(ggplot2::aes(y = !!second_axis_y),
+    p <- p + ggplot2::geom_area(ggplot2::aes(y = !!second_y),
                                 data = object |>
-                                  mutate(!!second_axis_y := !!second_axis_y /
+                                  mutate(!!second_y := !!second_y /
                                            adj),
                                 alpha = 0.2, position = "identity") +
       ggplot2::scale_y_continuous(
         sec.axis =
           ggplot2::sec_axis(~ . * adj,
-                            labels = scales::label_comma(accuracy = 1),
-                            name = as.character(second_axis_y)),
+                            labels = second_y_labels,
+                            name = as.character(second_y)),
         labels = y_labels)
   } else {
     p <- p + ggplot2::scale_y_continuous(labels = y_labels)

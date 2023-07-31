@@ -14,10 +14,11 @@
   color = NULL,
   mapping,
   second_axis = FALSE,
-  second_axis_y = NULL,
+  second_y = NULL,
   scales = "fixed",
   geoms = c("lines", "bars"),
-  y_labels = scales::label_percent(accuracy = 0.1)
+  y_labels = scales::label_percent(accuracy = 0.1),
+  second_y_labels = scales::label_comma(accuracy = 1)
 )
 
 \method{autoplot}{trx_df}(
@@ -28,10 +29,11 @@
   color = NULL,
   mapping,
   second_axis = FALSE,
-  second_axis_y = NULL,
+  second_y = NULL,
   scales = "fixed",
   geoms = c("lines", "bars"),
-  y_labels = scales::label_percent(accuracy = 0.1)
+  y_labels = scales::label_percent(accuracy = 0.1),
+  second_y_labels = scales::label_comma(accuracy = 1)
 )
 }
 \arguments{
@@ -56,10 +58,10 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 \code{mapping} is supplied, the \code{x}, \code{y}, and \code{color} arguments will be ignored.}
 
 \item{second_axis}{Logical. If \code{TRUE}, the variable specified by
-\code{second_axis_y } (default = exposures) is plotted on a second
+\code{second_y } (default = exposures) is plotted on a second
 y-axis using an area geometry.}
 
-\item{second_axis_y}{An unquoted column name in \code{object} to use as the \code{y}
+\item{second_y}{An unquoted column name in \code{object} to use as the \code{y}
 variable on the second y-axis. If unspecified, this will default to
 \code{exposure}.}
 
@@ -69,6 +71,8 @@ variable on the second y-axis. If unspecified, this will default to
 display lines and points. If "lines", the plot will display bars.}
 
 \item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
+
+\item{second_y_labels}{Same as \code{y_labels}, but for the second y-axis.}
 }
 \value{
 a \code{ggplot} object
