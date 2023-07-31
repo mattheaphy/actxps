@@ -470,7 +470,8 @@ exp_shiny <- function(dat,
       shiny::updateSelectInput(
         session, "yVar_2nd", choices =
           if (input$study_type == "exp") {
-            yVar_exp2()
+            yVar_exp2()[!yVar_exp2() %in%
+                          c("All termination rates", "All A/E ratios")]
           } else {
             yVar_trx2()
           },
@@ -581,23 +582,29 @@ exp_shiny <- function(dat,
                               fill = !!color, group = !!color)
 
       # y labels
-      if (input$yVar %in% c("claims", "n_claims", "exposure",
-                            "trx_n", "trx_flag", "trx_amt",
-                            "avg_trx", "avg_all",
-                            input$pct_checks,
-                            paste0(input$pct_checks, "_w_trx"))) {
-        y_labels <- scales::label_comma(accuracy = 1)
-      } else if (input$yVar == "trx_freq") {
-        y_labels <- scales::label_comma(accuracy = 0.1)
-      } else {
-        y_labels <- scales::label_percent(accuracy = 0.1)
+      get_y_labels <- function(x) {
+        if (x %in% c("claims", "n_claims", "exposure",
+                              "trx_n", "trx_flag", "trx_amt",
+                              "avg_trx", "avg_all",
+                              input$pct_checks,
+                              paste0(input$pct_checks, "_w_trx"))) {
+          scales::label_comma(accuracy = 1)
+        } else if (x == "trx_freq") {
+          scales::label_comma(accuracy = 0.1)
+        } else {
+          scales::label_percent(accuracy = 0.1)
+        }
       }
+
+      y_labels <- get_y_labels(input$yVar)
+      second_y_labels <- get_y_labels(input$yVar_2nd)
 
       if (is.null(input$facetVar)) {
         p <- dat |> plot.fun(mapping = mapping, geoms = input$plotGeom,
                              y_labels = y_labels,
                              second_axis = input$plot2ndY,
-                             second_y = !!second_y)
+                             second_y = !!second_y,
+                             second_y_labels = second_y_labels)
       } else {
 
         facets <- rlang::syms(input$facetVar)
@@ -610,7 +617,9 @@ exp_shiny <- function(dat,
                              y_labels = y_labels,
                              scales =
                                if (input$plotFreeY) "free_y" else "fixed",
-                             second_axis = input$plot2ndY)
+                             second_axis = input$plot2ndY,
+                             second_y = !!second_y,
+                             second_y_labels = second_y_labels)
       }
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
