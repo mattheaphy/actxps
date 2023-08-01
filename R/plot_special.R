@@ -6,6 +6,8 @@
 #' @param object An object of class `exp_df` created by the function
 #' [exp_stats()].
 #' @param ... Additional arguments passed to [autoplot.exp_df()].
+#' @param include_cred_adj If `TRUE`, credibility-weighted termination rates
+#' will be plotted as well.
 #'
 #' @details
 #'
@@ -37,14 +39,18 @@
 #' @name plot_special
 #' @rdname plot_special
 #' @export
-plot_termination_rates <- function(object, ...) {
+plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
 
   verify_exp_df(object)
 
   .groups <- groups(object)
+  piv_cols <- c("q_obs", attr(object, "expected"),
+                if (include_cred_adj) paste0("adj_", attr(object, "expected"))) |>
+    intersect(names(object))
+
+
   object <- object |>
-    tidyr::pivot_longer(c("q_obs", attr(object, "expected")) |>
-                          intersect(colnames(object)),
+    tidyr::pivot_longer(piv_cols,
                         names_to = "Series",
                         values_to = "Rate")
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)

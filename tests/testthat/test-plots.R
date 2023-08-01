@@ -86,6 +86,8 @@ test_that("Second axis works", {
 
 test_that("Termination plots works", {
   expect_s3_class(plot_termination_rates(exp_res), c("gg", "ggplot"))
+  expect_s3_class(plot_termination_rates(exp_res, include_cred_adj = TRUE),
+                  c("gg", "ggplot"))
   expect_error(plot_termination_rates(iris), regexp = "must be an `exp_df`")
 })
 

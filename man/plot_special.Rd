@@ -6,7 +6,7 @@
 \alias{plot_actual_to_expected}
 \title{Additional plotting functions for termination studies}
 \usage{
-plot_termination_rates(object, ...)
+plot_termination_rates(object, ..., include_cred_adj = FALSE)
 
 plot_actual_to_expected(object, ...)
 }
@@ -15,6 +15,9 @@ plot_actual_to_expected(object, ...)
 \code{\link[=exp_stats]{exp_stats()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[=autoplot.exp_df]{autoplot.exp_df()}}.}
+
+\item{include_cred_adj}{If \code{TRUE}, credibility-weighted termination rates
+will be plotted as well.}
 }
 \value{
 a \code{ggplot} object
