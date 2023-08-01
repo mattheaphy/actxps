@@ -458,24 +458,36 @@ exp_shiny <- function(dat,
 
     # update y variable selections in response to inputs
     shiny::observe({
-      shiny::updateSelectInput(
-        session, "yVar", choices =
-          if (input$study_type == "exp") {
-            yVar_exp2()
-          } else {
-            yVar_trx2()
-          }
-      )
+
+      new_choices <- if (input$study_type == "exp") {
+        yVar_exp2()
+      } else {
+        yVar_trx2()
+      }
 
       shiny::updateSelectInput(
-        session, "yVar_2nd", choices =
-          if (input$study_type == "exp") {
-            yVar_exp2()[!yVar_exp2() %in%
-                          c("All termination rates", "All A/E ratios")]
-          } else {
-            yVar_trx2()
-          },
-        selected = "exposure"
+        session, "yVar", choices = new_choices,
+        selected = if (input$yVar %in% new_choices) {
+          input$yVar
+        } else {
+          new_choices[[1]]
+        }
+      )
+
+      new_choices_2 <- if (input$study_type == "exp") {
+        yVar_exp2()[!yVar_exp2() %in%
+                      c("All termination rates", "All A/E ratios")]
+      } else {
+        yVar_trx2()
+      }
+
+      shiny::updateSelectInput(
+        session, "yVar_2nd", choices = new_choices_2,
+        selected = if (input$yVar_2nd %in% new_choices_2) {
+          input$yVar_2nd
+        } else {
+          "exposure"
+        }
       )
 
     }) |>
@@ -497,7 +509,7 @@ exp_shiny <- function(dat,
         )
       }
     ) |>
-      shiny::bindEvent(input$yVar, input$colorVar)
+      shiny::bindEvent(input$yVar, input$ex_checks)
 
     # reactive data
     rdat <- shiny::reactive({
