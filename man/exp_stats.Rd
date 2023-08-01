@@ -55,7 +55,8 @@ If any values are passed to \code{expected}, additional columns will be
 added for expected decrements and actual-to-expected ratios. If
 \code{credibility} is set to \code{TRUE}, additional columns are added
 for partial credibility and credibility-weighted decrement rates
-(assuming values are passed to \code{expected}).
+(assuming values are passed to \code{expected}). Credibility-weighted decrement
+rates are prefixed by \code{adj_}.
 }
 \description{
 Create a summary data frame of termination experience for a

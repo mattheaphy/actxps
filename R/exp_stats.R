@@ -54,7 +54,8 @@
 #' added for expected decrements and actual-to-expected ratios. If
 #' `credibility` is set to `TRUE`, additional columns are added
 #' for partial credibility and credibility-weighted decrement rates
-#' (assuming values are passed to `expected`).
+#' (assuming values are passed to `expected`). Credibility-weighted decrement
+#' rates are prefixed by `adj_`.
 #'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
