@@ -584,6 +584,7 @@ exp_shiny <- function(dat,
         y <- rlang::expr(`A/E ratio`)
         plot.fun <- plot_actual_to_expected
       } else {
+        if (!all(c(input$yVar, as.character(color)) %in% names(rxp()))) return()
         y <- rlang::sym(input$yVar)
         plot.fun <- autoplot
       }
