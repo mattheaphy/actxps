@@ -13,7 +13,7 @@ add_predictions(.data, model, ..., col_expected = NULL)
 
 \item{...}{Additional arguments passed to \code{\link[=predict]{predict()}}}
 
-\item{col_expected}{NULL or a character vector containing column names for
+\item{col_expected}{\code{NULL} or a character vector containing column names for
 each value returned by \code{\link[=predict]{predict()}}}
 }
 \value{

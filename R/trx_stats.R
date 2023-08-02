@@ -49,7 +49,7 @@
 #' data while retaining any grouping variables passed to the "dots"
 #' (`...`).
 #'
-#' @param .data a data frame with exposure-level records of type
+#' @param .data A data frame with exposure-level records of type
 #' `exposed_df` with transaction data attached. If necessary, use
 #' [as_exposed_df()] to convert a data frame to an `exposed_df` object, and use
 #' [add_transactions()] to attach transactions to an `exposed_df` object.
@@ -66,13 +66,13 @@
 #' for each transaction type. If `TRUE`, the results will contains aggregated
 #' results across all transaction types.
 #'
-#' @param col_exposure name of the column in `.data` containing exposures
+#' @param col_exposure Name of the column in `.data` containing exposures
 #'
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
 #'
-#' @param object an `trx_df` object
-#' @param ... groups to retain after `summary()` is called
+#' @param object A `trx_df` object
+#' @param ... Groups to retain after `summary()` is called
 #'
 #' @return A tibble with class `trx_df`, `tbl_df`, `tbl`,
 #' and `data.frame`. The results include columns for any grouping

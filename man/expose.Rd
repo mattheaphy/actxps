@@ -43,29 +43,29 @@ expose_cm(...)
 expose_cw(...)
 }
 \arguments{
-\item{.data}{a data frame with census-level records}
+\item{.data}{A data frame with census-level records}
 
-\item{end_date}{experience study end date}
+\item{end_date}{Experience study end date}
 
-\item{start_date}{experience study start date. Default value = 1900-01-01.}
+\item{start_date}{Experience study start date. Default value = 1900-01-01.}
 
-\item{target_status}{character vector of target status values. Default value = \code{NULL}.}
+\item{target_status}{Character vector of target status values. Default value = \code{NULL}.}
 
-\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
+\item{cal_expo}{Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
 
-\item{expo_length}{exposure period length}
+\item{expo_length}{Exposure period length}
 
-\item{col_pol_num}{name of the column in \code{.data} containing the policy number}
+\item{col_pol_num}{Name of the column in \code{.data} containing the policy number}
 
-\item{col_status}{name of the column in \code{.data} containing the policy status}
+\item{col_status}{Name of the column in \code{.data} containing the policy status}
 
-\item{col_issue_date}{name of the column in \code{.data} containing the issue date}
+\item{col_issue_date}{Name of the column in \code{.data} containing the issue date}
 
-\item{col_term_date}{name of the column in \code{.data} containing the termination date}
+\item{col_term_date}{Name of the column in \code{.data} containing the termination date}
 
-\item{default_status}{optional scalar character representing the default active status code}
+\item{default_status}{Optional scalar character representing the default active status code}
 
-\item{...}{arguments passed to \code{expose()}}
+\item{...}{Arguments passed to \code{expose()}}
 }
 \value{
 A tibble with class \code{exposed_df}, \code{tbl_df}, \code{tbl},

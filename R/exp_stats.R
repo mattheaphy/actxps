@@ -30,22 +30,22 @@
 #' data while retaining any grouping variables passed to the "dots"
 #' (`...`).
 #'
-#' @param .data a data frame with exposure-level records, ideally of type `exposed_df`
-#' @param target_status a character vector of target status values
-#' @param expected a character vector containing column names in `.data`
+#' @param .data A data frame with exposure-level records, ideally of type `exposed_df`
+#' @param target_status A character vector of target status values
+#' @param expected A character vector containing column names in `.data`
 #' with expected values
-#' @param col_exposure name of the column in `.data` containing exposures
-#' @param col_status name of the column in `.data` containing the policy status
+#' @param col_exposure Name of the column in `.data` containing exposures
+#' @param col_status Name of the column in `.data` containing the policy status
 #' @param wt Optional. Length 1 character vector. Name of the column in
 #' `.data` containing weights to use in the calculation of claims,
 #' exposures, and partial credibility.
-#' @param credibility whether the output should include partial credibility
+#' @param credibility Whether the output should include partial credibility
 #' weights and credibility-weighted decrement rates.
-#' @param cred_p confidence level under the Limited Fluctuation credibility method
-#' @param cred_r error tolerance under the Limited Fluctuation credibility
+#' @param cred_p Confidence level under the Limited Fluctuation credibility method
+#' @param cred_r Error tolerance under the Limited Fluctuation credibility
 #' method
-#' @param object an `exp_df` object
-#' @param ... groups to retain after `summary()` is called
+#' @param object An `exp_df` object
+#' @param ... Groups to retain after `summary()` is called
 #'
 #' @return A tibble with class `exp_df`, `tbl_df`, `tbl`,
 #' and `data.frame`. The results include columns for any grouping

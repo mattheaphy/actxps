@@ -10,7 +10,7 @@
 #' Optionally, if `x` has transaction counts and amounts by type, these can
 #' be specified without calling [add_transactions()].
 #'
-#' @param x an object. For `as_exposed_df()`, `x` must be a data frame.
+#' @param x An object. For `as_exposed_df()`, `x` must be a data frame.
 #' @param trx_types Optional. Character vector containing unique transaction
 #' types that have been attached to `x`. For each value in `trx_types`,
 #' `as_exposed_df` requires that columns exist in `x` named `trx_n_{*}` and

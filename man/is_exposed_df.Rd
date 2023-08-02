@@ -25,17 +25,17 @@ as_exposed_df(
 )
 }
 \arguments{
-\item{x}{an object. For \code{as_exposed_df()}, \code{x} must be a data frame.}
+\item{x}{An object. For \code{as_exposed_df()}, \code{x} must be a data frame.}
 
-\item{end_date}{experience study end date}
+\item{end_date}{Experience study end date}
 
-\item{start_date}{experience study start date. Default value = 1900-01-01.}
+\item{start_date}{Experience study start date. Default value = 1900-01-01.}
 
-\item{target_status}{character vector of target status values. Default value = \code{NULL}.}
+\item{target_status}{Character vector of target status values. Default value = \code{NULL}.}
 
-\item{cal_expo}{set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
+\item{cal_expo}{Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
 
-\item{expo_length}{exposure period length}
+\item{expo_length}{Exposure period length}
 
 \item{trx_types}{Optional. Character vector containing unique transaction
 types that have been attached to \code{x}. For each value in \code{trx_types},

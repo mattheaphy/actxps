@@ -8,15 +8,15 @@
 \format{
 For the 2012 IAMB table, a data frame with 242 rows and 3 columns:
 \describe{
-\item{age}{attained age}
-\item{qx}{mortality rate}
+\item{age}{Attained age}
+\item{qx}{Mortality rate}
 \item{gender}{Female or Male}
 }
 
 For the Projection Scale G2 table, a data frame with 242 rows and 3 columns:
 \describe{
-\item{age}{attained age}
-\item{mi}{mortality improvement rate}
+\item{age}{Attained age}
+\item{mi}{Mortality improvement rate}
 \item{gender}{Female or Male}
 }
 }

@@ -14,24 +14,24 @@ add_transactions(
 )
 }
 \arguments{
-\item{.data}{a data frame with exposure-level records with the class
+\item{.data}{A data frame with exposure-level records with the class
 \code{exposed_df}. Use \code{\link[=as_exposed_df]{as_exposed_df()}} to convert a data frame to an
 \code{exposed_df} object if necessary.}
 
-\item{trx_data}{a data frame containing transactions details. This data
+\item{trx_data}{A data frame containing transactions details. This data
 frame must have columns for policy numbers, transaction dates, transaction
 types, and transaction amounts.}
 
-\item{col_pol_num}{name of the column in \code{trx_data} containing the policy
+\item{col_pol_num}{Name of the column in \code{trx_data} containing the policy
 number}
 
-\item{col_trx_date}{name of the column in \code{trx_data} containing the
+\item{col_trx_date}{Name of the column in \code{trx_data} containing the
 transaction date}
 
-\item{col_trx_type}{name of the column in \code{trx_data} containing the
+\item{col_trx_type}{Name of the column in \code{trx_data} containing the
 transaction type}
 
-\item{col_trx_amt}{name of the column in \code{trx_data} containing the
+\item{col_trx_amt}{Name of the column in \code{trx_data} containing the
 transaction amount}
 }
 \value{

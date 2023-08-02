@@ -17,7 +17,7 @@ trx_stats(
 \method{summary}{trx_df}(object, ...)
 }
 \arguments{
-\item{.data}{a data frame with exposure-level records of type
+\item{.data}{A data frame with exposure-level records of type
 \code{exposed_df} with transaction data attached. If necessary, use
 \code{\link[=as_exposed_df]{as_exposed_df()}} to convert a data frame to an \code{exposed_df} object, and use
 \code{\link[=add_transactions]{add_transactions()}} to attach transactions to an \code{exposed_df} object.}
@@ -34,14 +34,14 @@ actual-to-expected ratios.}
 for each transaction type. If \code{TRUE}, the results will contains aggregated
 results across all transaction types.}
 
-\item{col_exposure}{name of the column in \code{.data} containing exposures}
+\item{col_exposure}{Name of the column in \code{.data} containing exposures}
 
 \item{full_exposures_only}{If \code{TRUE} (default), partially exposed records will
 be excluded from \code{data}.}
 
-\item{object}{an \code{trx_df} object}
+\item{object}{A \code{trx_df} object}
 
-\item{...}{groups to retain after \code{summary()} is called}
+\item{...}{Groups to retain after \code{summary()} is called}
 }
 \value{
 A tibble with class \code{trx_df}, \code{tbl_df}, \code{tbl},
