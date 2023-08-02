@@ -597,10 +597,10 @@ exp_shiny <- function(dat,
       # y labels
       get_y_labels <- function(x) {
         if (x %in% c("claims", "n_claims", "exposure",
-                              "trx_n", "trx_flag", "trx_amt",
-                              "avg_trx", "avg_all",
-                              input$pct_checks,
-                              paste0(input$pct_checks, "_w_trx"))) {
+                     "trx_n", "trx_flag", "trx_amt",
+                     "avg_trx", "avg_all",
+                     input$pct_checks,
+                     paste0(input$pct_checks, "_w_trx"))) {
           scales::label_comma(accuracy = 1)
         } else if (x == "trx_freq") {
           scales::label_comma(accuracy = 0.1)
