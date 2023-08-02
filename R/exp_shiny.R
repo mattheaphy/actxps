@@ -94,6 +94,7 @@
 #' prevents the drawing of overly complex plots. Default value = 25.
 #' @param title Optional. Title of the shiny app. If no title is provided,
 #' a descriptive title will be generated based on attributes of `dat`.
+#' @inheritParams exp_stats
 #'
 #' @return No return value. This function is called for the side effect of
 #' launching a shiny application.
@@ -118,7 +119,10 @@ exp_shiny <- function(dat,
                       predictors = names(dat),
                       expected = names(dat)[grepl("expected", names(dat))],
                       distinct_max = 25L,
-                      title) {
+                      title,
+                      credibility = TRUE,
+                      cred_p = 0.95,
+                      cred_r = 0.05) {
 
   rlang::check_installed("shiny")
   rlang::check_installed("bslib")
@@ -172,7 +176,8 @@ exp_shiny <- function(dat,
 
   preds_small <- filter(preds, n_unique <= distinct_max)$predictors
 
-  yVar_exp <- c("q_obs", "n_claims", "claims", "exposure", "credibility")
+  yVar_exp <- c("q_obs", "n_claims", "claims", "exposure",
+                if (credibility) "credibility")
   if (has_trx) {
     yVar_trx <- c("trx_util", "trx_freq", "trx_n", "trx_flag",
                   "trx_amt", "avg_trx", "avg_all", "exposure")
@@ -560,7 +565,8 @@ exp_shiny <- function(dat,
       if (input$study_type == "exp") {
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
-          exp_stats(wt = wt, credibility = TRUE, expected = ex)
+          exp_stats(wt = wt, credibility = credibility, expected = ex,
+                    cred_p = cred_p, cred_r = cred_r)
       } else {
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>

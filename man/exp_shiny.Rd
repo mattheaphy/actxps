@@ -9,7 +9,10 @@ exp_shiny(
   predictors = names(dat),
   expected = names(dat)[grepl("expected", names(dat))],
   distinct_max = 25L,
-  title
+  title,
+  credibility = TRUE,
+  cred_p = 0.95,
+  cred_r = 0.05
 )
 }
 \arguments{
@@ -27,6 +30,14 @@ prevents the drawing of overly complex plots. Default value = 25.}
 
 \item{title}{Optional. Title of the shiny app. If no title is provided,
 a descriptive title will be generated based on attributes of \code{dat}.}
+
+\item{credibility}{Whether the output should include partial credibility
+weights and credibility-weighted decrement rates.}
+
+\item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
+
+\item{cred_r}{Error tolerance under the Limited Fluctuation credibility
+method}
 }
 \value{
 No return value. This function is called for the side effect of
