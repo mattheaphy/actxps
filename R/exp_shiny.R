@@ -67,6 +67,8 @@
 #' - y: y variable
 #' - Geometry: plotting geometry
 #' - Add Smoothing?: activate to plot loess curves
+#' - Second y-axis?: activate to enable a second y-axis
+#' - Second axis y: y variable to plot on the second axis
 #' - Free y Scales: activate to enable separate y scales in each plot.
 #'
 #' ### Table
