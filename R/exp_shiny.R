@@ -474,11 +474,25 @@ exp_shiny <- function(dat,
         }
       )
 
-      new_choices_2 <- if (input$study_type == "exp") {
-        yVar_exp2()[!yVar_exp2() %in%
-                      c("All termination rates", "All A/E ratios")]
+    }) |>
+      shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks)
+
+    shiny::observe({
+
+      if (input$study_type == "exp") {
+
+        new_choices_2 <- yVar_exp2()[
+          !yVar_exp2() %in% c("All termination rates", "All A/E ratios")]
+        if(input$yVar == "All termination rates") {
+          new_choices_2 <- new_choices_2[
+            !new_choices_2 %in% c('q_obs', input$ex_checks)]
+        } else if (input$yVar == "All A/E ratios") {
+          new_choices_2 <- new_choices_2[
+            !new_choices_2 %in% paste0("ae_", input$ex_checks)]
+        }
+
       } else {
-        yVar_trx2()
+        new_choices_2 <- yVar_trx2()
       }
 
       shiny::updateSelectInput(
@@ -491,7 +505,8 @@ exp_shiny <- function(dat,
       )
 
     }) |>
-      shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks)
+      shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks,
+                       input$yVar)
 
     # disable color input when using special plots
     shiny::observe(
