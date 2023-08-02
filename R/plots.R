@@ -15,14 +15,15 @@
 #' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()]. NOTE: If
 #' `mapping` is supplied, the `x`, `y`, and `color` arguments will be ignored.
 #' @param second_axis Logical. If `TRUE`, the variable specified by
-#' `second_y ` (default = exposure) is plotted on a second
-#' y-axis using an area geometry.
+#' `second_y` (default = exposure) is plotted on a second
+#' y-axis. An area geometry is used if the `x` variable is numeric. If not,
+#' bars are plotted.
 #' @param second_y An unquoted column name in `object` to use as the `y`
 #' variable on the second y-axis. If unspecified, this will default to
 #' `exposure`.
 #' @param scales The `scales` argument passed to [ggplot2::facet_wrap()].
 #' @param geoms Type of geometry. If "lines" is passed, the plot will
-#' display lines and points. If "lines", the plot will display bars.
+#' display lines and points. If "bars", the plot will display bars.
 #' @param y_labels Label function passed to [ggplot2::scale_y_continuous()].
 #' @param second_y_labels Same as `y_labels`, but for the second y-axis.
 #'
@@ -152,11 +153,16 @@ plot_experience <- function(
   if (second_axis) {
     adj <- max(object |> dplyr::pull(!!second_y), na.rm = TRUE) /
       max(object |> dplyr::pull(!!mapping$y), na.rm = TRUE)
-    p <- p + ggplot2::geom_area(ggplot2::aes(y = !!second_y),
-                                data = object |>
-                                  mutate(!!second_y := !!second_y /
-                                           adj),
-                                alpha = 0.2, position = "identity") +
+    if (dplyr::pull(object, !!mapping$x) |> is.numeric()) {
+      geom.fun <- ggplot2::geom_area
+    } else {
+      geom.fun <- ggplot2::geom_col
+    }
+    p <- p + geom.fun(ggplot2::aes(y = !!second_y),
+                      data = object |>
+                        mutate(!!second_y := !!second_y /
+                                 adj),
+                      alpha = 0.2, position = "identity") +
       ggplot2::scale_y_continuous(
         sec.axis =
           ggplot2::sec_axis(~ . * adj,

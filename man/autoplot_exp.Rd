@@ -58,8 +58,9 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 \code{mapping} is supplied, the \code{x}, \code{y}, and \code{color} arguments will be ignored.}
 
 \item{second_axis}{Logical. If \code{TRUE}, the variable specified by
-\code{second_y } (default = exposure) is plotted on a second
-y-axis using an area geometry.}
+\code{second_y} (default = exposure) is plotted on a second
+y-axis. An area geometry is used if the \code{x} variable is numeric. If not,
+bars are plotted.}
 
 \item{second_y}{An unquoted column name in \code{object} to use as the \code{y}
 variable on the second y-axis. If unspecified, this will default to
@@ -68,7 +69,7 @@ variable on the second y-axis. If unspecified, this will default to
 \item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
 \item{geoms}{Type of geometry. If "lines" is passed, the plot will
-display lines and points. If "lines", the plot will display bars.}
+display lines and points. If "bars", the plot will display bars.}
 
 \item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
 
