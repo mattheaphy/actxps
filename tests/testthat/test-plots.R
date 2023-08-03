@@ -97,3 +97,10 @@ test_that("AE plots works", {
   expect_error(plot_actual_to_expected(expo |> exp_stats()),
                regexp = "does not have any actual-to-expected")
 })
+
+test_that("Log y scale works", {
+  expect_s3_class(autoplot(exp_res4, y_log10 = TRUE, second_axis = TRUE),
+                  c("gg", "ggplot"))
+  expect_s3_class(autoplot(trx_res4, y_log10 = TRUE, second_axis = TRUE),
+                  c("gg", "ggplot"))
+})
