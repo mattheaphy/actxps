@@ -18,7 +18,8 @@
   scales = "fixed",
   geoms = c("lines", "bars"),
   y_labels = scales::label_percent(accuracy = 0.1),
-  second_y_labels = scales::label_comma(accuracy = 1)
+  second_y_labels = scales::label_comma(accuracy = 1),
+  y_log10 = FALSE
 )
 
 \method{autoplot}{trx_df}(
@@ -33,7 +34,8 @@
   scales = "fixed",
   geoms = c("lines", "bars"),
   y_labels = scales::label_percent(accuracy = 0.1),
-  second_y_labels = scales::label_comma(accuracy = 1)
+  second_y_labels = scales::label_comma(accuracy = 1),
+  y_log10 = FALSE
 )
 }
 \arguments{
@@ -74,6 +76,8 @@ display lines and points. If "bars", the plot will display bars.}
 \item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
 
 \item{second_y_labels}{Same as \code{y_labels}, but for the second y-axis.}
+
+\item{y_log10}{If \code{TRUE}, the y-axes are plotted on a log-10 scale.}
 }
 \value{
 a \code{ggplot} object
