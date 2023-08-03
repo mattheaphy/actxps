@@ -64,9 +64,9 @@ plot_actual_to_expected <- function(object, ...) {
 
   verify_exp_df(object)
 
-  ae_names <- paste0("ae_", attr(object, "expected")) |>
+  piv_cols <- paste0("ae_", attr(object, "expected")) |>
     intersect(names(object))
-  if (length(ae_names) == 0) {
+  if (length(piv_cols) == 0) {
     rlang::abort(c(x = "The `exp_df` object does not have any actual-to-expected results available.",
                    i = "Hint: to add expected values, use the `expected` argument in `exp_stats()`"
     ))
@@ -74,7 +74,7 @@ plot_actual_to_expected <- function(object, ...) {
 
   .groups <- groups(object)
   object <- object |>
-    tidyr::pivot_longer(dplyr::all_of(ae_names),
+    tidyr::pivot_longer(dplyr::all_of(piv_cols),
                         names_to = "Series",
                         values_to = "A/E ratio")
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
