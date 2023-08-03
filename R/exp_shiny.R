@@ -69,7 +69,8 @@
 #' - Add Smoothing?: activate to plot loess curves
 #' - Second y-axis?: activate to enable a second y-axis
 #' - Second axis y: y variable to plot on the second axis
-#' - Free y Scales: activate to enable separate y scales in each plot.
+#' - Free y Scales: activate to enable separate y scales in each plot
+#' - Log y-axis: activate to plot all y-axes on a log-10 scale
 #'
 #' ### Table
 #'
@@ -417,6 +418,9 @@ exp_shiny <- function(dat,
                 width = 4,
                 shiny::checkboxInput("plotFreeY",
                                      shiny::strong("Free y Scales?"),
+                                     value = FALSE),
+                shiny::checkboxInput("plotLogY",
+                                     shiny::strong("Log y-axis?"),
                                      value = FALSE)
               )
 
@@ -640,7 +644,8 @@ exp_shiny <- function(dat,
                              y_labels = y_labels,
                              second_axis = input$plot2ndY,
                              second_y = !!second_y,
-                             second_y_labels = second_y_labels)
+                             second_y_labels = second_y_labels,
+                             y_log10 = input$plotLogY)
       } else {
 
         facets <- rlang::syms(input$facetVar)
@@ -655,7 +660,8 @@ exp_shiny <- function(dat,
                                if (input$plotFreeY) "free_y" else "fixed",
                              second_axis = input$plot2ndY,
                              second_y = !!second_y,
-                             second_y_labels = second_y_labels)
+                             second_y_labels = second_y_labels,
+                             y_log10 = input$plotLogY)
       }
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",

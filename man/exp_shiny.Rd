@@ -117,7 +117,8 @@ This tab includes a plot and various options for customization:
 \item Add Smoothing?: activate to plot loess curves
 \item Second y-axis?: activate to enable a second y-axis
 \item Second axis y: y variable to plot on the second axis
-\item Free y Scales: activate to enable separate y scales in each plot.
+\item Free y Scales: activate to enable separate y scales in each plot
+\item Log y-axis: activate to plot all y-axes on a log-10 scale
 }
 }
 
