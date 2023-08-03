@@ -50,7 +50,7 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
 
 
   object <- object |>
-    tidyr::pivot_longer(piv_cols,
+    tidyr::pivot_longer(dplyr::all_of(piv_cols),
                         names_to = "Series",
                         values_to = "Rate")
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
@@ -65,7 +65,7 @@ plot_actual_to_expected <- function(object, ...) {
   verify_exp_df(object)
 
   ae_names <- paste0("ae_", attr(object, "expected")) |>
-    intersect(colnames(object))
+    intersect(names(object))
   if (length(ae_names) == 0) {
     rlang::abort(c(x = "The `exp_df` object does not have any actual-to-expected results available.",
                    i = "Hint: to add expected values, use the `expected` argument in `exp_stats()`"
@@ -74,8 +74,7 @@ plot_actual_to_expected <- function(object, ...) {
 
   .groups <- groups(object)
   object <- object |>
-    tidyr::pivot_longer(ae_names |>
-                          intersect(colnames(object)),
+    tidyr::pivot_longer(dplyr::all_of(ae_names),
                         names_to = "Series",
                         values_to = "A/E ratio")
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
