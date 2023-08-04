@@ -29,6 +29,7 @@ available or difficult to produce using the \verb{[autoplot.exp_df()]} function.
 \details{
 \code{\link[=plot_termination_rates]{plot_termination_rates()}} - Create a plot of observed termination rates
 and any expected termination rates attached to an \code{exp_df} object.
+
 \code{\link[=plot_actual_to_expected]{plot_actual_to_expected()}} - Create a plot of actual-to-expected termination
 rates attached to an \code{exp_df} object.
 }

@@ -13,6 +13,7 @@
 #'
 #' [plot_termination_rates()] - Create a plot of observed termination rates
 #' and any expected termination rates attached to an `exp_df` object.
+#'
 #' [plot_actual_to_expected()] - Create a plot of actual-to-expected termination
 #' rates attached to an `exp_df` object.
 #'
