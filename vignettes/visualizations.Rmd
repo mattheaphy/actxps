@@ -1,0 +1,259 @@
+---
+title: "Data visualizations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data visualizations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.height = 4, 
+  fig.width = 5
+)
+```
+
+This article describes the data visualization functions available in the actxps
+package.
+
+- The `autoplot()` function creates plots of termination study results
+(`exp_df` objects^[`exp_df` objects are created by `exp_stats()` see 
+`vignette("exp_summary")` for more information]) or transaction study results
+(`trx_df` objects^[`trx_df` objects are created by `trx_stats()` see 
+`vignette("transactions")` for more information]).
+- The `plot_termination_rates()` and `plot_actual_to_expected()` functions 
+create special plots for termination studies that are not possible using 
+`autoplot()`. 
+
+- `plot_termination_rates()` produces plots of observed termination rates 
+alongside expected termination rates.
+- `plot_actual_to_expected()` draws a plot of all actual-to-expected 
+termination rates.
+
+- The `autotable()` function creates HTML tables of termination study or 
+transaction study results.
+- The `exp_shiny()` function launches a shiny app that includes interactive
+filters, grouping variables, and data visualizations.
+
+## Plotting termination studies
+
+Before we start plotting, we need to create experience study data. The examples
+below use the simulated `census_dat` and `withdrawals` data sets that come 
+with the actxps package. First, exposure records are created using `expose()`.
+Then, illustrative expected values and withdrawal transactions are added to the 
+data.
+
+```{r expo-data}
+library(actxps)
+library(ggplot2)
+
+# create exposure records
+exposed_data <- expose(census_dat, end_date = "2019-12-31",
+                       target_status = "Surrender")
+
+# add expected values
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+exposed_data <- exposed_data |> 
+  mutate(expected_1 = expected_table[pol_yr],
+         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03)) |> 
+  # add transactions
+  add_transactions(withdrawals)
+
+```
+
+### `autoplot.exp_df`
+
+The `autoplot()` function has a method for `exp_df` objects. Throughout this 
+vignette, the name `autoplot.exp_df()` will be used to distinguish this method
+from the generic `autoplot()` function.
+
+Below, an `exp_df` object is created using `exp_stats()`.
+
+```{r plot-data}
+exp_res <- exposed_data |> 
+  group_by(pol_yr) |> 
+  exp_stats()
+```
+
+The default plot produced by `autoplot.exp_df()` is a line plot of the observed 
+termination rate. The `x` variable corresponds to the first grouping variable
+of the `exp_df` object^[If there are no grouping variables, a single point is 
+plotted].
+
+```{r plot-basic}
+autoplot(exp_res)
+```
+
+If there is a second grouping variable, it is mapped onto color.
+
+```{r plot-color}
+exposed_data |> 
+  group_by(pol_yr, inc_guar) |> 
+  exp_stats() |> 
+  autoplot()
+```
+
+Any additional grouping variables beyond two are used to create facets.   
+
+```{r plot-facets}
+exp_res2 <- exposed_data |> 
+  group_by(pol_yr, product, inc_guar) |> 
+  exp_stats() 
+
+autoplot(exp_res2)
+``` 
+
+To set axis scales that vary by subplot, use the `scales` argument. This 
+argument is subsequently forwarded to `ggplot2::facet_wrap()`. Under the 
+default value "fixed", scales are identical across subplots. If "free_y" is 
+passed as shown below, the y-scales will vary. If "free_x" is passed, the 
+x-scales will vary. If "free" is passed, both the x- and y-scales will vary.
+
+```{r plot-facet-free}
+autoplot(exp_res2, scales = "free_y")
+```
+
+
+**`autoplot.exp_df()` arguments**
+
+There are two ways of overriding the default aesthetics selected by 
+`autoplot.exp_df()`.
+
+1. The `x`, `y`, `color`, and `...` arguments can be passed unquoted column 
+names or expressions to use as the x, y, color / fill, and faceting variables, 
+respectively.
+2. The `mapping` argument can be passed an aesthetic mapping using 
+`ggplot2::aes()`. If this argument is supplied, the `x`, `y`, and `color` 
+arguments are ignored.
+
+Let's assume we want to plot the number of claims instead of the termination 
+rate, and we want `inc_guar` to be the color variable instead of `producgt`.
+
+Using the `y`, `color`, and `...` arguments, we could write:
+
+```{r plot-alt-map-1}
+autoplot(exp_res2, y = claims, color = inc_guar, product)
+```
+
+Alternatively, we could supply a mapping for more fine-grained control. Note 
+that the example below adds an additional mapping for `linetype` which is 
+otherwise unavailable under the defaults for `autoplot.exp_df()`.
+
+```{r plot-alt-map-2}
+autoplot(exp_res2, 
+         mapping = aes(x = pol_yr, y = claims, color = inc_guar,
+                       linetype = inc_guar), 
+         product)
+```
+
+The `autoplot.exp_df()` function defaults to percentages for y-axis labels. As seen in
+the immediately preceding example, this will not always be appropriate. The 
+`y_labels` function can be used to pass a different labeling function.
+
+```{r plot-y-label}
+autoplot(exp_res2, y = claims, color = inc_guar, product,
+         y_labels = scales::label_comma(accuracy = 1))
+```
+
+The `geoms` argument can be used to change the plotting geometry. Under the 
+default value of "lines", points and lines are displayed. If "bars" is 
+passed, a bar plot will be drawn.
+
+```{r plot-bar}
+autoplot(exp_res, geoms = "bars")
+```
+
+If the `y_log10` argument is set to `TRUE`, the y-axis will be plotting on a 
+logarithmic base ten scale.
+
+```{r plot-log10}
+autoplot(exp_res, y_log10 = TRUE)
+```
+
+`autoplot.exp_df()` contains a handful of arguments for plotting an additional variable on the y-axis. This variable defaults to exposures and will always use an area geometry.
+
+- To add a second y-axis, set `second_axis` to `TRUE`.
+- The `second_y` argument specifies which variable is plotted on the second y-axis.
+- The `second_y_labels` argument is used to change the labels on the second y-axis. Since exposures are the default second y-axis variable, labels are defaulted to a whole number comma format.
+
+```{r plot-second-y-axis}
+autoplot(exp_res, second_axis = TRUE)
+```
+
+### `plot_termination_rates()`
+
+A limitation of `autoplot.exp_df()` is that it doesn't allow one to plot observed 
+termination rates alongside one or more expected termination rates. This type 
+of plot is common in actuarial analyses as an alternative to plots of
+actual-to-expected ratios.
+
+The `plot_termination_rates()` function produces a plot of the observed 
+termination rates plus any expected termination rates that were passed to the
+`expected` argument of `exp_stats()`.
+
+In the example below, a new `exp_df` object is created that contains two 
+sets of expected surrender rates. This object is then passed into     
+`plot_termination_rates()`.
+
+```{r plot-term-1}
+
+exp_res3 <- exposed_data |> 
+  group_by(pol_yr) |> 
+  exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
+
+plot_termination_rates(exp_res3)
+```
+
+In the plot above, termination rates are mapped to the `y` variable and
+the `Series` variable specifies a color scale. Similar to `autoplot.exp_df()`, the 
+`x` variable is the first grouping variable (here, `pol_yr`).
+
+If the `exp_df` object contains credibility-weighted decrement rates^[See the 
+`credibility` argument of `exp_stats()` for more information], these rates can
+be included in the plot using the argument `include_cred_adj = TRUE`.
+
+```{r plot-term-2}
+plot_termination_rates(exp_res3, include_cred_adj = TRUE)
+```
+
+
+
+### `plot_actual_to_expected()`
+
+The `plot_actual_to_expected()` function is similar to `plot_termination_rates()`
+except that all actual-to-expected ratios are plotted on the y-axis instead.
+
+Like `plot_termination_rates()`, this function calls `autoplot.exp_df()` after
+reshaping the `exp_df` object and accepts all arguments passed to 
+`autoplot.exp_df()` except the `y` variable.
+
+```{r plot-ae}
+plot_actual_to_expected(exp_res3)
+```
+
+### Relationship of `plot_termination_rates()` and `plot_actual_to_expected()` to `autoplot.exp_df()`
+
+Behind the scenes, `plot_termination_rates()` and `plot_actual_to_expected()` 
+call `autoplot.exp_df()` after reshaping the `exp_df` object.  As such, all 
+arguments passed to `autoplot.exp_df()` described above can also be passed to
+these functions. However, there is an exception: the `y` variable is reserved
+and cannot be modified. In addition, while the `color` variable can be overridden, 
+this is discouraged because it may result in odd-looking plots.
+
+Since these functions automatically creates a color variable, any grouping 
+variables beyond the *first* are used to create facets. This differs from 
+`autoplot.exp_df()` which uses grouping variables beyond the *second* to create
+subplots.
+
+
+## Plotting transaction studies
+
+
+## Tables
+
+
+## Interactive Shiny app
