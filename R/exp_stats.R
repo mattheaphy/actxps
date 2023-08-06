@@ -40,7 +40,7 @@
 #' `.data` containing weights to use in the calculation of claims,
 #' exposures, and partial credibility.
 #' @param credibility Whether the output should include partial credibility
-#' weights and credibility-weighted decrement rates.
+#' weights and credibility-weighted termination rates.
 #' @param cred_p Confidence level under the Limited Fluctuation credibility method
 #' @param cred_r Error tolerance under the Limited Fluctuation credibility
 #' method
@@ -49,12 +49,12 @@
 #'
 #' @return A tibble with class `exp_df`, `tbl_df`, `tbl`,
 #' and `data.frame`. The results include columns for any grouping
-#' variables, claims, exposures, and observed decrement rates (`q_obs`).
+#' variables, claims, exposures, and observed termination rates (`q_obs`).
 #' If any values are passed to `expected`, additional columns will be
-#' added for expected decrements and actual-to-expected ratios. If
+#' added for expected termination rates and actual-to-expected ratios. If
 #' `credibility` is set to `TRUE`, additional columns are added
-#' for partial credibility and credibility-weighted decrement rates
-#' (assuming values are passed to `expected`). Credibility-weighted decrement
+#' for partial credibility and credibility-weighted termination rates
+#' (assuming values are passed to `expected`). Credibility-weighted termination
 #' rates are prefixed by `adj_`.
 #'
 #' @examples

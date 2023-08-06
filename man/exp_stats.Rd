@@ -36,7 +36,7 @@ with expected values}
 exposures, and partial credibility.}
 
 \item{credibility}{Whether the output should include partial credibility
-weights and credibility-weighted decrement rates.}
+weights and credibility-weighted termination rates.}
 
 \item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
 
@@ -50,12 +50,12 @@ method}
 \value{
 A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include columns for any grouping
-variables, claims, exposures, and observed decrement rates (\code{q_obs}).
+variables, claims, exposures, and observed termination rates (\code{q_obs}).
 If any values are passed to \code{expected}, additional columns will be
-added for expected decrements and actual-to-expected ratios. If
+added for expected termination rates and actual-to-expected ratios. If
 \code{credibility} is set to \code{TRUE}, additional columns are added
-for partial credibility and credibility-weighted decrement rates
-(assuming values are passed to \code{expected}). Credibility-weighted decrement
+for partial credibility and credibility-weighted termination rates
+(assuming values are passed to \code{expected}). Credibility-weighted termination
 rates are prefixed by \code{adj_}.
 }
 \description{

@@ -42,10 +42,10 @@ function \code{\link[=exp_stats]{exp_stats()}} or an object of class \code{trx_d
 \item{decimals}{Number of decimals to display for percentages}
 
 \item{colorful}{If \code{TRUE}, color will be added to the the observed
-decrement rate and actual-to-expected columns for termination studies, and
+termination rate and actual-to-expected columns for termination studies, and
 the utilization rate and "percentage of" columns for transaction studies.}
 
-\item{color_q_obs}{Color palette used for the observed decrement rate.}
+\item{color_q_obs}{Color palette used for the observed termination rate.}
 
 \item{color_ae_}{Color palette used for actual-to-expected rates.}
 

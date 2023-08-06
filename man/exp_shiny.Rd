@@ -32,7 +32,7 @@ prevents the drawing of overly complex plots. Default value = 25.}
 a descriptive title will be generated based on attributes of \code{dat}.}
 
 \item{credibility}{Whether the output should include partial credibility
-weights and credibility-weighted decrement rates.}
+weights and credibility-weighted termination rates.}
 
 \item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
 
