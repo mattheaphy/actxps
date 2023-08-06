@@ -19,16 +19,16 @@ exp_shiny(
 \item{dat}{An \code{exposed_df} object.}
 
 \item{predictors}{A character vector of independent variables in \code{dat} to
-include in the shiny app.}
+include in the Shiny app.}
 
 \item{expected}{A character vector of expected values in \code{dat} to include
-in the shiny app.}
+in the Shiny app.}
 
 \item{distinct_max}{Maximum number of distinct values allowed for \code{predictors}
 to be included as "Color" and "Facets" grouping variables. This input
 prevents the drawing of overly complex plots. Default value = 25.}
 
-\item{title}{Optional. Title of the shiny app. If no title is provided,
+\item{title}{Optional. Title of the Shiny app. If no title is provided,
 a descriptive title will be generated based on attributes of \code{dat}.}
 
 \item{credibility}{Whether the output should include partial credibility
@@ -41,10 +41,10 @@ method}
 }
 \value{
 No return value. This function is called for the side effect of
-launching a shiny application.
+launching a Shiny application.
 }
 \description{
-Launch a shiny application to interactively explore drivers of
+Launch a Shiny application to interactively explore drivers of
 experience.
 
 \code{dat} must be an \code{exposed_df} object. An error will be thrown is any other

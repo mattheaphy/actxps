@@ -1,6 +1,6 @@
 #' Interactively explore experience data
 #'
-#' @description Launch a shiny application to interactively explore drivers of
+#' @description Launch a Shiny application to interactively explore drivers of
 #' experience.
 #'
 #' `dat` must be an `exposed_df` object. An error will be thrown is any other
@@ -89,18 +89,18 @@
 #'
 #' @param dat An `exposed_df` object.
 #' @param predictors A character vector of independent variables in `dat` to
-#' include in the shiny app.
+#' include in the Shiny app.
 #' @param expected A character vector of expected values in `dat` to include
-#' in the shiny app.
+#' in the Shiny app.
 #' @param distinct_max Maximum number of distinct values allowed for `predictors`
 #' to be included as "Color" and "Facets" grouping variables. This input
 #' prevents the drawing of overly complex plots. Default value = 25.
-#' @param title Optional. Title of the shiny app. If no title is provided,
+#' @param title Optional. Title of the Shiny app. If no title is provided,
 #' a descriptive title will be generated based on attributes of `dat`.
 #' @inheritParams exp_stats
 #'
 #' @return No return value. This function is called for the side effect of
-#' launching a shiny application.
+#' launching a Shiny application.
 #'
 #' @examples
 #'

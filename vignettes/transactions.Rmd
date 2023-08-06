@@ -166,7 +166,7 @@ glimpse(trx_res)
 
 The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables from `trx_df` objects.
 
-```{r trx-plot, warning=FALSE, message=FALSE, dpi = 400}
+```{r trx-plot, warning=FALSE, message=FALSE, fig.height=5.5, fig.width=7}
 
 library(ggplot2)
 

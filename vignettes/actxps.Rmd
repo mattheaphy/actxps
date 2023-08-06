@@ -161,7 +161,7 @@ summary(exp_res, inc_guar)
 
 ## Shiny App
 
-Passing an `exposed_df` object to the `exp_shiny()` function launches a shiny app that enables interactive exploration of experience data.
+Passing an `exposed_df` object to the `exp_shiny()` function launches a Shiny app that enables interactive exploration of experience data.
 
 ```{r shiny, eval = FALSE}
 exp_shiny(exposed_data)
