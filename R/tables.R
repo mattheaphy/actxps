@@ -31,12 +31,14 @@
 #'
 #' @details
 #'
-#' See [paletteer::paletteer_d()]'s `palette` argument for usage of
-#' the `color_q_obs` and `color_ae_` arguments.
+#' The `color_q_obs`, `color_ae_`, `color_util`, and `color_pct_of` arguments
+#' must be strings referencing a discrete color palette available in the
+#' `paletteer` package. Palettes must be in the form "package::palette".
+#' For a full list of available palettes, see [paletteer::palettes_d_names].
 #'
 #' @return a `gt` object
 #'
-#'  @examples
+#' @examples
 #'
 #' study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
 #' expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))

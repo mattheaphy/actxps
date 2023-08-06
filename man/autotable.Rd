@@ -61,25 +61,6 @@ information.}
 }
 \value{
 a \code{gt} object
-
-@examples
-
-study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
-expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
-
-study_py <- study_py |>
-mutate(expected_1 = expected_table\link{pol_yr},
-expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
-add_transactions(withdrawals) |>
-left_join(account_vals, by = c("pol_num", "pol_date_yr"))
-
-exp_res <- study_py |> group_by(pol_yr) |>
-exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
-autotable(exp_res)
-
-trx_res <- study_py |> group_by(pol_yr) |>
-trx_stats(percent_of = "av_anniv")
-autotable(trx_res)
 }
 \description{
 \code{autotable()} is a generic function used to create a table
@@ -93,6 +74,28 @@ presentation-friendly format.
 presentation-friendly format.
 }
 \details{
-See \code{\link[paletteer:paletteer_d]{paletteer::paletteer_d()}}'s \code{palette} argument for usage of
-the \code{color_q_obs} and \code{color_ae_} arguments.
+The \code{color_q_obs}, \code{color_ae_}, \code{color_util}, and \code{color_pct_of} arguments
+must be strings referencing a discrete color palette available in the
+\code{paletteer} package. Palettes must be in the form "package::palette".
+For a full list of available palettes, see \link[paletteer:palettes_d_names]{paletteer::palettes_d_names}.
+}
+\examples{
+
+study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+
+study_py <- study_py |>
+  mutate(expected_1 = expected_table[pol_yr],
+         expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+  add_transactions(withdrawals) |>
+  left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+
+exp_res <- study_py |> group_by(pol_yr) |>
+  exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
+autotable(exp_res)
+
+trx_res <- study_py |> group_by(pol_yr) |>
+  trx_stats(percent_of = "av_anniv")
+autotable(trx_res)
+
 }
