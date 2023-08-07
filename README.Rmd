@@ -118,7 +118,7 @@ exp_res
 
 Create visualizations using the `autoplot()` and `autotable()` functions.
 
-```{r plots, warning=FALSE, message=FALSE, fig.height=3, fig.width=5.5}
+```{r plots, warning=FALSE, message=FALSE, dpi = 300, fig.height=3, fig.width=5.5}
 
 library(ggplot2)
 
