@@ -8,7 +8,7 @@
 \usage{
 plot_termination_rates(object, ..., include_cred_adj = FALSE)
 
-plot_actual_to_expected(object, ...)
+plot_actual_to_expected(object, ..., add_hline = TRUE)
 }
 \arguments{
 \item{object}{An object of class \code{exp_df} created by the function
@@ -18,6 +18,9 @@ plot_actual_to_expected(object, ...)
 
 \item{include_cred_adj}{If \code{TRUE}, credibility-weighted termination rates
 will be plotted as well.}
+
+\item{add_hline}{If \code{TRUE}, a blue dashed horizontal line will be drawn at
+100\%.}
 }
 \value{
 a \code{ggplot} object
