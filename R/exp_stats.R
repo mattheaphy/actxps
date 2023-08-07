@@ -266,7 +266,8 @@ finish_exp_stats <- function(.data, target_status, expected,
 # Note - this could be handled using across, but is not due to performance on
 # grouped data frames
 exp_form <- function(form, new_col, .col) {
-  glue::glue(form) |>
+  gsub("\\{\\.col\\}", "`{.col}`", form) |>
+    glue::glue() |>
     purrr::set_names(glue::glue(new_col)) |>
     rlang::parse_exprs()
 }
