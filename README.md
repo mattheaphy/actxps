@@ -188,14 +188,14 @@ Create visualizations using the `autoplot()` and `autotable()`
 functions.
 
 ``` r
-exp_res |> 
-  autoplot()
+autoplot(exp_res)
 ```
 
 <img src="man/figures/README-plots-1.png" width="100%" />
 
 ``` r
-autotable(exp_res)
+# first 10 rows showed for brevity
+exp_res |> head(10) |> autotable()
 ```
 
 <center>

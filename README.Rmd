@@ -14,11 +14,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 
-ggplot2::theme_set(ggplot2::theme_light())
-if (rlang::is_installed("thematic")) {
-  thematic::thematic_on(
-    qualitative = c("#1367D4", "#7515EB", "#EB15E4", "#1AC4F2", "#1FF2C1"))
-}
+actxps:::.actxps_plot_theme()
 
 ```
 
@@ -126,16 +122,16 @@ exp_res
 Create visualizations using the `autoplot()` and `autotable()` functions.
 
 ```{r plots, warning=FALSE, message=FALSE, dpi = 300}
-exp_res |> 
-  autoplot()
+autoplot(exp_res)
 ```
 
 ```{r table1, eval = FALSE}
-autotable(exp_res)
+# first 10 rows showed for brevity
+exp_res |> head(10) |> autotable()
 ```
 
 ```{r table2, echo = FALSE}
-autotable(exp_res) |> gt::gtsave("man/figures/exp_gt.png")
+exp_res |> head(10) |> autotable() |> gt::gtsave("man/figures/exp_gt.png")
 ```
 
 <center><img src="man/figures/exp_gt.png" width="55%" height="55%" /></center>
