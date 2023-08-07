@@ -66,7 +66,7 @@ exp_res <- exposed_data |>
   exp_stats()
 ```
 
-The default plot produced by `autoplot.exp_df()` is a line plot of the observed termination rate. The `x` variable corresponds to the first grouping variable of the `exp_df` object^[If there are no grouping variables, a single point is plotted].
+The default plot produced by `autoplot.exp_df()` is a line plot of the observed termination rate (`q_obs`). The `x` variable corresponds to the first grouping variable of the `exp_df` object^[If there are no grouping variables, a single point is plotted].
 
 ```{r plot-basic}
 autoplot(exp_res)
@@ -182,21 +182,21 @@ plot_termination_rates(exp_res3, include_cred_adj = TRUE)
 
 The `plot_actual_to_expected()` function is similar to `plot_termination_rates()` except that all actual-to-expected ratios are plotted on the y-axis instead.
 
-Like `plot_termination_rates()`, this function calls `autoplot.exp_df()` after reshaping the `exp_df` object and accepts all arguments passed to `autoplot.exp_df()` except the `y` variable.
-
 ```{r plot-ae}
 plot_actual_to_expected(exp_res3)
 ```
 
 ### Relationship of `plot_termination_rates()` and `plot_actual_to_expected()` to `autoplot.exp_df()`
 
-Behind the scenes, `plot_termination_rates()` and `plot_actual_to_expected()` call `autoplot.exp_df()` after reshaping the `exp_df` object.  As such, all arguments passed to `autoplot.exp_df()` described above can also be passed to these functions. However, there is an exception: the `y` variable is reserved and cannot be modified. In addition, while the `color` variable can be overridden, this is discouraged because it may result in odd-looking plots.
+Behind the scenes, `plot_termination_rates()` and `plot_actual_to_expected()` call `autoplot()` after reshaping the `exp_df` object.  As such, all arguments passed to `autoplot.exp_df()` described above can also be passed to these functions. However, there is an exception: the `y` variable is reserved and cannot be modified. In addition, while the `color` variable can be overridden, this is discouraged because it may result in odd-looking plots.
 
 Since these functions automatically creates a color variable, any grouping variables beyond the *first* are used to create facets. This differs from `autoplot.exp_df()` which uses grouping variables beyond the *second* to create subplots.
 
 ## Plotting transaction studies
 
 The actxps package also provides an `autoplot()` method for `trx_df` objects. The `autoplot.trx_df()` method has the same arguments as `autoplot.exp_df()`, so all options described in the previous section can be used for transaction studies as well.
+
+The y variable defaults to the observed transaction frequency (`trx_util`). Like `autoplot.exp_df()`, any numeric column can be mapped onto the y-axis using the `y` or `mapping` arguments.
 
 Under the defaults, `autoplot.trx_df()` handles grouping variables the same as `autoplot.exp_df()`:
 
@@ -206,7 +206,7 @@ Under the defaults, `autoplot.trx_df()` handles grouping variables the same as `
 
 In addition to the above, facets are also created for each transaction type found in the data.
 
-```{r}
+```{r trx-plot}
 trx_res <- exposed_data |> 
   group_by(pol_yr, inc_guar) |> 
   trx_stats(percent_of = "premium")
@@ -214,6 +214,20 @@ trx_res <- exposed_data |>
 trx_res |> 
   autoplot(y = pct_of_premium_all, second_axis = TRUE)
 ```
+
+### `plot_utilization_rates()`
+
+The `plot_utilization_rates()` function can be used to create a side-by-side view of both transaction frequency and severity. This type of plot is useful for answering questions like, "what percentage of customers are taking withdrawals each quarter, and of those taking withdrawals, what is the average percentage of account value taken out?".
+
+Transaction frequency is represented by utilization rates (`trx_util`). Severity is represented by transaction amounts as a percentage of one or more other columns in the data (`{*}_w_trx`). All severity series begin with the prefix "pct_of_" and end with the suffix "_w_trx". The suffix refers to the fact that the denominator only includes records with non-zero transactions. Severity series are automatically selected based on column names passed to the `percent_of` argument in `trx_stats()`. If no "percentage of" columns exist, this function will only plot utilization rates.
+
+Like `plot_termination_rates()` and `plot_actual_to_expected()`, this function calls `autoplot()` after reshaping the data. All arguments passed to `autoplot.trx_df()` can be utilized by this function except `y` and `scales`. The `y` argument is reserved for utilization rates, and the `scales` argument is preset to allow differing scales between the frequency and severity subplots.
+
+```{r trx-util-plot, warning = FALSE}
+plot_utilization_rates(trx_res)
+```
+
+
 
 ## Tables
 

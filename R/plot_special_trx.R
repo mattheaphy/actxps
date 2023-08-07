@@ -14,9 +14,9 @@
 #' Severity is represented by transaction amounts as a percentage of one or
 #' more other columns in the data (`{*}_w_trx`). All severity series begin with
 #' the prefix "pct_of_" and end with the suffix "_w_trx". The suffix refers to
-#' the fact that the denominator only includes records with a non-zero
+#' the fact that the denominator only includes records with non-zero
 #' transactions. Severity series are based on column names passed to the
-#' `percent_of` argument in `trx_stats()`. If no "percentage of" columns exist
+#' `percent_of` argument in [trx_stats()]. If no "percentage of" columns exist
 #' in `object`, this function will only plot utilization rates.
 #'
 #' @return a `ggplot` object
