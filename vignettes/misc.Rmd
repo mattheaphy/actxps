@@ -68,7 +68,7 @@ Below, a very simple logistic regression model is fit to surrender experience in
 
 The `col_expected` argument is used to rename the column(s) containing predicted values. If no names are specified, the default name is "expected".
 
-```{r add-preds}
+```{r add-preds, fig.height=3, fig.width=4}
 
 # create exposure records
 exposed_data <- expose(census_dat, end_date = "2019-12-31",
