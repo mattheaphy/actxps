@@ -13,6 +13,13 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+ggplot2::theme_set(ggplot2::theme_light())
+if (rlang::is_installed("thematic")) {
+  thematic::thematic_on(
+    qualitative = c("#1367D4", "#7515EB", "#EB15E4", "#1AC4F2", "#1FF2C1"))
+}
+
 ```
 
 # actxps <a href="https://mattheaphy.github.io/actxps/"><img src="man/figures/logo.png" align="right" height="138" /></a>
@@ -119,17 +126,8 @@ exp_res
 Create visualizations using the `autoplot()` and `autotable()` functions.
 
 ```{r plots, warning=FALSE, message=FALSE, dpi = 300}
-
-library(ggplot2)
-
-.colors <- c("#eb15e4", "#7515eb")
-theme_set(theme_light())
-
 exp_res |> 
-  autoplot() + 
-  scale_color_manual(values = .colors) + 
-  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
-
+  autoplot()
 ```
 
 ```{r table1, eval = FALSE}

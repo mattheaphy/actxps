@@ -188,16 +188,8 @@ Create visualizations using the `autoplot()` and `autotable()`
 functions.
 
 ``` r
-
-library(ggplot2)
-
-.colors <- c("#eb15e4", "#7515eb")
-theme_set(theme_light())
-
 exp_res |> 
-  autoplot() + 
-  scale_color_manual(values = .colors) + 
-  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
+  autoplot()
 ```
 
 <img src="man/figures/README-plots-1.png" width="100%" />
@@ -222,4 +214,3 @@ exp_shiny(exposed_data)
 
 <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&position=7&from_view=search&track=sph">Image
 by macrovector</a> on Freepik
-
