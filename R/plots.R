@@ -145,6 +145,7 @@ plot_experience <- function(
   if (missing(mapping)) {
     x <- auto_aes(x, 1)
     color <- auto_aes(color, 2)
+    if (!is.null(color) && as.character(color) == ".no_color") color <- NULL
     mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                             fill = !!color, group = !!color)
   }

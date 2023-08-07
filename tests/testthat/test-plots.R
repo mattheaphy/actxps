@@ -88,14 +88,22 @@ test_that("Termination plots works", {
   expect_s3_class(plot_termination_rates(exp_res), c("gg", "ggplot"))
   expect_s3_class(plot_termination_rates(exp_res, include_cred_adj = TRUE),
                   c("gg", "ggplot"))
-  expect_error(plot_termination_rates(iris), regexp = "must be an `exp_df`")
+  expect_error(plot_termination_rates(trx_res), regexp = "must be an `exp_df`")
 })
 
 test_that("AE plots works", {
   expect_s3_class(plot_actual_to_expected(exp_res), c("gg", "ggplot"))
-  expect_error(plot_actual_to_expected(iris), regexp = "must be an `exp_df`")
+  expect_error(plot_actual_to_expected(trx_res), regexp = "must be an `exp_df`")
   expect_error(plot_actual_to_expected(expo |> exp_stats()),
                regexp = "does not have any actual-to-expected")
+})
+
+test_that("Transaction utilization plots work", {
+  expect_s3_class(plot_utilization_rates(trx_res), c("gg", "ggplot"))
+  expect_s3_class(plot_utilization_rates(trx_res2), c("gg", "ggplot"))
+  expect_s3_class(plot_utilization_rates(trx_res3), c("gg", "ggplot"))
+  expect_s3_class(plot_utilization_rates(trx_res4), c("gg", "ggplot"))
+  expect_error(plot_utilization_rates(exp_res), regexp = "must be a `trx_df`")
 })
 
 test_that("Log y scale works", {

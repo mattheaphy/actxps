@@ -253,3 +253,11 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      percent_of = percent_of,
                      end_date = end_date)
 }
+
+verify_trx_df <- function(.data) {
+  if (!inherits(.data, "trx_df")) {
+    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be a `trx_df` object."),
+                   i = "Hint: Use `trx_stats()` to create `trx_df` objects."
+    ))
+  }
+}
