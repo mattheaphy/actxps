@@ -8,6 +8,8 @@
 #' @param ... Additional arguments passed to [autoplot.exp_df()].
 #' @param include_cred_adj If `TRUE`, credibility-weighted termination rates
 #' will be plotted as well.
+#' @param add_hline If `TRUE`, a blue dashed horizontal line will be drawn at
+#' 100%.
 #'
 #' @details
 #'
@@ -61,7 +63,7 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
 
 #' @rdname plot_special
 #' @export
-plot_actual_to_expected <- function(object, ...) {
+plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
 
   verify_exp_df(object)
 
@@ -80,6 +82,13 @@ plot_actual_to_expected <- function(object, ...) {
                         values_to = "A/E ratio")
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
   class(object) <- c("exp_df", class(object))
-  autoplot(object, y = `A/E ratio`, ...)
+  p <- autoplot(object, y = `A/E ratio`, ...)
+
+  if (add_hline) {
+    p <- p + ggplot2::geom_hline(yintercept = 1,
+                                 linetype = 2, color = "#112599")
+  }
+
+  p
 
 }
