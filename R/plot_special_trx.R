@@ -1,7 +1,7 @@
 #' Additional plotting functions for transaction studies
 #'
 #' These functions create additional experience study plots that are not
-#' available or difficult to produce using the `[autoplot.trx_df()]` function.
+#' available or difficult to produce using the [autoplot.trx_df()] function.
 #'
 #' @param object An object of class `trx_df` created by the function
 #' [trx_stats()].

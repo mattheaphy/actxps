@@ -66,7 +66,7 @@ pol_interval(dates, "2022-05-10", weeks(2))
 
 The `add_predictions()` function can be used to attach predictions from any model with a `predict()` method.
 
-Below, a very simple logistic regression model is fit to surrender experience in the first ten policy years. Predictions from this model are then added to exposure records using `add_predictions()`. This function only requires a data frame of exposure records and a model with a `predict()` method. Often, it is necessary to specify additional model-specific arguments like `type` to ensure `predict()` returns the desired values. In the example below, type is set to "response" to return probabilities instead of the default predictions on the log-odds scale.
+Below, a very simple logistic regression model is fit to surrender experience in the first ten policy years. Predictions from this model are then added to exposure records using `add_predictions()`. This function only requires a data frame of exposure records and a model with a `predict()` method. Often, it is necessary to specify additional model-specific arguments like `type` to ensure `predict()` returns the desired output. In the example below, `type` is set to "response" to return probabilities instead of the default predictions on the log-odds scale.
 
 The `col_expected` argument is used to rename the column(s) containing predicted values. If no names are specified, the default name is "expected".
 

@@ -18,7 +18,7 @@ a \code{ggplot} object
 }
 \description{
 These functions create additional experience study plots that are not
-available or difficult to produce using the \verb{[autoplot.trx_df()]} function.
+available or difficult to produce using the \code{\link[=autoplot.trx_df]{autoplot.trx_df()}} function.
 }
 \details{
 \code{\link[=plot_utilization_rates]{plot_utilization_rates()}} - Create a plot of transaction frequency and

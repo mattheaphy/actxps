@@ -27,7 +27,7 @@ a \code{ggplot} object
 }
 \description{
 These functions create additional experience study plots that are not
-available or difficult to produce using the \verb{[autoplot.exp_df()]} function.
+available or difficult to produce using the \code{\link[=autoplot.exp_df]{autoplot.exp_df()}} function.
 }
 \details{
 \code{\link[=plot_termination_rates]{plot_termination_rates()}} - Create a plot of observed termination rates

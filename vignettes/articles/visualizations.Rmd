@@ -18,10 +18,11 @@ This article describes the data visualization functions available in the actxps
 package.
 
 - The `autoplot()` function uses the `ggplot2` package to create plots of termination study results (`exp_df` objects^[`exp_df` objects are created by `exp_stats()` see `vignette("exp_summary")` for more information]) or transaction study results (`trx_df` objects^[`trx_df` objects are created by `trx_stats()` see `vignette("transactions")` for more information]).
-- The `plot_termination_rates()` and `plot_actual_to_expected()` functions create special plots for termination studies that are not possible using `autoplot()`. 
+- Additional plotting functions create special plots that are not possible or difficult to produce using `autoplot()`. 
 
-- `plot_termination_rates()` produces plots of observed termination rates alongside expected termination rates.
-- `plot_actual_to_expected()` draws a plot of all actual-to-expected termination rates.
+  - `plot_termination_rates()` produces plots of observed termination rates alongside expected termination rates.
+  - `plot_actual_to_expected()` draws a plot of all actual-to-expected termination rates.
+  - `plot_utilization_rates()` creates a side-by-side plot of transaction frequency and severity.
 
 - The `autotable()` function uses the `gt` package to create HTML tables of termination study or transaction study results.
 - The `exp_shiny()` function launches a Shiny app that includes interactive filters, grouping variables, and data visualizations.
@@ -86,13 +87,6 @@ exp_res2 <- exposed_data |>
 autoplot(exp_res2)
 ``` 
 
-To set axis scales that vary by subplot, use the `scales` argument. This argument is subsequently forwarded to `ggplot2::facet_wrap()`. Under the default value "fixed", scales are identical across subplots. If "free_y" is passed as shown below, the y-scales will vary. If "free_x" is passed, the x-scales will vary. If "free" is passed, both the x- and y-scales will vary.
-
-```{r plot-facet-free}
-autoplot(exp_res2, scales = "free_y")
-```
-
-
 **`autoplot.exp_df()` arguments**
 
 There are two ways of overriding the default aesthetics selected by `autoplot.exp_df()`.
@@ -124,6 +118,14 @@ autoplot(exp_res2, y = claims, color = inc_guar, product,
          y_labels = scales::label_comma(accuracy = 1))
 ```
 
+
+To set axis scales that vary by subplot, use the `scales` argument. This argument is subsequently forwarded to `ggplot2::facet_wrap()`. Under the default value "fixed", scales are identical across subplots. If "free_y" is passed as shown below, the y-scales will vary. If "free_x" is passed, the x-scales will vary. If "free" is passed, both the x- and y-scales will vary.
+
+```{r plot-facet-free}
+autoplot(exp_res2, scales = "free_y")
+```
+
+
 The `geoms` argument can be used to change the plotting geometry. Under the default value of "lines", points and lines are displayed. If "bars" is passed, a bar plot will be drawn.
 
 ```{r plot-bar}
@@ -148,7 +150,7 @@ autoplot(exp_res, second_axis = TRUE)
 
 ### `plot_termination_rates()`
 
-A limitation of `autoplot.exp_df()` is that it doesn't allow one to plot observed termination rates alongside one or more expected termination rates. This type of plot is common in actuarial analyses as an alternative to plots of actual-to-expected ratios.
+A limitation of `autoplot.exp_df()` is that it doesn't allow one to plot observed termination rates alongside one or more expected termination rates. This type of plot is common as an alternative to actual-to-expected ratio plots.
 
 The `plot_termination_rates()` function produces a plot of the observed termination rates plus any expected termination rates that were passed to the `expected` argument of `exp_stats()`.
 
@@ -185,7 +187,7 @@ plot_actual_to_expected(exp_res3)
 
 Behind the scenes, `plot_termination_rates()` and `plot_actual_to_expected()` call `autoplot()` after reshaping the `exp_df` object.  As such, all arguments passed to `autoplot.exp_df()` described above can also be passed to these functions. However, there is an exception: the `y` variable is reserved and cannot be modified. In addition, while the `color` variable can be overridden, this is discouraged because it may result in odd-looking plots.
 
-Since these functions automatically creates a color variable, any grouping variables beyond the *first* are used to create facets. This differs from `autoplot.exp_df()` which uses grouping variables beyond the *second* to create subplots.
+Since these functions automatically create a color variable, any grouping variables beyond the *first* are used to create facets. This differs from `autoplot.exp_df()` which uses grouping variables beyond the *second* to create facets
 
 ## Plotting transaction studies
 
@@ -212,7 +214,7 @@ trx_res |>
 
 ### `plot_utilization_rates()`
 
-The `plot_utilization_rates()` function can be used to create a side-by-side view of both transaction frequency and severity. This type of plot is useful for answering questions like, "what percentage of customers are taking withdrawals each quarter, and of those taking withdrawals, what is the average percentage of account value taken out?".
+The `plot_utilization_rates()` function can be used to create a side-by-side view of both transaction frequency and severity. This type of plot is useful for answering questions like, *"what percentage of customers are taking withdrawals each quarter, and of those taking withdrawals, what is the average percentage of account value taken out?"*.
 
 Transaction frequency is represented by utilization rates (`trx_util`). Severity is represented by transaction amounts as a percentage of one or more other columns in the data (`{*}_w_trx`). All severity series begin with the prefix "pct_of_" and end with the suffix "_w_trx". The suffix refers to the fact that the denominator only includes records with non-zero transactions. Severity series are automatically selected based on column names passed to the `percent_of` argument in `trx_stats()`. If no "percentage of" columns exist, this function will only plot utilization rates.
 
@@ -251,7 +253,7 @@ The `autotable()` function creates summary tables of termination or transaction 
 
 ## Interactive Shiny app
 
-`exp_shiny()` is a powerful function that launches an interactive Shiny app containing filters, grouping variables, plots produced by `autoplot()`, tables produced by `autotable()`, and a data export button. This function requires an `exposed_df` object^[See `exposed()` or `as_exposed_df()` for more information].
+`exp_shiny()` is a powerful function that launches an interactive Shiny app containing filters, grouping variables, plots produced by `autoplot()`, tables produced by `autotable()`, and a data export button. This function requires an `exposed_df` object^[See `expose()` or `as_exposed_df()` for more information].
 
 The left sidebar of the app contains filtering widgets for all variables passed to the `predictors` argument. If `predictors` is not specified, all columns in the data except policy numbers, statuses, termination dates, exposures, and transaction columns will be used. The type of widget will vary depending on the data type and number of unique values of each predictor.
 
@@ -269,4 +271,4 @@ The output section includes tabs for plots, tables, and exporting data. The plot
 
 - `distinct_max`: an upper limit on the number of distinct values a variable is allowed to have to be included as a viable option for the color and facets grouping variables. Default = 25.
 - `title`: an optional title for the app
-- `credibility`, `cred_p`, `cred_r`: credibility options for termination studies. See `exp_stats()` for more information. Limited fluctuation credibility estimates at a 95% confidence within 5% of the theoretical mean assuming a binomial distribution are included as a default.
+- `credibility`, `cred_p`, `cred_r`: credibility options for termination studies. See `exp_stats()` for more information. Limited fluctuation credibility estimates at a 95% confidence within 5% of the theoretical mean assuming a binomial distribution are used as a default.

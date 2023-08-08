@@ -1,7 +1,7 @@
 #' Additional plotting functions for termination studies
 #'
 #' These functions create additional experience study plots that are not
-#' available or difficult to produce using the `[autoplot.exp_df()]` function.
+#' available or difficult to produce using the [autoplot.exp_df()] function.
 #'
 #' @param object An object of class `exp_df` created by the function
 #' [exp_stats()].
