@@ -40,22 +40,24 @@
 #'
 #' @examples
 #'
-#' study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
-#' expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+#' if (interactive()) {
+#'   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+#'   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 #'
-#' study_py <- study_py |>
-#'   mutate(expected_1 = expected_table[pol_yr],
-#'          expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
-#'   add_transactions(withdrawals) |>
-#'   left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+#'   study_py <- study_py |>
+#'     mutate(expected_1 = expected_table[pol_yr],
+#'            expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+#'     add_transactions(withdrawals) |>
+#'     left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 #'
-#' exp_res <- study_py |> group_by(pol_yr) |>
-#'   exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
-#' autotable(exp_res)
+#'   exp_res <- study_py |> group_by(pol_yr) |>
+#'     exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
+#'   autotable(exp_res)
 #'
-#' trx_res <- study_py |> group_by(pol_yr) |>
-#'   trx_stats(percent_of = "av_anniv")
-#' autotable(trx_res)
+#'   trx_res <- study_py |> group_by(pol_yr) |>
+#'     trx_stats(percent_of = "av_anniv")
+#'   autotable(trx_res)
+#' }
 #'
 #' @importFrom rlang :=
 #'
