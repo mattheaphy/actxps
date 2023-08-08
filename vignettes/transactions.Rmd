@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-actxps:::.actxps_plot_theme()
+actxps:::set_actxps_plot_theme()
 ```
 
 This article walks through an example of creating a **transaction study** using the actxps package. Unlike a termination study, transaction studies track events that can occur multiple times over the life of a policy. Often, transactions are expected to reoccur; for example, the utilization of a guaranteed income stream.

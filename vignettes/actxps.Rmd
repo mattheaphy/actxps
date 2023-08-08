@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-actxps:::.actxps_plot_theme()
+actxps:::set_actxps_plot_theme()
 
 ```
 
