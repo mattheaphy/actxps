@@ -97,7 +97,7 @@ plot_termination_rates(exp_res)
 
 
 
-In addition, for users of the tidymodels framework, the actxps package includes a recipe step function, `step_expose()`, that can apply the `expose()` function during data pre-processing.
+In addition, for users of the tidymodels framework, the actxps package includes a recipe step function, `step_expose()`, that can apply the `expose()` function during data preprocessing.
 
 ```{r recipe, warning=FALSE}
 library(recipes)
