@@ -187,16 +187,6 @@ trx_res |>
   autotable()
 ```
 
-```{r table2, echo = FALSE}
-trx_res |> 
-  # remove periods with zero transactions
-  filter(trx_n > 0) |> 
-  # first 10 rows showed for brevity
-  head(10) |> 
-  autotable() |> 
-  gt::gtsave("../man/figures/trx_gt.png")
-```
-
 <center><img src="../man/figures/trx_gt.png" width="65%" height="65%" /></center>
 
 
