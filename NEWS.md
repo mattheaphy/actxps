@@ -6,6 +6,7 @@
 - A new vignette was added on data visualization.
 - The miscellaneous vignette was updated to include examples for `add_predictions()` and `step_expose()`.
 - Examples were added to `autoplot()` and `autotable()` methods
+- Help documentation was added for the package itself (`?actxps`)
 
 # actxps 1.1.0
 
