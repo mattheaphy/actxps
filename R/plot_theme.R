@@ -4,6 +4,7 @@
 #' and articles.
 #'
 #' @return No return value. This function is called for its side effects.
+#' @noRd
 set_actxps_plot_theme <- function() {
 
   ggplot2::theme_set(ggplot2::theme_light() +
