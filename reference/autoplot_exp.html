@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,7 @@
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
     <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a>
     <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
@@ -71,9 +72,13 @@
 <span>  y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">mapping</span>,</span>
+<span>  second_axis <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  second_y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>  geoms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lines"</span>, <span class="st">"bars"</span><span class="op">)</span>,</span>
-<span>  y_labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">label_percent</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span>  y_labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">label_percent</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  second_y_labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_number.html" class="external-link">label_comma</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  y_log10 <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for trx_df</span></span>
@@ -84,9 +89,13 @@
 <span>  y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">mapping</span>,</span>
+<span>  second_axis <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  second_y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>  geoms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lines"</span>, <span class="st">"bars"</span><span class="op">)</span>,</span>
-<span>  y_labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">label_percent</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span>  y_labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">label_percent</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  second_y_labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_number.html" class="external-link">label_comma</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  y_log10 <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -124,17 +133,38 @@ rate (<code>q_obs</code>) for <code>exp_df</code> objects and the observed utili
 <code>mapping</code> is supplied, the <code>x</code>, <code>y</code>, and <code>color</code> arguments will be ignored.</p></dd>
 
 
+<dt>second_axis</dt>
+<dd><p>Logical. If <code>TRUE</code>, the variable specified by
+<code>second_y</code> (default = exposure) is plotted on a second
+y-axis. An area geometry is used if the <code>x</code> variable is numeric. If not,
+bars are plotted.</p></dd>
+
+
+<dt>second_y</dt>
+<dd><p>An unquoted column name in <code>object</code> to use as the <code>y</code>
+variable on the second y-axis. If unspecified, this will default to
+<code>exposure</code>.</p></dd>
+
+
 <dt>scales</dt>
 <dd><p>The <code>scales</code> argument passed to <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">ggplot2::facet_wrap()</a></code>.</p></dd>
 
 
 <dt>geoms</dt>
 <dd><p>Type of geometry. If "lines" is passed, the plot will
-display lines and points. If "lines", the plot will display bars.</p></dd>
+display lines and points. If "bars", the plot will display bars.</p></dd>
 
 
 <dt>y_labels</dt>
 <dd><p>Label function passed to <code><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">ggplot2::scale_y_continuous()</a></code>.</p></dd>
+
+
+<dt>second_y_labels</dt>
+<dd><p>Same as <code>y_labels</code>, but for the second y-axis.</p></dd>
+
+
+<dt>y_log10</dt>
+<dd><p>If <code>TRUE</code>, the y-axes are plotted on a log-10 scale.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -154,7 +184,29 @@ variables 3 and up as facets. These variables are passed into
 <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">ggplot2::facet_wrap()</a></code>. Specific to <code>trx_df</code> objects, transaction
 type (<code>trx_type</code>) will also be added as a faceting variable.</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="plot_special.html">plot_termination_rates()</a></code>, <code><a href="plot_special.html">plot_actual_to_expected()</a></code></p></div>
+    </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">study_py</span> <span class="op">&lt;-</span> <span class="fu"><a href="expose.html">expose_py</a></span><span class="op">(</span><span class="va">census_dat</span>, <span class="st">"2019-12-31"</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">study_py</span> <span class="op">&lt;-</span> <span class="va">study_py</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="add_transactions.html">add_transactions</a></span><span class="op">(</span><span class="va">withdrawals</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">exp_res</span> <span class="op">&lt;-</span> <span class="va">study_py</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="autoplot_exp-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">trx_res</span> <span class="op">&lt;-</span> <span class="va">study_py</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="trx_stats.html">trx_stats</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">trx_res</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="autoplot_exp-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

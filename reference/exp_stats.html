@@ -12,7 +12,7 @@ given target status."><meta property="og:image" content="https://mattheaphy.gith
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,7 @@ given target status."><meta property="og:image" content="https://mattheaphy.gith
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
     <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a>
     <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
@@ -85,24 +86,24 @@ given target status.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>a data frame with exposure-level records, ideally of type <code>exposed_df</code></p></dd>
+<dd><p>A data frame with exposure-level records, ideally of type <code>exposed_df</code></p></dd>
 
 
 <dt>target_status</dt>
-<dd><p>a character vector of target status values</p></dd>
+<dd><p>A character vector of target status values</p></dd>
 
 
 <dt>expected</dt>
-<dd><p>a character vector containing column names in <code>.data</code>
+<dd><p>A character vector containing column names in <code>.data</code>
 with expected values</p></dd>
 
 
 <dt>col_exposure</dt>
-<dd><p>name of the column in <code>.data</code> containing exposures</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing exposures</p></dd>
 
 
 <dt>col_status</dt>
-<dd><p>name of the column in <code>.data</code> containing the policy status</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing the policy status</p></dd>
 
 
 <dt>wt</dt>
@@ -112,25 +113,25 @@ exposures, and partial credibility.</p></dd>
 
 
 <dt>credibility</dt>
-<dd><p>whether the output should include partial credibility
-weights and credibility-weighted decrement rates.</p></dd>
+<dd><p>Whether the output should include partial credibility
+weights and credibility-weighted termination rates.</p></dd>
 
 
 <dt>cred_p</dt>
-<dd><p>confidence level under the Limited Fluctuation credibility method</p></dd>
+<dd><p>Confidence level under the Limited Fluctuation credibility method</p></dd>
 
 
 <dt>cred_r</dt>
-<dd><p>error tolerance under the Limited Fluctuation credibility
+<dd><p>Error tolerance under the Limited Fluctuation credibility
 method</p></dd>
 
 
 <dt>object</dt>
-<dd><p>an <code>exp_df</code> object</p></dd>
+<dd><p>An <code>exp_df</code> object</p></dd>
 
 
 <dt>...</dt>
-<dd><p>groups to retain after <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> is called</p></dd>
+<dd><p>Groups to retain after <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> is called</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -139,12 +140,13 @@ method</p></dd>
 
 <p>A tibble with class <code>exp_df</code>, <code>tbl_df</code>, <code>tbl</code>,
 and <code>data.frame</code>. The results include columns for any grouping
-variables, claims, exposures, and observed decrement rates (<code>q_obs</code>).
+variables, claims, exposures, and observed termination rates (<code>q_obs</code>).
 If any values are passed to <code>expected</code>, additional columns will be
-added for expected decrements and actual-to-expected ratios. If
+added for expected termination rates and actual-to-expected ratios. If
 <code>credibility</code> is set to <code>TRUE</code>, additional columns are added
-for partial credibility and credibility-weighted decrement rates
-(assuming values are passed to <code>expected</code>).</p>
+for partial credibility and credibility-weighted termination rates
+(assuming values are passed to <code>expected</code>). Credibility-weighted termination
+rates are prefixed by <code>adj_</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

@@ -12,7 +12,7 @@ and utilization rates."><meta property="og:image" content="https://mattheaphy.gi
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,7 @@ and utilization rates."><meta property="og:image" content="https://mattheaphy.gi
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
     <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a>
     <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
@@ -82,7 +83,7 @@ and utilization rates.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>a data frame with exposure-level records of type
+<dd><p>A data frame with exposure-level records of type
 <code>exposed_df</code> with transaction data attached. If necessary, use
 <code><a href="is_exposed_df.html">as_exposed_df()</a></code> to convert a data frame to an <code>exposed_df</code> object, and use
 <code><a href="add_transactions.html">add_transactions()</a></code> to attach transactions to an <code>exposed_df</code> object.</p></dd>
@@ -107,7 +108,7 @@ results across all transaction types.</p></dd>
 
 
 <dt>col_exposure</dt>
-<dd><p>name of the column in <code>.data</code> containing exposures</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing exposures</p></dd>
 
 
 <dt>full_exposures_only</dt>
@@ -116,11 +117,11 @@ be excluded from <code>data</code>.</p></dd>
 
 
 <dt>object</dt>
-<dd><p>an <code>trx_df</code> object</p></dd>
+<dd><p>A <code>trx_df</code> object</p></dd>
 
 
 <dt>...</dt>
-<dd><p>groups to retain after <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> is called</p></dd>
+<dd><p>Groups to retain after <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> is called</p></dd>
 
 </dl></div>
     <div class="section level2">

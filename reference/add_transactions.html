@@ -12,7 +12,7 @@ exposure-level records."><meta property="og:image" content="https://mattheaphy.g
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,7 @@ exposure-level records."><meta property="og:image" content="https://mattheaphy.g
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
     <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a>
     <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
@@ -79,34 +80,34 @@ exposure-level records.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>a data frame with exposure-level records with the class
+<dd><p>A data frame with exposure-level records with the class
 <code>exposed_df</code>. Use <code><a href="is_exposed_df.html">as_exposed_df()</a></code> to convert a data frame to an
 <code>exposed_df</code> object if necessary.</p></dd>
 
 
 <dt>trx_data</dt>
-<dd><p>a data frame containing transactions details. This data
+<dd><p>A data frame containing transactions details. This data
 frame must have columns for policy numbers, transaction dates, transaction
 types, and transaction amounts.</p></dd>
 
 
 <dt>col_pol_num</dt>
-<dd><p>name of the column in <code>trx_data</code> containing the policy
+<dd><p>Name of the column in <code>trx_data</code> containing the policy
 number</p></dd>
 
 
 <dt>col_trx_date</dt>
-<dd><p>name of the column in <code>trx_data</code> containing the
+<dd><p>Name of the column in <code>trx_data</code> containing the
 transaction date</p></dd>
 
 
 <dt>col_trx_type</dt>
-<dd><p>name of the column in <code>trx_data</code> containing the
+<dd><p>Name of the column in <code>trx_data</code> containing the
 transaction type</p></dd>
 
 
 <dt>col_trx_amt</dt>
-<dd><p>name of the column in <code>trx_data</code> containing the
+<dd><p>Name of the column in <code>trx_data</code> containing the
 transaction amount</p></dd>
 
 </dl></div>

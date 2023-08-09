@@ -28,6 +28,9 @@
     <loc>https://mattheaphy.github.io/actxps/articles/transactions.html</loc>
   </url>
   <url>
+    <loc>https://mattheaphy.github.io/actxps/articles/visualizations.html</loc>
+  </url>
+  <url>
     <loc>https://mattheaphy.github.io/actxps/authors.html</loc>
   </url>
   <url>
@@ -35,6 +38,9 @@
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/news/index.html</loc>
+  </url>
+  <url>
+    <loc>https://mattheaphy.github.io/actxps/reference/actxps-package.html</loc>
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/reference/add_predictions.html</loc>
@@ -62,6 +68,12 @@
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/reference/is_exposed_df.html</loc>
+  </url>
+  <url>
+    <loc>https://mattheaphy.github.io/actxps/reference/plot_special.html</loc>
+  </url>
+  <url>
+    <loc>https://mattheaphy.github.io/actxps/reference/plot_special_trx.html</loc>
   </url>
   <url>
     <loc>https://mattheaphy.github.io/actxps/reference/pol_yr.html</loc>

@@ -12,7 +12,7 @@ records."><meta property="og:image" content="https://mattheaphy.github.io/actxps
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,7 @@ records."><meta property="og:image" content="https://mattheaphy.github.io/actxps
     <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
     <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
     <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
+    <a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a>
     <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
   </div>
 </li>
@@ -100,51 +101,51 @@ records.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>a data frame with census-level records</p></dd>
+<dd><p>A data frame with census-level records</p></dd>
 
 
 <dt>end_date</dt>
-<dd><p>experience study end date</p></dd>
+<dd><p>Experience study end date</p></dd>
 
 
 <dt>start_date</dt>
-<dd><p>experience study start date. Default value = 1900-01-01.</p></dd>
+<dd><p>Experience study start date. Default value = 1900-01-01.</p></dd>
 
 
 <dt>target_status</dt>
-<dd><p>character vector of target status values. Default value = <code>NULL</code>.</p></dd>
+<dd><p>Character vector of target status values. Default value = <code>NULL</code>.</p></dd>
 
 
 <dt>cal_expo</dt>
-<dd><p>set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.</p></dd>
+<dd><p>Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.</p></dd>
 
 
 <dt>expo_length</dt>
-<dd><p>exposure period length</p></dd>
+<dd><p>Exposure period length</p></dd>
 
 
 <dt>col_pol_num</dt>
-<dd><p>name of the column in <code>.data</code> containing the policy number</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing the policy number</p></dd>
 
 
 <dt>col_status</dt>
-<dd><p>name of the column in <code>.data</code> containing the policy status</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing the policy status</p></dd>
 
 
 <dt>col_issue_date</dt>
-<dd><p>name of the column in <code>.data</code> containing the issue date</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing the issue date</p></dd>
 
 
 <dt>col_term_date</dt>
-<dd><p>name of the column in <code>.data</code> containing the termination date</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing the termination date</p></dd>
 
 
 <dt>default_status</dt>
-<dd><p>optional scalar character representing the default active status code</p></dd>
+<dd><p>Optional scalar character representing the default active status code</p></dd>
 
 
 <dt>...</dt>
-<dd><p>arguments passed to <code>expose()</code></p></dd>
+<dd><p>Arguments passed to <code>expose()</code></p></dd>
 
 </dl></div>
     <div class="section level2">
