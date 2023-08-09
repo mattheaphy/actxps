@@ -16,9 +16,9 @@
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
 #' @param colorful If `TRUE`, color will be added to the the observed
-#' decrement rate and actual-to-expected columns for termination studies, and
+#' termination rate and actual-to-expected columns for termination studies, and
 #' the utilization rate and "percentage of" columns for transaction studies.
-#' @param color_q_obs Color palette used for the observed decrement rate.
+#' @param color_q_obs Color palette used for the observed termination rate.
 #' @param color_ae_ Color palette used for actual-to-expected rates.
 #' @param color_util Color palette used for utilization rates.
 #' @param color_pct_of Color palette used for "percentage of" columns.
@@ -31,10 +31,33 @@
 #'
 #' @details
 #'
-#' See [paletteer::paletteer_d()]'s `palette` argument for usage of
-#' the `color_q_obs` and `color_ae_` arguments.
+#' The `color_q_obs`, `color_ae_`, `color_util`, and `color_pct_of` arguments
+#' must be strings referencing a discrete color palette available in the
+#' `paletteer` package. Palettes must be in the form "package::palette".
+#' For a full list of available palettes, see [paletteer::palettes_d_names].
 #'
 #' @return a `gt` object
+#'
+#' @examples
+#'
+#' if (interactive()) {
+#'   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+#'   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+#'
+#'   study_py <- study_py |>
+#'     mutate(expected_1 = expected_table[pol_yr],
+#'            expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+#'     add_transactions(withdrawals) |>
+#'     left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+#'
+#'   exp_res <- study_py |> group_by(pol_yr) |>
+#'     exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
+#'   autotable(exp_res)
+#'
+#'   trx_res <- study_py |> group_by(pol_yr) |>
+#'     trx_stats(percent_of = "av_anniv")
+#'   autotable(trx_res)
+#' }
 #'
 #' @importFrom rlang :=
 #'
@@ -191,7 +214,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
 
   if (colorful) {
 
-    domain_pct <- if(!is.null(percent_of)) {
+    domain_pct <- if (!is.null(percent_of)) {
       object |>
         select(dplyr::starts_with('pct_of')) |>
         range(na.rm = TRUE)

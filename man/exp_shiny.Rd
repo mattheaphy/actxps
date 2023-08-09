@@ -8,28 +8,43 @@ exp_shiny(
   dat,
   predictors = names(dat),
   expected = names(dat)[grepl("expected", names(dat))],
-  distinct_max = 25L
+  distinct_max = 25L,
+  title,
+  credibility = TRUE,
+  cred_p = 0.95,
+  cred_r = 0.05
 )
 }
 \arguments{
 \item{dat}{An \code{exposed_df} object.}
 
 \item{predictors}{A character vector of independent variables in \code{dat} to
-include in the shiny app.}
+include in the Shiny app.}
 
 \item{expected}{A character vector of expected values in \code{dat} to include
-in the shiny app.}
+in the Shiny app.}
 
 \item{distinct_max}{Maximum number of distinct values allowed for \code{predictors}
 to be included as "Color" and "Facets" grouping variables. This input
 prevents the drawing of overly complex plots. Default value = 25.}
+
+\item{title}{Optional. Title of the Shiny app. If no title is provided,
+a descriptive title will be generated based on attributes of \code{dat}.}
+
+\item{credibility}{Whether the output should include partial credibility
+weights and credibility-weighted termination rates.}
+
+\item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
+
+\item{cred_r}{Error tolerance under the Limited Fluctuation credibility
+method}
 }
 \value{
 No return value. This function is called for the side effect of
-launching a shiny application.
+launching a Shiny application.
 }
 \description{
-Launch a shiny application to interactively explore drivers of
+Launch a Shiny application to interactively explore drivers of
 experience.
 
 \code{dat} must be an \code{exposed_df} object. An error will be thrown is any other
@@ -100,7 +115,10 @@ This tab includes a plot and various options for customization:
 \item y: y variable
 \item Geometry: plotting geometry
 \item Add Smoothing?: activate to plot loess curves
-\item Free y Scales: activate to enable separate y scales in each plot.
+\item Second y-axis?: activate to enable a second y-axis
+\item Second axis y: y variable to plot on the second axis
+\item Free y Scales: activate to enable separate y scales in each plot
+\item Log y-axis: activate to plot all y-axes on a log-10 scale
 }
 }
 
@@ -132,10 +150,10 @@ if (interactive()) {
   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
   study_py <- study_py |>
-  mutate(expected_1 = expected_table[pol_yr],
-                expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
-  add_transactions(withdrawals) |>
-  left_join(account_vals, by = c("pol_num", "pol_date_yr"))
+    mutate(expected_1 = expected_table[pol_yr],
+           expected_2 = ifelse(inc_guar, 0.015, 0.03)) |>
+    add_transactions(withdrawals) |>
+    left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 
   exp_shiny(study_py)
 }

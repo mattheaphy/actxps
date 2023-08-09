@@ -13,9 +13,13 @@
   y = NULL,
   color = NULL,
   mapping,
+  second_axis = FALSE,
+  second_y = NULL,
   scales = "fixed",
   geoms = c("lines", "bars"),
-  y_labels = scales::label_percent(accuracy = 0.1)
+  y_labels = scales::label_percent(accuracy = 0.1),
+  second_y_labels = scales::label_comma(accuracy = 1),
+  y_log10 = FALSE
 )
 
 \method{autoplot}{trx_df}(
@@ -25,9 +29,13 @@
   y = NULL,
   color = NULL,
   mapping,
+  second_axis = FALSE,
+  second_y = NULL,
   scales = "fixed",
   geoms = c("lines", "bars"),
-  y_labels = scales::label_percent(accuracy = 0.1)
+  y_labels = scales::label_percent(accuracy = 0.1),
+  second_y_labels = scales::label_comma(accuracy = 1),
+  y_log10 = FALSE
 )
 }
 \arguments{
@@ -51,12 +59,25 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 \item{mapping}{Aesthetic mapping passed to \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}. NOTE: If
 \code{mapping} is supplied, the \code{x}, \code{y}, and \code{color} arguments will be ignored.}
 
+\item{second_axis}{Logical. If \code{TRUE}, the variable specified by
+\code{second_y} (default = exposure) is plotted on a second
+y-axis. An area geometry is used if the \code{x} variable is numeric. If not,
+bars are plotted.}
+
+\item{second_y}{An unquoted column name in \code{object} to use as the \code{y}
+variable on the second y-axis. If unspecified, this will default to
+\code{exposure}.}
+
 \item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
 \item{geoms}{Type of geometry. If "lines" is passed, the plot will
-display lines and points. If "lines", the plot will display bars.}
+display lines and points. If "bars", the plot will display bars.}
 
 \item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
+
+\item{second_y_labels}{Same as \code{y_labels}, but for the second y-axis.}
+
+\item{y_log10}{If \code{TRUE}, the y-axes are plotted on a log-10 scale.}
 }
 \value{
 a \code{ggplot} object
@@ -74,4 +95,21 @@ If no faceting variables are supplied, the plot will use grouping
 variables 3 and up as facets. These variables are passed into
 \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}. Specific to \code{trx_df} objects, transaction
 type (\code{trx_type}) will also be added as a faceting variable.
+}
+\examples{
+
+study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+
+study_py <- study_py |>
+  add_transactions(withdrawals)
+
+exp_res <- study_py |> group_by(pol_yr) |> exp_stats()
+autoplot(exp_res)
+
+trx_res <- study_py |> group_by(pol_yr) |> trx_stats()
+autoplot(trx_res)
+
+}
+\seealso{
+\code{\link[=plot_termination_rates]{plot_termination_rates()}}, \code{\link[=plot_actual_to_expected]{plot_actual_to_expected()}}
 }

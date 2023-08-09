@@ -12,19 +12,19 @@
 #' Transactions are associated with the `exposed_df` object by matching
 #' transactions dates with exposure dates ranges found in `exposed_df`.
 #'
-#' @param .data a data frame with exposure-level records with the class
+#' @param .data A data frame with exposure-level records with the class
 #' `exposed_df`. Use [as_exposed_df()] to convert a data frame to an
 #' `exposed_df` object if necessary.
-#' @param trx_data a data frame containing transactions details. This data
+#' @param trx_data A data frame containing transactions details. This data
 #' frame must have columns for policy numbers, transaction dates, transaction
 #' types, and transaction amounts.
-#' @param col_pol_num name of the column in `trx_data` containing the policy
+#' @param col_pol_num Name of the column in `trx_data` containing the policy
 #' number
-#' @param col_trx_date name of the column in `trx_data` containing the
+#' @param col_trx_date Name of the column in `trx_data` containing the
 #' transaction date
-#' @param col_trx_type name of the column in `trx_data` containing the
+#' @param col_trx_type Name of the column in `trx_data` containing the
 #' transaction type
-#' @param col_trx_amt name of the column in `trx_data` containing the
+#' @param col_trx_amt Name of the column in `trx_data` containing the
 #' transaction amount
 #'
 #' @examples
@@ -49,7 +49,7 @@ add_transactions <- function(.data, trx_data,
 
   verify_exposed_df(.data)
 
-  if(!is.data.frame(trx_data)) {
+  if (!is.data.frame(trx_data)) {
     rlang::abort(c(x = "`trx_data` must be a data frame."))
   }
 

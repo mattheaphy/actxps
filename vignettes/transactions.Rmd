@@ -12,6 +12,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+actxps:::set_actxps_plot_theme()
 ```
 
 This article walks through an example of creating a **transaction study** using the actxps package. Unlike a termination study, transaction studies track events that can occur multiple times over the life of a policy. Often, transactions are expected to reoccur; for example, the utilization of a guaranteed income stream.
@@ -166,26 +168,22 @@ glimpse(trx_res)
 
 The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables from `trx_df` objects.
 
-```{r trx-plot, warning=FALSE, message=FALSE, dpi = 400}
+```{r trx-plot, warning=FALSE, message=FALSE, fig.height=5.5, fig.width=7}
 
 library(ggplot2)
-
-.colors <- c("#eb15e4", "#7515eb")
-theme_set(theme_light())
 
 trx_res |>
   # remove periods with zero transactions
   filter(trx_n > 0) |> 
-  autoplot(y = pct_of_av_anniv_w_trx) +
-  scale_color_manual(values = .colors) +
-  labs(title = "Observed Withdrawal Rates by Policy Year and Income Guarantee Presence")
-
+  autoplot(y = pct_of_av_anniv_w_trx)
 ```
 
 ```{r trx-table, eval = FALSE}
 trx_res |> 
   # remove periods with zero transactions
   filter(trx_n > 0) |> 
+  # first 10 rows showed for brevity
+  head(10) |> 
   autotable()
 ```
 

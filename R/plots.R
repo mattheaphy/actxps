@@ -14,10 +14,19 @@
 #' `color` and `fill` variables.
 #' @param mapping Aesthetic mapping passed to [ggplot2::ggplot()]. NOTE: If
 #' `mapping` is supplied, the `x`, `y`, and `color` arguments will be ignored.
+#' @param second_axis Logical. If `TRUE`, the variable specified by
+#' `second_y` (default = exposure) is plotted on a second
+#' y-axis. An area geometry is used if the `x` variable is numeric. If not,
+#' bars are plotted.
+#' @param second_y An unquoted column name in `object` to use as the `y`
+#' variable on the second y-axis. If unspecified, this will default to
+#' `exposure`.
 #' @param scales The `scales` argument passed to [ggplot2::facet_wrap()].
 #' @param geoms Type of geometry. If "lines" is passed, the plot will
-#' display lines and points. If "lines", the plot will display bars.
+#' display lines and points. If "bars", the plot will display bars.
 #' @param y_labels Label function passed to [ggplot2::scale_y_continuous()].
+#' @param second_y_labels Same as `y_labels`, but for the second y-axis.
+#' @param y_log10 If `TRUE`, the y-axes are plotted on a log-10 scale.
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
 #' grouping variable in `object` on the x axis and `q_obs` on the y
@@ -31,31 +40,67 @@
 #'
 #' @return a `ggplot` object
 #'
+#' @examples
+#'
+#' study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
+#'
+#' study_py <- study_py |>
+#'   add_transactions(withdrawals)
+#'
+#' exp_res <- study_py |> group_by(pol_yr) |> exp_stats()
+#' autoplot(exp_res)
+#'
+#' trx_res <- study_py |> group_by(pol_yr) |> trx_stats()
+#' autoplot(trx_res)
+#'
+#' @seealso [plot_termination_rates()], [plot_actual_to_expected()]
+#'
 #' @name autoplot_exp
 #' @rdname autoplot_exp
 #' @export
 autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
-                            mapping, scales = "fixed",
-                            geoms = c("lines", "bars"),
-                            y_labels = scales::label_percent(accuracy = 0.1)) {
+                            mapping, second_axis = FALSE, second_y = NULL,
+                            scales = "fixed", geoms = c("lines", "bars"),
+                            y_labels = scales::label_percent(accuracy = 0.1),
+                            second_y_labels = scales::label_comma(
+                              accuracy = 1),
+                            y_log10 = FALSE) {
 
   y <- rlang::enexpr(y)
   y <- if (is.null(y)) rlang::expr(q_obs) else y
 
+  second_y <- rlang::enexpr(second_y)
+  second_y <- if (is.null(second_y)) {
+    rlang::expr(exposure)
+  } else {
+    second_y
+  }
+
   plot_experience(object, rlang::enexpr(x), y,
-                  rlang::enexpr(color), mapping, scales, geoms,
-                  y_labels, rlang::enquos(...))
+                  rlang::enexpr(color), mapping, second_axis, second_y,
+                  scales, geoms, y_labels, second_y_labels, rlang::enquos(...),
+                  y_log10)
 }
 
 #' @rdname autoplot_exp
 #' @export
 autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
-                            mapping, scales = "fixed",
-                            geoms = c("lines", "bars"),
-                            y_labels = scales::label_percent(accuracy = 0.1)) {
+                            mapping, second_axis = FALSE, second_y = NULL,
+                            scales = "fixed", geoms = c("lines", "bars"),
+                            y_labels = scales::label_percent(accuracy = 0.1),
+                            second_y_labels = scales::label_comma(
+                              accuracy = 1),
+                            y_log10 = FALSE) {
 
   y <- rlang::enexpr(y)
   y <- if (is.null(y)) rlang::expr(trx_util) else y
+
+  second_y <- rlang::enexpr(second_y)
+  second_y <- if (is.null(second_y)) {
+    rlang::expr(exposure)
+  } else {
+    second_y
+  }
 
   facets <- rlang::enquos(...)
   if (length(facets) == 0) {
@@ -63,25 +108,31 @@ autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
   }
 
   plot_experience(object, rlang::enexpr(x), y,
-                  rlang::enexpr(color), mapping, scales, geoms,
-                  y_labels, facets)
+                  rlang::enexpr(color), mapping, second_axis, second_y,
+                  scales, geoms, y_labels, second_y_labels, facets,
+                  y_log10)
 }
 
 plot_experience <- function(
     object, x = NULL, y = NULL, color = NULL,
-    mapping, scales = "fixed",
+    mapping,
+    second_axis = FALSE,
+    second_y = NULL,
+    scales = "fixed",
     geoms = c("lines", "bars"),
     y_labels = scales::label_percent(accuracy = 0.1),
-    facets) {
+    second_y_labels = scales::label_comma(accuracy = 1),
+    facets,
+    y_log10) {
 
   .groups <- groups(object)
-  if(length(.groups) == 0) {
+  if (length(.groups) == 0) {
     .groups <- list(rlang::parse_expr("All"))
     object[["All"]] <- ""
   }
 
   auto_aes <- function(.var, default) {
-    if(length(.var) == 0) {
+    if (length(.var) == 0) {
       if (length(.groups) < default) NULL else .groups[[default]]
     } else {
       .var
@@ -91,20 +142,52 @@ plot_experience <- function(
   geoms <- match.arg(geoms)
 
   # set up aesthetics
-  if(missing(mapping)) {
+  if (missing(mapping)) {
     x <- auto_aes(x, 1)
     color <- auto_aes(color, 2)
+    if (!is.null(color) && as.character(color) == ".no_color") color <- NULL
     mapping <- ggplot2::aes(!!x, !!y, color = !!color,
                             fill = !!color, group = !!color)
   }
 
-  if(length(facets) == 0) {
+  if (length(facets) == 0) {
     facets <- .groups[-(1:2)]
     if (length(facets) == 0) facets <- NULL
   }
 
-  p <- ggplot2::ggplot(object, mapping) +
-    ggplot2::scale_y_continuous(labels = y_labels)
+  y_trans <- if (y_log10) {
+    "log10"
+  } else {
+    "identity"
+  }
+
+  p <- ggplot2::ggplot(object, mapping)
+
+  if (second_axis) {
+    adj <- max(object |> dplyr::pull(!!second_y), na.rm = TRUE) /
+      max(object |> dplyr::pull(!!mapping$y), na.rm = TRUE)
+    if (dplyr::pull(object, !!mapping$x) |> is.numeric()) {
+      geom.fun <- ggplot2::geom_area
+    } else {
+      geom.fun <- ggplot2::geom_col
+    }
+    p <- p + geom.fun(ggplot2::aes(y = !!second_y),
+                      data = object |>
+                        mutate(!!second_y := !!second_y /
+                                 adj),
+                      alpha = 0.2, position = "identity") +
+      ggplot2::scale_y_continuous(
+        sec.axis =
+          ggplot2::sec_axis(~ . * adj,
+                            labels = second_y_labels,
+                            name = as.character(second_y)),
+        labels = y_labels,
+        trans = y_trans)
+  } else {
+    p <- p + ggplot2::scale_y_continuous(
+      labels = y_labels,
+      trans = y_trans)
+  }
 
   if (geoms == "lines") {
     p <- p + ggplot2::geom_point() + ggplot2::geom_line()

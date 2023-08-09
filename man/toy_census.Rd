@@ -7,10 +7,10 @@
 \format{
 A data frame with 3 rows and 4 columns:
 \describe{
-\item{pol_num}{policy number}
-\item{status}{policy status}
-\item{issue_date}{issue date}
-\item{term_date}{termination date}
+\item{pol_num}{Policy number}
+\item{status}{Policy status}
+\item{issue_date}{Issue date}
+\item{term_date}{Termination date}
 }
 }
 \usage{

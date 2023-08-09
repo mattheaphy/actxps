@@ -12,6 +12,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+actxps:::set_actxps_plot_theme()
+
 ```
 
 This article is based on creating a termination study using sample data that 
@@ -125,22 +128,13 @@ exp_res
 
 The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables.
 
-```{r plot, warning=FALSE, message=FALSE, dpi = 400}
-
-library(ggplot2)
-
-.colors <- c("#eb15e4", "#7515eb")
-theme_set(theme_light())
-
-exp_res |>
-  autoplot() +
-  scale_color_manual(values = .colors) +
-  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
-
+```{r plot, warning=FALSE, message=FALSE, dpi = 300}
+autoplot(exp_res)
 ```
 
 ```{r table, eval = FALSE}
-autotable(exp_res)
+# first 10 rows showed for brevity
+exp_res |> head(10) |> autotable()
 ```
 
 <center><img src="../man/figures/exp_gt.png" width="55%" height="55%" /></center>
@@ -161,7 +155,7 @@ summary(exp_res, inc_guar)
 
 ## Shiny App
 
-Passing an `exposed_df` object to the `exp_shiny()` function launches a shiny app that enables interactive exploration of experience data.
+Passing an `exposed_df` object to the `exp_shiny()` function launches a Shiny app that enables interactive exploration of experience data.
 
 ```{r shiny, eval = FALSE}
 exp_shiny(exposed_data)

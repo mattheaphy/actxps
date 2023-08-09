@@ -20,42 +20,43 @@ exp_stats(
 \method{summary}{exp_df}(object, ...)
 }
 \arguments{
-\item{.data}{a data frame with exposure-level records, ideally of type \code{exposed_df}}
+\item{.data}{A data frame with exposure-level records, ideally of type \code{exposed_df}}
 
-\item{target_status}{a character vector of target status values}
+\item{target_status}{A character vector of target status values}
 
-\item{expected}{a character vector containing column names in \code{.data}
+\item{expected}{A character vector containing column names in \code{.data}
 with expected values}
 
-\item{col_exposure}{name of the column in \code{.data} containing exposures}
+\item{col_exposure}{Name of the column in \code{.data} containing exposures}
 
-\item{col_status}{name of the column in \code{.data} containing the policy status}
+\item{col_status}{Name of the column in \code{.data} containing the policy status}
 
 \item{wt}{Optional. Length 1 character vector. Name of the column in
 \code{.data} containing weights to use in the calculation of claims,
 exposures, and partial credibility.}
 
-\item{credibility}{whether the output should include partial credibility
-weights and credibility-weighted decrement rates.}
+\item{credibility}{Whether the output should include partial credibility
+weights and credibility-weighted termination rates.}
 
-\item{cred_p}{confidence level under the Limited Fluctuation credibility method}
+\item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
 
-\item{cred_r}{error tolerance under the Limited Fluctuation credibility
+\item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
 
-\item{object}{an \code{exp_df} object}
+\item{object}{An \code{exp_df} object}
 
-\item{...}{groups to retain after \code{summary()} is called}
+\item{...}{Groups to retain after \code{summary()} is called}
 }
 \value{
 A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include columns for any grouping
-variables, claims, exposures, and observed decrement rates (\code{q_obs}).
+variables, claims, exposures, and observed termination rates (\code{q_obs}).
 If any values are passed to \code{expected}, additional columns will be
-added for expected decrements and actual-to-expected ratios. If
+added for expected termination rates and actual-to-expected ratios. If
 \code{credibility} is set to \code{TRUE}, additional columns are added
-for partial credibility and credibility-weighted decrement rates
-(assuming values are passed to \code{expected}).
+for partial credibility and credibility-weighted termination rates
+(assuming values are passed to \code{expected}). Credibility-weighted termination
+rates are prefixed by \code{adj_}.
 }
 \description{
 Create a summary data frame of termination experience for a

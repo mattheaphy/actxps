@@ -31,11 +31,11 @@ created.}
 \item{trained}{A logical to indicate if the quantities for
 preprocessing have been estimated.}
 
-\item{end_date}{experience study end date}
+\item{end_date}{Experience study end date}
 
-\item{start_date}{experience study start date. Default value = 1900-01-01.}
+\item{start_date}{Experience study start date. Default value = 1900-01-01.}
 
-\item{target_status}{character vector of target status values. Default value = \code{NULL}.}
+\item{target_status}{Character vector of target status values. Default value = \code{NULL}.}
 
 \item{options}{A named list of additional arguments passed to \code{\link[=expose]{expose()}}.}
 

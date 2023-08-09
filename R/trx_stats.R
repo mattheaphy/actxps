@@ -49,7 +49,7 @@
 #' data while retaining any grouping variables passed to the "dots"
 #' (`...`).
 #'
-#' @param .data a data frame with exposure-level records of type
+#' @param .data A data frame with exposure-level records of type
 #' `exposed_df` with transaction data attached. If necessary, use
 #' [as_exposed_df()] to convert a data frame to an `exposed_df` object, and use
 #' [add_transactions()] to attach transactions to an `exposed_df` object.
@@ -66,13 +66,13 @@
 #' for each transaction type. If `TRUE`, the results will contains aggregated
 #' results across all transaction types.
 #'
-#' @param col_exposure name of the column in `.data` containing exposures
+#' @param col_exposure Name of the column in `.data` containing exposures
 #'
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
 #'
-#' @param object an `trx_df` object
-#' @param ... groups to retain after `summary()` is called
+#' @param object A `trx_df` object
+#' @param ... Groups to retain after `summary()` is called
 #'
 #' @return A tibble with class `trx_df`, `tbl_df`, `tbl`,
 #' and `data.frame`. The results include columns for any grouping
@@ -121,7 +121,7 @@ trx_stats <- function(.data,
   # verify transaction types
   all_trx_types <- verify_get_trx_types(.data)
 
-  if(missing(trx_types)) {
+  if (missing(trx_types)) {
     trx_types <- all_trx_types
   } else {
     unmatched <- setdiff(trx_types, all_trx_types)
@@ -136,7 +136,7 @@ trx_stats <- function(.data,
   .data <- .data |> rename(exposure = {{col_exposure}})
 
   # remove partial exposures
-  if(full_exposures_only) {
+  if (full_exposures_only) {
     .data <- filter(.data, dplyr::near(exposure, 1))
   }
 
@@ -252,4 +252,12 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      start_date = start_date,
                      percent_of = percent_of,
                      end_date = end_date)
+}
+
+verify_trx_df <- function(.data) {
+  if (!inherits(.data, "trx_df")) {
+    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be a `trx_df` object."),
+                   i = "Hint: Use `trx_stats()` to create `trx_df` objects."
+    ))
+  }
 }

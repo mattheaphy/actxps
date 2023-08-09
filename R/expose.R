@@ -43,18 +43,18 @@
 #' - `m` = months
 #' - `w` = weeks
 #'
-#' @param .data a data frame with census-level records
-#' @param end_date experience study end date
-#' @param start_date experience study start date. Default value = 1900-01-01.
-#' @param target_status character vector of target status values. Default value = `NULL`.
-#' @param cal_expo set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.
-#' @param expo_length exposure period length
-#' @param col_pol_num name of the column in `.data` containing the policy number
-#' @param col_status name of the column in `.data` containing the policy status
-#' @param col_issue_date name of the column in `.data` containing the issue date
-#' @param col_term_date name of the column in `.data` containing the termination date
-#' @param default_status optional scalar character representing the default active status code
-#' @param ... arguments passed to `expose()`
+#' @param .data A data frame with census-level records
+#' @param end_date Experience study end date
+#' @param start_date Experience study start date. Default value = 1900-01-01.
+#' @param target_status Character vector of target status values. Default value = `NULL`.
+#' @param cal_expo Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.
+#' @param expo_length Exposure period length
+#' @param col_pol_num Name of the column in `.data` containing the policy number
+#' @param col_status Name of the column in `.data` containing the policy status
+#' @param col_issue_date Name of the column in `.data` containing the issue date
+#' @param col_term_date Name of the column in `.data` containing the termination date
+#' @param default_status Optional scalar character representing the default active status code
+#' @param ... Arguments passed to `expose()`
 #'
 #' @return A tibble with class `exposed_df`, `tbl_df`, `tbl`,
 #' and `data.frame`. The results include all existing columns in
@@ -123,7 +123,7 @@ expose <- function(.data,
     .expo_name_conflict(cal_expo, expo_length)
 
   # set up statuses
-  if(!is.factor(.data$status)) .data$status <- factor(.data$status)
+  if (!is.factor(.data$status)) .data$status <- factor(.data$status)
 
   if (missing(default_status)) {
     default_status <- factor(levels(.data$status)[[1]],

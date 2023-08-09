@@ -13,6 +13,9 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+actxps:::set_actxps_plot_theme()
+
 ```
 
 # actxps <a href="https://mattheaphy.github.io/actxps/"><img src="man/figures/logo.png" align="right" height="138" /></a>
@@ -118,31 +121,22 @@ exp_res
 
 Create visualizations using the `autoplot()` and `autotable()` functions.
 
-```{r plots, warning=FALSE, message=FALSE, dpi = 400}
-
-library(ggplot2)
-
-.colors <- c("#eb15e4", "#7515eb")
-theme_set(theme_light())
-
-exp_res |> 
-  autoplot() + 
-  scale_color_manual(values = .colors) + 
-  labs(title = "Observed Surrender Rates by Policy Year and Income Guarantee Presence")
-
+```{r plots, warning=FALSE, message=FALSE, dpi = 300}
+autoplot(exp_res)
 ```
 
 ```{r table1, eval = FALSE}
-autotable(exp_res)
+# first 10 rows showed for brevity
+exp_res |> head(10) |> autotable()
 ```
 
 ```{r table2, echo = FALSE}
-autotable(exp_res) |> gt::gtsave("man/figures/exp_gt.png")
+exp_res |> head(10) |> autotable() |> gt::gtsave("man/figures/exp_gt.png")
 ```
 
 <center><img src="man/figures/exp_gt.png" width="55%" height="55%" /></center>
 
-Launch a shiny app to interactively explore experience data.
+Launch a Shiny app to interactively explore experience data.
 
 ```{r shiny, eval = FALSE}
 exp_shiny(exposed_data)

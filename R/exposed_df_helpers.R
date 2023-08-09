@@ -10,7 +10,7 @@
 #' Optionally, if `x` has transaction counts and amounts by type, these can
 #' be specified without calling [add_transactions()].
 #'
-#' @param x an object. For `as_exposed_df()`, `x` must be a data frame.
+#' @param x An object. For `as_exposed_df()`, `x` must be a data frame.
 #' @param trx_types Optional. Character vector containing unique transaction
 #' types that have been attached to `x`. For each value in `trx_types`,
 #' `as_exposed_df` requires that columns exist in `x` named `trx_n_{*}` and
@@ -62,33 +62,33 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
                           col_trx_n_ = "trx_n_",
                           col_trx_amt_ = "trx_amt_") {
 
-  if(is_exposed_df(x)) return(x)
+  if (is_exposed_df(x)) return(x)
 
   expo_length <- rlang::arg_match(expo_length)
 
-  if(!is.data.frame(x)) {
+  if (!is.data.frame(x)) {
     rlang::abort("`x` must be a data frame.")
   }
 
   # column name alignment
-  if(!missing(col_pol_num)) x <- x |> rename(pol_num = {{col_pol_num}})
-  if(!missing(col_status)) x <- x |> rename(status = {{col_status}})
-  if(!missing(col_exposure)) x <- x |> rename(exposure = {{col_exposure}})
+  if (!missing(col_pol_num)) x <- x |> rename(pol_num = {{col_pol_num}})
+  if (!missing(col_status)) x <- x |> rename(status = {{col_status}})
+  if (!missing(col_exposure)) x <- x |> rename(exposure = {{col_exposure}})
 
   # column name alignment - policy exposure periods
   exp_col_pol_per <- if (!cal_expo) {
     abbrev <- abbr_period(expo_length)
     paste0("pol_", abbrev)
   }
-  if(!missing(col_pol_per) && !cal_expo) {
+  if (!missing(col_pol_per) && !cal_expo) {
     x <- x |> rename({{exp_col_pol_per}} := {{col_pol_per}})
   }
 
   # column name alignment - period start and end dates
   exp_cols_dates <- make_date_col_names(cal_expo, expo_length)
-  if(!missing(cols_dates)) {
+  if (!missing(cols_dates)) {
 
-    if(length(cols_dates) != 2 && is.character(cols_dates)) {
+    if (length(cols_dates) != 2 && is.character(cols_dates)) {
       rlang::abort("`cols_dates` must be a length 2 character vector")
     }
 
@@ -100,7 +100,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
   }
 
   # check transaction types
-  if(!is.null(trx_types)) {
+  if (!is.null(trx_types)) {
 
     trx_renamer <- function(x) {
       x <- gsub(paste0("^", col_trx_n_), "trx_n_", x)
@@ -124,7 +124,7 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
                  exp_cols_trx)
   unmatched <- setdiff(unmatched, names(x))
 
-  if(length(unmatched) > 0) {
+  if (length(unmatched) > 0) {
     rlang::abort(c(x = glue::glue("The following columns are missing from `x`: {paste(unmatched, collapse = ', ')}."),
                    i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
   }
@@ -144,7 +144,7 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
   tibble::new_tibble(x,
                      class = "exposed_df",
                      target_status = target_status,
-                     exposure_type = glue::glue("{if(cal_expo) 'calendar' else 'policy'}_{expo_length}") |>
+                     exposure_type = glue::glue("{if (cal_expo) 'calendar' else 'policy'}_{expo_length}") |>
                        as.character(),
                      start_date = start_date,
                      end_date = end_date,
@@ -292,7 +292,7 @@ anti_join.exposed_df <- function (x, y, by = NULL, copy = FALSE, ...) {
 
 
 # NULL coalesce function
-`%||%` <- function(x, y) if(is.null(x)) y else x
+`%||%` <- function(x, y) if (is.null(x)) y else x
 
 has_compatible_expo <- function(x, y) {
   x <- attr(x, "exposure_type")
@@ -454,7 +454,7 @@ make_date_col_names <- function(cal_expo, expo_length) {
 }
 
 verify_exposed_df <- function(.data) {
-  if(!is_exposed_df(.data)) {
+  if (!is_exposed_df(.data)) {
     rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be an `exposed_df` object."),
                    i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
     ))
@@ -466,7 +466,7 @@ verify_exposed_df <- function(.data) {
 # if returned
 verify_get_trx_types <- function(.data, required = TRUE) {
   trx_types <- attr(.data, "trx_types")
-  if(is.null(trx_types)) {
+  if (is.null(trx_types)) {
     if (required) {
       rlang::abort(c(x = "No transactions have been attached to `.data`.",
                      i = "Add transaction data using `add_transactions()` before calling this function."))

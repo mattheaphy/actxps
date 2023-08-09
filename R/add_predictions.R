@@ -20,7 +20,7 @@
 #' @param .data A data frame, preferably with the class `exposed_df`
 #' @param model A model object that has an S3 method for [predict()]
 #' @param ... Additional arguments passed to [predict()]
-#' @param col_expected NULL or a character vector containing column names for
+#' @param col_expected `NULL` or a character vector containing column names for
 #' each value returned by [predict()]
 #'
 #' @examples

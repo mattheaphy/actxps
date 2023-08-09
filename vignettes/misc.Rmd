@@ -12,6 +12,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+actxps:::set_actxps_plot_theme()
 ```
 
 
@@ -57,6 +59,51 @@ pol_interval(dates, "2022-05-10", days(1))
 
 # fortnights
 pol_interval(dates, "2022-05-10", weeks(2))
+
+```
+
+## Predictive modeling support functions
+
+The `add_predictions()` function can be used to attach predictions from any model with a `predict()` method.
+
+Below, a very simple logistic regression model is fit to surrender experience in the first ten policy years. Predictions from this model are then added to exposure records using `add_predictions()`. This function only requires a data frame of exposure records and a model with a `predict()` method. Often, it is necessary to specify additional model-specific arguments like `type` to ensure `predict()` returns the desired output. In the example below, `type` is set to "response" to return probabilities instead of the default predictions on the log-odds scale.
+
+The `col_expected` argument is used to rename the column(s) containing predicted values. If no names are specified, the default name is "expected".
+
+```{r add-preds, fig.height=4, fig.width=5}
+
+# create exposure records
+exposed_data <- expose(census_dat, end_date = "2019-12-31",
+                       target_status = "Surrender") |> 
+  filter(pol_yr <= 10) |> 
+  # add a response column for surrenders
+  mutate(surrendered = status == "Surrender")
+
+# create a simple logistic model
+mod <- glm(surrendered ~ pol_yr, data = exposed_data, 
+           family = "binomial", weights = exposure)
+
+exp_res <- exposed_data |> 
+  # attach predictions
+  add_predictions(mod, type = "response", col_expected = "logistic") |> 
+  # summarize results
+  group_by(pol_yr) |> 
+  exp_stats(expected = "logistic")
+ 
+# create a plot
+plot_termination_rates(exp_res)
+
+```
+
+
+
+In addition, for users of the tidymodels framework, the actxps package includes a recipe step function, `step_expose()`, that can apply the `expose()` function during data preprocessing.
+
+```{r recipe, warning=FALSE}
+library(recipes)
+
+recipe(~ ., data = census_dat) |> 
+  step_expose(end_date = "2019-12-31", target_status = "Surrender")
 
 ```
 

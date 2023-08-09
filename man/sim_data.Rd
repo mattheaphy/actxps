@@ -32,34 +32,34 @@ does not represent the experience on any specific product.
 }
 \section{Census data (\code{census_dat})}{
 \describe{
-\item{pol_num}{policy number}
-\item{status}{policy status: Active, Surrender, or Death}
-\item{issue_date}{issue date}
-\item{inc_guar}{indicates whether the policy was issued with an income guarantee}
-\item{qual}{indicates whether the policy was purchased with tax-qualified funds}
-\item{age}{issue age}
-\item{product}{product: a, b, or c}
+\item{pol_num}{Policy number}
+\item{status}{Policy status: Active, Surrender, or Death}
+\item{issue_date}{Issue date}
+\item{inc_guar}{Indicates whether the policy was issued with an income guarantee}
+\item{qual}{Indicates whether the policy was purchased with tax-qualified funds}
+\item{age}{Issue age}
+\item{product}{Product: a, b, or c}
 \item{gender}{M (Male) or F (Female)}
 \item{wd_age}{Age that withdrawals commence}
 \item{premium}{Single premium deposit}
-\item{term_date}{termination date upon death or surrender}
+\item{term_date}{Termination date upon death or surrender}
 }
 }
 
 \section{Withdrawal data (\code{withdrawals})}{
 \describe{
-\item{pol_num}{policy number}
-\item{trx_date}{withdrawal transaction date}
-\item{trx_type}{withdrawal transaction type, either Base or Rider}
-\item{trx_amt}{withdrawal transaction amount}
+\item{pol_num}{Policy number}
+\item{trx_date}{Withdrawal transaction date}
+\item{trx_type}{Withdrawal transaction type, either Base or Rider}
+\item{trx_amt}{Withdrawal transaction amount}
 }
 }
 
 \section{Account values data (\code{account_vals})}{
 \describe{
-\item{pol_num}{policy number}
-\item{pol_date_yr}{policy anniversary date (beginning of year)}
-\item{av_anniv}{account value on the policy anniversary date}
+\item{pol_num}{Policy number}
+\item{pol_date_yr}{Policy anniversary date (beginning of year)}
+\item{av_anniv}{Account value on the policy anniversary date}
 }
 }
 

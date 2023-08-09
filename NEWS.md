@@ -1,3 +1,13 @@
+# actxps 1.2.0
+
+- `autoplot.exp_df` and `autoplot.trx_df()` now include new options for adding a second y-axis and plotting results on a log-10 scale. The second y-axis defaults to plotting exposures using an area geometry.
+- New plotting functions were added to create common experience analysis plots that were not simple to create using `autoplot()` methods. These include `plot_termination_rates()` and `plot_actual_to_expected()` for termination studies and `plot_utilization_rates()` for transaction studies
+- The `exp_shiny()` function received a handful of updates to accommodate new plotting functions and options. A small performance improvement was added in filtering logic as well. New options include a title input, credibility options taken from `exp_stats()`, 
+- A new vignette was added on data visualization.
+- The miscellaneous vignette was updated to include examples for `add_predictions()` and `step_expose()`.
+- Examples were added to `autoplot()` and `autotable()` methods
+- Help documentation was added for the package itself (`?actxps`)
+
 # actxps 1.1.0
 
 - New `add_predictions()` function that attaches one or more columns of model predictions to an `exposed_df` object or any other data frame.
