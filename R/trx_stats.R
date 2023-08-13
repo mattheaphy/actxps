@@ -176,7 +176,7 @@ print.trx_df <- function(x, ...) {
 
   cat("Transaction study results\n\n")
   if (length(groups(x)) > 0) {
-    cat("Groups:", paste(groups(x), collapse = ", "), "\n")
+    cat(" Groups:", paste(groups(x), collapse = ", "), "\n")
   }
   cat(" Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n",
