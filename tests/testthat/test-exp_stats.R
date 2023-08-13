@@ -11,12 +11,12 @@ study_py <- study_py |>
 exp_res <- study_py |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"),
-            credibility = TRUE)
+            credibility = TRUE, conf_int = TRUE)
 
 exp_res_weighted <- study_py |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"),
-            credibility = TRUE, wt = "weights")
+            credibility = TRUE, wt = "weights", conf_int = TRUE)
 
 
 test_that("Partial credibility is between 0 and 1", {
@@ -28,10 +28,11 @@ test_that("Partial credibility is between 0 and 1", {
 test_that("Experience study summary method checks", {
   expect_identical(exp_res, summary(exp_res, pol_yr, inc_guar))
   expect_equal(exp_stats(study_py, expected = c("expected_1", "expected_2"),
-                         credibility = TRUE),
+                         credibility = TRUE, conf_int = TRUE),
                summary(exp_res))
   expect_equal(exp_stats(study_py, expected = c("expected_1", "expected_2"),
-                         credibility = TRUE, wt = "weights"),
+                         credibility = TRUE, wt = "weights",
+                         conf_int = TRUE),
                summary(exp_res_weighted))
 })
 
@@ -48,4 +49,19 @@ toy_census2 <- toy_census |> dplyr::rename_with(\(x) renamer[x])
 test_that("Renaming works", {
   expect_error(exp_stats(toy_expo))
   expect_no_error(exp_stats(toy_expo, col_exposure = "a", col_status = "b"))
+})
+
+test_that("Confidence intervals work", {
+  expect_true(all(exp_res$q_obs_lower < exp_res$q_obs))
+  expect_true(all(exp_res$q_obs_upper > exp_res$q_obs))
+  expect_true(all(exp_res_weighted$q_obs_lower < exp_res_weighted$q_obs))
+  expect_true(all(exp_res_weighted$q_obs_upper > exp_res_weighted$q_obs))
+
+  expect_true(all(exp_res$ae_expected_1_lower < exp_res$ae_expected_1))
+  expect_true(all(exp_res$ae_expected_2_upper > exp_res$ae_expected_2))
+  expect_true(all(exp_res_weighted$ae_expected_1_lower <
+                    exp_res_weighted$ae_expected_1))
+  expect_true(all(exp_res_weighted$ae_expected_2_upper >
+                    exp_res_weighted$ae_expected_2))
+
 })
