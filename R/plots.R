@@ -27,6 +27,9 @@
 #' @param y_labels Label function passed to [ggplot2::scale_y_continuous()].
 #' @param second_y_labels Same as `y_labels`, but for the second y-axis.
 #' @param y_log10 If `TRUE`, the y-axes are plotted on a log-10 scale.
+#' @param conf_int_bars If `TRUE`, confidence interval error bars are included
+#' in the plot. This option is only available for termination rates and
+#' actual-to-expected ratios.
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
 #' grouping variable in `object` on the x axis and `q_obs` on the y
@@ -64,7 +67,7 @@ autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
                             y_labels = scales::label_percent(accuracy = 0.1),
                             second_y_labels = scales::label_comma(
                               accuracy = 1),
-                            y_log10 = FALSE) {
+                            y_log10 = FALSE, conf_int_bars = FALSE) {
 
   y <- rlang::enexpr(y)
   y <- if (is.null(y)) rlang::expr(q_obs) else y
@@ -79,7 +82,7 @@ autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
   plot_experience(object, rlang::enexpr(x), y,
                   rlang::enexpr(color), mapping, second_axis, second_y,
                   scales, geoms, y_labels, second_y_labels, rlang::enquos(...),
-                  y_log10)
+                  y_log10, conf_int_bars)
 }
 
 #' @rdname autoplot_exp
@@ -90,7 +93,7 @@ autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
                             y_labels = scales::label_percent(accuracy = 0.1),
                             second_y_labels = scales::label_comma(
                               accuracy = 1),
-                            y_log10 = FALSE) {
+                            y_log10 = FALSE, conf_int_bars = FALSE) {
 
   y <- rlang::enexpr(y)
   y <- if (is.null(y)) rlang::expr(trx_util) else y
@@ -110,7 +113,7 @@ autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
   plot_experience(object, rlang::enexpr(x), y,
                   rlang::enexpr(color), mapping, second_axis, second_y,
                   scales, geoms, y_labels, second_y_labels, facets,
-                  y_log10)
+                  y_log10, conf_int_bars)
 }
 
 plot_experience <- function(
@@ -123,7 +126,8 @@ plot_experience <- function(
     y_labels = scales::label_percent(accuracy = 0.1),
     second_y_labels = scales::label_comma(accuracy = 1),
     facets,
-    y_log10) {
+    y_log10,
+    conf_int_bars = FALSE) {
 
   .groups <- groups(object)
   if (length(.groups) == 0) {
@@ -195,6 +199,30 @@ plot_experience <- function(
     p <- p + ggplot2::geom_col(position = "dodge")
   }
 
+  if (conf_int_bars) {
+
+    y_chr <- rlang::as_name(p$mapping$y)
+    if (y_chr == "q_obs" || grepl("^ae_", y_chr)) {
+
+      conf_int <- attr(object, "exp_params")$conf_int
+      if (is.null(conf_int) || !conf_int) {
+        rlang::warn(c("*" = "`object` has no confidence intervals.",
+                      "i" = "Pass `conf_int = TRUE` to `exp_stats()` to calculate confidence intervals."))
+      } else {
+        if (y_chr == "q_obs") {
+          y_min_max <- rlang::exprs(q_obs_lower, q_obs_upper)
+        } else {
+          y_min_max <- paste0(y_chr, c("_upper", "_lower")) |>
+            rlang::syms()
+        }
+        p <- p + ggplot2::geom_errorbar(ggplot2::aes(
+          ymin = !!y_min_max[[1]], ymax = !!y_min_max[[2]]
+        ))
+      }
+    } else {
+      rlang::warn(c("Confidence intervals are not available for the selected y-variable."))
+    }
+  }
 
   if (is.null(facets)) return(p)
   p + ggplot2::facet_wrap(ggplot2::vars(!!!facets), scales = scales)

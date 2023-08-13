@@ -19,7 +19,8 @@
   geoms = c("lines", "bars"),
   y_labels = scales::label_percent(accuracy = 0.1),
   second_y_labels = scales::label_comma(accuracy = 1),
-  y_log10 = FALSE
+  y_log10 = FALSE,
+  conf_int_bars = FALSE
 )
 
 \method{autoplot}{trx_df}(
@@ -35,7 +36,8 @@
   geoms = c("lines", "bars"),
   y_labels = scales::label_percent(accuracy = 0.1),
   second_y_labels = scales::label_comma(accuracy = 1),
-  y_log10 = FALSE
+  y_log10 = FALSE,
+  conf_int_bars = FALSE
 )
 }
 \arguments{
@@ -78,6 +80,10 @@ display lines and points. If "bars", the plot will display bars.}
 \item{second_y_labels}{Same as \code{y_labels}, but for the second y-axis.}
 
 \item{y_log10}{If \code{TRUE}, the y-axes are plotted on a log-10 scale.}
+
+\item{conf_int_bars}{If \code{TRUE}, confidence interval error bars are included
+in the plot. This option is only available for termination rates and
+actual-to-expected ratios.}
 }
 \value{
 a \code{ggplot} object
