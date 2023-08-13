@@ -34,7 +34,8 @@ a descriptive title will be generated based on attributes of \code{dat}.}
 \item{credibility}{Whether the output should include partial credibility
 weights and credibility-weighted termination rates.}
 
-\item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
+\item{cred_p}{Confidence level used for the Limited Fluctuation credibility
+method and confidence intervals}
 
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
