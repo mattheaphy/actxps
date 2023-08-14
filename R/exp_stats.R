@@ -304,7 +304,9 @@ finish_exp_stats <- function(.data, target_status, expected,
                      !!!cred,
                      !!!ci,
                      .groups = "drop") |>
-    relocate(n_exposure, exposure, q_obs, .after = claims)
+    relocate(n_exposure, exposure, q_obs,
+             dplyr::any_of(c("q_obs_lower", "q_obs_upper")),
+             .after = claims)
 
   if (!is.null(wt)) {
     res <- res |>

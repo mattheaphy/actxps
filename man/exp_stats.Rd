@@ -55,12 +55,11 @@ the observed termination rates and any actual-to-expected ratios.}
 }
 \value{
 A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
-and \code{data.frame}. The results include:
+and \code{data.frame}. The results include columns for any grouping variables,
+claims, exposures, and observed termination rates (\code{q_obs}).
 \itemize{
-\item Columns for any grouping variables, claims, exposures, and observed
-termination rates (\code{q_obs}).
-\item If any values are passed to \code{expected}, additional columns will be
-added for expected termination rates and actual-to-expected ratios.
+\item If any values are passed to \code{expected}, expected termination rates and
+actual-to-expected ratios.
 \item If \code{credibility} is set to \code{TRUE}, additional columns are added
 for partial credibility and credibility-weighted termination rates
 (assuming values are passed to \code{expected}). Credibility-weighted termination
@@ -103,14 +102,14 @@ Credibility) assuming a binomial distribution of claims.
 \section{Confidence intervals}{
 If \code{conf_int} is set to \code{TRUE}, the output will contain lower and upper
 confidence interval limits for the observed termination rate and any
-actual-to-expected ratio. The confidence level is dictated
+actual-to-expected ratios. The confidence level is dictated
 by \code{cred_p}. If no weighting variable is passed to \code{wt}, confidence intervals
 will be constructed assuming a binomial distribution of claims. Otherwise,
 confidence intervals are calculated assuming that the aggregate claims
-distribution is normal with a mean equal to the observed levels of claims
-and a variance equal to:
+distribution is normal with a mean equal to observed claims and a variance
+equal to:
 
-\verb{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N),}
+\code{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)},
 
 Where \code{S} is the aggregate claim random variable, \code{X} is the weighting
 variable, and \code{N} is a binomial random variable for the number of claims.
