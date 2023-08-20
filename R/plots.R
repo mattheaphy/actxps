@@ -23,7 +23,8 @@
 #' `exposure`.
 #' @param scales The `scales` argument passed to [ggplot2::facet_wrap()].
 #' @param geoms Type of geometry. If "lines" is passed, the plot will
-#' display lines and points. If "bars", the plot will display bars.
+#' display lines and points. If "bars", the plot will display bars. If "points",
+#' the plot will display points only.
 #' @param y_labels Label function passed to [ggplot2::scale_y_continuous()].
 #' @param second_y_labels Same as `y_labels`, but for the second y-axis.
 #' @param y_log10 If `TRUE`, the y-axes are plotted on a log-10 scale.
@@ -63,7 +64,8 @@
 #' @export
 autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
                             mapping, second_axis = FALSE, second_y = NULL,
-                            scales = "fixed", geoms = c("lines", "bars"),
+                            scales = "fixed",
+                            geoms = c("lines", "bars", "points"),
                             y_labels = scales::label_percent(accuracy = 0.1),
                             second_y_labels = scales::label_comma(
                               accuracy = 1),
@@ -89,7 +91,8 @@ autoplot.exp_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
 #' @export
 autoplot.trx_df <- function(object, ..., x = NULL, y = NULL, color = NULL,
                             mapping, second_axis = FALSE, second_y = NULL,
-                            scales = "fixed", geoms = c("lines", "bars"),
+                            scales = "fixed",
+                            geoms = c("lines", "bars", "points"),
                             y_labels = scales::label_percent(accuracy = 0.1),
                             second_y_labels = scales::label_comma(
                               accuracy = 1),
@@ -122,7 +125,7 @@ plot_experience <- function(
     second_axis = FALSE,
     second_y = NULL,
     scales = "fixed",
-    geoms = c("lines", "bars"),
+    geoms = c("lines", "bars", "points"),
     y_labels = scales::label_percent(accuracy = 0.1),
     second_y_labels = scales::label_comma(accuracy = 1),
     facets,
@@ -195,6 +198,8 @@ plot_experience <- function(
 
   if (geoms == "lines") {
     p <- p + ggplot2::geom_point() + ggplot2::geom_line()
+  } else if (geoms == "points") {
+    p <- p + ggplot2::geom_point()
   } else {
     p <- p + ggplot2::geom_col(position = "dodge")
   }
@@ -216,8 +221,7 @@ plot_experience <- function(
             rlang::syms()
         }
         p <- p + ggplot2::geom_errorbar(ggplot2::aes(
-          ymin = !!y_min_max[[1]], ymax = !!y_min_max[[2]]
-        ))
+          ymin = !!y_min_max[[1]], ymax = !!y_min_max[[2]]))
       }
     } else {
       rlang::warn(c("Confidence intervals are not available for the selected y-variable."))

@@ -70,6 +70,9 @@ test_that("Autoplot works with mapping overrides", {
                            y_labels = scales::label_number()),
                   c("gg", "ggplot"))
 
+  expect_s3_class(autoplot(exp_res4, geoms = "points"), c("gg", "ggplot"))
+  expect_s3_class(autoplot(trx_res4, geoms = "points"), c("gg", "ggplot"))
+
 })
 
 test_that("Second axis works", {
