@@ -16,7 +16,7 @@
   second_axis = FALSE,
   second_y = NULL,
   scales = "fixed",
-  geoms = c("lines", "bars"),
+  geoms = c("lines", "bars", "points"),
   y_labels = scales::label_percent(accuracy = 0.1),
   second_y_labels = scales::label_comma(accuracy = 1),
   y_log10 = FALSE,
@@ -33,7 +33,7 @@
   second_axis = FALSE,
   second_y = NULL,
   scales = "fixed",
-  geoms = c("lines", "bars"),
+  geoms = c("lines", "bars", "points"),
   y_labels = scales::label_percent(accuracy = 0.1),
   second_y_labels = scales::label_comma(accuracy = 1),
   y_log10 = FALSE,
@@ -63,8 +63,7 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 
 \item{second_axis}{Logical. If \code{TRUE}, the variable specified by
 \code{second_y} (default = exposure) is plotted on a second
-y-axis. An area geometry is used if the \code{x} variable is numeric. If not,
-bars are plotted.}
+y-axis using an area geometry.}
 
 \item{second_y}{An unquoted column name in \code{object} to use as the \code{y}
 variable on the second y-axis. If unspecified, this will default to
@@ -73,7 +72,8 @@ variable on the second y-axis. If unspecified, this will default to
 \item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
 \item{geoms}{Type of geometry. If "lines" is passed, the plot will
-display lines and points. If "bars", the plot will display bars.}
+display lines and points. If "bars", the plot will display bars. If "points",
+the plot will display points only.}
 
 \item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
 

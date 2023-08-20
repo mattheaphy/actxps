@@ -16,8 +16,7 @@
 #' `mapping` is supplied, the `x`, `y`, and `color` arguments will be ignored.
 #' @param second_axis Logical. If `TRUE`, the variable specified by
 #' `second_y` (default = exposure) is plotted on a second
-#' y-axis. An area geometry is used if the `x` variable is numeric. If not,
-#' bars are plotted.
+#' y-axis using an area geometry.
 #' @param second_y An unquoted column name in `object` to use as the `y`
 #' variable on the second y-axis. If unspecified, this will default to
 #' `exposure`.
@@ -173,13 +172,22 @@ plot_experience <- function(
   if (second_axis) {
     adj <- max(object |> dplyr::pull(!!second_y), na.rm = TRUE) /
       max(object |> dplyr::pull(!!mapping$y), na.rm = TRUE)
-    if (dplyr::pull(object, !!mapping$x) |> is.numeric()) {
-      geom.fun <- ggplot2::geom_area
+    if (y_log10) {
+      geom.fun <- function(...) {
+        ggplot2::geom_ribbon(
+          ggplot2::aes(ymax = !!second_y,
+                       group = if (is.null(color)) 1 else !!color),
+          ..., ymin = -Inf)
+      }
     } else {
-      geom.fun <- ggplot2::geom_col
+      geom.fun <- function(...) {
+        ggplot2::geom_area(
+          ggplot2::aes(y = !!second_y,
+                       group = if (is.null(color)) 1 else !!color),
+          ...)
+      }
     }
-    p <- p + geom.fun(ggplot2::aes(y = !!second_y),
-                      data = object |>
+    p <- p + geom.fun(data = object |>
                         mutate(!!second_y := !!second_y /
                                  adj),
                       alpha = 0.2, position = "identity") +
