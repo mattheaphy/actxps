@@ -3,7 +3,7 @@ expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
   mutate(q_exp = ifelse(inc_guar, 0.015, 0.03))
 
 exp_stats2 <- function(dat) exp_stats(dat, wt = "premium", credibility = TRUE,
-                                      expected = "q_exp")
+                                      expected = "q_exp", conf_int = TRUE)
 trx_stats2 <- function(dat) trx_stats(dat, percent_of = 'premium')
 
 # ungrouped summaries
@@ -114,4 +114,14 @@ test_that("Log y scale works", {
                   c("gg", "ggplot"))
   expect_s3_class(autoplot(trx_res4, y_log10 = TRUE, second_axis = TRUE),
                   c("gg", "ggplot"))
+})
+
+test_that("Warning messages work", {
+  expect_no_warning(autoplot(exp_res4, conf_int_bars = TRUE))
+  expect_warning(expo |> group_by(pol_yr, inc_guar, product) |>
+                   exp_stats() |>
+                   autoplot(conf_int_bars = TRUE),
+                 regexp = "has no confidence intervals")
+  expect_warning(autoplot(exp_res4, conf_int_bars = TRUE, y = exposure),
+                 regexp = "Confidence intervals are not available")
 })
