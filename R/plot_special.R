@@ -47,16 +47,35 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
   verify_exp_df(object)
 
   .groups <- groups(object)
+  exp_params <- attr(object, "exp_params")
   piv_cols <- c("q_obs", attr(object, "expected"),
                 if (include_cred_adj) paste0("adj_", attr(object, "expected"))) |>
     intersect(names(object))
 
 
-  object <- object |>
-    tidyr::pivot_longer(dplyr::all_of(piv_cols),
-                        names_to = "Series",
-                        values_to = "Rate")
+  if (exp_params$conf_int) {
+
+    object <- object |>
+      dplyr::rename_at(piv_cols, \(x) paste0(x, "_Rate")) |>
+      tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_Rate")),
+                            "q_obs_lower", "q_obs_upper"),
+                          names_to = c("Series", ".value"),
+                          names_pattern = paste0("^(",
+                                                 paste0(piv_cols, collapse = "|"),
+                                                 ")_(Rate|upper|lower)")) |>
+      rename(Rate_lower = lower, Rate_upper = upper)
+
+  } else {
+
+    object <- object |>
+      tidyr::pivot_longer(dplyr::all_of(piv_cols),
+                          names_to = "Series",
+                          values_to = "Rate")
+
+  }
+
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
+  attr(object, "exp_params") <- exp_params
   class(object) <- c("exp_df", class(object))
   autoplot(object, y = Rate, ...)
 }

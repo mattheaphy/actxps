@@ -89,7 +89,8 @@ test_that("Second axis works", {
 
 test_that("Termination plots works", {
   expect_s3_class(plot_termination_rates(exp_res), c("gg", "ggplot"))
-  expect_s3_class(plot_termination_rates(exp_res, include_cred_adj = TRUE),
+  expect_s3_class(plot_termination_rates(exp_res, include_cred_adj = TRUE,
+                                         conf_int_bars = TRUE),
                   c("gg", "ggplot"))
   expect_error(plot_termination_rates(trx_res), regexp = "must be an `exp_df`")
 })
@@ -118,10 +119,14 @@ test_that("Log y scale works", {
 
 test_that("Warning messages work", {
   expect_no_warning(autoplot(exp_res4, conf_int_bars = TRUE))
-  expect_warning(expo |> group_by(pol_yr, inc_guar, product) |>
-                   exp_stats() |>
-                   autoplot(conf_int_bars = TRUE),
+
+  no_ci <- expo |> group_by(pol_yr, inc_guar, product) |>
+    exp_stats()
+  expect_warning(autoplot(no_ci, conf_int_bars = TRUE),
                  regexp = "has no confidence intervals")
+  expect_warning(plot_termination_rates(no_ci, conf_int_bars = TRUE),
+                 regexp = "has no confidence intervals")
+
   expect_warning(autoplot(exp_res4, conf_int_bars = TRUE, y = exposure),
                  regexp = "Confidence intervals are not available")
 })
