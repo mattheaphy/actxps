@@ -55,10 +55,17 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
 
   if (exp_params$conf_int) {
 
+    extra_piv_cols <- c("q_obs_lower", "q_obs_upper")
+    if (include_cred_adj) {
+      extra_piv_cols <- c(extra_piv_cols,
+                          paste0("adj_", attr(object, "expected"), "_lower"),
+                          paste0("adj_", attr(object, "expected"), "_upper"))
+    }
+
     object <- object |>
       dplyr::rename_at(piv_cols, \(x) paste0(x, "_Rate")) |>
       tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_Rate")),
-                            "q_obs_lower", "q_obs_upper"),
+                            extra_piv_cols),
                           names_to = c("Series", ".value"),
                           names_pattern = paste0("^(",
                                                  paste0(piv_cols, collapse = "|"),

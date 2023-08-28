@@ -286,6 +286,15 @@ finish_exp_stats <- function(.data, target_status, expected,
       ae_upper <- exp_form("q_obs_upper / {.col}",
                            "ae_{.col}_upper", expected)
       ci <- append(ci, ae_lower) |> append(ae_upper)
+      if (credibility) {
+        ci <- append(ci,
+                     c(exp_form("credibility * q_obs_lower +
+                                (1 - credibility) * {.col}",
+                                "adj_{.col}_lower", expected),
+                       exp_form("credibility * q_obs_upper +
+                                (1 - credibility) * {.col}",
+                                "adj_{.col}_upper", expected)))
+      }
     }
 
   } else {
