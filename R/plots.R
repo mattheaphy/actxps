@@ -215,7 +215,7 @@ plot_experience <- function(
   if (conf_int_bars) {
 
     y_chr <- rlang::as_name(p$mapping$y)
-    if (y_chr %in% c("q_obs", "Rate") || grepl("^ae_", y_chr)) {
+    if (y_chr %in% c("q_obs", "Rate", "A/E ratio") || grepl("^ae_", y_chr)) {
 
       conf_int <- attr(object, "exp_params")$conf_int
       if (is.null(conf_int) || !conf_int) {

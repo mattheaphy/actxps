@@ -59,7 +59,8 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
     if (include_cred_adj) {
       extra_piv_cols <- c(extra_piv_cols,
                           paste0("adj_", attr(object, "expected"), "_lower"),
-                          paste0("adj_", attr(object, "expected"), "_upper"))
+                          paste0("adj_", attr(object, "expected"), "_upper")) |>
+        intersect(names(object))
     }
 
     object <- object |>
@@ -102,11 +103,35 @@ plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
   }
 
   .groups <- groups(object)
-  object <- object |>
-    tidyr::pivot_longer(dplyr::all_of(piv_cols),
-                        names_to = "Series",
-                        values_to = "A/E ratio")
+  exp_params <- attr(object, "exp_params")
+
+  if (exp_params$conf_int) {
+
+    extra_piv_cols <- c(paste0("ae_", attr(object, "expected"), "_lower"),
+                        paste0("ae_", attr(object, "expected"), "_upper")) |>
+      intersect(names(object))
+
+    object <- object |>
+      dplyr::rename_at(piv_cols, \(x) paste0(x, "_A/E ratio")) |>
+      tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_A/E ratio")),
+                            extra_piv_cols),
+                          names_to = c("Series", ".value"),
+                          names_pattern = paste0("^(",
+                                                 paste0(piv_cols, collapse = "|"),
+                                                 ")_(A/E ratio|upper|lower)")) |>
+      rename(`A/E ratio_lower` = lower, `A/E ratio_upper` = upper)
+
+  } else {
+
+    object <- object |>
+      tidyr::pivot_longer(dplyr::all_of(piv_cols),
+                          names_to = "Series",
+                          values_to = "A/E ratio")
+
+  }
+
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
+  attr(object, "exp_params") <- exp_params
   class(object) <- c("exp_df", class(object))
   p <- autoplot(object, y = `A/E ratio`, ...)
 
