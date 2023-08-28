@@ -66,7 +66,7 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
     object <- object |>
       dplyr::rename_at(piv_cols, \(x) paste0(x, "_Rate")) |>
       tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_Rate")),
-                            extra_piv_cols),
+                            dplyr::all_of(extra_piv_cols)),
                           names_to = c("Series", ".value"),
                           names_pattern = paste0("^(",
                                                  paste0(piv_cols, collapse = "|"),
@@ -114,7 +114,7 @@ plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
     object <- object |>
       dplyr::rename_at(piv_cols, \(x) paste0(x, "_A/E ratio")) |>
       tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_A/E ratio")),
-                            extra_piv_cols),
+                            dplyr::all_of(extra_piv_cols)),
                           names_to = c("Series", ".value"),
                           names_pattern = paste0("^(",
                                                  paste0(piv_cols, collapse = "|"),
