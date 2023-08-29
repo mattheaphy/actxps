@@ -13,7 +13,7 @@ exp_stats(
   col_status = "status",
   wt = NULL,
   credibility = FALSE,
-  cred_p = 0.95,
+  conf_level = 0.95,
   cred_r = 0.05,
   conf_int = FALSE
 )
@@ -40,8 +40,8 @@ exposures, partial credibility, and confidence intervals.}
 \item{credibility}{If \code{TRUE}, the output will include partial credibility
 weights and credibility-weighted termination rates.}
 
-\item{cred_p}{Confidence level used for the Limited Fluctuation credibility
-method and confidence intervals}
+\item{conf_level}{Confidence level used for the Limited Fluctuation
+credibility method and confidence intervals}
 
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
@@ -103,11 +103,11 @@ Credibility) assuming a binomial distribution of claims.
 If \code{conf_int} is set to \code{TRUE}, the output will contain lower and upper
 confidence interval limits for the observed termination rate and any
 actual-to-expected ratios. The confidence level is dictated
-by \code{cred_p}. If no weighting variable is passed to \code{wt}, confidence intervals
-will be constructed assuming a binomial distribution of claims. Otherwise,
-confidence intervals are calculated assuming that the aggregate claims
-distribution is normal with a mean equal to observed claims and a variance
-equal to:
+by \code{conf_level}. If no weighting variable is passed to \code{wt}, confidence
+intervals will be constructed assuming a binomial distribution of claims.
+Otherwise, confidence intervals are calculated assuming that the aggregate
+claims distribution is normal with a mean equal to observed claims and a
+variance equal to:
 
 \code{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)},
 

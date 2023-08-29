@@ -271,4 +271,5 @@ The output section includes tabs for plots, tables, and exporting data. The plot
 
 - `distinct_max`: an upper limit on the number of distinct values a variable is allowed to have to be included as a viable option for the color and facets grouping variables. Default = 25.
 - `title`: an optional title for the app
-- `credibility`, `cred_p`, `cred_r`: credibility options for termination studies. See `exp_stats()` for more information. Limited fluctuation credibility estimates at a 95% confidence within 5% of the theoretical mean assuming a binomial distribution are used as a default.
+- `credibility`, `conf_level`, `cred_r`: credibility options for termination studies. See `exp_stats()` for more information. Limited fluctuation credibility estimates at a 95% confidence within 5% of the theoretical mean assuming a binomial distribution are used as a default.
+- The `conf_level` argument is also used for confidence intervals for both termination and transaction studies.

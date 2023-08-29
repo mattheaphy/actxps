@@ -124,7 +124,7 @@ exp_shiny <- function(dat,
                       distinct_max = 25L,
                       title,
                       credibility = TRUE,
-                      cred_p = 0.95,
+                      conf_level = 0.95,
                       cred_r = 0.05) {
 
   rlang::check_installed("shiny")
@@ -572,7 +572,7 @@ exp_shiny <- function(dat,
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
           exp_stats(wt = wt, credibility = credibility, expected = ex,
-                    cred_p = cred_p, cred_r = cred_r)
+                    conf_level = conf_level, cred_r = cred_r)
       } else {
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>

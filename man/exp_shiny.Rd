@@ -11,7 +11,7 @@ exp_shiny(
   distinct_max = 25L,
   title,
   credibility = TRUE,
-  cred_p = 0.95,
+  conf_level = 0.95,
   cred_r = 0.05
 )
 }
@@ -34,8 +34,8 @@ a descriptive title will be generated based on attributes of \code{dat}.}
 \item{credibility}{If \code{TRUE}, the output will include partial credibility
 weights and credibility-weighted termination rates.}
 
-\item{cred_p}{Confidence level used for the Limited Fluctuation credibility
-method and confidence intervals}
+\item{conf_level}{Confidence level used for the Limited Fluctuation
+credibility method and confidence intervals}
 
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}

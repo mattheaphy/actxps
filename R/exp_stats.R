@@ -29,11 +29,11 @@
 #' If `conf_int` is set to `TRUE`, the output will contain lower and upper
 #' confidence interval limits for the observed termination rate and any
 #' actual-to-expected ratios. The confidence level is dictated
-#' by `cred_p`. If no weighting variable is passed to `wt`, confidence intervals
-#' will be constructed assuming a binomial distribution of claims. Otherwise,
-#' confidence intervals are calculated assuming that the aggregate claims
-#' distribution is normal with a mean equal to observed claims and a variance
-#' equal to:
+#' by `conf_level`. If no weighting variable is passed to `wt`, confidence
+#' intervals will be constructed assuming a binomial distribution of claims.
+#' Otherwise, confidence intervals are calculated assuming that the aggregate
+#' claims distribution is normal with a mean equal to observed claims and a
+#' variance equal to:
 #'
 #' `Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)`,
 #'
@@ -58,8 +58,8 @@
 #' exposures, partial credibility, and confidence intervals.
 #' @param credibility If `TRUE`, the output will include partial credibility
 #' weights and credibility-weighted termination rates.
-#' @param cred_p Confidence level used for the Limited Fluctuation credibility
-#' method and confidence intervals
+#' @param conf_level Confidence level used for the Limited Fluctuation
+#' credibility method and confidence intervals
 #' @param cred_r Error tolerance under the Limited Fluctuation credibility
 #' method
 #' @param conf_int If `TRUE`, the output will include confidence intervals
@@ -106,7 +106,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       col_status = "status",
                       wt = NULL,
                       credibility = FALSE,
-                      cred_p = 0.95, cred_r = 0.05,
+                      conf_level = 0.95, cred_r = 0.05,
                       conf_int = FALSE) {
 
   .groups <- groups(.data)
@@ -144,7 +144,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   finish_exp_stats(res, target_status, expected, .groups,
                    start_date, end_date, credibility,
-                   cred_p, cred_r, wt, conf_int)
+                   conf_level, cred_r, wt, conf_int)
 
 }
 
@@ -192,7 +192,7 @@ summary.exp_df <- function(object, ...) {
 
   finish_exp_stats(res, target_status, expected, .groups,
                    start_date, end_date, exp_params$credibility,
-                   exp_params$cred_p, exp_params$cred_r,
+                   exp_params$conf_level, exp_params$cred_r,
                    wt, exp_params$conf_int)
 
 }
@@ -203,7 +203,7 @@ summary.exp_df <- function(object, ...) {
 
 finish_exp_stats <- function(.data, target_status, expected,
                              .groups, start_date, end_date,
-                             credibility, cred_p, cred_r,
+                             credibility, conf_level, cred_r,
                              wt, conf_int) {
 
   # expected value formulas. these are already weighted if applicable
@@ -232,7 +232,7 @@ finish_exp_stats <- function(.data, target_status, expected,
   # credibility formulas - varying by weights
   if (credibility) {
 
-    y <- (stats::qnorm((1 + cred_p) / 2) / cred_r) ^ 2
+    y <- (stats::qnorm((1 + conf_level) / 2) / cred_r) ^ 2
 
     if (is.null(wt)) {
       cred <- rlang::exprs(
@@ -262,7 +262,7 @@ finish_exp_stats <- function(.data, target_status, expected,
   # confidence interval formulas
   if (conf_int) {
 
-    p <- c((1 - cred_p) / 2, 1 - (1 - cred_p) / 2)
+    p <- c((1 - conf_level) / 2, 1 - (1 - conf_level) / 2)
 
     if (is.null(wt)) {
       ci <- rlang::exprs(
@@ -333,7 +333,7 @@ finish_exp_stats <- function(.data, target_status, expected,
                      end_date = end_date,
                      wt = wt,
                      exp_params = list(credibility = credibility,
-                                       cred_p = cred_p, cred_r = cred_r,
+                                       conf_level = conf_level, cred_r = cred_r,
                                        conf_int = conf_int))
 }
 
