@@ -11,7 +11,9 @@ trx_stats(
   percent_of = NULL,
   combine_trx = FALSE,
   col_exposure = "exposure",
-  full_exposures_only = TRUE
+  full_exposures_only = TRUE,
+  conf_int = FALSE,
+  conf_level = 0.95
 )
 
 \method{summary}{trx_df}(object, ...)
@@ -38,6 +40,11 @@ results across all transaction types.}
 
 \item{full_exposures_only}{If \code{TRUE} (default), partially exposed records will
 be excluded from \code{data}.}
+
+\item{conf_int}{If \code{TRUE}, the output will include confidence intervals
+around the observed utilization rate.}
+
+\item{conf_level}{Confidence level for confidence intervals}
 
 \item{object}{A \code{trx_df} object}
 

@@ -71,6 +71,11 @@
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
 #'
+#' @param conf_int If `TRUE`, the output will include confidence intervals
+#' around the observed utilization rate.
+#'
+#' @param conf_level Confidence level for confidence intervals
+#'
 #' @param object A `trx_df` object
 #' @param ... Groups to retain after `summary()` is called
 #'
@@ -114,7 +119,9 @@ trx_stats <- function(.data,
                       percent_of = NULL,
                       combine_trx = FALSE,
                       col_exposure = "exposure",
-                      full_exposures_only = TRUE) {
+                      full_exposures_only = TRUE,
+                      conf_int = FALSE,
+                      conf_level = 0.95) {
 
   verify_exposed_df(.data)
 
@@ -167,7 +174,8 @@ trx_stats <- function(.data,
     mutate(trx_flag = abs(trx_n) > 0, !!!pct_nz)
 
   finish_trx_stats(.data, trx_types, percent_of,
-                   .groups, start_date, end_date)
+                   .groups, start_date, end_date,
+                   conf_int, conf_level)
 
 }
 
@@ -205,9 +213,11 @@ summary.trx_df <- function(object, ...) {
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
   percent_of <- attr(object, "percent_of")
+  trx_params <- attr(object, "trx_params")
 
   finish_trx_stats(res, trx_types, percent_of,
-                   .groups, start_date, end_date)
+                   .groups, start_date, end_date,
+                   trx_params$conf_int, trx_params$conf_level)
 
 }
 
@@ -216,8 +226,10 @@ summary.trx_df <- function(object, ...) {
 
 
 finish_trx_stats <- function(.data, trx_types, percent_of,
-                             .groups, start_date, end_date) {
+                             .groups, start_date, end_date,
+                             conf_int, conf_level) {
 
+  # "percent of" formulas
   if (!is.null(percent_of)) {
     percent_of_nz <- paste0(percent_of, "_w_trx")
     pct_vals <- exp_form("sum({.col})", "{.col}", percent_of)
@@ -228,6 +240,20 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                              percent_of_nz)
   } else {
     pct_vals <- pct_vals_trx <- pct_form_all <- pct_form_trx <- percent_of <- NULL
+  }
+
+  # confidence interval formulas
+  if (conf_int) {
+
+    p <- c((1 - conf_level) / 2, 1 - (1 - conf_level) / 2)
+
+    ci <- rlang::exprs(
+      trx_util_lower = stats::qbinom(p[[1]], exposure, trx_util) / exposure,
+      trx_util_upper = stats::qbinom(p[[2]], exposure, trx_util) / exposure
+    )
+
+  } else {
+    ci <- NULL
   }
 
   res <- .data |>
@@ -244,6 +270,7 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      !!!pct_vals,
                      !!!pct_form_trx,
                      !!!pct_form_all,
+                     !!!ci,
                      .groups = "drop")
 
   tibble::new_tibble(res,
@@ -251,7 +278,9 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      groups = .groups, trx_types = trx_types,
                      start_date = start_date,
                      percent_of = percent_of,
-                     end_date = end_date)
+                     end_date = end_date,
+                     trx_params = list(conf_level = conf_level,
+                                       conf_int = conf_int))
 }
 
 verify_trx_df <- function(.data) {
