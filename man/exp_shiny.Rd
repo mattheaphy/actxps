@@ -31,7 +31,7 @@ prevents the drawing of overly complex plots. Default value = 25.}
 \item{title}{Optional. Title of the Shiny app. If no title is provided,
 a descriptive title will be generated based on attributes of \code{dat}.}
 
-\item{credibility}{Whether the output should include partial credibility
+\item{credibility}{If \code{TRUE}, the output will include partial credibility
 weights and credibility-weighted termination rates.}
 
 \item{cred_p}{Confidence level used for the Limited Fluctuation credibility

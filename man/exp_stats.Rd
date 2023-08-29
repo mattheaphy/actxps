@@ -37,7 +37,7 @@ with expected values}
 \code{.data} containing weights to use in the calculation of claims,
 exposures, partial credibility, and confidence intervals.}
 
-\item{credibility}{Whether the output should include partial credibility
+\item{credibility}{If \code{TRUE}, the output will include partial credibility
 weights and credibility-weighted termination rates.}
 
 \item{cred_p}{Confidence level used for the Limited Fluctuation credibility
@@ -46,8 +46,8 @@ method and confidence intervals}
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
 
-\item{conf_int}{Whether the output should include confidence intervals around
-the observed termination rates and any actual-to-expected ratios.}
+\item{conf_int}{If \code{TRUE}, the output will include confidence intervals
+around the observed termination rates and any actual-to-expected ratios.}
 
 \item{object}{An \code{exp_df} object}
 

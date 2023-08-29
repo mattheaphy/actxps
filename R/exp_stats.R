@@ -56,14 +56,14 @@
 #' @param wt Optional. Length 1 character vector. Name of the column in
 #' `.data` containing weights to use in the calculation of claims,
 #' exposures, partial credibility, and confidence intervals.
-#' @param credibility Whether the output should include partial credibility
+#' @param credibility If `TRUE`, the output will include partial credibility
 #' weights and credibility-weighted termination rates.
 #' @param cred_p Confidence level used for the Limited Fluctuation credibility
 #' method and confidence intervals
 #' @param cred_r Error tolerance under the Limited Fluctuation credibility
 #' method
-#' @param conf_int Whether the output should include confidence intervals around
-#' the observed termination rates and any actual-to-expected ratios.
+#' @param conf_int If `TRUE`, the output will include confidence intervals
+#' around the observed termination rates and any actual-to-expected ratios.
 #' @param object An `exp_df` object
 #' @param ... Groups to retain after `summary()` is called
 #'
