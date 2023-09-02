@@ -38,7 +38,8 @@
 #' `Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)`,
 #'
 #' Where `S` is the aggregate claim random variable, `X` is the weighting
-#' variable, and `N` is a binomial random variable for the number of claims.
+#' variable assumed to follow a normal distribution, and `N` is a binomial
+#' random variable for the number of claims.
 #'
 #' # `summary()` Method
 #'

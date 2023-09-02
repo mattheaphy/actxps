@@ -112,7 +112,8 @@ variance equal to:
 \code{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)},
 
 Where \code{S} is the aggregate claim random variable, \code{X} is the weighting
-variable, and \code{N} is a binomial random variable for the number of claims.
+variable assumed to follow a normal distribution, and \code{N} is a binomial
+random variable for the number of claims.
 }
 
 \section{\code{summary()} Method}{
