@@ -4,7 +4,8 @@ expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
 
 exp_stats2 <- function(dat) exp_stats(dat, wt = "premium", credibility = TRUE,
                                       expected = "q_exp", conf_int = TRUE)
-trx_stats2 <- function(dat) trx_stats(dat, percent_of = 'premium')
+trx_stats2 <- function(dat) trx_stats(dat, percent_of = 'premium',
+                                      conf_int = TRUE)
 
 # ungrouped summaries
 exp_res <- exp_stats2(expo)
@@ -119,7 +120,7 @@ test_that("Log y scale works", {
                   c("gg", "ggplot"))
 })
 
-test_that("Warning messages work", {
+test_that("Confidence interval warning messages work for termination plots", {
   expect_no_warning(autoplot(exp_res4, conf_int_bars = TRUE))
 
   no_ci <- expo |> group_by(pol_yr, inc_guar, product) |>
@@ -132,5 +133,19 @@ test_that("Warning messages work", {
                  regexp = "has no confidence intervals")
 
   expect_warning(autoplot(exp_res4, conf_int_bars = TRUE, y = exposure),
+                 regexp = "Confidence intervals are not available")
+})
+
+test_that("Confidence interval warning messages work for transaction plots", {
+  expect_no_warning(autoplot(trx_res4, conf_int_bars = TRUE))
+
+  no_ci <- expo |> group_by(pol_yr, inc_guar, product) |>
+    trx_stats(percent_of = "premium")
+  expect_warning(autoplot(no_ci, conf_int_bars = TRUE),
+                 regexp = "has no confidence intervals")
+  expect_warning(plot_utilization_rates(no_ci, conf_int_bars = TRUE),
+                 regexp = "has no confidence intervals")
+
+  expect_warning(autoplot(trx_res4, conf_int_bars = TRUE, y = exposure),
                  regexp = "Confidence intervals are not available")
 })
