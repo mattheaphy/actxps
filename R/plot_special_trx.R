@@ -43,14 +43,36 @@ plot_utilization_rates <- function(object, ...) {
   verify_trx_df(object)
 
   .groups <- groups(object)
-  piv_cols <- c("trx_util",
-                paste0("pct_of_", attr(object, "percent_of"), "_w_trx")) |>
+  xp_params <- attr(object, "xp_params")
+  pct_of <- paste0("pct_of_", attr(object, "percent_of"), "_w_trx")
+  piv_cols <- c("trx_util", pct_of) |>
     intersect(names(object))
 
-  object <- object |>
-    tidyr::pivot_longer(dplyr::all_of(piv_cols),
-                        names_to = "Series",
-                        values_to = "Rate")
+  if (xp_params$conf_int) {
+
+    extra_piv_cols <- c("trx_util_lower",
+                        "trx_util_upper",
+                        paste0(pct_of, "_lower"),
+                        paste0(pct_of, "_upper")) |>
+      intersect(names(object))
+
+    object <- object |>
+      dplyr::rename_at(piv_cols, \(x) paste0(x, "_Rate")) |>
+      tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_Rate")),
+                            dplyr::all_of(extra_piv_cols)),
+                          names_to = c("Series", ".value"),
+                          names_pattern =
+                            paste0("^(",
+                                   paste0(piv_cols, collapse = "|"),
+                                   ")_(Rate|upper|lower)")) |>
+      rename(Rate_lower = lower, Rate_upper = upper)
+
+  } else {
+    object <- object |>
+      tidyr::pivot_longer(dplyr::all_of(piv_cols),
+                          names_to = "Series",
+                          values_to = "Rate")
+  }
 
   # special logic to ensure that `Series` will not be used as an
   #   x or color variable
@@ -62,7 +84,15 @@ plot_utilization_rates <- function(object, ...) {
     .groups <- append(.groups, rlang::parse_expr(".no_color"))
   }
   attr(object, "groups") <- c(.groups, rlang::expr(Series))
+  attr(object, "xp_params") <- xp_params
   class(object) <- c("trx_df", class(object))
 
   autoplot(object, y = Rate, scales = "free_y", ...)
 }
+
+
+
+
+
+
+
