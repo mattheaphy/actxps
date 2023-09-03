@@ -68,9 +68,10 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
       tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_Rate")),
                             dplyr::all_of(extra_piv_cols)),
                           names_to = c("Series", ".value"),
-                          names_pattern = paste0("^(",
-                                                 paste0(piv_cols, collapse = "|"),
-                                                 ")_(Rate|upper|lower)")) |>
+                          names_pattern =
+                            paste0("^(",
+                                   paste0(piv_cols, collapse = "|"),
+                                   ")_(Rate|upper|lower)")) |>
       rename(Rate_lower = lower, Rate_upper = upper)
 
   } else {
@@ -116,9 +117,10 @@ plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
       tidyr::pivot_longer(c(dplyr::all_of(piv_cols |> paste0("_A/E ratio")),
                             dplyr::all_of(extra_piv_cols)),
                           names_to = c("Series", ".value"),
-                          names_pattern = paste0("^(",
-                                                 paste0(piv_cols, collapse = "|"),
-                                                 ")_(A/E ratio|upper|lower)")) |>
+                          names_pattern =
+                            paste0("^(",
+                                   paste0(piv_cols, collapse = "|"),
+                                   ")_(A/E ratio|upper|lower)")) |>
       rename(`A/E ratio_lower` = lower, `A/E ratio_upper` = upper)
 
   } else {
