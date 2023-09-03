@@ -173,6 +173,6 @@ res
 summary(res)
 
 expo |> group_by(inc_guar) |>
-  trx_stats(percent_of = "premium", combine_trx = TRUE)
+  trx_stats(percent_of = "premium", combine_trx = TRUE, conf_int = TRUE)
 
 }

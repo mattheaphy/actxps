@@ -307,11 +307,11 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
       # confidence intervals across all records
       pct_lower_all <- exp_form(
         "stats::qnorm(p[[1]], trx_amt, sd_all) / {.col}",
-        "pct_of_{.col}_lower",
+        "pct_of_{.col}_all_lower",
         percent_of)
       pct_upper_all = exp_form(
         "stats::qnorm(p[[2]], trx_amt, sd_all) / {.col}",
-        "pct_of_{.col}_upper",
+        "pct_of_{.col}_all_upper",
         percent_of)
       ci <- append(ci, c(sds, pct_lower, pct_upper,
                          pct_lower_all, pct_upper_all))

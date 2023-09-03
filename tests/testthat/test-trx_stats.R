@@ -63,8 +63,12 @@ test_that("trx_stats works", {
 
 })
 
-test_that("Confidence intervals surround the observed utilization rate", {
+test_that("Confidence intervals work", {
   res2 <- filter(res, trx_util > 0)
   expect_true(all(res2$trx_util < res2$trx_util_upper))
   expect_true(all(res2$trx_util > res2$trx_util_lower))
+  expect_true(all(res2$pct_of_premium_w_trx < res2$pct_of_premium_w_trx_upper))
+  expect_true(all(res2$pct_of_premium_w_trx > res2$pct_of_premium_w_trx_lower))
+  expect_true(all(res2$pct_of_premium_all < res2$pct_of_premium_all_upper))
+  expect_true(all(res2$pct_of_premium_all > res2$pct_of_premium_all_lower))
 })
