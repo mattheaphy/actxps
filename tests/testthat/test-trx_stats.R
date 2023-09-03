@@ -71,4 +71,15 @@ test_that("Confidence intervals work", {
   expect_true(all(res2$pct_of_premium_w_trx > res2$pct_of_premium_w_trx_lower))
   expect_true(all(res2$pct_of_premium_all < res2$pct_of_premium_all_upper))
   expect_true(all(res2$pct_of_premium_all > res2$pct_of_premium_all_lower))
+
+  # verify that confidence intervals are tighter using lower confidence
+  less_confident <- expo |>
+    group_by(pol_yr, inc_guar) |>
+    trx_stats(percent_of = c("av_anniv", "premium"),
+              conf_int = TRUE, conf_level = 0.5) |>
+    filter(trx_util > 0)
+  expect_true(all(res2$trx_util_upper - res2$trx_util_lower >
+                    less_confident$trx_util_upper -
+                    less_confident$trx_util_lower))
+
 })

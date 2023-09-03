@@ -71,4 +71,12 @@ test_that("Confidence intervals work", {
   expect_true(all(exp_res_weighted$ae_expected_2_upper >
                     exp_res_weighted$ae_expected_2))
 
+  # verify that confidence intervals are tighter using lower confidence
+  less_confident <- study_py |>
+    group_by(pol_yr, inc_guar) |>
+    exp_stats(expected = c("expected_1", "expected_2"),
+              credibility = TRUE, conf_int = TRUE, conf_level = 0.5)
+  expect_true(all(exp_res$q_obs_upper - exp_res$q_obs_lower >
+                    less_confident$q_obs_upper - less_confident$q_obs_lower))
+
 })
