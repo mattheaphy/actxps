@@ -216,20 +216,15 @@ plot_experience <- function(
   if (conf_int_bars) {
 
     y_chr <- rlang::as_name(p$mapping$y)
-    if (y_chr %in% c("q_obs", "Rate", "A/E ratio", "trx_util") ||
-        grepl("^(ae|pct_of)_", y_chr)) {
+    y_min_max <- paste0(y_chr, c("_upper", "_lower"))
+    if (all(y_min_max %in% names(object))) {
 
       conf_int <- attr(object, "xp_params")$conf_int
       if (is.null(conf_int) || !conf_int) {
         rlang::warn(c("*" = "`object` has no confidence intervals.",
-                      "i" = "Pass `conf_int = TRUE` to `exp_stats()` to calculate confidence intervals."))
+                      "i" = "Pass `conf_int = TRUE` to `exp_stats()` or `trx_stats()` to calculate confidence intervals."))
       } else {
-        if (y_chr == "q_obs") {
-          y_min_max <- rlang::exprs(q_obs_lower, q_obs_upper)
-        } else {
-          y_min_max <- paste0(y_chr, c("_upper", "_lower")) |>
-            rlang::syms()
-        }
+        y_min_max <- rlang::syms(y_min_max)
         p <- p + ggplot2::geom_errorbar(ggplot2::aes(
           ymin = !!y_min_max[[1]], ymax = !!y_min_max[[2]]))
       }
