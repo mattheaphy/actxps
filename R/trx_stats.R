@@ -246,11 +246,11 @@ summary.trx_df <- function(object, ...) {
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
   percent_of <- attr(object, "percent_of")
-  trx_params <- attr(object, "trx_params")
+  xp_params <- attr(object, "xp_params")
 
   finish_trx_stats(res, trx_types, percent_of,
                    .groups, start_date, end_date,
-                   trx_params$conf_int, trx_params$conf_level)
+                   xp_params$conf_int, xp_params$conf_level)
 
 }
 
@@ -338,12 +338,12 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      !!!ci,
                      .groups = "drop")
 
-    if (conf_int && !is.null(percent_of)) {
-      res <- res |>
-        # drop interim columns
-        select(-sd_trx, -sd_all) |>
-        relocate(trx_amt_sq, .after = dplyr::last_col())
-    }
+  if (conf_int && !is.null(percent_of)) {
+    res <- res |>
+      # drop interim columns
+      select(-sd_trx, -sd_all) |>
+      relocate(trx_amt_sq, .after = dplyr::last_col())
+  }
 
   tibble::new_tibble(res,
                      class = "trx_df",
@@ -351,8 +351,8 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      start_date = start_date,
                      percent_of = percent_of,
                      end_date = end_date,
-                     trx_params = list(conf_level = conf_level,
-                                       conf_int = conf_int))
+                     xp_params = list(conf_level = conf_level,
+                                      conf_int = conf_int))
 }
 
 verify_trx_df <- function(.data) {

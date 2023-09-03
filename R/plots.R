@@ -28,8 +28,9 @@
 #' @param second_y_labels Same as `y_labels`, but for the second y-axis.
 #' @param y_log10 If `TRUE`, the y-axes are plotted on a log-10 scale.
 #' @param conf_int_bars If `TRUE`, confidence interval error bars are included
-#' in the plot. This option is only available for termination rates and
-#' actual-to-expected ratios.
+#' in the plot. For `exp_df` objects, this option is available for termination
+#' rates and actual-to-expected ratios. For `trx_df` objects, this option is
+#' available for utilization rates and any `pct_of` columns.
 #'
 #' @details If no aesthetic map is supplied, the plot will use the first
 #' grouping variable in `object` on the x axis and `q_obs` on the y
@@ -215,9 +216,10 @@ plot_experience <- function(
   if (conf_int_bars) {
 
     y_chr <- rlang::as_name(p$mapping$y)
-    if (y_chr %in% c("q_obs", "Rate", "A/E ratio") || grepl("^ae_", y_chr)) {
+    if (y_chr %in% c("q_obs", "Rate", "A/E ratio", "trx_util") ||
+        grepl("^(ae|pct_of)_", y_chr)) {
 
-      conf_int <- attr(object, "exp_params")$conf_int
+      conf_int <- attr(object, "xp_params")$conf_int
       if (is.null(conf_int) || !conf_int) {
         rlang::warn(c("*" = "`object` has no confidence intervals.",
                       "i" = "Pass `conf_int = TRUE` to `exp_stats()` to calculate confidence intervals."))

@@ -80,7 +80,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   expected <- attr(object, "expected")
   target_status <- attr(object, "target_status")
   wt <- attr(object, "wt")
-  cred <- attr(object, "exp_params")$credibility
+  cred <- attr(object, "xp_params")$credibility
 
   tab <- object |>
     select(-dplyr::starts_with(".weight")) |>

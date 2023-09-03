@@ -188,13 +188,13 @@ summary.exp_df <- function(object, ...) {
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
   expected <- attr(object, "expected")
-  exp_params <- attr(object, "exp_params")
+  xp_params <- attr(object, "xp_params")
   wt <- attr(object, "wt")
 
   finish_exp_stats(res, target_status, expected, .groups,
-                   start_date, end_date, exp_params$credibility,
-                   exp_params$conf_level, exp_params$cred_r,
-                   wt, exp_params$conf_int)
+                   start_date, end_date, xp_params$credibility,
+                   xp_params$conf_level, xp_params$cred_r,
+                   wt, xp_params$conf_int)
 
 }
 
@@ -333,9 +333,9 @@ finish_exp_stats <- function(.data, target_status, expected,
                      expected = expected,
                      end_date = end_date,
                      wt = wt,
-                     exp_params = list(credibility = credibility,
-                                       conf_level = conf_level, cred_r = cred_r,
-                                       conf_int = conf_int))
+                     xp_params = list(credibility = credibility,
+                                      conf_level = conf_level, cred_r = cred_r,
+                                      conf_int = conf_int))
 }
 
 # this function is used to create formula specifications passed to dplyr::mutate

@@ -47,13 +47,13 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
   verify_exp_df(object)
 
   .groups <- groups(object)
-  exp_params <- attr(object, "exp_params")
+  xp_params <- attr(object, "xp_params")
   piv_cols <- c("q_obs", attr(object, "expected"),
                 if (include_cred_adj) paste0("adj_", attr(object, "expected"))) |>
     intersect(names(object))
 
 
-  if (exp_params$conf_int) {
+  if (xp_params$conf_int) {
 
     extra_piv_cols <- c("q_obs_lower", "q_obs_upper")
     if (include_cred_adj) {
@@ -83,7 +83,7 @@ plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
   }
 
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
-  attr(object, "exp_params") <- exp_params
+  attr(object, "xp_params") <- xp_params
   class(object) <- c("exp_df", class(object))
   autoplot(object, y = Rate, ...)
 }
@@ -103,9 +103,9 @@ plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
   }
 
   .groups <- groups(object)
-  exp_params <- attr(object, "exp_params")
+  xp_params <- attr(object, "xp_params")
 
-  if (exp_params$conf_int) {
+  if (xp_params$conf_int) {
 
     extra_piv_cols <- c(paste0("ae_", attr(object, "expected"), "_lower"),
                         paste0("ae_", attr(object, "expected"), "_upper")) |>
@@ -131,7 +131,7 @@ plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
   }
 
   attr(object, "groups") <- append(.groups, rlang::expr(Series), after = 1L)
-  attr(object, "exp_params") <- exp_params
+  attr(object, "xp_params") <- xp_params
   class(object) <- c("exp_df", class(object))
   p <- autoplot(object, y = `A/E ratio`, ...)
 
