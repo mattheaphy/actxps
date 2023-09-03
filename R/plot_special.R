@@ -63,7 +63,8 @@ plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
 
   verify_exp_df(object)
 
-  piv_cols <- paste0("ae_", attr(object, "expected"))
+  piv_cols <- paste0("ae_", attr(object, "expected")) |>
+    intersect(names(object))
   if (length(piv_cols) == 0) {
     rlang::abort(c(x = "The `exp_df` object does not have any actual-to-expected results available.",
                    i = "Hint: to add expected values, use the `expected` argument in `exp_stats()`"
