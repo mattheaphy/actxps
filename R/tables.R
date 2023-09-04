@@ -236,8 +236,9 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   if (conf_int) {
     tab <- tab |>
       gt::cols_merge_range(trx_util_lower, trx_util_upper) |>
-      gt::cols_label(trx_util_lower = "Utilization CI") |>
-      gt::cols_move(trx_util_lower, after = trx_util)
+      gt::tab_spanner(gt::md("**Utilization**"), c(trx_util, trx_util_lower)) |>
+      gt::cols_label(trx_util = gt::md("*Rate*"),
+                     trx_util_lower = gt::md("*CI*"))
     for (i in percent_of) {
       tab <- tab |>
         gt::cols_merge_range(paste0("pct_of_", i, "_w_trx_lower"),
