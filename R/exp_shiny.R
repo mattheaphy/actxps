@@ -106,7 +106,8 @@
 #'
 #' if (interactive()) {
 #'   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
-#'   expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+#'   expected_table <- c(seq(0.005, 0.03, length.out = 10),
+#'                       0.2, 0.15, rep(0.05, 3))
 #'
 #'   study_py <- study_py |>
 #'     mutate(expected_1 = expected_table[pol_yr],
@@ -401,6 +402,9 @@ exp_shiny <- function(dat,
                 width = 4,
                 shiny::checkboxInput("plotSmooth",
                                      shiny::strong("Add Smoothing?"),
+                                     value = FALSE),
+                shiny::checkboxInput("plotCI",
+                                     shiny::strong("Confidence intervals?"),
                                      value = FALSE)
               )
             ),
@@ -572,13 +576,15 @@ exp_shiny <- function(dat,
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
           exp_stats(wt = wt, credibility = credibility, expected = ex,
-                    conf_level = conf_level, cred_r = cred_r)
+                    conf_level = conf_level, cred_r = cred_r,
+                    conf_int = TRUE)
       } else {
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
           trx_stats(percent_of = input$pct_checks,
                     trx_types = input$trx_types_checks,
-                    combine_trx = input$trx_combine)
+                    combine_trx = input$trx_combine,
+                    conf_int = TRUE)
       }
 
     })
@@ -645,7 +651,8 @@ exp_shiny <- function(dat,
                              second_axis = input$plot2ndY,
                              second_y = !!second_y,
                              second_y_labels = second_y_labels,
-                             y_log10 = input$plotLogY)
+                             y_log10 = input$plotLogY,
+                             conf_int_bars = input$plotCI)
       } else {
 
         facets <- rlang::syms(input$facetVar)
