@@ -1,5 +1,27 @@
 # actxps (development version)
 
+- A new `conf_int` argument was added to `exp_stats()` and that creates confidence 
+intervals around observed termination rates, credibility-weighted termination 
+rates, and any actual-to-expected ratios.
+- Similarly, `conf_int` was added to `trx_stats()` to create confidence intervals around utilization rates and any "percentage of" output columns. A `conf_level`
+argument was also added to this function.
+- `autoplot.exp_df()` and `autoplot.trx_df()` now have a `conf_int_bars` argument 
+that plots confidence intervals (if available) as error bars for the selected 
+y-variable
+- `autoplot.exp_df()` and `autoplot.trx_df()` can now create scatter plots if
+"points" is passed to the `geoms` argument.
+- The second y-axis in the `autoplot()` methods was updated to use an area 
+geometry instead of bars for discrete x-axis variables. In addition, when a 
+log-10 y-scale is used, areas will always be positive quantities. Previously,
+it was observed that areas were drawn as negative values for y-values on the 
+main scale less than 1.
+- `autotable.exp_df()` and `autotable.trx_df()` were updated to format 
+intervals.
+- **Breaking change** - The confidence level argument `cred_p` was renamed to 
+`conf_level`. This change was made because the confidence level is no longer 
+strictly used for credibility calculations. This change impacts the functions
+`exp_stats()` and `exp_shiny()`.
+
 # actxps 1.2.0
 
 - `autoplot.exp_df()` and `autoplot.trx_df()` now include new options for adding a second y-axis and plotting results on a log-10 scale. The second y-axis defaults to plotting exposures using an area geometry.
