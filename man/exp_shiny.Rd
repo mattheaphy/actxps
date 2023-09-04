@@ -148,7 +148,8 @@ records retained.
 
 if (interactive()) {
   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
-  expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+  expected_table <- c(seq(0.005, 0.03, length.out = 10),
+                      0.2, 0.15, rep(0.05, 3))
 
   study_py <- study_py |>
     mutate(expected_1 = expected_table[pol_yr],
