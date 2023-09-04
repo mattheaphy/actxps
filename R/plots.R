@@ -220,8 +220,7 @@ plot_experience <- function(
     y_min_max <- paste0(y_chr, c("_upper", "_lower"))
 
     if (is.null(conf_int) || !conf_int) {
-      rlang::warn(c("*" = "`object` has no confidence intervals.",
-                    "i" = "Pass `conf_int = TRUE` to `exp_stats()` or `trx_stats()` to calculate confidence intervals."))
+      conf_int_warning()
     } else {
 
       if (all(y_min_max %in% names(object))) {
@@ -237,5 +236,13 @@ plot_experience <- function(
 
   if (is.null(facets)) return(p)
   p + ggplot2::facet_wrap(ggplot2::vars(!!!facets), scales = scales)
+
+}
+
+# This internal function provides a common warning that is used by multiple
+# functions.
+conf_int_warning <- function() {
+  rlang::warn(c("*" = "`object` has no confidence intervals.",
+                "i" = "Pass `conf_int = TRUE` to `exp_stats()` or `trx_stats()` to calculate confidence intervals."))
 
 }

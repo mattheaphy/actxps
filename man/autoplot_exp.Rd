@@ -82,8 +82,9 @@ the plot will display points only.}
 \item{y_log10}{If \code{TRUE}, the y-axes are plotted on a log-10 scale.}
 
 \item{conf_int_bars}{If \code{TRUE}, confidence interval error bars are included
-in the plot. This option is only available for termination rates and
-actual-to-expected ratios.}
+in the plot. For \code{exp_df} objects, this option is available for termination
+rates and actual-to-expected ratios. For \code{trx_df} objects, this option is
+available for utilization rates and any \code{pct_of} columns.}
 }
 \value{
 a \code{ggplot} object

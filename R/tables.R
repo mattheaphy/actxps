@@ -27,6 +27,8 @@
 #' useful for renaming grouping variables that will appear under their original
 #' variable names if left unchanged. See [gt::cols_label()] for more
 #' information.
+#' @param conf_int_show If `TRUE` confidence intervals will be displayed
+#' assuming they are available on `object`.
 #' @param ... Additional arguments passed to [gt::gt()].
 #'
 #' @details
@@ -74,6 +76,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                              color_q_obs = "RColorBrewer::GnBu",
                              color_ae_ = "RColorBrewer::RdBu",
                              rename_cols = rlang::list2(...),
+                             conf_int_show = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -83,6 +86,16 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   wt <- attr(object, "wt")
   cred <- attr(object, "xp_params")$credibility
   conf_int <- attr(object, "xp_params")$conf_int
+
+
+  if (conf_int_show && !conf_int) {
+    conf_int_warning()
+  } else if (conf_int && !conf_int_show) {
+    object <- object |>
+      select(-dplyr::ends_with("_lower"),
+             -dplyr::ends_with("_upper"))
+  }
+  conf_int <- conf_int_show && conf_int
 
   tab <- object |>
     select(-dplyr::starts_with(".weight")) |>
@@ -188,6 +201,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
                              color_util = "RColorBrewer::GnBu",
                              color_pct_of = "RColorBrewer::RdBu",
                              rename_cols = rlang::list2(...),
+                             conf_int_show = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -195,6 +209,15 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   percent_of <- attr(object, "percent_of")
   trx_types <- attr(object, "trx_types")
   conf_int <- attr(object, "xp_params")$conf_int
+
+  if (conf_int_show && !conf_int) {
+    conf_int_warning()
+  } else if (conf_int && !conf_int_show) {
+    object <- object |>
+      select(-dplyr::ends_with("_lower"),
+             -dplyr::ends_with("_upper"))
+  }
+  conf_int <- conf_int_show && conf_int
 
   # remove unnecessary columns
   if (!is.null(percent_of)) {
@@ -255,7 +278,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   if (colorful) {
 
     pct_of_cols <- c(paste0("pct_of_", percent_of, "_w_trx"),
-                         paste0("pct_of_", percent_of, "_all"))
+                     paste0("pct_of_", percent_of, "_all"))
     domain_pct <- if (!is.null(percent_of)) {
       object |>
         select(dplyr::any_of(pct_of_cols)) |>
