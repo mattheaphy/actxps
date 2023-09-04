@@ -368,7 +368,8 @@ span_percent_of <- function(tab, pct_of, conf_int) {
   if (conf_int) {
     tab <- tab |>
       gt::cols_label(!!rlang::sym(pct_names[[3]]) := gt::md("*w/ trx CI*"),
-                     !!rlang::sym(pct_names[[4]]) := gt::md("*all CI*"))
+                     !!rlang::sym(pct_names[[4]]) := gt::md("*all CI*")) |>
+      gt::cols_move(pct_names[[3]], pct_names[[1]])
   }
 
   tab
