@@ -434,6 +434,14 @@ exp_shiny <- function(dat,
           shiny::tabPanel(
             "Table",
             shiny::br(),
+            shiny::fluidRow(
+              shiny::column(
+                width = 4,
+                shiny::checkboxInput("tableCI",
+                                     shiny::strong("Confidence intervals?"),
+                                     value = FALSE)
+              )
+            ),
             gt::gt_output("xpTable")
           ),
           shiny::tabPanel(
@@ -684,7 +692,7 @@ exp_shiny <- function(dat,
     }, res = 92)
 
     output$xpTable <- gt::render_gt({
-      rxp() |> autotable()
+      rxp() |> autotable(conf_int_show = input$tableCI)
     })
 
     # filter information
