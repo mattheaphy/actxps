@@ -51,11 +51,12 @@
 #'     left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 #'
 #'   exp_res <- study_py |> group_by(pol_yr) |>
-#'     exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
+#'     exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE,
+#'               conf_int = TRUE)
 #'   autotable(exp_res)
 #'
 #'   trx_res <- study_py |> group_by(pol_yr) |>
-#'     trx_stats(percent_of = "av_anniv")
+#'     trx_stats(percent_of = "av_anniv", conf_int = TRUE)
 #'   autotable(trx_res)
 #' }
 #'
@@ -81,12 +82,15 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   target_status <- attr(object, "target_status")
   wt <- attr(object, "wt")
   cred <- attr(object, "xp_params")$credibility
+  conf_int <- attr(object, "xp_params")$conf_int
 
   tab <- object |>
     select(-dplyr::starts_with(".weight")) |>
     gt::gt(...) |>
     gt::fmt_number(c(claims, exposure), decimals = 0) |>
     gt::fmt_percent(c(q_obs,
+                      dplyr::ends_with("_lower"),
+                      dplyr::ends_with("_upper"),
                       dplyr::starts_with("ae_"),
                       dplyr::starts_with("adj_"),
                       dplyr::any_of("credibility"),
@@ -113,9 +117,25 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
     tab <- tab |> gt::cols_hide(n_claims)
   }
 
+  # merge confidence intervals into a single range column
+  if (conf_int) {
+    tab <- tab |>
+      gt::cols_merge_range(q_obs_lower, q_obs_upper) |>
+      gt::cols_label(q_obs_lower = gt::md("*q<sup>obs</sup> CI*"))
+    for (i in expected) {
+      tab <- tab |>
+        gt::cols_merge_range(paste0("ae_", i, "_lower"),
+                             paste0("ae_", i, "_upper"))
+      if (cred) {
+        tab <- tab |>
+          gt::cols_merge_range(paste0("adj_", i, "_lower"),
+                               paste0("adj_", i, "_upper"))
+      }
+    }
+  }
 
   for (i in expected) {
-    tab <- tab |> span_expected(i, cred)
+    tab <- tab |> span_expected(i, cred, conf_int)
   }
 
   if (cred) {
@@ -130,9 +150,10 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   }
   if (colorful) {
 
+    ae_cols <- paste0("ae_", expected)
     domain_ae <- if (length(expected > 0)) {
       object |>
-        select(dplyr::starts_with('ae_')) |>
+        select(dplyr::any_of(ae_cols)) |>
         range(na.rm = TRUE)
     }
 
@@ -146,7 +167,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
         )
       ) |>
       gt::data_color(
-        columns = dplyr::starts_with("ae_"),
+        columns = dplyr::any_of(ae_cols),
         fn = scales::col_numeric(
           palette = paletteer::paletteer_d(palette = color_ae_) |>
             as.character(),
@@ -173,6 +194,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
 
   percent_of <- attr(object, "percent_of")
   trx_types <- attr(object, "trx_types")
+  conf_int <- attr(object, "xp_params")$conf_int
 
   # remove unnecessary columns
   if (!is.null(percent_of)) {
@@ -182,13 +204,14 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   }
 
   tab <- object |>
-    select(-exposure) |>
+    select(-exposure, -dplyr::any_of("trx_amt_sq")) |>
     arrange(trx_type) |>
     gt::gt(groupname_col = "trx_type") |>
     gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
                    decimals = 0) |>
     gt::fmt_number(trx_freq, decimals = 1) |>
-    gt::fmt_percent(c(trx_util, dplyr::starts_with("pct_of_")),
+    gt::fmt_percent(c(dplyr::starts_with("trx_util"),
+                      dplyr::starts_with("pct_of_")),
                     decimals = decimals) |>
     gt::sub_missing() |>
     gt::tab_options(table.font.size = gt::pct(fontsize),
@@ -209,15 +232,32 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
                    subtitle = glue::glue("Transaction type{ifelse(length(trx_types) > 1,'s','')}: {paste(trx_types, collapse = ', ')}")) |>
     gt::tab_source_note(glue::glue("Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"))
 
+  # merge confidence intervals into a single range column
+  if (conf_int) {
+    tab <- tab |>
+      gt::cols_merge_range(trx_util_lower, trx_util_upper) |>
+      gt::cols_label(trx_util_lower = "Utilization CI") |>
+      gt::cols_move(trx_util_lower, after = trx_util)
+    for (i in percent_of) {
+      tab <- tab |>
+        gt::cols_merge_range(paste0("pct_of_", i, "_w_trx_lower"),
+                             paste0("pct_of_", i, "_w_trx_upper")) |>
+        gt::cols_merge_range(paste0("pct_of_", i, "_all_lower"),
+                             paste0("pct_of_", i, "_all_upper"))
+    }
+  }
+
   for (i in percent_of) {
-    tab <- tab |> span_percent_of(i)
+    tab <- tab |> span_percent_of(i, conf_int)
   }
 
   if (colorful) {
 
+    pct_of_cols <- c(paste0("pct_of_", percent_of, "_w_trx"),
+                         paste0("pct_of_", percent_of, "_all"))
     domain_pct <- if (!is.null(percent_of)) {
       object |>
-        select(dplyr::starts_with('pct_of')) |>
+        select(dplyr::any_of(pct_of_cols)) |>
         range(na.rm = TRUE)
     }
 
@@ -231,7 +271,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
         )
       ) |>
       gt::data_color(
-        columns = dplyr::starts_with("pct_of"),
+        columns = dplyr::any_of(pct_of_cols),
         fn = scales::col_numeric(
           palette = paletteer::paletteer_d(palette = color_pct_of) |>
             as.character(),
@@ -246,31 +286,67 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
 }
 
 
-span_expected <- function(tab, ex, cred) {
+span_expected <- function(tab, ex, cred, conf_int) {
 
   force(ex)
+
+  ae <- paste0("ae_", ex)
+  ae_ci <- paste0(ae, "_lower")
+  adj <- paste0("adj_", ex)
+  adj_ci <- paste0("adj_", ex, "_lower")
+
   tab <- tab |>
     gt::tab_spanner(glue::glue("`{ex}`") |> gt::md(),
-                    c(ex, paste0("ae_", ex),
-                      if (cred) paste0("adj_", ex))) |>
+                    c(ex, ae,
+                      if (cred) adj,
+                      if (conf_int) c(
+                        ae_ci,
+                        if(cred) adj_ci
+                      ))) |>
     gt::cols_label(!!rlang::enquo(ex) := gt::md("*q<sup>exp</sup>*"),
-                   !!rlang::sym(paste0("ae_", ex)) := gt::md("*A/E*"))
+                   !!rlang::sym(ae) := gt::md("*A/E*"))
 
-  if (!cred) return(tab)
+  if (cred) {
+    tab <- tab |> gt::cols_label(
+      !!rlang::sym(adj) := gt::md("*q<sup>adj</sup>*"))
+  }
 
-  tab |> gt::cols_label(
-    !!rlang::sym(paste0("adj_", ex)) := gt::md("*q<sup>adj</sup>*"))
+  if (conf_int) {
+    tab <- tab |> gt::cols_label(
+      !!rlang::sym(ae_ci) :=
+        gt::md("*A/E CI*")) |>
+      gt::cols_move(ae_ci, after = ae)
+    if (cred) {
+      tab <- tab |> gt::cols_label(
+        !!rlang::sym(adj_ci) :=
+          gt::md("*q<sup>adj</sup> CI*"))
+    }
+  }
+
+  tab
 
 }
 
-span_percent_of <- function(tab, pct_of) {
+span_percent_of <- function(tab, pct_of, conf_int) {
 
   pct_names <- paste0("pct_of_", pct_of, c("_w_trx", "_all"))
+  if (conf_int) {
+    pct_names <- c(pct_names,
+                   paste0(pct_names, "_lower"))
+  }
 
   tab <- tab |>
     gt::tab_spanner(glue::glue("**% of {pct_of}**") |> gt::md(),
                     pct_names) |>
     gt::cols_label(!!rlang::sym(pct_names[[1]]) := gt::md("*w/ trx*"),
                    !!rlang::sym(pct_names[[2]]) := gt::md("*all*"))
+
+  if (conf_int) {
+    tab <- tab |>
+      gt::cols_label(!!rlang::sym(pct_names[[3]]) := gt::md("*w/ trx CI*"),
+                     !!rlang::sym(pct_names[[4]]) := gt::md("*all CI*"))
+  }
+
+  tab
 
 }
