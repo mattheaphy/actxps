@@ -233,7 +233,7 @@ exposed_data2 |>
 If no weighting variable is passed to `wt`, confidence intervals will be constructed assuming a binomial distribution of claims. However, if a weighting variable is supplied, a normal distribution for aggregate claims will be assumed with a mean equal to observed claims and a variance equal to:
 
 $$
-Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)
+Var(S) = E(N) \times Var(X) + E(X)^2 \times Var(N)
 $$
 
 Where `S` is the aggregate claim random variable, `X` is the weighting variable assumed to follow a normal distribution, and `N` is a binomial random variable for the number of claims.
