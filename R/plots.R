@@ -244,5 +244,4 @@ plot_experience <- function(
 conf_int_warning <- function() {
   rlang::warn(c("*" = "`object` has no confidence intervals.",
                 "i" = "Pass `conf_int = TRUE` to `exp_stats()` or `trx_stats()` to calculate confidence intervals."))
-
 }

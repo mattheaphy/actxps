@@ -16,7 +16,8 @@ autotable(object, ...)
   color_q_obs = "RColorBrewer::GnBu",
   color_ae_ = "RColorBrewer::RdBu",
   rename_cols = rlang::list2(...),
-  conf_int_show = FALSE,
+  show_conf_int = FALSE,
+  show_cred_adj = FALSE,
   ...
 )
 
@@ -28,7 +29,7 @@ autotable(object, ...)
   color_util = "RColorBrewer::GnBu",
   color_pct_of = "RColorBrewer::RdBu",
   rename_cols = rlang::list2(...),
-  conf_int_show = FALSE,
+  show_conf_int = FALSE,
   ...
 )
 }
@@ -57,8 +58,11 @@ useful for renaming grouping variables that will appear under their original
 variable names if left unchanged. See \code{\link[gt:cols_label]{gt::cols_label()}} for more
 information.}
 
-\item{conf_int_show}{If \code{TRUE} confidence intervals will be displayed
+\item{show_conf_int}{If \code{TRUE} confidence intervals will be displayed
 assuming they are available on \code{object}.}
+
+\item{show_cred_adj}{If \code{TRUE} credibility-weighted termination rates will
+be displayed assuming they are available on \code{object}.}
 
 \item{color_util}{Color palette used for utilization rates.}
 

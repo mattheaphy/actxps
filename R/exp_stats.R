@@ -31,15 +31,19 @@
 #' actual-to-expected ratios. The confidence level is dictated
 #' by `conf_level`. If no weighting variable is passed to `wt`, confidence
 #' intervals will be constructed assuming a binomial distribution of claims.
-#' Otherwise, confidence intervals are calculated assuming that the aggregate
-#' claims distribution is normal with a mean equal to observed claims and a
-#' variance equal to:
+#' Otherwise, confidence intervals will be calculated assuming that the
+#' aggregate claims distribution is normal with a mean equal to observed claims
+#' and a variance equal to:
 #'
 #' `Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)`,
 #'
 #' Where `S` is the aggregate claim random variable, `X` is the weighting
 #' variable assumed to follow a normal distribution, and `N` is a binomial
 #' random variable for the number of claims.
+#'
+#' If `credibility` is `TRUE` and expected values are passed to `expected`,
+#' the output will also contain confidence intervals for any
+#' credibility-weighted termination rates.
 #'
 #' # `summary()` Method
 #'
@@ -80,8 +84,11 @@
 #' rates are prefixed by `adj_`.
 #' - If `conf_int` is set to `TRUE`, additional columns are added for lower and
 #' upper confidence interval limits around the observed termination rates and
-#' any actual-to-expected ratios. Confidence interval columns include the name
-#' of the original output column suffixed by either `_lower` or `_upper`.
+#' any actual-to-expected ratios. Additionally, if `credibility` is `TRUE` and
+#' expected values are passed to `expected`, the output will contain confidence
+#' intervals around credibility-weighted termination rates. Confidence interval
+#' columns include the name of the original output column suffixed by either
+#' `_lower` or `_upper`.
 #' - If a value is passed to `wt`, additional columns are created containing
 #' the the sum of weights (`.weight`), the sum of squared weights
 #' (`.weight_qs`), and the number of records (`.weight_n`).

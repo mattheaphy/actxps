@@ -436,9 +436,12 @@ exp_shiny <- function(dat,
             shiny::br(),
             shiny::fluidRow(
               shiny::column(
-                width = 4,
+                width = 12,
                 shiny::checkboxInput("tableCI",
                                      shiny::strong("Confidence intervals?"),
+                                     value = FALSE),
+                shiny::checkboxInput("tableCredAdj",
+                                     shiny::strong("Credibility-weighted termination rates?"),
                                      value = FALSE)
               )
             ),
@@ -692,7 +695,13 @@ exp_shiny <- function(dat,
     }, res = 92)
 
     output$xpTable <- gt::render_gt({
-      rxp() |> autotable(conf_int_show = input$tableCI)
+      if (input$study_type == "exp") {
+        rxp() |> autotable(show_conf_int = input$tableCI,
+                           show_cred_adj = input$tableCredAdj)
+      } else {
+        rxp() |> autotable(show_conf_int = input$tableCI)
+      }
+
     })
 
     # filter information

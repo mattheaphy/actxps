@@ -27,8 +27,10 @@
 #' useful for renaming grouping variables that will appear under their original
 #' variable names if left unchanged. See [gt::cols_label()] for more
 #' information.
-#' @param conf_int_show If `TRUE` confidence intervals will be displayed
+#' @param show_conf_int If `TRUE` confidence intervals will be displayed
 #' assuming they are available on `object`.
+#' @param show_cred_adj If `TRUE` credibility-weighted termination rates will
+#' be displayed assuming they are available on `object`.
 #' @param ... Additional arguments passed to [gt::gt()].
 #'
 #' @details
@@ -76,7 +78,8 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                              color_q_obs = "RColorBrewer::GnBu",
                              color_ae_ = "RColorBrewer::RdBu",
                              rename_cols = rlang::list2(...),
-                             conf_int_show = FALSE,
+                             show_conf_int = FALSE,
+                             show_cred_adj = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -87,15 +90,23 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   cred <- attr(object, "xp_params")$credibility
   conf_int <- attr(object, "xp_params")$conf_int
 
-
-  if (conf_int_show && !conf_int) {
+  if (show_conf_int && !conf_int) {
     conf_int_warning()
-  } else if (conf_int && !conf_int_show) {
+  } else if (conf_int && !show_conf_int) {
     object <- object |>
       select(-dplyr::ends_with("_lower"),
              -dplyr::ends_with("_upper"))
   }
-  conf_int <- conf_int_show && conf_int
+  conf_int <- show_conf_int && conf_int
+
+  if (show_cred_adj && (!cred | is.null(expected))) {
+    rlang::warn(c("*" = "`object` has no credibility-weighted termination rates.",
+                  "i" = "Pass `credibility = TRUE` and one or more column names to `expected` when calling `exp_stats()` to calculate credibility-weighted termination rates."))
+  } else if (cred && !show_cred_adj) {
+    object <- object |>
+      select(-dplyr::matches(paste0("adj_", expected)))
+  }
+  show_cred_adj <- show_cred_adj && cred
 
   tab <- object |>
     select(-dplyr::starts_with(".weight")) |>
@@ -139,7 +150,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
       tab <- tab |>
         gt::cols_merge_range(paste0("ae_", i, "_lower"),
                              paste0("ae_", i, "_upper"))
-      if (cred) {
+      if (show_cred_adj) {
         tab <- tab |>
           gt::cols_merge_range(paste0("adj_", i, "_lower"),
                                paste0("adj_", i, "_upper"))
@@ -148,7 +159,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   }
 
   for (i in expected) {
-    tab <- tab |> span_expected(i, cred, conf_int)
+    tab <- tab |> span_expected(i, conf_int, show_cred_adj)
   }
 
   if (cred) {
@@ -201,7 +212,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
                              color_util = "RColorBrewer::GnBu",
                              color_pct_of = "RColorBrewer::RdBu",
                              rename_cols = rlang::list2(...),
-                             conf_int_show = FALSE,
+                             show_conf_int = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -210,14 +221,14 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   trx_types <- attr(object, "trx_types")
   conf_int <- attr(object, "xp_params")$conf_int
 
-  if (conf_int_show && !conf_int) {
+  if (show_conf_int && !conf_int) {
     conf_int_warning()
-  } else if (conf_int && !conf_int_show) {
+  } else if (conf_int && !show_conf_int) {
     object <- object |>
       select(-dplyr::ends_with("_lower"),
              -dplyr::ends_with("_upper"))
   }
-  conf_int <- conf_int_show && conf_int
+  conf_int <- show_conf_int && conf_int
 
   # remove unnecessary columns
   if (!is.null(percent_of)) {
@@ -310,7 +321,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
 }
 
 
-span_expected <- function(tab, ex, cred, conf_int) {
+span_expected <- function(tab, ex, conf_int, show_cred_adj) {
 
   force(ex)
 
@@ -322,15 +333,15 @@ span_expected <- function(tab, ex, cred, conf_int) {
   tab <- tab |>
     gt::tab_spanner(glue::glue("`{ex}`") |> gt::md(),
                     c(ex, ae,
-                      if (cred) adj,
+                      if (show_cred_adj) adj,
                       if (conf_int) c(
                         ae_ci,
-                        if(cred) adj_ci
+                        if(show_cred_adj) adj_ci
                       ))) |>
     gt::cols_label(!!rlang::enquo(ex) := gt::md("*q<sup>exp</sup>*"),
                    !!rlang::sym(ae) := gt::md("*A/E*"))
 
-  if (cred) {
+  if (show_cred_adj) {
     tab <- tab |> gt::cols_label(
       !!rlang::sym(adj) := gt::md("*q<sup>adj</sup>*"))
   }
@@ -340,7 +351,7 @@ span_expected <- function(tab, ex, cred, conf_int) {
       !!rlang::sym(ae_ci) :=
         gt::md("*A/E CI*")) |>
       gt::cols_move(ae_ci, after = ae)
-    if (cred) {
+    if (show_cred_adj) {
       tab <- tab |> gt::cols_label(
         !!rlang::sym(adj_ci) :=
           gt::md("*q<sup>adj</sup> CI*"))

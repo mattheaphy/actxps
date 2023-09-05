@@ -66,8 +66,11 @@ for partial credibility and credibility-weighted termination rates
 rates are prefixed by \code{adj_}.
 \item If \code{conf_int} is set to \code{TRUE}, additional columns are added for lower and
 upper confidence interval limits around the observed termination rates and
-any actual-to-expected ratios. Confidence interval columns include the name
-of the original output column suffixed by either \verb{_lower} or \verb{_upper}.
+any actual-to-expected ratios. Additionally, if \code{credibility} is \code{TRUE} and
+expected values are passed to \code{expected}, the output will contain confidence
+intervals around credibility-weighted termination rates. Confidence interval
+columns include the name of the original output column suffixed by either
+\verb{_lower} or \verb{_upper}.
 \item If a value is passed to \code{wt}, additional columns are created containing
 the the sum of weights (\code{.weight}), the sum of squared weights
 (\code{.weight_qs}), and the number of records (\code{.weight_n}).
@@ -105,15 +108,19 @@ confidence interval limits for the observed termination rate and any
 actual-to-expected ratios. The confidence level is dictated
 by \code{conf_level}. If no weighting variable is passed to \code{wt}, confidence
 intervals will be constructed assuming a binomial distribution of claims.
-Otherwise, confidence intervals are calculated assuming that the aggregate
-claims distribution is normal with a mean equal to observed claims and a
-variance equal to:
+Otherwise, confidence intervals will be calculated assuming that the
+aggregate claims distribution is normal with a mean equal to observed claims
+and a variance equal to:
 
 \code{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)},
 
 Where \code{S} is the aggregate claim random variable, \code{X} is the weighting
 variable assumed to follow a normal distribution, and \code{N} is a binomial
 random variable for the number of claims.
+
+If \code{credibility} is \code{TRUE} and expected values are passed to \code{expected},
+the output will also contain confidence intervals for any
+credibility-weighted termination rates.
 }
 
 \section{\code{summary()} Method}{
