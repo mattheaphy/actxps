@@ -120,11 +120,11 @@ test_that("Log y scale works", {
                   c("gg", "ggplot"))
 })
 
+no_ci <- expo |> group_by(pol_yr, inc_guar, product) |>
+  exp_stats(expected = "q_exp")
+
 test_that("Confidence interval warning messages work for termination plots", {
   expect_no_warning(autoplot(exp_res4, conf_int_bars = TRUE))
-
-  no_ci <- expo |> group_by(pol_yr, inc_guar, product) |>
-    exp_stats(expected = "q_exp")
   expect_warning(autoplot(no_ci, conf_int_bars = TRUE),
                  regexp = "has no confidence intervals")
   expect_warning(plot_termination_rates(no_ci, conf_int_bars = TRUE),
@@ -139,13 +139,21 @@ test_that("Confidence interval warning messages work for termination plots", {
 test_that("Confidence interval warning messages work for transaction plots", {
   expect_no_warning(autoplot(trx_res4, conf_int_bars = TRUE))
 
-  no_ci <- expo |> group_by(pol_yr, inc_guar, product) |>
+  no_ci_trx <- expo |> group_by(pol_yr, inc_guar, product) |>
     trx_stats(percent_of = "premium")
-  expect_warning(autoplot(no_ci, conf_int_bars = TRUE),
+  expect_warning(autoplot(no_ci_trx, conf_int_bars = TRUE),
                  regexp = "has no confidence intervals")
-  expect_warning(plot_utilization_rates(no_ci, conf_int_bars = TRUE),
+  expect_warning(plot_utilization_rates(no_ci_trx, conf_int_bars = TRUE),
                  regexp = "has no confidence intervals")
-
   expect_warning(autoplot(trx_res4, conf_int_bars = TRUE, y = exposure),
                  regexp = "Confidence intervals are not available")
+})
+
+test_that("plot_termination_rates credibility-adjusted message works", {
+  expect_warning(plot_termination_rates(no_ci, include_cred_adj = TRUE),
+                 regexp = "has no credibility-weighted")
+  no_expected <- expo |> group_by(pol_yr) |>
+    exp_stats(credibility = TRUE)
+  expect_warning(plot_termination_rates(no_expected, include_cred_adj = TRUE),
+                 regexp = "has no credibility-weighted")
 })

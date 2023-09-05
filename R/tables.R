@@ -100,8 +100,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   conf_int <- show_conf_int && conf_int
 
   if (show_cred_adj && (!cred | is.null(expected))) {
-    rlang::warn(c("*" = "`object` has no credibility-weighted termination rates.",
-                  "i" = "Pass `credibility = TRUE` and one or more column names to `expected` when calling `exp_stats()` to calculate credibility-weighted termination rates."))
+    cred_adj_warning()
   } else if (cred && !show_cred_adj) {
     object <- object |>
       select(-dplyr::matches(paste0("adj_", expected)))

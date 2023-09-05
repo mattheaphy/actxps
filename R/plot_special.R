@@ -45,6 +45,10 @@
 plot_termination_rates <- function(object, ..., include_cred_adj = FALSE) {
 
   verify_exp_df(object)
+  if (include_cred_adj && (!attr(object, "xp_params")$credibility ||
+                           is.null(attr(object, "expected")))) {
+    cred_adj_warning()
+  }
 
   .groups <- groups(object)
   piv_cols <- c("q_obs", attr(object, "expected"),
@@ -133,4 +137,11 @@ pivot_plot_special <- function(object, piv_cols, values_to = "Rate") {
   attr(object, "xp_params") <- xp_params
   object
 
+}
+
+# This internal function provides a common warning that is used by multiple
+# functions.
+cred_adj_warning <- function() {
+  rlang::warn(c("*" = "`object` has no credibility-weighted termination rates.",
+                "i" = "Pass `credibility = TRUE` and one or more column names to `expected` when calling `exp_stats()` to calculate credibility-weighted termination rates."))
 }
