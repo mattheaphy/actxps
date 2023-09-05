@@ -30,18 +30,6 @@
 #' - In a study of recurring claims, if `percent_of` refers to a column
 #' containing a maximum benefit amount, utilization rates can be determined.
 #'
-#' # Default removal of partial exposures
-#'
-#' As a default, partial exposures are removed from `.data` before summarizing
-#' results. This is done to avoid complexity associated with a lopsided skew
-#' in the timing of transactions. For example, if transactions can occur on a
-#' monthly basis or annually at the beginning of each policy year, partial
-#' exposures may not be appropriate. If a policy had an exposure of 0.5 years
-#' and was taking withdrawals annually at the beginning of the year, an
-#' argument could be made that the exposure should instead be 1 complete year.
-#' If the same policy was expected to take withdrawals 9 months into the year,
-#' it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
-#' To override this treatment, set `full_exposures_only` to `FALSE`.
 #' # Confidence intervals
 #'
 #' If `conf_int` is set to `TRUE`, the output will contain lower and upper
@@ -55,15 +43,28 @@
 #' non-zero transactions (`pct_of_{*}_w_trx`) are constructed using a normal
 #' distribution
 #' - Intervals for transactions as a percentage of another column
-#' regardless of transaction utilization (`pct_of_{*}`) are calculated assuming
-#' that the aggregate distribution is normal with a mean equal to observed
-#' transactions and a variance equal to:
+#' regardless of transaction utilization (`pct_of_{*}_all`) are calculated
+#' assuming that the aggregate distribution is normal with a mean equal to
+#' observed transactions and a variance equal to:
 #'
 #'     `Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)`,
 #'
 #'     Where `S` is the aggregate transactions random variable, `X` is an individual
 #' transaction amount assumed to follow a normal distribution, and `N` is a
 #' binomial random variable for transaction utilization.
+#'
+#' # Default removal of partial exposures
+#'
+#' As a default, partial exposures are removed from `.data` before summarizing
+#' results. This is done to avoid complexity associated with a lopsided skew
+#' in the timing of transactions. For example, if transactions can occur on a
+#' monthly basis or annually at the beginning of each policy year, partial
+#' exposures may not be appropriate. If a policy had an exposure of 0.5 years
+#' and was taking withdrawals annually at the beginning of the year, an
+#' argument could be made that the exposure should instead be 1 complete year.
+#' If the same policy was expected to take withdrawals 9 months into the year,
+#' it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
+#' To override this treatment, set `full_exposures_only` to `FALSE`.
 #'
 #' # `summary()` Method
 #'

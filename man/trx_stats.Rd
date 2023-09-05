@@ -120,19 +120,6 @@ containing a maximum benefit amount, utilization rates can be determined.
 }
 }
 
-\section{Default removal of partial exposures}{
-As a default, partial exposures are removed from \code{.data} before summarizing
-results. This is done to avoid complexity associated with a lopsided skew
-in the timing of transactions. For example, if transactions can occur on a
-monthly basis or annually at the beginning of each policy year, partial
-exposures may not be appropriate. If a policy had an exposure of 0.5 years
-and was taking withdrawals annually at the beginning of the year, an
-argument could be made that the exposure should instead be 1 complete year.
-If the same policy was expected to take withdrawals 9 months into the year,
-it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
-To override this treatment, set \code{full_exposures_only} to \code{FALSE}.
-}
-
 \section{Confidence intervals}{
 If \code{conf_int} is set to \code{TRUE}, the output will contain lower and upper
 confidence interval limits for the observed utilization rate and any
@@ -145,9 +132,9 @@ distribution.
 non-zero transactions (\verb{pct_of_\{*\}_w_trx}) are constructed using a normal
 distribution
 \item Intervals for transactions as a percentage of another column
-regardless of transaction utilization (\verb{pct_of_\{*\}}) are calculated assuming
-that the aggregate distribution is normal with a mean equal to observed
-transactions and a variance equal to:
+regardless of transaction utilization (\verb{pct_of_\{*\}_all}) are calculated
+assuming that the aggregate distribution is normal with a mean equal to
+observed transactions and a variance equal to:
 
 \code{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)},
 
@@ -155,6 +142,19 @@ Where \code{S} is the aggregate transactions random variable, \code{X} is an ind
 transaction amount assumed to follow a normal distribution, and \code{N} is a
 binomial random variable for transaction utilization.
 }
+}
+
+\section{Default removal of partial exposures}{
+As a default, partial exposures are removed from \code{.data} before summarizing
+results. This is done to avoid complexity associated with a lopsided skew
+in the timing of transactions. For example, if transactions can occur on a
+monthly basis or annually at the beginning of each policy year, partial
+exposures may not be appropriate. If a policy had an exposure of 0.5 years
+and was taking withdrawals annually at the beginning of the year, an
+argument could be made that the exposure should instead be 1 complete year.
+If the same policy was expected to take withdrawals 9 months into the year,
+it's not clear if the exposure should be 0.5 years or 0.5 / 0.75 years.
+To override this treatment, set \code{full_exposures_only} to \code{FALSE}.
 }
 
 \section{\code{summary()} Method}{
