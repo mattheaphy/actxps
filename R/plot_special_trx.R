@@ -43,14 +43,10 @@ plot_utilization_rates <- function(object, ...) {
   verify_trx_df(object)
 
   .groups <- groups(object)
-  piv_cols <- c("trx_util",
-                paste0("pct_of_", attr(object, "percent_of"), "_w_trx")) |>
-    intersect(names(object))
+  pct_of <- paste0("pct_of_", attr(object, "percent_of"), "_w_trx")
+  piv_cols <- c("trx_util", pct_of)
 
-  object <- object |>
-    tidyr::pivot_longer(dplyr::all_of(piv_cols),
-                        names_to = "Series",
-                        values_to = "Rate")
+  object <- pivot_plot_special(object, piv_cols)
 
   # special logic to ensure that `Series` will not be used as an
   #   x or color variable
@@ -62,7 +58,13 @@ plot_utilization_rates <- function(object, ...) {
     .groups <- append(.groups, rlang::parse_expr(".no_color"))
   }
   attr(object, "groups") <- c(.groups, rlang::expr(Series))
-  class(object) <- c("trx_df", class(object))
 
   autoplot(object, y = Rate, scales = "free_y", ...)
 }
+
+
+
+
+
+
+

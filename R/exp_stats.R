@@ -24,13 +24,35 @@
 #' the Limited Fluctuation credibility method (also known as Classical
 #' Credibility) assuming a binomial distribution of claims.
 #'
+#' # Confidence intervals
+#'
+#' If `conf_int` is set to `TRUE`, the output will contain lower and upper
+#' confidence interval limits for the observed termination rate and any
+#' actual-to-expected ratios. The confidence level is dictated
+#' by `conf_level`. If no weighting variable is passed to `wt`, confidence
+#' intervals will be constructed assuming a binomial distribution of claims.
+#' Otherwise, confidence intervals will be calculated assuming that the
+#' aggregate claims distribution is normal with a mean equal to observed claims
+#' and a variance equal to:
+#'
+#' `Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)`,
+#'
+#' Where `S` is the aggregate claim random variable, `X` is the weighting
+#' variable assumed to follow a normal distribution, and `N` is a binomial
+#' random variable for the number of claims.
+#'
+#' If `credibility` is `TRUE` and expected values are passed to `expected`,
+#' the output will also contain confidence intervals for any
+#' credibility-weighted termination rates.
+#'
 #' # `summary()` Method
 #'
 #' Applying `summary()` to a `exp_df` object will re-summarize the
 #' data while retaining any grouping variables passed to the "dots"
 #' (`...`).
 #'
-#' @param .data A data frame with exposure-level records, ideally of type `exposed_df`
+#' @param .data A data frame with exposure-level records, ideally of type
+#' `exposed_df`
 #' @param target_status A character vector of target status values
 #' @param expected A character vector containing column names in `.data`
 #' with expected values
@@ -38,24 +60,38 @@
 #' @param col_status Name of the column in `.data` containing the policy status
 #' @param wt Optional. Length 1 character vector. Name of the column in
 #' `.data` containing weights to use in the calculation of claims,
-#' exposures, and partial credibility.
-#' @param credibility Whether the output should include partial credibility
+#' exposures, partial credibility, and confidence intervals.
+#' @param credibility If `TRUE`, the output will include partial credibility
 #' weights and credibility-weighted termination rates.
-#' @param cred_p Confidence level under the Limited Fluctuation credibility method
+#' @param conf_level Confidence level used for the Limited Fluctuation
+#' credibility method and confidence intervals
 #' @param cred_r Error tolerance under the Limited Fluctuation credibility
 #' method
+#' @param conf_int If `TRUE`, the output will include confidence intervals
+#' around the observed termination rates and any actual-to-expected ratios.
 #' @param object An `exp_df` object
 #' @param ... Groups to retain after `summary()` is called
 #'
 #' @return A tibble with class `exp_df`, `tbl_df`, `tbl`,
-#' and `data.frame`. The results include columns for any grouping
-#' variables, claims, exposures, and observed termination rates (`q_obs`).
-#' If any values are passed to `expected`, additional columns will be
-#' added for expected termination rates and actual-to-expected ratios. If
-#' `credibility` is set to `TRUE`, additional columns are added
+#' and `data.frame`. The results include columns for any grouping variables,
+#' claims, exposures, and observed termination rates (`q_obs`).
+#'
+#' - If any values are passed to `expected`, expected termination rates and
+#' actual-to-expected ratios.
+#' - If `credibility` is set to `TRUE`, additional columns are added
 #' for partial credibility and credibility-weighted termination rates
 #' (assuming values are passed to `expected`). Credibility-weighted termination
 #' rates are prefixed by `adj_`.
+#' - If `conf_int` is set to `TRUE`, additional columns are added for lower and
+#' upper confidence interval limits around the observed termination rates and
+#' any actual-to-expected ratios. Additionally, if `credibility` is `TRUE` and
+#' expected values are passed to `expected`, the output will contain confidence
+#' intervals around credibility-weighted termination rates. Confidence interval
+#' columns include the name of the original output column suffixed by either
+#' `_lower` or `_upper`.
+#' - If a value is passed to `wt`, additional columns are created containing
+#' the the sum of weights (`.weight`), the sum of squared weights
+#' (`.weight_qs`), and the number of records (`.weight_n`).
 #'
 #' @examples
 #' toy_census |> expose("2020-12-31", target_status = "Surrender") |>
@@ -78,7 +114,8 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
                       col_status = "status",
                       wt = NULL,
                       credibility = FALSE,
-                      cred_p = 0.95, cred_r = 0.05) {
+                      conf_level = 0.95, cred_r = 0.05,
+                      conf_int = FALSE) {
 
   .groups <- groups(.data)
   start_date <- attr(.data, "start_date")
@@ -114,7 +151,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   finish_exp_stats(res, target_status, expected, .groups,
                    start_date, end_date, credibility,
-                   cred_p, cred_r, wt)
+                   conf_level, cred_r, wt, conf_int)
 
 }
 
@@ -123,7 +160,7 @@ print.exp_df <- function(x, ...) {
 
   cat("Experience study results\n\n")
   if (length(groups(x)) > 0) {
-    cat("Groups:", paste(groups(x), collapse = ", "), "\n")
+    cat(" Groups:", paste(groups(x), collapse = ", "), "\n")
   }
   cat(" Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
       "Study range:", as.character(attr(x, "start_date")), "to",
@@ -157,13 +194,13 @@ summary.exp_df <- function(object, ...) {
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
   expected <- attr(object, "expected")
-  exp_params <- attr(object, "exp_params")
+  xp_params <- attr(object, "xp_params")
   wt <- attr(object, "wt")
 
   finish_exp_stats(res, target_status, expected, .groups,
-                   start_date, end_date, exp_params$credibility,
-                   exp_params$cred_p, exp_params$cred_r,
-                   wt)
+                   start_date, end_date, xp_params$credibility,
+                   xp_params$conf_level, xp_params$cred_r,
+                   wt, xp_params$conf_int)
 
 }
 
@@ -173,8 +210,8 @@ summary.exp_df <- function(object, ...) {
 
 finish_exp_stats <- function(.data, target_status, expected,
                              .groups, start_date, end_date,
-                             credibility, cred_p, cred_r,
-                             wt) {
+                             credibility, conf_level, cred_r,
+                             wt, conf_int) {
 
   # expected value formulas. these are already weighted if applicable
   if (!missing(expected)) {
@@ -202,7 +239,7 @@ finish_exp_stats <- function(.data, target_status, expected,
   # credibility formulas - varying by weights
   if (credibility) {
 
-    y <- (stats::qnorm((1 + cred_p) / 2) / cred_r) ^ 2
+    y <- (stats::qnorm((1 + conf_level) / 2) / cred_r) ^ 2
 
     if (is.null(wt)) {
       cred <- rlang::exprs(
@@ -229,6 +266,48 @@ finish_exp_stats <- function(.data, target_status, expected,
     cred <- NULL
   }
 
+  # confidence interval formulas
+  if (conf_int) {
+
+    p <- c((1 - conf_level) / 2, 1 - (1 - conf_level) / 2)
+
+    if (is.null(wt)) {
+      ci <- rlang::exprs(
+        q_obs_lower = stats::qbinom(p[[1]], exposure, q_obs) / exposure,
+        q_obs_upper = stats::qbinom(p[[2]], exposure, q_obs) / exposure
+      )
+    } else {
+      ci <- rlang::exprs(
+        # For binomial N
+        # Var(S) = n * p * (Var(X) + E(X)^2 * (1 - p))
+        sd_agg = (claims * (
+          (ex2_wt - ex_wt ^ 2) + ex_wt ^ 2 * (1 - q_obs))) ^ 0.5,
+        q_obs_lower = stats::qnorm(p[[1]], claims, sd_agg) / exposure,
+        q_obs_upper = stats::qnorm(p[[2]], claims, sd_agg) / exposure
+      )
+    }
+
+    if (!is.null(expected)) {
+      ae_lower <- exp_form("q_obs_lower / {.col}",
+                           "ae_{.col}_lower", expected)
+      ae_upper <- exp_form("q_obs_upper / {.col}",
+                           "ae_{.col}_upper", expected)
+      ci <- append(ci, c(ae_lower, ae_upper))
+      if (credibility) {
+        ci <- append(ci,
+                     c(exp_form("credibility * q_obs_lower +
+                                (1 - credibility) * {.col}",
+                                "adj_{.col}_lower", expected),
+                       exp_form("credibility * q_obs_upper +
+                                (1 - credibility) * {.col}",
+                                "adj_{.col}_upper", expected)))
+      }
+    }
+
+  } else {
+    ci <- NULL
+  }
+
   res <- .data |>
     dplyr::summarize(n_claims = sum(n_claims),
                      claims = sum(claims),
@@ -238,12 +317,15 @@ finish_exp_stats <- function(.data, target_status, expected,
                      !!!ex_ae,
                      !!!wt_forms,
                      !!!cred,
+                     !!!ci,
                      .groups = "drop") |>
-    relocate(exposure, q_obs, .after = claims)
+    relocate(exposure, q_obs,
+             dplyr::any_of(c("q_obs_lower", "q_obs_upper")),
+             .after = claims)
 
   if (!is.null(wt)) {
     res <- res |>
-      select(-ex_wt, -ex2_wt) |>
+      select(-ex_wt, -ex2_wt, -dplyr::any_of("sd_agg")) |>
       relocate(.weight, .weight_sq, .weight_n,
                .after = dplyr::last_col())
   }
@@ -256,8 +338,9 @@ finish_exp_stats <- function(.data, target_status, expected,
                      expected = expected,
                      end_date = end_date,
                      wt = wt,
-                     exp_params = list(credibility = credibility,
-                                       cred_p = cred_p, cred_r = cred_r))
+                     xp_params = list(credibility = credibility,
+                                      conf_level = conf_level, cred_r = cred_r,
+                                      conf_int = conf_int))
 }
 
 # this function is used to create formula specifications passed to dplyr::mutate
@@ -265,6 +348,12 @@ finish_exp_stats <- function(.data, target_status, expected,
 # a common naming structure.
 # Note - this could be handled using across, but is not due to performance on
 # grouped data frames
+#' @param form A formula for new columns that will be passed into
+#' `glue::glue()` that uses the placeholder "{.col}"
+#' @param new_col The desired names of the new columns. This will also use the
+#' placeholder "{.col}".
+#' @param .col The names of existing columns that "{.col}" refers to
+#' @noRd
 exp_form <- function(form, new_col, .col) {
   gsub("\\{\\.col\\}", "`{.col}`", form) |>
     glue::glue() |>

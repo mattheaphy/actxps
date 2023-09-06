@@ -11,7 +11,7 @@ exp_shiny(
   distinct_max = 25L,
   title,
   credibility = TRUE,
-  cred_p = 0.95,
+  conf_level = 0.95,
   cred_r = 0.05
 )
 }
@@ -31,10 +31,11 @@ prevents the drawing of overly complex plots. Default value = 25.}
 \item{title}{Optional. Title of the Shiny app. If no title is provided,
 a descriptive title will be generated based on attributes of \code{dat}.}
 
-\item{credibility}{Whether the output should include partial credibility
+\item{credibility}{If \code{TRUE}, the output will include partial credibility
 weights and credibility-weighted termination rates.}
 
-\item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
+\item{conf_level}{Confidence level used for the Limited Fluctuation
+credibility method and confidence intervals}
 
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
@@ -147,7 +148,8 @@ records retained.
 
 if (interactive()) {
   study_py <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")
-  expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
+  expected_table <- c(seq(0.005, 0.03, length.out = 10),
+                      0.2, 0.15, rep(0.05, 3))
 
   study_py <- study_py |>
     mutate(expected_1 = expected_table[pol_yr],

@@ -163,10 +163,47 @@ glimpse(trx_res)
 
 ```
 
+## Confidence intervals
 
-### `autoplot()` and `autotable()`
+If `conf_int` is set to `TRUE`, `trx_stats()` will produce lower and upper confidence interval limits for the observed utilization rate. Confidence intervals are constructed assuming a binomial distribution.
 
-The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables from `trx_df` objects.
+```{r trx-conf1}
+exposed_trx |> 
+  group_by(pol_yr) |> 
+  trx_stats(conf_int = TRUE) |> 
+  select(pol_yr, trx_util, trx_util_lower, trx_util_upper)
+```
+
+The default confidence level is 95%. This can be changed using the `conf_level` argument. Below, tighter confidence intervals are constructed by decreasing the confidence level to 90%.
+
+```{r trx-conf2}
+exposed_trx |> 
+  group_by(pol_yr) |> 
+  trx_stats(conf_int = TRUE, conf_level = 0.9) |> 
+  select(pol_yr, trx_util, trx_util_lower, trx_util_upper)
+```
+
+If any column names are passed to `percent_of`, `trx_stats()` will produce additional confidence intervals:
+
+- Intervals for transactions as a percentage of another column when transactions occur (`pct_of_{*}_w_trx`) are constructed using a normal distribution.
+- Intervals for transactions as a percentage of another column regardless of transaction utilization (`pct_of_{*}_all`) are calculated assuming that the aggregate distribution is normal with a mean equal to observed transactions and a variance equal to:
+
+$$
+     Var(S) = E(N) \times Var(X) + E(X)^2 \times Var(N),
+$$
+Where `S` is the aggregate transactions random variable, `X` is an individual transaction amount assumed to follow a normal distribution, and `N` is a binomial random variable for transaction utilization.
+
+```{r trx-conf3}
+exposed_trx_w_av |> 
+  group_by(pol_yr) |> 
+  trx_stats(conf_int = TRUE, percent_of = "av_anniv") |> 
+  select(pol_yr, starts_with("pct_of")) |> 
+  glimpse()
+```
+
+## `autoplot()` and `autotable()`
+
+The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables from `trx_df` objects. See `vignette("visualizations")` for full details on these functions.
 
 ```{r trx-plot, warning=FALSE, message=FALSE, fig.height=5.5, fig.width=7}
 
@@ -188,7 +225,6 @@ trx_res |>
 ```
 
 <center><img src="../man/figures/trx_gt.png" width="65%" height="65%" /></center>
-
 
 ## Miscellaneous
 

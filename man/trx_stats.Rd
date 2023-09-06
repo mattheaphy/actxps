@@ -11,7 +11,9 @@ trx_stats(
   percent_of = NULL,
   combine_trx = FALSE,
   col_exposure = "exposure",
-  full_exposures_only = TRUE
+  full_exposures_only = TRUE,
+  conf_int = FALSE,
+  conf_level = 0.95
 )
 
 \method{summary}{trx_df}(object, ...)
@@ -39,6 +41,11 @@ results across all transaction types.}
 \item{full_exposures_only}{If \code{TRUE} (default), partially exposed records will
 be excluded from \code{data}.}
 
+\item{conf_int}{If \code{TRUE}, the output will include confidence intervals
+around the observed utilization rate and any \code{percent_of} output columns.}
+
+\item{conf_level}{Confidence level for confidence intervals}
+
 \item{object}{A \code{trx_df} object}
 
 \item{...}{Groups to retain after \code{summary()} is called}
@@ -64,8 +71,20 @@ If \code{percent_of} is provided, the results will also include:
 These columns include the suffix \verb{_w_trx}.
 \item The sum of any columns passed to \code{percent_of}
 \item \verb{pct_of_\{*\}_w_trx}: total transactions as a percentage of column
-\verb{\{*\}_w_trx}
-\item \verb{pct_of_\{*\}_all}: total transactions as a percentage of column \verb{\{*\}}
+\verb{\{*\}_w_trx}. In other words, total transactions divided by the sum of a
+column including only records utilizing transactions.
+\item \verb{pct_of_\{*\}_all}: total transactions as a percentage of column \verb{\{*\}}. In
+other words, total transactions divided by the sum of a column regardless
+of whether or not transactions were utilized.
+}
+
+If \code{conf_int} is set to \code{TRUE}, additional columns are added for lower and
+upper confidence interval limits around the observed utilization rate and any
+\code{percent_of} output columns. Confidence interval columns include the name
+of the original output column suffixed by either \verb{_lower} or \verb{_upper}.
+\itemize{
+\item If values are passed to \code{percent_of}, an additional column is created
+containing the the sum of squared transaction amounts (\code{trx_amt_sq}).
 }
 }
 \description{
@@ -101,6 +120,30 @@ containing a maximum benefit amount, utilization rates can be determined.
 }
 }
 
+\section{Confidence intervals}{
+If \code{conf_int} is set to \code{TRUE}, the output will contain lower and upper
+confidence interval limits for the observed utilization rate and any
+\code{percent_of} output columns. The confidence level is dictated
+by \code{conf_level}.
+\itemize{
+\item Intervals for the utilization rate (\code{trx_util}) assume a binomial
+distribution.
+\item Intervals for transactions as a percentage of another column with
+non-zero transactions (\verb{pct_of_\{*\}_w_trx}) are constructed using a normal
+distribution
+\item Intervals for transactions as a percentage of another column
+regardless of transaction utilization (\verb{pct_of_\{*\}_all}) are calculated
+assuming that the aggregate distribution is normal with a mean equal to
+observed transactions and a variance equal to:
+
+\code{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)},
+
+Where \code{S} is the aggregate transactions random variable, \code{X} is an individual
+transaction amount assumed to follow a normal distribution, and \code{N} is a
+binomial random variable for transaction utilization.
+}
+}
+
 \section{Default removal of partial exposures}{
 As a default, partial exposures are removed from \code{.data} before summarizing
 results. This is done to avoid complexity associated with a lopsided skew
@@ -130,6 +173,6 @@ res
 summary(res)
 
 expo |> group_by(inc_guar) |>
-  trx_stats(percent_of = "premium", combine_trx = TRUE)
+  trx_stats(percent_of = "premium", combine_trx = TRUE, conf_int = TRUE)
 
 }

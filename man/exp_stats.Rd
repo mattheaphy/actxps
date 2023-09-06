@@ -13,14 +13,16 @@ exp_stats(
   col_status = "status",
   wt = NULL,
   credibility = FALSE,
-  cred_p = 0.95,
-  cred_r = 0.05
+  conf_level = 0.95,
+  cred_r = 0.05,
+  conf_int = FALSE
 )
 
 \method{summary}{exp_df}(object, ...)
 }
 \arguments{
-\item{.data}{A data frame with exposure-level records, ideally of type \code{exposed_df}}
+\item{.data}{A data frame with exposure-level records, ideally of type
+\code{exposed_df}}
 
 \item{target_status}{A character vector of target status values}
 
@@ -33,15 +35,19 @@ with expected values}
 
 \item{wt}{Optional. Length 1 character vector. Name of the column in
 \code{.data} containing weights to use in the calculation of claims,
-exposures, and partial credibility.}
+exposures, partial credibility, and confidence intervals.}
 
-\item{credibility}{Whether the output should include partial credibility
+\item{credibility}{If \code{TRUE}, the output will include partial credibility
 weights and credibility-weighted termination rates.}
 
-\item{cred_p}{Confidence level under the Limited Fluctuation credibility method}
+\item{conf_level}{Confidence level used for the Limited Fluctuation
+credibility method and confidence intervals}
 
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
+
+\item{conf_int}{If \code{TRUE}, the output will include confidence intervals
+around the observed termination rates and any actual-to-expected ratios.}
 
 \item{object}{An \code{exp_df} object}
 
@@ -49,14 +55,26 @@ method}
 }
 \value{
 A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
-and \code{data.frame}. The results include columns for any grouping
-variables, claims, exposures, and observed termination rates (\code{q_obs}).
-If any values are passed to \code{expected}, additional columns will be
-added for expected termination rates and actual-to-expected ratios. If
-\code{credibility} is set to \code{TRUE}, additional columns are added
+and \code{data.frame}. The results include columns for any grouping variables,
+claims, exposures, and observed termination rates (\code{q_obs}).
+\itemize{
+\item If any values are passed to \code{expected}, expected termination rates and
+actual-to-expected ratios.
+\item If \code{credibility} is set to \code{TRUE}, additional columns are added
 for partial credibility and credibility-weighted termination rates
 (assuming values are passed to \code{expected}). Credibility-weighted termination
 rates are prefixed by \code{adj_}.
+\item If \code{conf_int} is set to \code{TRUE}, additional columns are added for lower and
+upper confidence interval limits around the observed termination rates and
+any actual-to-expected ratios. Additionally, if \code{credibility} is \code{TRUE} and
+expected values are passed to \code{expected}, the output will contain confidence
+intervals around credibility-weighted termination rates. Confidence interval
+columns include the name of the original output column suffixed by either
+\verb{_lower} or \verb{_upper}.
+\item If a value is passed to \code{wt}, additional columns are created containing
+the the sum of weights (\code{.weight}), the sum of squared weights
+(\code{.weight_qs}), and the number of records (\code{.weight_n}).
+}
 }
 \description{
 Create a summary data frame of termination experience for a
@@ -82,6 +100,27 @@ If \code{credibility} is set to \code{TRUE}, the output will contain a
 \code{credibility} column equal to the partial credibility estimate under
 the Limited Fluctuation credibility method (also known as Classical
 Credibility) assuming a binomial distribution of claims.
+}
+
+\section{Confidence intervals}{
+If \code{conf_int} is set to \code{TRUE}, the output will contain lower and upper
+confidence interval limits for the observed termination rate and any
+actual-to-expected ratios. The confidence level is dictated
+by \code{conf_level}. If no weighting variable is passed to \code{wt}, confidence
+intervals will be constructed assuming a binomial distribution of claims.
+Otherwise, confidence intervals will be calculated assuming that the
+aggregate claims distribution is normal with a mean equal to observed claims
+and a variance equal to:
+
+\code{Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)},
+
+Where \code{S} is the aggregate claim random variable, \code{X} is the weighting
+variable assumed to follow a normal distribution, and \code{N} is a binomial
+random variable for the number of claims.
+
+If \code{credibility} is \code{TRUE} and expected values are passed to \code{expected},
+the output will also contain confidence intervals for any
+credibility-weighted termination rates.
 }
 
 \section{\code{summary()} Method}{

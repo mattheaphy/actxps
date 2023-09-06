@@ -16,6 +16,8 @@ autotable(object, ...)
   color_q_obs = "RColorBrewer::GnBu",
   color_ae_ = "RColorBrewer::RdBu",
   rename_cols = rlang::list2(...),
+  show_conf_int = FALSE,
+  show_cred_adj = FALSE,
   ...
 )
 
@@ -27,6 +29,7 @@ autotable(object, ...)
   color_util = "RColorBrewer::GnBu",
   color_pct_of = "RColorBrewer::RdBu",
   rename_cols = rlang::list2(...),
+  show_conf_int = FALSE,
   ...
 )
 }
@@ -54,6 +57,12 @@ can be used to relabel columns on the output table. This parameter is most
 useful for renaming grouping variables that will appear under their original
 variable names if left unchanged. See \code{\link[gt:cols_label]{gt::cols_label()}} for more
 information.}
+
+\item{show_conf_int}{If \code{TRUE} confidence intervals will be displayed
+assuming they are available on \code{object}.}
+
+\item{show_cred_adj}{If \code{TRUE} credibility-weighted termination rates will
+be displayed assuming they are available on \code{object}.}
 
 \item{color_util}{Color palette used for utilization rates.}
 
@@ -92,11 +101,12 @@ if (interactive()) {
     left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 
   exp_res <- study_py |> group_by(pol_yr) |>
-    exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE)
+    exp_stats(expected = c("expected_1", "expected_2"), credibility = TRUE,
+              conf_int = TRUE)
   autotable(exp_res)
 
   trx_res <- study_py |> group_by(pol_yr) |>
-    trx_stats(percent_of = "av_anniv")
+    trx_stats(percent_of = "av_anniv", conf_int = TRUE)
   autotable(trx_res)
 }
 

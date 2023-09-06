@@ -177,7 +177,6 @@ exposed_data2 |>
 
 ```
 
-
 ## Credibility
 
 If the `credibility` argument is set to `TRUE`, `exp_stats()` will produce an estimate of partial credibility under the Limited Fluctuation credibility method (also known as Classical Credibility) assuming a binomial distribution of claims.^[See Herzog, Thomas (1999). Introduction to Credibility Theory for more information on Limited Fluctuation Credibility.]
@@ -189,12 +188,12 @@ exposed_data2 |>
   select(pol_yr, inc_guar, claims, q_obs, credibility)
 ```
 
-Under the default arguments, credibility calculations assume a 95% confidence of being within 5% of the true value. These parameters can be overridden using the `cred_p` and `cred_r` arguments, respectively.
+Under the default arguments, credibility calculations assume a 95% confidence of being within 5% of the true value. These parameters can be overridden using the `conf_level` and `cred_r` arguments, respectively.
 
 ```{r cred2}
 exposed_data2 |> 
   group_by(pol_yr, inc_guar) |>
-  exp_stats(credibility = TRUE, cred_p = 0.98, cred_r = 0.03) |> 
+  exp_stats(credibility = TRUE, conf_level = 0.98, cred_r = 0.03) |> 
   select(pol_yr, inc_guar, claims, q_obs, credibility)
 ```
 
@@ -219,6 +218,45 @@ exposed_data2 |>
          expected_1, ae_expected_1)
 ```
 
+
+## Confidence intervals
+
+If `conf_int` is set to `TRUE`, `exp_stats()` will produce lower and upper confidence interval limits for the observed termination rate.
+
+```{r conf1}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(conf_int = TRUE) |> 
+  select(pol_yr, inc_guar, q_obs, q_obs_lower, q_obs_upper)
+```
+
+If no weighting variable is passed to `wt`, confidence intervals will be constructed assuming a binomial distribution of claims. However, if a weighting variable is supplied, a normal distribution for aggregate claims will be assumed with a mean equal to observed claims and a variance equal to:
+
+$$
+Var(S) = E(N) \times Var(X) + E(X)^2 \times Var(N)
+$$
+
+Where `S` is the aggregate claim random variable, `X` is the weighting variable assumed to follow a normal distribution, and `N` is a binomial random variable for the number of claims.
+
+The default confidence level is 95%. This can be changed using the `conf_level` argument. Below, tighter confidence intervals are constructed by decreasing the confidence level to 90%.
+
+```{r conf2}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(conf_int = TRUE, conf_level = 0.9) |> 
+  select(pol_yr, inc_guar, q_obs, q_obs_lower, q_obs_upper)
+```
+
+If expected values are passed to `expected`, the output will also contain confidence intervals around any actual-to-expected ratios. 
+
+```{r conf3}
+exposed_data2 |> 
+  group_by(pol_yr, inc_guar) |>
+  exp_stats(conf_int = TRUE, expected = "expected_1") |> 
+  select(pol_yr, inc_guar, starts_with("ae_"))
+```
+
+Lastly, if `credibility` is `TRUE` *and* expected values are passed to `expected`,  confidence intervals will also be calculated for any credibility-weighted termination rates.
 
 ## Miscellaneous
 

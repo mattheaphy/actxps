@@ -5,7 +5,8 @@ expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
 
 res <- expo |>
   group_by(pol_yr, inc_guar) |>
-  trx_stats(percent_of = c("av_anniv", "premium"))
+  trx_stats(percent_of = c("av_anniv", "premium"),
+            conf_int = TRUE)
 
 test_that("trx_stats error checks work", {
 
@@ -18,7 +19,8 @@ test_that("trx_stats error checks work", {
 
 test_that("Experience study summary method checks", {
   expect_identical(res, summary(res, pol_yr, inc_guar))
-  expect_equal(trx_stats(expo, percent_of = c("av_anniv", "premium")),
+  expect_equal(trx_stats(expo, percent_of = c("av_anniv", "premium"),
+                         conf_int = TRUE),
                summary(res))
 })
 
@@ -32,7 +34,8 @@ test_that("Renaming works", {
 test_that("trx_stats works", {
 
   expect_equal(ncol(expo |> trx_stats(trx_types = "Base",
-                                      percent_of = c("av_anniv", "premium"))),
+                                      percent_of = c("av_anniv", "premium"),
+                                      conf_int = TRUE)),
                ncol(res) - 2)
   expect_s3_class(res, "trx_df")
   expect_true(all(res$exposure >= res$trx_flag, na.rm = TRUE))
@@ -57,5 +60,26 @@ test_that("trx_stats works", {
   attr(res3, "trx_types") <- NULL
 
   expect_equal(res2, res3)
+
+})
+
+test_that("Confidence intervals work", {
+  res2 <- filter(res, trx_util > 0)
+  expect_true(all(res2$trx_util < res2$trx_util_upper))
+  expect_true(all(res2$trx_util > res2$trx_util_lower))
+  expect_true(all(res2$pct_of_premium_w_trx < res2$pct_of_premium_w_trx_upper))
+  expect_true(all(res2$pct_of_premium_w_trx > res2$pct_of_premium_w_trx_lower))
+  expect_true(all(res2$pct_of_premium_all < res2$pct_of_premium_all_upper))
+  expect_true(all(res2$pct_of_premium_all > res2$pct_of_premium_all_lower))
+
+  # verify that confidence intervals are tighter using lower confidence
+  less_confident <- expo |>
+    group_by(pol_yr, inc_guar) |>
+    trx_stats(percent_of = c("av_anniv", "premium"),
+              conf_int = TRUE, conf_level = 0.5) |>
+    filter(trx_util > 0)
+  expect_true(all(res2$trx_util_upper - res2$trx_util_lower >
+                    less_confident$trx_util_upper -
+                    less_confident$trx_util_lower))
 
 })

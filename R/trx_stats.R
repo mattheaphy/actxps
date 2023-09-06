@@ -30,6 +30,29 @@
 #' - In a study of recurring claims, if `percent_of` refers to a column
 #' containing a maximum benefit amount, utilization rates can be determined.
 #'
+#' # Confidence intervals
+#'
+#' If `conf_int` is set to `TRUE`, the output will contain lower and upper
+#' confidence interval limits for the observed utilization rate and any
+#' `percent_of` output columns. The confidence level is dictated
+#' by `conf_level`.
+#'
+#' - Intervals for the utilization rate (`trx_util`) assume a binomial
+#' distribution.
+#' - Intervals for transactions as a percentage of another column with
+#' non-zero transactions (`pct_of_{*}_w_trx`) are constructed using a normal
+#' distribution
+#' - Intervals for transactions as a percentage of another column
+#' regardless of transaction utilization (`pct_of_{*}_all`) are calculated
+#' assuming that the aggregate distribution is normal with a mean equal to
+#' observed transactions and a variance equal to:
+#'
+#'     `Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)`,
+#'
+#'     Where `S` is the aggregate transactions random variable, `X` is an individual
+#' transaction amount assumed to follow a normal distribution, and `N` is a
+#' binomial random variable for transaction utilization.
+#'
 #' # Default removal of partial exposures
 #'
 #' As a default, partial exposures are removed from `.data` before summarizing
@@ -71,6 +94,11 @@
 #' @param full_exposures_only If `TRUE` (default), partially exposed records will
 #' be excluded from `data`.
 #'
+#' @param conf_int If `TRUE`, the output will include confidence intervals
+#' around the observed utilization rate and any `percent_of` output columns.
+#'
+#' @param conf_level Confidence level for confidence intervals
+#'
 #' @param object A `trx_df` object
 #' @param ... Groups to retain after `summary()` is called
 #'
@@ -93,8 +121,18 @@
 #' These columns include the suffix `_w_trx`.
 #' - The sum of any columns passed to `percent_of`
 #' - `pct_of_{*}_w_trx`: total transactions as a percentage of column
-#' `{*}_w_trx`
-#' - `pct_of_{*}_all`: total transactions as a percentage of column `{*}`
+#' `{*}_w_trx`. In other words, total transactions divided by the sum of a
+#' column including only records utilizing transactions.
+#' - `pct_of_{*}_all`: total transactions as a percentage of column `{*}`. In
+#' other words, total transactions divided by the sum of a column regardless
+#' of whether or not transactions were utilized.
+#'
+#' If `conf_int` is set to `TRUE`, additional columns are added for lower and
+#' upper confidence interval limits around the observed utilization rate and any
+#' `percent_of` output columns. Confidence interval columns include the name
+#' of the original output column suffixed by either `_lower` or `_upper`.
+#' - If values are passed to `percent_of`, an additional column is created
+#' containing the the sum of squared transaction amounts (`trx_amt_sq`).
 #'
 #' @examples
 #' expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
@@ -106,7 +144,7 @@
 #' summary(res)
 #'
 #' expo |> group_by(inc_guar) |>
-#'   trx_stats(percent_of = "premium", combine_trx = TRUE)
+#'   trx_stats(percent_of = "premium", combine_trx = TRUE, conf_int = TRUE)
 #'
 #' @export
 trx_stats <- function(.data,
@@ -114,7 +152,9 @@ trx_stats <- function(.data,
                       percent_of = NULL,
                       combine_trx = FALSE,
                       col_exposure = "exposure",
-                      full_exposures_only = TRUE) {
+                      full_exposures_only = TRUE,
+                      conf_int = FALSE,
+                      conf_level = 0.95) {
 
   verify_exposed_df(.data)
 
@@ -164,10 +204,12 @@ trx_stats <- function(.data,
     tidyr::pivot_longer(dplyr::all_of(trx_cols),
                         names_to = c(".value", "trx_type"),
                         names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
-    mutate(trx_flag = abs(trx_n) > 0, !!!pct_nz)
+    mutate(trx_flag = abs(trx_n) > 0, !!!pct_nz,
+           trx_amt_sq = if (conf_int) trx_amt ^ 2)
 
   finish_trx_stats(.data, trx_types, percent_of,
-                   .groups, start_date, end_date)
+                   .groups, start_date, end_date,
+                   conf_int, conf_level)
 
 }
 
@@ -176,7 +218,7 @@ print.trx_df <- function(x, ...) {
 
   cat("Transaction study results\n\n")
   if (length(groups(x)) > 0) {
-    cat("Groups:", paste(groups(x), collapse = ", "), "\n")
+    cat(" Groups:", paste(groups(x), collapse = ", "), "\n")
   }
   cat(" Study range:", as.character(attr(x, "start_date")), "to",
       as.character(attr(x, "end_date")), "\n",
@@ -205,9 +247,11 @@ summary.trx_df <- function(object, ...) {
   start_date <- attr(object, "start_date")
   end_date <- attr(object, "end_date")
   percent_of <- attr(object, "percent_of")
+  xp_params <- attr(object, "xp_params")
 
   finish_trx_stats(res, trx_types, percent_of,
-                   .groups, start_date, end_date)
+                   .groups, start_date, end_date,
+                   xp_params$conf_int, xp_params$conf_level)
 
 }
 
@@ -216,8 +260,10 @@ summary.trx_df <- function(object, ...) {
 
 
 finish_trx_stats <- function(.data, trx_types, percent_of,
-                             .groups, start_date, end_date) {
+                             .groups, start_date, end_date,
+                             conf_int, conf_level) {
 
+  # "percent_of" formulas
   if (!is.null(percent_of)) {
     percent_of_nz <- paste0(percent_of, "_w_trx")
     pct_vals <- exp_form("sum({.col})", "{.col}", percent_of)
@@ -228,6 +274,52 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                              percent_of_nz)
   } else {
     pct_vals <- pct_vals_trx <- pct_form_all <- pct_form_trx <- percent_of <- NULL
+  }
+
+  # confidence interval formulas
+  if (conf_int) {
+
+    p <- c((1 - conf_level) / 2, 1 - (1 - conf_level) / 2)
+
+    ci <- rlang::exprs(
+      trx_util_lower = stats::qbinom(p[[1]], exposure, trx_util) / exposure,
+      trx_util_upper = stats::qbinom(p[[2]], exposure, trx_util) / exposure
+    )
+
+    if (!is.null(percent_of)) {
+
+      # standard deviations
+      sds <- rlang::exprs(
+        trx_amt_sq = sum(trx_amt_sq),
+        sd_trx = (trx_amt_sq / trx_flag - avg_trx ^ 2) ^ 0.5,
+        # For binomial N
+        # Var(S) = n * p * (Var(X) + E(X)^2 * (1 - p))
+        sd_all = (trx_flag * (
+          sd_trx ^ 2 + avg_trx ^ 2 * (1 - trx_util))) ^ 0.5
+      )
+
+      # confidence intervals with transactions
+      pct_lower <- exp_form("stats::qnorm(p[[1]], trx_amt,
+                            sd_trx * sqrt(trx_flag)) / {.col}",
+                            "pct_of_{.col}_lower", percent_of_nz)
+      pct_upper <- exp_form("stats::qnorm(p[[2]], trx_amt,
+                            sd_trx * sqrt(trx_flag)) / {.col}",
+                            "pct_of_{.col}_upper", percent_of_nz)
+      # confidence intervals across all records
+      pct_lower_all <- exp_form(
+        "stats::qnorm(p[[1]], trx_amt, sd_all) / {.col}",
+        "pct_of_{.col}_all_lower",
+        percent_of)
+      pct_upper_all = exp_form(
+        "stats::qnorm(p[[2]], trx_amt, sd_all) / {.col}",
+        "pct_of_{.col}_all_upper",
+        percent_of)
+      ci <- append(ci, c(sds, pct_lower, pct_upper,
+                         pct_lower_all, pct_upper_all))
+    }
+
+  } else {
+    ci <- NULL
   }
 
   res <- .data |>
@@ -244,14 +336,24 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
                      !!!pct_vals,
                      !!!pct_form_trx,
                      !!!pct_form_all,
+                     !!!ci,
                      .groups = "drop")
+
+  if (conf_int && !is.null(percent_of)) {
+    res <- res |>
+      # drop interim columns
+      select(-sd_trx, -sd_all) |>
+      relocate(trx_amt_sq, .after = dplyr::last_col())
+  }
 
   tibble::new_tibble(res,
                      class = "trx_df",
                      groups = .groups, trx_types = trx_types,
                      start_date = start_date,
                      percent_of = percent_of,
-                     end_date = end_date)
+                     end_date = end_date,
+                     xp_params = list(conf_level = conf_level,
+                                      conf_int = conf_int))
 }
 
 verify_trx_df <- function(.data) {

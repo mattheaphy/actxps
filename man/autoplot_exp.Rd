@@ -16,10 +16,11 @@
   second_axis = FALSE,
   second_y = NULL,
   scales = "fixed",
-  geoms = c("lines", "bars"),
+  geoms = c("lines", "bars", "points"),
   y_labels = scales::label_percent(accuracy = 0.1),
   second_y_labels = scales::label_comma(accuracy = 1),
-  y_log10 = FALSE
+  y_log10 = FALSE,
+  conf_int_bars = FALSE
 )
 
 \method{autoplot}{trx_df}(
@@ -32,10 +33,11 @@
   second_axis = FALSE,
   second_y = NULL,
   scales = "fixed",
-  geoms = c("lines", "bars"),
+  geoms = c("lines", "bars", "points"),
   y_labels = scales::label_percent(accuracy = 0.1),
   second_y_labels = scales::label_comma(accuracy = 1),
-  y_log10 = FALSE
+  y_log10 = FALSE,
+  conf_int_bars = FALSE
 )
 }
 \arguments{
@@ -61,8 +63,7 @@ rate (\code{q_obs}) for \code{exp_df} objects and the observed utilization rate
 
 \item{second_axis}{Logical. If \code{TRUE}, the variable specified by
 \code{second_y} (default = exposure) is plotted on a second
-y-axis. An area geometry is used if the \code{x} variable is numeric. If not,
-bars are plotted.}
+y-axis using an area geometry.}
 
 \item{second_y}{An unquoted column name in \code{object} to use as the \code{y}
 variable on the second y-axis. If unspecified, this will default to
@@ -71,13 +72,19 @@ variable on the second y-axis. If unspecified, this will default to
 \item{scales}{The \code{scales} argument passed to \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.}
 
 \item{geoms}{Type of geometry. If "lines" is passed, the plot will
-display lines and points. If "bars", the plot will display bars.}
+display lines and points. If "bars", the plot will display bars. If "points",
+the plot will display points only.}
 
 \item{y_labels}{Label function passed to \code{\link[ggplot2:scale_continuous]{ggplot2::scale_y_continuous()}}.}
 
 \item{second_y_labels}{Same as \code{y_labels}, but for the second y-axis.}
 
 \item{y_log10}{If \code{TRUE}, the y-axes are plotted on a log-10 scale.}
+
+\item{conf_int_bars}{If \code{TRUE}, confidence interval error bars are included
+in the plot. For \code{exp_df} objects, this option is available for termination
+rates and actual-to-expected ratios. For \code{trx_df} objects, this option is
+available for utilization rates and any \code{pct_of} columns.}
 }
 \value{
 a \code{ggplot} object
