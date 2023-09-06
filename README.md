@@ -120,7 +120,7 @@ exp_res <- exposed_data |>
 exp_res
 #> Experience study results
 #> 
-#> Groups: pol_yr, inc_guar 
+#>  Groups: pol_yr, inc_guar 
 #>  Target status: Surrender 
 #>  Study range: 1900-01-01 to 2019-12-31 
 #> 
@@ -162,7 +162,7 @@ exp_res <- exposed_data |>
 exp_res
 #> Experience study results
 #> 
-#> Groups: pol_yr, inc_guar 
+#>  Groups: pol_yr, inc_guar 
 #>  Target status: Surrender 
 #>  Study range: 1900-01-01 to 2019-12-31 
 #>  Expected values: expected_1, expected_2 
@@ -214,4 +214,3 @@ exp_shiny(exposed_data)
 
 <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&position=7&from_view=search&track=sph">Image
 by macrovector</a> on Freepik
-

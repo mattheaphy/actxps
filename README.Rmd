@@ -84,7 +84,6 @@ exposed_data <- expose(census_dat, end_date = "2019-12-31",
 exposed_data
 ```
 
-
 Create a summary grouped by policy year and the presence of a guaranteed 
 income rider.
 
