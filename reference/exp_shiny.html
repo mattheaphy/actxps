@@ -30,7 +30,7 @@ containing the word "expected" are used.'><meta property="og:image" content="htt
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +101,7 @@ containing the word "expected" are used.</p>
 <span>  distinct_max <span class="op">=</span> <span class="fl">25L</span>,</span>
 <span>  <span class="va">title</span>,</span>
 <span>  credibility <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  cred_p <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  cred_r <span class="op">=</span> <span class="fl">0.05</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -134,12 +134,13 @@ a descriptive title will be generated based on attributes of <code>dat</code>.</
 
 
 <dt>credibility</dt>
-<dd><p>Whether the output should include partial credibility
+<dd><p>If <code>TRUE</code>, the output will include partial credibility
 weights and credibility-weighted termination rates.</p></dd>
 
 
-<dt>cred_p</dt>
-<dd><p>Confidence level under the Limited Fluctuation credibility method</p></dd>
+<dt>conf_level</dt>
+<dd><p>Confidence level used for the Limited Fluctuation
+credibility method and confidence intervals</p></dd>
 
 
 <dt>cred_r</dt>
@@ -267,7 +268,8 @@ records retained.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">study_py</span> <span class="op">&lt;-</span> <span class="fu"><a href="expose.html">expose_py</a></span><span class="op">(</span><span class="va">census_dat</span>, <span class="st">"2019-12-31"</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">expected_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.005</span>, <span class="fl">0.03</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, <span class="fl">0.2</span>, <span class="fl">0.15</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">expected_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.005</span>, <span class="fl">0.03</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      <span class="fl">0.2</span>, <span class="fl">0.15</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">study_py</span> <span class="op">&lt;-</span> <span class="va">study_py</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>expected_1 <span class="op">=</span> <span class="va">expected_table</span><span class="op">[</span><span class="va">pol_yr</span><span class="op">]</span>,</span></span>

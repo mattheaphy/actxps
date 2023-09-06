@@ -22,7 +22,7 @@ presentation-friendly format."><meta property="og:image" content="https://matthe
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,6 +93,8 @@ presentation-friendly format.</p>
 <span>  color_q_obs <span class="op">=</span> <span class="st">"RColorBrewer::GnBu"</span>,</span>
 <span>  color_ae_ <span class="op">=</span> <span class="st">"RColorBrewer::RdBu"</span>,</span>
 <span>  rename_cols <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/list2.html" class="external-link">list2</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>,</span>
+<span>  show_conf_int <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_cred_adj <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -105,6 +107,7 @@ presentation-friendly format.</p>
 <span>  color_util <span class="op">=</span> <span class="st">"RColorBrewer::GnBu"</span>,</span>
 <span>  color_pct_of <span class="op">=</span> <span class="st">"RColorBrewer::RdBu"</span>,</span>
 <span>  rename_cols <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/list2.html" class="external-link">list2</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>,</span>
+<span>  show_conf_int <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -151,6 +154,16 @@ variable names if left unchanged. See <code><a href="https://gt.rstudio.com/refe
 information.</p></dd>
 
 
+<dt>show_conf_int</dt>
+<dd><p>If <code>TRUE</code> confidence intervals will be displayed
+assuming they are available on <code>object</code>.</p></dd>
+
+
+<dt>show_cred_adj</dt>
+<dd><p>If <code>TRUE</code> credibility-weighted termination rates will
+be displayed assuming they are available on <code>object</code>.</p></dd>
+
+
 <dt>color_util</dt>
 <dd><p>Color palette used for utilization rates.</p></dd>
 
@@ -187,11 +200,12 @@ For a full list of available palettes, see <a href="https://rdrr.io/pkg/palettee
 <span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">account_vals</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pol_num"</span>, <span class="st">"pol_date_yr"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">exp_res</span> <span class="op">&lt;-</span> <span class="va">study_py</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="exp_stats.html">exp_stats</a></span><span class="op">(</span>expected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expected_1"</span>, <span class="st">"expected_2"</span><span class="op">)</span>, credibility <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="exp_stats.html">exp_stats</a></span><span class="op">(</span>expected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expected_1"</span>, <span class="st">"expected_2"</span><span class="op">)</span>, credibility <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>              conf_int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">autotable</span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">trx_res</span> <span class="op">&lt;-</span> <span class="va">study_py</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="trx_stats.html">trx_stats</a></span><span class="op">(</span>percent_of <span class="op">=</span> <span class="st">"av_anniv"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="trx_stats.html">trx_stats</a></span><span class="op">(</span>percent_of <span class="op">=</span> <span class="st">"av_anniv"</span>, conf_int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">autotable</span><span class="op">(</span><span class="va">trx_res</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>

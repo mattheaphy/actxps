@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -165,7 +165,7 @@ from the generic <code><a href="https://ggplot2.tidyverse.org/reference/autoplot
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exp_res</span> <span class="op">&lt;-</span> <span class="va">exposed_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span>conf_int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The default plot produced by <code><a href="../reference/autoplot_exp.html">autoplot.exp_df()</a></code> is a line
 plot of the observed termination rate (<code>q_obs</code>). The
 <code>x</code> variable corresponds to the first grouping variable of
@@ -240,12 +240,13 @@ vary. If “free” is passed, both the x- and y-scales will vary.</p>
 <p><img src="visualizations_files/figure-html/plot-facet-free-1.png" width="576"></p>
 <p>The <code>geoms</code> argument can be used to change the plotting
 geometry. Under the default value of “lines”, points and lines are
-displayed. If “bars” is passed, a bar plot will be drawn.</p>
+displayed. If “bars” is passed, a bar plot will be drawn. If “points” is
+passed, a scatter plot will be drawn.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">exp_res</span>, geoms <span class="op">=</span> <span class="st">"bars"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualizations_files/figure-html/plot-bar-1.png" width="576"></p>
 <p>If the <code>y_log10</code> argument is set to <code>TRUE</code>, the
-y-axis will be plotting on a logarithmic base ten scale.</p>
+y-axis will be plotted on a logarithmic base ten scale.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">exp_res</span>, y_log10 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualizations_files/figure-html/plot-log10-1.png" width="576"></p>
@@ -265,6 +266,13 @@ format.</li>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">exp_res</span>, second_axis <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualizations_files/figure-html/plot-second-y-axis-1.png" width="576"></p>
+<p>Confidence interval error bars can be added to a plot by passing
+<code>conf_int_bars = TRUE</code>. Confidence intervals will only be
+displayed if they are available for the selected <code>y</code>
+variable.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">exp_res</span>, conf_int_bars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="visualizations_files/figure-html/plot-conf-int-1.png" width="576"></p>
 </div>
 <div class="section level3">
 <h3 id="plot_termination_rates">
@@ -281,7 +289,7 @@ were passed to the <code>expected</code> argument of
 <p>In the example below, a new <code>exp_df</code> object is created
 that contains two sets of expected surrender rates. This object is then
 passed into <code><a href="../reference/plot_special.html">plot_termination_rates()</a></code>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">exp_res3</span> <span class="op">&lt;-</span> <span class="va">exposed_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -297,7 +305,7 @@ is the first grouping variable (here, <code>pol_yr</code>).</p>
 termination rates<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;See the &lt;code&gt;credibility&lt;/code&gt; argument of
 &lt;code&gt;&lt;a href="../reference/exp_stats.html"&gt;exp_stats()&lt;/a&gt;&lt;/code&gt; for more information&lt;/p&gt;'><sup>4</sup></a>, these rates can be included in the plot
 using the argument <code>include_cred_adj = TRUE</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_special.html">plot_termination_rates</a></span><span class="op">(</span><span class="va">exp_res3</span>, include_cred_adj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualizations_files/figure-html/plot-term-2-1.png" width="576"></p>
 </div>
@@ -308,7 +316,7 @@ using the argument <code>include_cred_adj = TRUE</code>.</p>
 <p>The <code><a href="../reference/plot_special.html">plot_actual_to_expected()</a></code> function is similar to
 <code><a href="../reference/plot_special.html">plot_termination_rates()</a></code> except that all actual-to-expected
 ratios are plotted on the y-axis instead.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_special.html">plot_actual_to_expected</a></span><span class="op">(</span><span class="va">exp_res3</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualizations_files/figure-html/plot-ae-1.png" width="576"></p>
 </div>
@@ -353,7 +361,7 @@ variables the same as <code><a href="../reference/autoplot_exp.html">autoplot.ex
 </ul>
 <p>In addition to the above, facets are also created for each
 transaction type found in the data.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trx_res</span> <span class="op">&lt;-</span> <span class="va">exposed_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>percent_of <span class="op">=</span> <span class="st">"premium"</span><span class="op">)</span></span>
@@ -389,7 +397,7 @@ except <code>y</code> and <code>scales</code>. The <code>y</code>
 argument is reserved for utilization rates, and the <code>scales</code>
 argument is preset to allow differing scales between the frequency and
 severity subplots.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_special_trx.html">plot_utilization_rates</a></span><span class="op">(</span><span class="va">trx_res</span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualizations_files/figure-html/trx-util-plot-1.png" width="576"></p>
 </div>
@@ -444,6 +452,10 @@ Most of the column names created by <code><a href="../reference/autotable.html">
 presentation-ready, however, grouping variables on the left side of the
 table may require updates since they default to the variable names that
 appear in the data.</p></li>
+<li><p><code>show_conf_int</code> and <code>show_cred_adj</code> can be
+used to include any confidence intervals and credibility-weighted
+termination rates, if available. As a default, these columns are not
+included to avoid producing overcrowded tables.</p></li>
 </ul>
 </div>
 </div>
@@ -495,11 +507,13 @@ for the color and facets grouping variables. Default = 25.</li>
 <li>
 <code>title</code>: an optional title for the app</li>
 <li>
-<code>credibility</code>, <code>cred_p</code>, <code>cred_r</code>:
-credibility options for termination studies. See
+<code>credibility</code>, <code>conf_level</code>,
+<code>cred_r</code>: credibility options for termination studies. See
 <code><a href="../reference/exp_stats.html">exp_stats()</a></code> for more information. Limited fluctuation
 credibility estimates at a 95% confidence within 5% of the theoretical
 mean assuming a binomial distribution are used as a default.</li>
+<li>The <code>conf_level</code> argument is also used for confidence
+intervals for both termination and transaction studies.</li>
 </ul>
 </div>
 

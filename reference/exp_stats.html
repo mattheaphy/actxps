@@ -12,7 +12,7 @@ given target status."><meta property="og:image" content="https://mattheaphy.gith
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,8 +75,9 @@ given target status.</p>
 <span>  col_status <span class="op">=</span> <span class="st">"status"</span>,</span>
 <span>  wt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  credibility <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  cred_p <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  cred_r <span class="op">=</span> <span class="fl">0.05</span></span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  cred_r <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  conf_int <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for exp_df</span></span>
@@ -86,7 +87,8 @@ given target status.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>A data frame with exposure-level records, ideally of type <code>exposed_df</code></p></dd>
+<dd><p>A data frame with exposure-level records, ideally of type
+<code>exposed_df</code></p></dd>
 
 
 <dt>target_status</dt>
@@ -109,21 +111,27 @@ with expected values</p></dd>
 <dt>wt</dt>
 <dd><p>Optional. Length 1 character vector. Name of the column in
 <code>.data</code> containing weights to use in the calculation of claims,
-exposures, and partial credibility.</p></dd>
+exposures, partial credibility, and confidence intervals.</p></dd>
 
 
 <dt>credibility</dt>
-<dd><p>Whether the output should include partial credibility
+<dd><p>If <code>TRUE</code>, the output will include partial credibility
 weights and credibility-weighted termination rates.</p></dd>
 
 
-<dt>cred_p</dt>
-<dd><p>Confidence level under the Limited Fluctuation credibility method</p></dd>
+<dt>conf_level</dt>
+<dd><p>Confidence level used for the Limited Fluctuation
+credibility method and confidence intervals</p></dd>
 
 
 <dt>cred_r</dt>
 <dd><p>Error tolerance under the Limited Fluctuation credibility
 method</p></dd>
+
+
+<dt>conf_int</dt>
+<dd><p>If <code>TRUE</code>, the output will include confidence intervals
+around the observed termination rates and any actual-to-expected ratios.</p></dd>
 
 
 <dt>object</dt>
@@ -139,15 +147,24 @@ method</p></dd>
     
 
 <p>A tibble with class <code>exp_df</code>, <code>tbl_df</code>, <code>tbl</code>,
-and <code>data.frame</code>. The results include columns for any grouping
-variables, claims, exposures, and observed termination rates (<code>q_obs</code>).
-If any values are passed to <code>expected</code>, additional columns will be
-added for expected termination rates and actual-to-expected ratios. If
-<code>credibility</code> is set to <code>TRUE</code>, additional columns are added
+and <code>data.frame</code>. The results include columns for any grouping variables,
+claims, exposures, and observed termination rates (<code>q_obs</code>).</p><ul><li><p>If any values are passed to <code>expected</code>, expected termination rates and
+actual-to-expected ratios.</p></li>
+<li><p>If <code>credibility</code> is set to <code>TRUE</code>, additional columns are added
 for partial credibility and credibility-weighted termination rates
 (assuming values are passed to <code>expected</code>). Credibility-weighted termination
-rates are prefixed by <code>adj_</code>.</p>
-    </div>
+rates are prefixed by <code>adj_</code>.</p></li>
+<li><p>If <code>conf_int</code> is set to <code>TRUE</code>, additional columns are added for lower and
+upper confidence interval limits around the observed termination rates and
+any actual-to-expected ratios. Additionally, if <code>credibility</code> is <code>TRUE</code> and
+expected values are passed to <code>expected</code>, the output will contain confidence
+intervals around credibility-weighted termination rates. Confidence interval
+columns include the name of the original output column suffixed by either
+<code>_lower</code> or <code>_upper</code>.</p></li>
+<li><p>If a value is passed to <code>wt</code>, additional columns are created containing
+the the sum of weights (<code>.weight</code>), the sum of squared weights
+(<code>.weight_qs</code>), and the number of records (<code>.weight_n</code>).</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If <code>.data</code> is grouped, the resulting data frame will contain
@@ -169,6 +186,24 @@ containing expected experience. More than one expected basis can be provided.</p
 <code>credibility</code> column equal to the partial credibility estimate under
 the Limited Fluctuation credibility method (also known as Classical
 Credibility) assuming a binomial distribution of claims.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="confidence-intervals">Confidence intervals<a class="anchor" aria-label="anchor" href="#confidence-intervals"></a></h2>
+    <p>If <code>conf_int</code> is set to <code>TRUE</code>, the output will contain lower and upper
+confidence interval limits for the observed termination rate and any
+actual-to-expected ratios. The confidence level is dictated
+by <code>conf_level</code>. If no weighting variable is passed to <code>wt</code>, confidence
+intervals will be constructed assuming a binomial distribution of claims.
+Otherwise, confidence intervals will be calculated assuming that the
+aggregate claims distribution is normal with a mean equal to observed claims
+and a variance equal to:</p>
+<p><code>Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)</code>,</p>
+<p>Where <code>S</code> is the aggregate claim random variable, <code>X</code> is the weighting
+variable assumed to follow a normal distribution, and <code>N</code> is a binomial
+random variable for the number of claims.</p>
+<p>If <code>credibility</code> is <code>TRUE</code> and expected values are passed to <code>expected</code>,
+the output will also contain confidence intervals for any
+credibility-weighted termination rates.</p>
     </div>
     <div class="section level2">
     <h2 id="summary-method"><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> Method<a class="anchor" aria-label="anchor" href="#summary-method"></a></h2>
@@ -203,7 +238,7 @@ data while retaining any grouping variables passed to the "dots"
 <span class="r-in"><span><span class="va">exp_res</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Experience study results</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Groups: pol_yr, inc_guar </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups: pol_yr, inc_guar </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Target status: Surrender </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Study range: 1900-01-01 to 2019-12-31 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -234,7 +269,7 @@ data while retaining any grouping variables passed to the "dots"
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span>, <span class="va">inc_guar</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Experience study results</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Groups: inc_guar </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups: inc_guar </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Target status: Surrender </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Study range: 1900-01-01 to 2019-12-31 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

@@ -12,7 +12,7 @@ and utilization rates."><meta property="og:image" content="https://mattheaphy.gi
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,9 @@ and utilization rates.</p>
 <span>  percent_of <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  combine_trx <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  col_exposure <span class="op">=</span> <span class="st">"exposure"</span>,</span>
-<span>  full_exposures_only <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  full_exposures_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  conf_int <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for trx_df</span></span>
@@ -116,6 +118,15 @@ results across all transaction types.</p></dd>
 be excluded from <code>data</code>.</p></dd>
 
 
+<dt>conf_int</dt>
+<dd><p>If <code>TRUE</code>, the output will include confidence intervals
+around the observed utilization rate and any <code>percent_of</code> output columns.</p></dd>
+
+
+<dt>conf_level</dt>
+<dd><p>Confidence level for confidence intervals</p></dd>
+
+
 <dt>object</dt>
 <dd><p>A <code>trx_df</code> object</p></dd>
 
@@ -142,8 +153,16 @@ variables and transaction types, plus the following:</p><ul><li><p><code>trx_n</
 These columns include the suffix <code>_w_trx</code>.</p></li>
 <li><p>The sum of any columns passed to <code>percent_of</code></p></li>
 <li><p><code>pct_of_{*}_w_trx</code>: total transactions as a percentage of column
-<code>{*}_w_trx</code></p></li>
-<li><p><code>pct_of_{*}_all</code>: total transactions as a percentage of column <code>{*}</code></p></li>
+<code>{*}_w_trx</code>. In other words, total transactions divided by the sum of a
+column including only records utilizing transactions.</p></li>
+<li><p><code>pct_of_{*}_all</code>: total transactions as a percentage of column <code>{*}</code>. In
+other words, total transactions divided by the sum of a column regardless
+of whether or not transactions were utilized.</p></li>
+</ul><p>If <code>conf_int</code> is set to <code>TRUE</code>, additional columns are added for lower and
+upper confidence interval limits around the observed utilization rate and any
+<code>percent_of</code> output columns. Confidence interval columns include the name
+of the original output column suffixed by either <code>_lower</code> or <code>_upper</code>.</p><ul><li><p>If values are passed to <code>percent_of</code>, an additional column is created
+containing the the sum of squared transaction amounts (<code>trx_amt_sq</code>).</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -169,6 +188,25 @@ rates or actual-to-expected ratios. Example usage:</p><ul><li><p>In a study of p
 account values, observed withdrawal rates can be determined.</p></li>
 <li><p>In a study of recurring claims, if <code>percent_of</code> refers to a column
 containing a maximum benefit amount, utilization rates can be determined.</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="confidence-intervals">Confidence intervals<a class="anchor" aria-label="anchor" href="#confidence-intervals"></a></h2>
+    <p>If <code>conf_int</code> is set to <code>TRUE</code>, the output will contain lower and upper
+confidence interval limits for the observed utilization rate and any
+<code>percent_of</code> output columns. The confidence level is dictated
+by <code>conf_level</code>.</p><ul><li><p>Intervals for the utilization rate (<code>trx_util</code>) assume a binomial
+distribution.</p></li>
+<li><p>Intervals for transactions as a percentage of another column with
+non-zero transactions (<code>pct_of_{*}_w_trx</code>) are constructed using a normal
+distribution</p></li>
+<li><p>Intervals for transactions as a percentage of another column
+regardless of transaction utilization (<code>pct_of_{*}_all</code>) are calculated
+assuming that the aggregate distribution is normal with a mean equal to
+observed transactions and a variance equal to:</p>
+<p><code>Var(S) = E(N) * Var(X) + E(X)^2 * Var(N)</code>,</p>
+<p>Where <code>S</code> is the aggregate transactions random variable, <code>X</code> is an individual
+transaction amount assumed to follow a normal distribution, and <code>N</code> is a
+binomial random variable for transaction utilization.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="default-removal-of-partial-exposures">Default removal of partial exposures<a class="anchor" aria-label="anchor" href="#default-removal-of-partial-exposures"></a></h2>
@@ -199,7 +237,7 @@ data while retaining any grouping variables passed to the "dots"
 <span class="r-in"><span><span class="va">res</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transaction study results</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Groups: inc_guar </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups: inc_guar </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Study range: 1900-01-01 to 2019-12-31 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Transaction types: Base, Rider </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Transactions as % of: premium </span>
@@ -228,20 +266,23 @@ data while retaining any grouping variables passed to the "dots"
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pct_of_premium_w_trx &lt;dbl&gt;, pct_of_premium_all &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">expo</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">trx_stats</span><span class="op">(</span>percent_of <span class="op">=</span> <span class="st">"premium"</span>, combine_trx <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">trx_stats</span><span class="op">(</span>percent_of <span class="op">=</span> <span class="st">"premium"</span>, combine_trx <span class="op">=</span> <span class="cn">TRUE</span>, conf_int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transaction study results</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Groups: inc_guar </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups: inc_guar </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Study range: 1900-01-01 to 2019-12-31 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Transaction types: Base, Rider </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Transactions as % of: premium </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 21</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   inc_guar trx_type trx_n trx_flag trx_amt exposure avg_trx avg_all trx_freq</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FALSE    All      <span style="text-decoration: underline;">52</span>939    <span style="text-decoration: underline;">24</span>703  <span style="text-decoration: underline;">952</span>629    <span style="text-decoration: underline;">48</span>938    38.6    19.5     2.14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> TRUE     All      <span style="text-decoration: underline;">84</span>882    <span style="text-decoration: underline;">39</span>462 2<span style="text-decoration: underline;">983</span>999    <span style="text-decoration: underline;">75</span>235    75.6    39.7     2.15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more variables: trx_util &lt;dbl&gt;, premium_w_trx &lt;dbl&gt;, premium &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pct_of_premium_w_trx &lt;dbl&gt;, pct_of_premium_all &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more variables: trx_util &lt;dbl&gt;, premium_w_trx &lt;dbl&gt;, premium &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pct_of_premium_w_trx &lt;dbl&gt;, pct_of_premium_all &lt;dbl&gt;, trx_util_lower &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   trx_util_upper &lt;dbl&gt;, pct_of_premium_w_trx_lower &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pct_of_premium_w_trx_upper &lt;dbl&gt;, pct_of_premium_all_lower &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pct_of_premium_all_upper &lt;dbl&gt;, trx_amt_sq &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

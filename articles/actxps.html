@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -243,7 +243,7 @@ one record for each unique group.</p>
 <span><span class="va">exp_res</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Groups: pol_yr, inc_guar </span></span>
+<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -285,7 +285,7 @@ column names to the <code>expected</code> argument of
 <span><span class="va">exp_res</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Groups: pol_yr, inc_guar </span></span>
+<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
@@ -311,7 +311,9 @@ column names to the <code>expected</code> argument of
 <code>autoplot()</code> and <code>autotable()</code><a class="anchor" aria-label="anchor" href="#autoplot-and-autotable"></a>
 </h3>
 <p>The <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> and <code><a href="../reference/autotable.html">autotable()</a></code> functions
-can be used to create visualizations and summary tables.</p>
+can be used to create visualizations and summary tables. See
+<code><a href="../articles/visualizations.html">vignette("visualizations")</a></code> for full details on these
+functions.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span></code></pre></div>
 <p><img src="actxps_files/figure-html/plot-1.png" width="2187.5"></p>
@@ -349,7 +351,7 @@ object.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">exp_res</span>, <span class="va">inc_guar</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Groups: inc_guar </span></span>
+<span><span class="co">#&gt;  Groups: inc_guar </span></span>
 <span><span class="co">#&gt;  Target status: Surrender </span></span>
 <span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
 <span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
