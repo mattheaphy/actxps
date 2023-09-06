@@ -134,8 +134,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   res <- .data |>
     rename(exposure = {{col_exposure}},
            status = {{col_status}}) |>
-    mutate(n_claims = status %in% target_status,
-           n_exposure = exposure)
+    mutate(n_claims = status %in% target_status)
 
   if (!is.null(wt)) {
     res <- res |>
@@ -281,7 +280,7 @@ finish_exp_stats <- function(.data, target_status, expected,
       ci <- rlang::exprs(
         # For binomial N
         # Var(S) = n * p * (Var(X) + E(X)^2 * (1 - p))
-        sd_agg = (n_exposure * q_obs * (
+        sd_agg = (claims * (
           (ex2_wt - ex_wt ^ 2) + ex_wt ^ 2 * (1 - q_obs))) ^ 0.5,
         q_obs_lower = stats::qnorm(p[[1]], claims, sd_agg) / exposure,
         q_obs_upper = stats::qnorm(p[[2]], claims, sd_agg) / exposure
@@ -313,7 +312,6 @@ finish_exp_stats <- function(.data, target_status, expected,
     dplyr::summarize(n_claims = sum(n_claims),
                      claims = sum(claims),
                      !!!ex_mean,
-                     n_exposure = sum(n_exposure),
                      exposure = sum(exposure),
                      q_obs = claims / exposure,
                      !!!ex_ae,
@@ -321,7 +319,7 @@ finish_exp_stats <- function(.data, target_status, expected,
                      !!!cred,
                      !!!ci,
                      .groups = "drop") |>
-    relocate(n_exposure, exposure, q_obs,
+    relocate(exposure, q_obs,
              dplyr::any_of(c("q_obs_lower", "q_obs_upper")),
              .after = claims)
 

@@ -129,8 +129,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
     gt::cols_label(.list = rename_cols) |>
     gt::tab_header(title = "Experience Study Results",
                    subtitle = glue::glue("Target status{ifelse(length(target_status) > 1,'es','')}: {paste(target_status, collapse = ', ')}")) |>
-    gt::tab_source_note(glue::glue("Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}")) |>
-    gt::cols_hide(n_exposure)
+    gt::tab_source_note(glue::glue("Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"))
 
   if (length(wt) > 0) {
     tab <- tab |>

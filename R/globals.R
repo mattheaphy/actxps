@@ -7,6 +7,6 @@ utils::globalVariables(c("issue_date", "term_date", "last_date",
                          "trx_date", "trx_type", "trx_amt", "trx_n", "trx_flag",
                          "trx_util", "avg_trx", "avg_all", "trx_freq",
                          "class1", "Series", "Rate", "A/E ratio",
-                         "n_exposure", "q_obs_lower", "q_obs_upper",
+                         "q_obs_lower", "q_obs_upper",
                          "trx_util_lower", "trx_util_upper", "sd_agg",
                          "sd_all", "sd_trx", "trx_amt_sq"))
