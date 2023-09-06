@@ -59,7 +59,7 @@ Below, an `exp_df` object is created using `exp_stats()`.
 ```{r plot-data}
 exp_res <- exposed_data |> 
   group_by(pol_yr) |> 
-  exp_stats()
+  exp_stats(conf_int = TRUE)
 ```
 
 The default plot produced by `autoplot.exp_df()` is a line plot of the observed termination rate (`q_obs`). The `x` variable corresponds to the first grouping variable of the `exp_df` object^[If there are no grouping variables, a single point is plotted].
@@ -126,13 +126,13 @@ autoplot(exp_res2, scales = "free_y")
 ```
 
 
-The `geoms` argument can be used to change the plotting geometry. Under the default value of "lines", points and lines are displayed. If "bars" is passed, a bar plot will be drawn.
+The `geoms` argument can be used to change the plotting geometry. Under the default value of "lines", points and lines are displayed. If "bars" is passed, a bar plot will be drawn. If "points" is passed, a scatter plot will be drawn.
 
 ```{r plot-bar}
 autoplot(exp_res, geoms = "bars")
 ```
 
-If the `y_log10` argument is set to `TRUE`, the y-axis will be plotting on a logarithmic base ten scale.
+If the `y_log10` argument is set to `TRUE`, the y-axis will be plotted on a logarithmic base ten scale.
 
 ```{r plot-log10}
 autoplot(exp_res, y_log10 = TRUE)
@@ -147,6 +147,13 @@ autoplot(exp_res, y_log10 = TRUE)
 ```{r plot-second-y-axis}
 autoplot(exp_res, second_axis = TRUE)
 ```
+
+Confidence interval error bars can be added to a plot by passing `conf_int_bars = TRUE`. Confidence intervals will only be displayed if they are available for the selected `y` variable.
+
+```{r plot-conf-int}
+autoplot(exp_res, conf_int_bars = TRUE)
+```
+
 
 ### `plot_termination_rates()`
 
@@ -225,7 +232,6 @@ plot_utilization_rates(trx_res)
 ```
 
 
-
 ## Tables
 
 The `autotable()` function creates summary tables of termination or transaction study results. This function is a generic function with methods specific to `exp_df` and `trx_df` objects. 
@@ -250,6 +256,8 @@ The `autotable()` function creates summary tables of termination or transaction 
   These inputs must be strings referencing a discrete color palette available in the `paletteer` package. Palettes must be in the form "package::palette". For a full list of available palettes, see `paletteer::palettes_d_names`.
   
 - `rename_cols` can be used to relabel columns. This input must be a named list or character vector with names equal to original column names and values equal to the desired column labels. Most of the column names created by `autotable()` are presentation-ready, however, grouping variables on the left side of the table may require updates since they default to the variable names that appear in the data.
+
+- `show_conf_int` and `show_cred_adj` can be used to include any confidence intervals and credibility-weighted termination rates, if available. As a default, these columns are not included to avoid producing overcrowded tables.
 
 ## Interactive Shiny app
 
