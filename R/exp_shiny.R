@@ -446,13 +446,20 @@ exp_shiny <- function(dat,
 
       bslib::nav_panel(
         "Table",
-        bslib::input_switch("tableCI",
-                            shiny::strong("Confidence intervals"),
-                            value = FALSE),
-        bslib::input_switch("tableCredAdj",
-                            shiny::strong("Credibility-weighted termination rates"),
-                            value = FALSE),
-        gt::gt_output("xpTable")
+        bslib::card(
+          bslib::card_header(
+            bslib::popover(
+              shiny::icon("gear"),
+              bslib::input_switch("tableCI",
+                                  shiny::strong("Confidence intervals"),
+                                  value = FALSE),
+              bslib::input_switch("tableCredAdj",
+                                  shiny::strong("Credibility-weighted termination rates"),
+                                  value = FALSE)
+            )
+          ),
+          gt::gt_output("xpTable")
+        )
       ),
 
       bslib::nav_spacer(),
