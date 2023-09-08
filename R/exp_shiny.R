@@ -416,13 +416,13 @@ exp_shiny <- function(dat,
           shiny::column(
             width = 4,
             bslib::input_switch("plotSmooth",
-                                shiny::strong("Add Smoothing"),
+                                shiny::strong("Add smoothing"),
                                 value = FALSE),
             bslib::input_switch("plotCI",
                                 shiny::strong("Confidence intervals"),
                                 value = FALSE),
             bslib::input_switch("plotFreeY",
-                                shiny::strong("Free y Scales"),
+                                shiny::strong("Free y-scales"),
                                 value = FALSE),
             bslib::input_switch("plotLogY",
                                 shiny::strong("Log y-axis"),
@@ -464,7 +464,7 @@ exp_shiny <- function(dat,
 
       bslib::nav_spacer(),
       bslib::nav_menu(
-        title = "Export Data",
+        title = "Export",
         align = "right",
         bslib::nav_item(
           shiny::downloadButton("xpDownload", "Download")
