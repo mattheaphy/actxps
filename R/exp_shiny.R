@@ -387,7 +387,6 @@ exp_shiny <- function(dat,
       title = "Output",
       bslib::nav_panel(
         "Plot",
-        shiny::br(),
         shiny::fluidRow(
           shiny::column(
             width = 8,
@@ -430,11 +429,23 @@ exp_shiny <- function(dat,
                                 value = FALSE)
           )),
 
-        shiny::plotOutput("xpPlot")),
+        bslib::card(
+          bslib::card_header(
+            bslib::popover(
+              shiny::icon("gear"),
+              bslib::input_switch("plotResize", "Resize plot", value = FALSE),
+              shiny::sliderInput("plotHeight", "Height:",
+                                 200, 1000, value = 500, step = 50),
+              shiny::sliderInput("plotWidth", "Width:",
+                                 200, 1500, value = 1500, step = 50)
+            )
+          ),
+          shiny::plotOutput("xpPlot", height = "500px")
+        )
+      ),
 
       bslib::nav_panel(
         "Table",
-        shiny::br(),
         bslib::input_switch("tableCI",
                             shiny::strong("Confidence intervals"),
                             value = FALSE),
@@ -695,7 +706,10 @@ exp_shiny <- function(dat,
                          ggplot2::element_rect(fill = "#43536b")
         )
 
-    }, res = 92)
+    },
+    res = 92,
+    height = function() if (input$plotResize) input$plotHeight else "auto",
+    width = function() if (input$plotResize) input$plotWidth else "auto")
 
     output$xpTable <- gt::render_gt({
       if (input$study_type == "exp") {
