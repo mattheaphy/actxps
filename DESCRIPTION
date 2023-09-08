@@ -26,8 +26,8 @@ Suggests:
     RColorBrewer,
     rmarkdown,
     testthat (>= 3.0.0),
-    shiny (>= 1.6),
-    bslib,
+    shiny (>= 1.7.5),
+    bslib (>= 0.5.1),
     thematic
 Config/testthat/edition: 3
 Depends: 

@@ -66,8 +66,8 @@
 #'
 #' - y: y variable
 #' - Geometry: plotting geometry
-#' - Add Smoothing?: activate to plot loess curves
-#' - Second y-axis?: activate to enable a second y-axis
+#' - Add Smoothing: activate to plot loess curves
+#' - Second y-axis: activate to enable a second y-axis
 #' - Second axis y: y variable to plot on the second axis
 #' - Free y Scales: activate to enable separate y scales in each plot
 #' - Log y-axis: activate to plot all y-axes on a log-10 scale
@@ -92,9 +92,9 @@
 #' include in the Shiny app.
 #' @param expected A character vector of expected values in `dat` to include
 #' in the Shiny app.
-#' @param distinct_max Maximum number of distinct values allowed for `predictors`
-#' to be included as "Color" and "Facets" grouping variables. This input
-#' prevents the drawing of overly complex plots. Default value = 25.
+#' @param distinct_max Maximum number of distinct values allowed for
+#' `predictors` to be included as "Color" and "Facets" grouping variables. This
+#' input prevents the drawing of overly complex plots. Default value = 25.
 #' @param title Optional. Title of the Shiny app. If no title is provided,
 #' a descriptive title will be generated based on attributes of `dat`.
 #' @inheritParams exp_stats
@@ -314,9 +314,9 @@ exp_shiny <- function(dat,
                    choices = percent_of_choices, multiple = TRUE),
         shiny::column(
           width = 4,
-          shiny::checkboxInput("trx_combine",
-                               shiny::strong("Combine transactions?"),
-                               value = FALSE)
+          bslib::input_switch("trx_combine",
+                              shiny::strong("Combine transactions"),
+                              value = FALSE)
         )
       )
     )
@@ -334,7 +334,7 @@ exp_shiny <- function(dat,
 
   ui <- shiny::fluidPage(
 
-    theme = bslib::bs_theme(bootswatch = "flatly"),
+    theme = bslib::bs_theme(preset = "shiny"),
 
     shiny::titlePanel(title),
 
@@ -369,14 +369,15 @@ exp_shiny <- function(dat,
             id = "study_type",
             type = "pills",
 
-            shiny::tabPanel("Termination study",
-                            value = "exp",
-                            shiny::fluidRow(
-                              expected_widget,
-                              selectPred("weightVar", "Weight by:", 4,
-                                         choices = c("None",
-                                                     filter(preds, is_number)$predictors))
-                            )),
+            shiny::tabPanel(
+              "Termination study",
+              value = "exp",
+              shiny::fluidRow(
+                expected_widget,
+                selectPred("weightVar", "Weight by:", 4,
+                           choices = c("None",
+                                       filter(preds, is_number)$predictors))
+              )),
             trx_tab
 
           )
@@ -400,32 +401,32 @@ exp_shiny <- function(dat,
               ),
               shiny::column(
                 width = 4,
-                shiny::checkboxInput("plotSmooth",
-                                     shiny::strong("Add Smoothing?"),
-                                     value = FALSE),
-                shiny::checkboxInput("plotCI",
-                                     shiny::strong("Confidence intervals?"),
-                                     value = FALSE)
+                bslib::input_switch("plotSmooth",
+                                    shiny::strong("Add Smoothing"),
+                                    value = FALSE),
+                bslib::input_switch("plotCI",
+                                    shiny::strong("Confidence intervals"),
+                                    value = FALSE)
               )
             ),
 
             shiny::fluidRow(
               shiny::column(
                 width = 4,
-                shiny::checkboxInput("plot2ndY",
-                                     shiny::strong("Second y-axis?"),
-                                     value = FALSE)
+                bslib::input_switch("plot2ndY",
+                                    shiny::strong("Second y-axis"),
+                                    value = FALSE)
               ),
               selectPred("yVar_2nd", "Second axis y:", 4, choices = yVar_exp,
                          selected = "exposure"),
               shiny::column(
                 width = 4,
-                shiny::checkboxInput("plotFreeY",
-                                     shiny::strong("Free y Scales?"),
-                                     value = FALSE),
-                shiny::checkboxInput("plotLogY",
-                                     shiny::strong("Log y-axis?"),
-                                     value = FALSE)
+                bslib::input_switch("plotFreeY",
+                                    shiny::strong("Free y Scales"),
+                                    value = FALSE),
+                bslib::input_switch("plotLogY",
+                                    shiny::strong("Log y-axis"),
+                                    value = FALSE)
               )
 
             ),
@@ -434,17 +435,12 @@ exp_shiny <- function(dat,
           shiny::tabPanel(
             "Table",
             shiny::br(),
-            shiny::fluidRow(
-              shiny::column(
-                width = 12,
-                shiny::checkboxInput("tableCI",
-                                     shiny::strong("Confidence intervals?"),
-                                     value = FALSE),
-                shiny::checkboxInput("tableCredAdj",
-                                     shiny::strong("Credibility-weighted termination rates?"),
-                                     value = FALSE)
-              )
-            ),
+            bslib::input_switch("tableCI",
+                                shiny::strong("Confidence intervals"),
+                                value = FALSE),
+            bslib::input_switch("tableCredAdj",
+                                shiny::strong("Credibility-weighted termination rates"),
+                                value = FALSE),
             gt::gt_output("xpTable")
           ),
           shiny::tabPanel(
@@ -687,9 +683,12 @@ exp_shiny <- function(dat,
 
       p +
         ggplot2::theme_light() +
-        ggplot2::theme(axis.text = ggplot2::element_text(size = ggplot2::rel(0.95)),
-                       strip.text = ggplot2::element_text(size = ggplot2::rel(1)),
-                       strip.background = ggplot2::element_rect(fill = "#43536b")
+        ggplot2::theme(axis.text =
+                         ggplot2::element_text(size = ggplot2::rel(0.95)),
+                       strip.text =
+                         ggplot2::element_text(size = ggplot2::rel(1)),
+                       strip.background =
+                         ggplot2::element_rect(fill = "#43536b")
         )
 
     }, res = 92)
