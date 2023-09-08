@@ -304,7 +304,7 @@ exp_shiny <- function(dat,
 
     percent_of_choices <- filter(preds, is_number)$predictors
 
-    trx_tab <- shiny::tabPanel(
+    trx_tab <- bslib::nav_panel(
       "Transaction study",
       value = "trx",
       shiny::fluidRow(
@@ -335,6 +335,7 @@ exp_shiny <- function(dat,
   ui <- bslib::page_sidebar(
 
     theme = bslib::bs_theme(preset = "shiny"),
+    fillable = FALSE,
 
     title = title,
 
@@ -348,113 +349,113 @@ exp_shiny <- function(dat,
 
     ),
 
-    shiny::mainPanel(
+    bslib::card(
+      fill = FALSE,
 
-      shiny::wellPanel(
+      bslib::card_title("Study options"),
 
-        shiny::h3("Study options"),
-
-        shiny::h4("Grouping variables"),
-        shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
-        shiny::fluidRow(
-          selectPred("xVar", "x:", 4),
-          selectPred("colorVar", "Color:", 4,
-                     choices = c("None", preds_small)),
-          selectPred("facetVar", "Facets:", 4, multiple = TRUE,
-                     choices = preds_small)
-        ),
-
-        shiny::h4("Study type"),
-        shiny::tabsetPanel(
-          id = "study_type",
-          type = "pills",
-
-          shiny::tabPanel(
-            "Termination study",
-            value = "exp",
-            shiny::fluidRow(
-              expected_widget,
-              selectPred("weightVar", "Weight by:", 4,
-                         choices = c("None",
-                                     filter(preds, is_number)$predictors))
-            )),
-          trx_tab
-
-        )
+      shiny::h4("Grouping variables"),
+      shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
+      shiny::fluidRow(
+        selectPred("xVar", "x:", 4),
+        selectPred("colorVar", "Color:", 4,
+                   choices = c("None", preds_small)),
+        selectPred("facetVar", "Facets:", 4, multiple = TRUE,
+                   choices = preds_small)
       ),
 
-      shiny::h3("Output"),
+      shiny::h4("Study type"),
+      bslib::navset_pill_list(
+        id = "study_type",
+        widths = c(2, 10),
 
-      shiny::tabsetPanel(
-        type = "pills",
-        shiny::tabPanel(
-          "Plot",
-          shiny::br(),
+        bslib::nav_panel(
+          "Termination study",
+          value = "exp",
           shiny::fluidRow(
-            shiny::column(
-              width = 8,
+            expected_widget,
+            selectPred("weightVar", "Weight by:", 4,
+                       choices = c("None",
+                                   filter(preds, is_number)$predictors))
+          )),
 
-              shiny::fluidRow(
-                selectPred("yVar", "y:", 6, choices = yVar_exp),
-                shiny::column(
-                  width = 6,
-                  shiny::radioButtons("plotGeom",
-                                      shiny::strong("Geometry:"),
-                                      choices = c("Bars" = "bars",
-                                                  "Lines and Points" = "lines"))
-                ),
+        trx_tab
+      )
+    ),
+
+    bslib::navset_bar(
+      title = "Output",
+      bslib::nav_panel(
+        "Plot",
+        shiny::br(),
+        shiny::fluidRow(
+          shiny::column(
+            width = 8,
+
+            shiny::fluidRow(
+              selectPred("yVar", "y:", 6, choices = yVar_exp),
+              shiny::column(
+                width = 6,
+                shiny::radioButtons("plotGeom",
+                                    shiny::strong("Geometry:"),
+                                    choices = c("Bars" = "bars",
+                                                "Lines and Points" = "lines"))
               ),
+            ),
 
-              shiny::fluidRow(
-                shiny::column(
-                  width = 6,
-                  bslib::input_switch("plot2ndY",
-                                      shiny::strong("Second y-axis"),
-                                      value = FALSE)
-                ),
-                selectPred("yVar_2nd", "Second axis y:", 6, choices = yVar_exp,
-                           selected = "exposure"),
-              )),
-
-            shiny::column(
-              width = 4,
-              bslib::input_switch("plotSmooth",
-                                  shiny::strong("Add Smoothing"),
-                                  value = FALSE),
-              bslib::input_switch("plotCI",
-                                  shiny::strong("Confidence intervals"),
-                                  value = FALSE),
-              bslib::input_switch("plotFreeY",
-                                  shiny::strong("Free y Scales"),
-                                  value = FALSE),
-              bslib::input_switch("plotLogY",
-                                  shiny::strong("Log y-axis"),
-                                  value = FALSE)
+            shiny::fluidRow(
+              shiny::column(
+                width = 6,
+                bslib::input_switch("plot2ndY",
+                                    shiny::strong("Second y-axis"),
+                                    value = FALSE)
+              ),
+              selectPred("yVar_2nd", "Second axis y:", 6, choices = yVar_exp,
+                         selected = "exposure"),
             )),
 
-          shiny::plotOutput("xpPlot")),
-        shiny::tabPanel(
-          "Table",
-          shiny::br(),
-          bslib::input_switch("tableCI",
-                              shiny::strong("Confidence intervals"),
-                              value = FALSE),
-          bslib::input_switch("tableCredAdj",
-                              shiny::strong("Credibility-weighted termination rates"),
-                              value = FALSE),
-          gt::gt_output("xpTable")
-        ),
-        shiny::tabPanel(
-          "Export Data",
-          shiny::br(),
-          shiny::downloadButton("xpDownload", "Download")
-        )
+          shiny::column(
+            width = 4,
+            bslib::input_switch("plotSmooth",
+                                shiny::strong("Add Smoothing"),
+                                value = FALSE),
+            bslib::input_switch("plotCI",
+                                shiny::strong("Confidence intervals"),
+                                value = FALSE),
+            bslib::input_switch("plotFreeY",
+                                shiny::strong("Free y Scales"),
+                                value = FALSE),
+            bslib::input_switch("plotLogY",
+                                shiny::strong("Log y-axis"),
+                                value = FALSE)
+          )),
+
+        shiny::plotOutput("xpPlot")),
+
+      bslib::nav_panel(
+        "Table",
+        shiny::br(),
+        bslib::input_switch("tableCI",
+                            shiny::strong("Confidence intervals"),
+                            value = FALSE),
+        bslib::input_switch("tableCredAdj",
+                            shiny::strong("Credibility-weighted termination rates"),
+                            value = FALSE),
+        gt::gt_output("xpTable")
       ),
 
-      shiny::h3("Filter information"),
-      shiny::verbatimTextOutput("filterInfo")
+      bslib::nav_panel(
+        "Export Data",
+        shiny::br(),
+        shiny::downloadButton("xpDownload", "Download")
+      )
+    ),
 
+    bslib::card(
+      bslib::card_title("Filter information"),
+      shiny::verbatimTextOutput("filterInfo")
     )
+
   )
 
   server <- function(input, output, session) {
