@@ -332,65 +332,65 @@ exp_shiny <- function(dat,
               glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})
   }
 
-  ui <- shiny::fluidPage(
+  ui <- bslib::page_sidebar(
 
     theme = bslib::bs_theme(preset = "shiny"),
 
-    shiny::titlePanel(title),
+    title = title,
 
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
+    sidebar = bslib::sidebar(
 
-        shiny::h3("Filters"),
+      title = "Filters",
+      width = "15%",
 
-        # add filter widgets
-        purrr::map(preds$predictors, widget),
+      # add filter widgets
+      purrr::map(preds$predictors, widget),
 
-      ),
+    ),
 
-      shiny::mainPanel(
+    shiny::mainPanel(
 
-        shiny::wellPanel(
+      shiny::wellPanel(
 
-          shiny::h3("Study options"),
+        shiny::h3("Study options"),
 
-          shiny::h4("Grouping variables"),
-          shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
-          shiny::fluidRow(
-            selectPred("xVar", "x:", 4),
-            selectPred("colorVar", "Color:", 4,
-                       choices = c("None", preds_small)),
-            selectPred("facetVar", "Facets:", 4, multiple = TRUE,
-                       choices = preds_small)
-          ),
-
-          shiny::h4("Study type"),
-          shiny::tabsetPanel(
-            id = "study_type",
-            type = "pills",
-
-            shiny::tabPanel(
-              "Termination study",
-              value = "exp",
-              shiny::fluidRow(
-                expected_widget,
-                selectPred("weightVar", "Weight by:", 4,
-                           choices = c("None",
-                                       filter(preds, is_number)$predictors))
-              )),
-            trx_tab
-
-          )
+        shiny::h4("Grouping variables"),
+        shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
+        shiny::fluidRow(
+          selectPred("xVar", "x:", 4),
+          selectPred("colorVar", "Color:", 4,
+                     choices = c("None", preds_small)),
+          selectPred("facetVar", "Facets:", 4, multiple = TRUE,
+                     choices = preds_small)
         ),
 
-        shiny::h3("Output"),
-
+        shiny::h4("Study type"),
         shiny::tabsetPanel(
+          id = "study_type",
           type = "pills",
+
           shiny::tabPanel(
-            "Plot",
-            shiny::br(),
+            "Termination study",
+            value = "exp",
             shiny::fluidRow(
+              expected_widget,
+              selectPred("weightVar", "Weight by:", 4,
+                         choices = c("None",
+                                     filter(preds, is_number)$predictors))
+            )),
+          trx_tab
+
+        )
+      ),
+
+      shiny::h3("Output"),
+
+      shiny::tabsetPanel(
+        type = "pills",
+        shiny::tabPanel(
+          "Plot",
+          shiny::br(),
+          shiny::fluidRow(
             shiny::column(
               width = 8,
 
@@ -418,43 +418,42 @@ exp_shiny <- function(dat,
 
             shiny::column(
               width = 4,
-                bslib::input_switch("plotSmooth",
-                                    shiny::strong("Add Smoothing"),
-                                    value = FALSE),
-                bslib::input_switch("plotCI",
-                                    shiny::strong("Confidence intervals"),
-                                    value = FALSE),
-                bslib::input_switch("plotFreeY",
-                                    shiny::strong("Free y Scales"),
-                                    value = FALSE),
-                bslib::input_switch("plotLogY",
-                                    shiny::strong("Log y-axis"),
-                                    value = FALSE)
-              )),
+              bslib::input_switch("plotSmooth",
+                                  shiny::strong("Add Smoothing"),
+                                  value = FALSE),
+              bslib::input_switch("plotCI",
+                                  shiny::strong("Confidence intervals"),
+                                  value = FALSE),
+              bslib::input_switch("plotFreeY",
+                                  shiny::strong("Free y Scales"),
+                                  value = FALSE),
+              bslib::input_switch("plotLogY",
+                                  shiny::strong("Log y-axis"),
+                                  value = FALSE)
+            )),
 
-            shiny::plotOutput("xpPlot")),
-          shiny::tabPanel(
-            "Table",
-            shiny::br(),
-            bslib::input_switch("tableCI",
-                                shiny::strong("Confidence intervals"),
-                                value = FALSE),
-            bslib::input_switch("tableCredAdj",
-                                shiny::strong("Credibility-weighted termination rates"),
-                                value = FALSE),
-            gt::gt_output("xpTable")
-          ),
-          shiny::tabPanel(
-            "Export Data",
-            shiny::br(),
-            shiny::downloadButton("xpDownload", "Download")
-          )
+          shiny::plotOutput("xpPlot")),
+        shiny::tabPanel(
+          "Table",
+          shiny::br(),
+          bslib::input_switch("tableCI",
+                              shiny::strong("Confidence intervals"),
+                              value = FALSE),
+          bslib::input_switch("tableCredAdj",
+                              shiny::strong("Credibility-weighted termination rates"),
+                              value = FALSE),
+          gt::gt_output("xpTable")
         ),
+        shiny::tabPanel(
+          "Export Data",
+          shiny::br(),
+          shiny::downloadButton("xpDownload", "Download")
+        )
+      ),
 
-        shiny::h3("Filter information"),
-        shiny::verbatimTextOutput("filterInfo")
+      shiny::h3("Filter information"),
+      shiny::verbatimTextOutput("filterInfo")
 
-      )
     )
   )
 
