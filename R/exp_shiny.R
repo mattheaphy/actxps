@@ -342,7 +342,7 @@ exp_shiny <- function(dat,
     sidebar = bslib::sidebar(
 
       title = "Filters",
-      width = "15%",
+      width = "300px",
 
       # add filter widgets
       purrr::map(preds$predictors, widget),
@@ -444,10 +444,13 @@ exp_shiny <- function(dat,
         gt::gt_output("xpTable")
       ),
 
-      bslib::nav_panel(
-        "Export Data",
-        shiny::br(),
-        shiny::downloadButton("xpDownload", "Download")
+      bslib::nav_spacer(),
+      bslib::nav_menu(
+        title = "Export Data",
+        align = "right",
+        bslib::nav_item(
+          shiny::downloadButton("xpDownload", "Download")
+        )
       )
     ),
 
@@ -713,7 +716,8 @@ exp_shiny <- function(dat,
 
     output$xpDownload <- shiny::downloadHandler(
       filename = function() {
-        file.path(tempdir(), paste0(input$study_type, "-data-", Sys.Date(), ".csv"))
+        file.path(tempdir(), paste0(input$study_type, "-data-",
+                                    Sys.Date(), ".csv"))
       },
       content = function(file) {
         readr::write_csv(rxp(), file)
