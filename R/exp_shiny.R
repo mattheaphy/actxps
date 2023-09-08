@@ -391,45 +391,46 @@ exp_shiny <- function(dat,
             "Plot",
             shiny::br(),
             shiny::fluidRow(
-              selectPred("yVar", "y:", 4, choices = yVar_exp),
-              shiny::column(
-                width = 4,
-                shiny::radioButtons("plotGeom",
-                                    shiny::strong("Geometry:"),
-                                    choices = c("Bars" = "bars",
-                                                "Lines and Points" = "lines"))
+            shiny::column(
+              width = 8,
+
+              shiny::fluidRow(
+                selectPred("yVar", "y:", 6, choices = yVar_exp),
+                shiny::column(
+                  width = 6,
+                  shiny::radioButtons("plotGeom",
+                                      shiny::strong("Geometry:"),
+                                      choices = c("Bars" = "bars",
+                                                  "Lines and Points" = "lines"))
+                ),
               ),
-              shiny::column(
-                width = 4,
+
+              shiny::fluidRow(
+                shiny::column(
+                  width = 6,
+                  bslib::input_switch("plot2ndY",
+                                      shiny::strong("Second y-axis"),
+                                      value = FALSE)
+                ),
+                selectPred("yVar_2nd", "Second axis y:", 6, choices = yVar_exp,
+                           selected = "exposure"),
+              )),
+
+            shiny::column(
+              width = 4,
                 bslib::input_switch("plotSmooth",
                                     shiny::strong("Add Smoothing"),
                                     value = FALSE),
                 bslib::input_switch("plotCI",
                                     shiny::strong("Confidence intervals"),
-                                    value = FALSE)
-              )
-            ),
-
-            shiny::fluidRow(
-              shiny::column(
-                width = 4,
-                bslib::input_switch("plot2ndY",
-                                    shiny::strong("Second y-axis"),
-                                    value = FALSE)
-              ),
-              selectPred("yVar_2nd", "Second axis y:", 4, choices = yVar_exp,
-                         selected = "exposure"),
-              shiny::column(
-                width = 4,
+                                    value = FALSE),
                 bslib::input_switch("plotFreeY",
                                     shiny::strong("Free y Scales"),
                                     value = FALSE),
                 bslib::input_switch("plotLogY",
                                     shiny::strong("Log y-axis"),
                                     value = FALSE)
-              )
-
-            ),
+              )),
 
             shiny::plotOutput("xpPlot")),
           shiny::tabPanel(
