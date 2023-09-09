@@ -22,9 +22,7 @@
 #' The sidebar contains filtering widgets for all variables passed
 #' to the `predictors` argument.
 #'
-#' ## Study options
-#'
-#' ### Grouping variables
+#' ## Grouping variables
 #'
 #' This box includes widgets to select grouping variables for summarizing
 #' experience. The "x" widget is also used as the x variable in the plot output.
@@ -33,10 +31,11 @@
 #' "x", "Color", and "Facets" have no particular meaning beyond the order in
 #' which of grouping variables are displayed.
 #'
-#' ### Study type
+#' ## Study type
 #'
-#' This box also includes a toggle to switch between termination studies and
-#' transaction studies (if available).
+#' This also includes a toggle to switch between termination studies and
+#' transaction studies (if available). Different options are available for each
+#' study type.
 #'
 #' #### Termination studies
 #'
@@ -290,7 +289,7 @@ exp_shiny <- function(dat,
 
     has_expected <- TRUE
 
-    expected_widget <- checkboxGroupPred("ex_checks", "Expected values:", 4,
+    expected_widget <- checkboxGroupPred("ex_checks", "Expected values:", 6,
                                          choices = expected,
                                          selected = expected)
 
@@ -349,37 +348,51 @@ exp_shiny <- function(dat,
 
     ),
 
-    bslib::card(
-      fill = FALSE,
+    bslib::layout_column_wrap(
+      width = "400px",
+      heights_equal = "row",
 
-      bslib::card_title("Study options"),
+      bslib::card(
+        fill = FALSE,
 
-      shiny::h4("Grouping variables"),
-      shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
-      shiny::fluidRow(
-        selectPred("xVar", "x:", 4),
-        selectPred("colorVar", "Color:", 4,
-                   choices = c("None", preds_small)),
-        selectPred("facetVar", "Facets:", 4, multiple = TRUE,
-                   choices = preds_small)
+        bslib::card_header("Grouping variables",
+                           bslib::tooltip(
+                             shiny::icon("circle-info"),
+                             "The variables selected below will be used as
+                             grouping variables in the plot and table outputs.
+                             Multiple variables can be selected as facets.")
+        ),
+        shiny::fluidRow(
+          selectPred("xVar", "x:", 4),
+          selectPred("colorVar", "Color:", 4,
+                     choices = c("None", preds_small)),
+          selectPred("facetVar", "Facets:", 4, multiple = TRUE,
+                     choices = preds_small)
+        )
       ),
 
-      shiny::h4("Study type"),
-      bslib::navset_pill_list(
+      bslib::navset_card_tab(
         id = "study_type",
-        widths = c(2, 10),
+        title = "Study type",
 
         bslib::nav_panel(
-          "Termination study",
+          list("Termination study",
+               bslib::tooltip(
+                 shiny::icon("circle-info"),
+                 "Choose expected values (if available) that appear in the plot
+                 and table outputs. If desired, select a weighting variable
+                 for summarizing experience.")
+          ),
           value = "exp",
           shiny::fluidRow(
             expected_widget,
-            selectPred("weightVar", "Weight by:", 4,
+            selectPred("weightVar", "Weight by:", 6,
                        choices = c("None",
                                    filter(preds, is_number)$predictors))
           )),
 
         trx_tab
+
       )
     ),
 
