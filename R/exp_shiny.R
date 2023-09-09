@@ -284,6 +284,11 @@ exp_shiny <- function(dat,
   selectPred <- widgetPred(shiny::selectInput)
   checkboxGroupPred <- widgetPred(shiny::checkboxGroupInput)
 
+  # create a tooltip with an info icon
+  info_tooltip <- function(x) {
+    bslib::tooltip(shiny::icon("circle-info"), x)
+  }
+
   # expected values set up
   if (length(expected) > 0) {
 
@@ -306,8 +311,7 @@ exp_shiny <- function(dat,
     trx_tab <- bslib::nav_panel(
       list(
         "Transaction study",
-        bslib::tooltip(
-          shiny::icon("circle-info"),
+        info_tooltip(
           'Choose transaction types and "percent of" variables that appear in
           the plot and table outputs. If desired, combine all transaction types
           into a single group.')
@@ -366,8 +370,7 @@ exp_shiny <- function(dat,
       bslib::card(
 
         bslib::card_header("Grouping variables",
-                           bslib::tooltip(
-                             shiny::icon("circle-info"),
+                           info_tooltip(
                              "The variables selected below will be used as
                              grouping variables in the plot and table outputs.
                              Multiple variables can be selected as facets.")
@@ -387,8 +390,7 @@ exp_shiny <- function(dat,
 
         bslib::nav_panel(
           list("Termination study",
-               bslib::tooltip(
-                 shiny::icon("circle-info"),
+               info_tooltip(
                  "Choose expected values (if available) that appear in the plot
                  and table outputs. If desired, select a weighting variable
                  for summarizing experience.")
@@ -421,7 +423,8 @@ exp_shiny <- function(dat,
                 shiny::radioButtons("plotGeom",
                                     shiny::strong("Geometry:"),
                                     choices = c("Bars" = "bars",
-                                                "Lines and Points" = "lines"))
+                                                "Lines and Points" = "lines",
+                                                "Points" = "points"))
               ),
             ),
 
