@@ -54,7 +54,7 @@
 #' In the plot output, transaction type will always appear as a faceting
 #' variable. The "Transactions as % of" selector will expand the list of
 #' available "y" variables for the plot and impact the table output directly.
-#' Lastly, a checkbox exists that allows for all transaction types to be
+#' Lastly, a toggle exists that allows for all transaction types to be
 #' aggregated into a single group.
 #'
 #' ## Output
@@ -304,7 +304,14 @@ exp_shiny <- function(dat,
     percent_of_choices <- filter(preds, is_number)$predictors
 
     trx_tab <- bslib::nav_panel(
-      "Transaction study",
+      list(
+        "Transaction study",
+        bslib::tooltip(
+          shiny::icon("circle-info"),
+          'Choose transaction types and "percent of" variables that appear in
+          the plot and table outputs. If desired, combine all transaction types
+          into a single group.')
+      ),
       value = "trx",
       shiny::fluidRow(
         checkboxGroupPred("trx_types_checks", "Transaction types:", 4,

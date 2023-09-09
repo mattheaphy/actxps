@@ -24,9 +24,9 @@ include in the Shiny app.}
 \item{expected}{A character vector of expected values in \code{dat} to include
 in the Shiny app.}
 
-\item{distinct_max}{Maximum number of distinct values allowed for \code{predictors}
-to be included as "Color" and "Facets" grouping variables. This input
-prevents the drawing of overly complex plots. Default value = 25.}
+\item{distinct_max}{Maximum number of distinct values allowed for
+\code{predictors} to be included as "Color" and "Facets" grouping variables. This
+input prevents the drawing of overly complex plots. Default value = 25.}
 
 \item{title}{Optional. Title of the Shiny app. If no title is provided,
 a descriptive title will be generated based on attributes of \code{dat}.}
@@ -67,7 +67,6 @@ The sidebar contains filtering widgets for all variables passed
 to the \code{predictors} argument.
 }
 
-\subsection{Study options}{
 \subsection{Grouping variables}{
 
 This box includes widgets to select grouping variables for summarizing
@@ -80,8 +79,9 @@ which of grouping variables are displayed.
 
 \subsection{Study type}{
 
-This box also includes a toggle to switch between termination studies and
-transaction studies (if available).
+This also includes a toggle to switch between termination studies and
+transaction studies (if available). Different options are available for each
+study type.
 \subsection{Termination studies}{
 
 The expected values checkboxes are used to activate and deactivate expected
@@ -100,10 +100,8 @@ transaction types are taken from the \code{trx_types} attribute of \code{dat}.
 In the plot output, transaction type will always appear as a faceting
 variable. The "Transactions as \% of" selector will expand the list of
 available "y" variables for the plot and impact the table output directly.
-Lastly, a checkbox exists that allows for all transaction types to be
+Lastly, a toggle exists that allows for all transaction types to be
 aggregated into a single group.
-}
-
 }
 
 }
@@ -115,8 +113,8 @@ This tab includes a plot and various options for customization:
 \itemize{
 \item y: y variable
 \item Geometry: plotting geometry
-\item Add Smoothing?: activate to plot loess curves
-\item Second y-axis?: activate to enable a second y-axis
+\item Add Smoothing: activate to plot loess curves
+\item Second y-axis: activate to enable a second y-axis
 \item Second axis y: y variable to plot on the second axis
 \item Free y Scales: activate to enable separate y scales in each plot
 \item Log y-axis: activate to plot all y-axes on a log-10 scale
