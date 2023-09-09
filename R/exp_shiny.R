@@ -335,6 +335,10 @@ exp_shiny <- function(dat,
 
     theme = bslib::bs_theme(preset = "shiny"),
     fillable = FALSE,
+    tags$head(
+      tags$style(HTML(".html-fill-container > .html-fill-item {
+                      overflow: visible}"))
+    ),
 
     title = title,
 
@@ -349,11 +353,10 @@ exp_shiny <- function(dat,
     ),
 
     bslib::layout_column_wrap(
-      width = "400px",
+      width = 400,
       heights_equal = "row",
 
       bslib::card(
-        fill = FALSE,
 
         bslib::card_header("Grouping variables",
                            bslib::tooltip(
