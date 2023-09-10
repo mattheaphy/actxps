@@ -12,7 +12,8 @@ exp_shiny(
   title,
   credibility = TRUE,
   conf_level = 0.95,
-  cred_r = 0.05
+  cred_r = 0.05,
+  theme = "cerulean"
 )
 }
 \arguments{
@@ -39,6 +40,10 @@ credibility method and confidence intervals}
 
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
+
+\item{theme}{The name of a theme passed to the \code{preset} argument of
+\code{bslib::bs_theme()}. Alternatively, a complete Bootstrap theme created using
+\code{bslib::bs_theme()}.}
 }
 \value{
 No return value. This function is called for the side effect of

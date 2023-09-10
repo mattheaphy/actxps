@@ -96,6 +96,10 @@
 #' input prevents the drawing of overly complex plots. Default value = 25.
 #' @param title Optional. Title of the Shiny app. If no title is provided,
 #' a descriptive title will be generated based on attributes of `dat`.
+#' @param theme The name of a theme passed to the `preset` argument of
+#' `bslib::bs_theme()`. Alternatively, a complete Bootstrap theme created using
+#' `bslib::bs_theme()`.
+#'
 #' @inheritParams exp_stats
 #'
 #' @return No return value. This function is called for the side effect of
@@ -125,7 +129,8 @@ exp_shiny <- function(dat,
                       title,
                       credibility = TRUE,
                       conf_level = 0.95,
-                      cred_r = 0.05) {
+                      cred_r = 0.05,
+                      theme = "cerulean") {
 
   rlang::check_installed("shiny")
   rlang::check_installed("bslib")
@@ -149,6 +154,14 @@ exp_shiny <- function(dat,
     rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values will be removed.")
     predictors <- predictors[predictors %in% names(dat)]
     expected <- expected[expected %in% names(dat)]
+  }
+
+  if (!inherits(theme, "bs_theme")) {
+    if (is.character(theme)) {
+      theme <- bslib::bs_theme(preset = theme)
+    } else {
+      rlang::abort("`theme` must be a single character string or a `bs_theme`")
+    }
   }
 
   total_rows <- nrow(dat)
@@ -355,7 +368,7 @@ exp_shiny <- function(dat,
 
   ui <- bslib::page_sidebar(
 
-    theme = bslib::bs_theme(preset = "shiny"),
+    theme = theme,
     fillable = FALSE,
     shiny::tags$head(
       shiny::tags$style(shiny::HTML(".html-fill-container > .html-fill-item {
