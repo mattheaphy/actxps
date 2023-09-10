@@ -140,6 +140,11 @@ exp_shiny <- function(dat,
   # ungroup data if needed
   dat <- ungroup(dat)
 
+  if (is.null(predictors) || all(is.na(predictors))) {
+    rlang::warn("`predictors` cannot be NULL or NA. Reverting to the default of `predictors = names(dat)`")
+    predictors <- names(dat)
+  }
+
   if (any(!c(predictors, expected) %in% names(dat))) {
     rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values will be removed.")
     predictors <- predictors[predictors %in% names(dat)]
