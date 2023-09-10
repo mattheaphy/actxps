@@ -357,9 +357,9 @@ exp_shiny <- function(dat,
 
     theme = bslib::bs_theme(preset = "shiny"),
     fillable = FALSE,
-    tags$head(
-      tags$style(HTML(".html-fill-container > .html-fill-item {
-                      overflow: visible}"))
+    shiny::tags$head(
+      shiny::tags$style(shiny::HTML(".html-fill-container > .html-fill-item {
+                                    overflow: visible}"))
     ),
 
     title = title,
