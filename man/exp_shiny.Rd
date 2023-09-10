@@ -68,8 +68,12 @@ containing the word "expected" are used.
 \section{Layout}{
 \subsection{Filters}{
 
-The sidebar contains filtering widgets for all variables passed
-to the \code{predictors} argument.
+The sidebar contains filtering widgets organized by data type for all
+variables passed to the \code{predictors} argument.
+
+At the top, information is shown on the original number of exposure records,
+the number of records after filters are applied, and the percentage of
+records remaining.
 }
 
 \subsection{Grouping variables}{
@@ -137,13 +141,6 @@ This tab includes a download button that will save a copy of the summarized
 experience data.
 }
 
-}
-
-\subsection{Filter Information}{
-
-This box contains information on the original number of exposure records,
-the number of records after filters are applied, and the percentage of
-records retained.
 }
 }
 

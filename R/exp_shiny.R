@@ -19,8 +19,12 @@
 #'
 #' ## Filters
 #'
-#' The sidebar contains filtering widgets for all variables passed
-#' to the `predictors` argument.
+#' The sidebar contains filtering widgets organized by data type for all
+#' variables passed to the `predictors` argument.
+#'
+#' At the top, information is shown on the original number of exposure records,
+#' the number of records after filters are applied, and the percentage of
+#' records remaining.
 #'
 #' ## Grouping variables
 #'
@@ -79,12 +83,6 @@
 #'
 #' This tab includes a download button that will save a copy of the summarized
 #' experience data.
-#'
-#' ## Filter Information
-#'
-#' This box contains information on the original number of exposure records,
-#' the number of records after filters are applied, and the percentage of
-#' records retained.
 #'
 #' @param dat An `exposed_df` object.
 #' @param predictors A character vector of independent variables in `dat` to
@@ -382,6 +380,14 @@ exp_shiny <- function(dat,
       title = "Filters",
       width = "300px",
 
+      bslib::value_box(
+        title = "% records remaining",
+        value = textOutput("rem_pct"),
+        showcase = plotOutput("filter_pie", height = "60px", width = "60px"),
+        textOutput("tot_rows"),
+        textOutput("rem_rows")
+      ),
+
       # add filter widgets
       bslib::accordion(
         split(preds, preds$filter_group)[
@@ -528,13 +534,6 @@ exp_shiny <- function(dat,
           shiny::downloadButton("xpDownload", "Download")
         )
       )
-    ),
-
-    bslib::card(
-      bslib::card_header("Filter information"),
-      textOutput("tot_rows"),
-      textOutput("rem_rows"),
-      textOutput("rem_pct")
     )
 
   )
@@ -790,16 +789,31 @@ exp_shiny <- function(dat,
 
     # filter information
     output$tot_rows <- shiny::renderText({
-      paste0("Total records = ", scales::label_comma()(total_rows))
+      paste0("Total: ", scales::label_comma()(total_rows))
     })
     output$rem_rows <- shiny::renderText({
-      paste0("Remaining records = ", scales::label_comma()(nrow(rdat())))
+      paste0("Remaining: ", scales::label_comma()(nrow(rdat())))
     })
     output$rem_pct <- shiny::renderText({
-      paste0("% Data remaining = ",
-             scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows))
+      scales::label_percent(accuracy=1)(nrow(rdat()) / total_rows)
     })
 
+    output$filter_pie <- shiny::renderPlot({
+      data.frame(name = c("included", "excluded"),
+                 n = c(nrow(rdat()), total_rows - nrow(rdat()))) |>
+        mutate(ymax = cumsum(n) / sum(n),
+               ymin = dplyr::lag(ymax, default = 0)) |>
+        ggplot2::ggplot(ggplot2::aes(ymin = ymin, ymax = ymax,
+                                     xmin = 3, xmax = 4, fill = name)) +
+        ggplot2::geom_rect() +
+        ggplot2::coord_polar(theta = "y", direction = -1) +
+        ggplot2::xlim(c(2, 4)) +
+        ggplot2::theme_void() +
+        ggplot2::theme(legend.position = "none") +
+        ggplot2::scale_fill_manual(values = c("#EEEEEE", "#033C73"))
+    }, res = 92)
+
+    # exporting
     output$xpDownload <- shiny::downloadHandler(
       filename = function() {
         file.path(tempdir(), paste0(input$study_type, "-data-",
