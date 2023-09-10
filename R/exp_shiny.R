@@ -531,8 +531,10 @@ exp_shiny <- function(dat,
     ),
 
     bslib::card(
-      bslib::card_title("Filter information"),
-      shiny::verbatimTextOutput("filterInfo")
+      bslib::card_header("Filter information"),
+      textOutput("tot_rows"),
+      textOutput("rem_rows"),
+      textOutput("rem_pct")
     )
 
   )
@@ -787,10 +789,15 @@ exp_shiny <- function(dat,
     })
 
     # filter information
-    output$filterInfo <- shiny::renderPrint({
-      glue::glue("Total records = {scales::label_comma()(total_rows)}
-                 Remaining records = {scales::label_comma()(nrow(rdat()))}
-                 % Data remaining = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
+    output$tot_rows <- shiny::renderText({
+      paste0("Total records = ", scales::label_comma()(total_rows))
+    })
+    output$rem_rows <- shiny::renderText({
+      paste0("Remaining records = ", scales::label_comma()(nrow(rdat())))
+    })
+    output$rem_pct <- shiny::renderText({
+      paste0("% Data remaining = ",
+             scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows))
     })
 
     output$xpDownload <- shiny::downloadHandler(
