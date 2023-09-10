@@ -161,6 +161,12 @@ exp_shiny <- function(dat,
              class1 %in% c("numeric", "integer", "double") ~ 4,
              TRUE ~ 5
            ),
+           filter_group = dplyr::case_when(
+             class1 == "Date" ~ "Dates",
+             class1 %in% c("logical", "character", "factor") ~ "Categorical",
+             class1 %in% c("numeric", "integer", "double") ~ "Numeric",
+             TRUE ~ "Unknown"
+           ),
            is_number = purrr::map_lgl(predictors,
                                       ~ is.numeric(dat[[.x]])),
            n_unique = purrr::map_int(predictors,
@@ -359,7 +365,15 @@ exp_shiny <- function(dat,
       width = "300px",
 
       # add filter widgets
-      purrr::map(preds$predictors, widget),
+      bslib::accordion(
+        split(preds, preds$filter_group)[
+          c("Dates", "Categorical", "Numeric")] |>
+          purrr::keep(\(x) length(x) > 0) |>
+          purrr::map(\(x) bslib::accordion_panel(
+            title = x$filter_group[[1]],
+            purrr::map(x$predictors, widget)
+          ))
+      )
 
     ),
 
