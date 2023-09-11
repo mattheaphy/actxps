@@ -364,6 +364,15 @@ exp_shiny <- function(dat,
               glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})
   }
 
+  # function factory for output file names
+  export_path <- function(study_type, x, extension) {
+    function() {
+      file.path(tempdir(), paste0(study_type, "-", x, "-",
+                                  Sys.Date(), ".", extension))
+    }
+  }
+
+
   ui <- bslib::page_sidebar(
 
     theme = theme,
@@ -824,20 +833,14 @@ exp_shiny <- function(dat,
 
     # exporting
     output$xpDownload <- shiny::downloadHandler(
-      filename = function() {
-        file.path(tempdir(), paste0(input$study_type, "-data-",
-                                    Sys.Date(), ".csv"))
-      },
+      filename = export_path(input$study_type, "data", "csv"),
       content = function(file) {
         readr::write_csv(rxp(), file)
       }
     )
 
     output$plotDownload <- shiny::downloadHandler(
-      filename = function() {
-        file.path(tempdir(), paste0(input$study_type, "-plot-",
-                                    Sys.Date(), ".png"))
-      },
+      filename = export_path(input$study_type, "plot", "png"),
       content = function(file) {
         ggplot2::ggsave(file, plot = rplot(),
                         height = if (input$plotResize) input$plotHeight else NA,
@@ -847,10 +850,7 @@ exp_shiny <- function(dat,
     )
 
     output$tableDownload <- shiny::downloadHandler(
-      filename = function() {
-        file.path(tempdir(), paste0(input$study_type, "-table-",
-                                    Sys.Date(), ".png"))
-      },
+      filename = export_path(input$study_type, "table", "png"),
       content = function(file) {
         gt::gtsave(rtable(), file)
       }
