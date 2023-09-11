@@ -504,6 +504,7 @@ exp_shiny <- function(dat,
           )),
 
         bslib::card(
+          full_screen = TRUE,
           bslib::card_header(
             bslib::popover(
               shiny::icon("gear"),
@@ -769,7 +770,8 @@ exp_shiny <- function(dat,
                              second_axis = input$plot2ndY,
                              second_y = !!second_y,
                              second_y_labels = second_y_labels,
-                             y_log10 = input$plotLogY)
+                             y_log10 = input$plotLogY,
+                             conf_int_bars = input$plotCI)
       }
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
