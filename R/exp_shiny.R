@@ -390,13 +390,14 @@ exp_shiny <- function(dat,
       width = "300px",
 
       bslib::value_box(
-        title = "% records remaining",
+        title = "% data remaining",
         value = shiny::textOutput("rem_pct"),
         showcase = shiny::plotOutput("filter_pie",
-                                     height = "60px", width = "60px"),
-        shiny::textOutput("tot_rows"),
-        shiny::textOutput("rem_rows")
-      ),
+                                     height = "60px", width = "60px")
+      ) |>
+        bslib::tooltip(paste0("Original row count: ",
+                              scales::label_comma()(total_rows)),
+                       textOutput("rem_rows")),
 
       # add filter widgets
       bslib::accordion(
@@ -542,7 +543,7 @@ exp_shiny <- function(dat,
         title = list(shiny::icon("download"), "Export"),
         align = "right",
         bslib::nav_item(
-          shiny::downloadLink("xpDownload", "Data (.csv)"),
+          shiny::downloadLink("xpDownload", "Summary data (.csv)"),
           shiny::downloadLink("plotDownload", "Plot (.png)"),
           shiny::downloadLink("tableDownload", "Table (.png)")
         )
@@ -811,14 +812,11 @@ exp_shiny <- function(dat,
     output$xpTable <- gt::render_gt({rtable()})
 
     # filter information
-    output$tot_rows <- shiny::renderText({
-      paste0("Total: ", scales::label_comma()(total_rows))
-    })
-    output$rem_rows <- shiny::renderText({
-      paste0("Remaining: ", scales::label_comma()(nrow(rdat())))
-    })
     output$rem_pct <- shiny::renderText({
       scales::label_percent(accuracy=1)(nrow(rdat()) / total_rows)
+    })
+    output$rem_rows <- shiny::renderText({
+      paste0("Remaining rows: ", scales::label_comma()(nrow(rdat())))
     })
 
     output$filter_pie <- shiny::renderPlot({
