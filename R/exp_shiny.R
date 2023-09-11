@@ -307,8 +307,8 @@ exp_shiny <- function(dat,
   checkboxGroupPred <- widgetPred(shiny::checkboxGroupInput)
 
   # create a tooltip with an info icon
-  info_tooltip <- function(x) {
-    bslib::tooltip(shiny::icon("circle-info"), x)
+  info_tooltip <- function(...) {
+    bslib::tooltip(shiny::icon("circle-info"), ...)
   }
 
   # expected values set up
@@ -397,7 +397,7 @@ exp_shiny <- function(dat,
       ) |>
         bslib::tooltip(paste0("Original row count: ",
                               scales::label_comma()(total_rows)),
-                       textOutput("rem_rows")),
+                       shiny::textOutput("rem_rows")),
 
       # add filter widgets
       bslib::accordion(
