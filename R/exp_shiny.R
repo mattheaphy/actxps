@@ -533,7 +533,8 @@ exp_shiny <- function(dat,
         align = "right",
         bslib::nav_item(
           shiny::downloadLink("xpDownload", "Data (.csv)"),
-          shiny::downloadLink("plotDownload", "Plot (.png)")
+          shiny::downloadLink("plotDownload", "Plot (.png)"),
+          shiny::downloadLink("tableDownload", "Table (.png)")
         )
       )
     )
@@ -679,6 +680,7 @@ exp_shiny <- function(dat,
 
     })
 
+    # plot output
     rplot <- reactive({
 
       if (input$study_type == "exp" && input$yVar %in% yVar_trx2() &
@@ -776,21 +778,23 @@ exp_shiny <- function(dat,
 
     })
 
+    # table output
     output$xpPlot <- shiny::renderPlot(
       {rplot()},
       res = 92,
       height = function() if (input$plotResize) input$plotHeight else "auto",
       width = function() if (input$plotResize) input$plotWidth else "auto")
 
-    output$xpTable <- gt::render_gt({
+    rtable <- reactive({
       if (input$study_type == "exp") {
         rxp() |> autotable(show_conf_int = input$tableCI,
                            show_cred_adj = input$tableCredAdj)
       } else {
         rxp() |> autotable(show_conf_int = input$tableCI)
       }
-
     })
+
+    output$xpTable <- gt::render_gt({rtable()})
 
     # filter information
     output$tot_rows <- shiny::renderText({
@@ -839,6 +843,16 @@ exp_shiny <- function(dat,
                         height = if (input$plotResize) input$plotHeight else NA,
                         width = if (input$plotResize) input$plotWidth else NA,
                         units = "px")
+      }
+    )
+
+    output$tableDownload <- shiny::downloadHandler(
+      filename = function() {
+        file.path(tempdir(), paste0(input$study_type, "-table-",
+                                    Sys.Date(), ".png"))
+      },
+      content = function(file) {
+        gt::gtsave(rtable(), file)
       }
     )
 
