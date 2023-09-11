@@ -379,7 +379,9 @@ exp_shiny <- function(dat,
     fillable = FALSE,
     shiny::tags$head(
       shiny::tags$style(shiny::HTML(".html-fill-container > .html-fill-item {
-                                    overflow: visible}"))
+                                    overflow: visible}
+                                    .html-fill-container > .no-overflow {
+                                    overflow: auto}"))
     ),
 
     title = title,
@@ -505,6 +507,7 @@ exp_shiny <- function(dat,
           )),
 
         bslib::card(
+          class = "no-overflow",
           full_screen = TRUE,
           bslib::card_header(
             bslib::popover(
@@ -516,13 +519,18 @@ exp_shiny <- function(dat,
                                  200, 1500, value = 1500, step = 50)
             )
           ),
-          shiny::plotOutput("xpPlot", height = "500px")
+          bslib::card_body(
+            class = "no-overflow",
+            shiny::plotOutput("xpPlot", height = "500px")
+          )
         )
       ),
 
       bslib::nav_panel(
         "Table",
         bslib::card(
+          class = "no-overflow",
+          full_screen = TRUE,
           bslib::card_header(
             bslib::popover(
               shiny::icon("gear"),
@@ -534,7 +542,10 @@ exp_shiny <- function(dat,
                                   value = FALSE)
             )
           ),
-          gt::gt_output("xpTable")
+          bslib::card_body(
+            class = "no-overflow",
+            gt::gt_output("xpTable")
+          )
         )
       ),
 
