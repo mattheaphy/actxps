@@ -382,10 +382,11 @@ exp_shiny <- function(dat,
 
       bslib::value_box(
         title = "% records remaining",
-        value = textOutput("rem_pct"),
-        showcase = plotOutput("filter_pie", height = "60px", width = "60px"),
-        textOutput("tot_rows"),
-        textOutput("rem_rows")
+        value = shiny::textOutput("rem_pct"),
+        showcase = shiny::plotOutput("filter_pie",
+                                     height = "60px", width = "60px"),
+        shiny::textOutput("tot_rows"),
+        shiny::textOutput("rem_rows")
       ),
 
       # add filter widgets
@@ -498,9 +499,9 @@ exp_shiny <- function(dat,
             bslib::popover(
               shiny::icon("gear"),
               bslib::input_switch("plotResize", "Resize plot", value = FALSE),
-              shiny::sliderInput("plotHeight", "Height:",
-                                 200, 1000, value = 500, step = 50),
-              shiny::sliderInput("plotWidth", "Width:",
+              shiny::sliderInput("plotHeight", "Height (pixels):",
+                                 200, 1500, value = 500, step = 50),
+              shiny::sliderInput("plotWidth", "Width (pixels):",
                                  200, 1500, value = 1500, step = 50)
             )
           ),
@@ -528,10 +529,11 @@ exp_shiny <- function(dat,
 
       bslib::nav_spacer(),
       bslib::nav_menu(
-        title = "Export",
+        title = list(shiny::icon("download"), "Export"),
         align = "right",
         bslib::nav_item(
-          shiny::downloadButton("xpDownload", "Download")
+          shiny::downloadLink("xpDownload", "Data (.csv)"),
+          shiny::downloadLink("plotDownload", "Plot (.png)")
         )
       )
     )
@@ -677,7 +679,7 @@ exp_shiny <- function(dat,
 
     })
 
-    output$xpPlot <- shiny::renderPlot({
+    rplot <- reactive({
 
       if (input$study_type == "exp" && input$yVar %in% yVar_trx2() &
           !input$yVar == "exposure") return()
@@ -772,10 +774,13 @@ exp_shiny <- function(dat,
                          ggplot2::element_rect(fill = "#43536b")
         )
 
-    },
-    res = 92,
-    height = function() if (input$plotResize) input$plotHeight else "auto",
-    width = function() if (input$plotResize) input$plotWidth else "auto")
+    })
+
+    output$xpPlot <- shiny::renderPlot(
+      {rplot()},
+      res = 92,
+      height = function() if (input$plotResize) input$plotHeight else "auto",
+      width = function() if (input$plotResize) input$plotWidth else "auto")
 
     output$xpTable <- gt::render_gt({
       if (input$study_type == "exp") {
@@ -810,7 +815,7 @@ exp_shiny <- function(dat,
         ggplot2::xlim(c(2, 4)) +
         ggplot2::theme_void() +
         ggplot2::theme(legend.position = "none") +
-        ggplot2::scale_fill_manual(values = c("#EEEEEE", "#033C73"))
+        ggplot2::scale_fill_manual(values = c("#BBBBBB", "#033C73"))
     }, res = 92)
 
     # exporting
@@ -821,6 +826,19 @@ exp_shiny <- function(dat,
       },
       content = function(file) {
         readr::write_csv(rxp(), file)
+      }
+    )
+
+    output$plotDownload <- shiny::downloadHandler(
+      filename = function() {
+        file.path(tempdir(), paste0(input$study_type, "-plot-",
+                                    Sys.Date(), ".png"))
+      },
+      content = function(file) {
+        ggplot2::ggsave(file, plot = rplot(),
+                        height = if (input$plotResize) input$plotHeight else NA,
+                        width = if (input$plotResize) input$plotWidth else NA,
+                        units = "px")
       }
     )
 
