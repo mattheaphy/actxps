@@ -657,6 +657,9 @@ exp_shiny <- function(dat,
     # experience study
     rxp <- shiny::reactive({
 
+      shiny::validate(shiny::need(nrow(rdat()) > 0,
+                                  "No data remaining after applying filters."))
+
       .groups <- c(input$xVar, input$colorVar, input$facetVar)
       .groups <- .groups[!.groups %in% c("None", "Series")]
 
