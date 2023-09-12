@@ -564,7 +564,16 @@ exp_shiny <- function(dat,
                                   value = FALSE),
               bslib::input_switch("tableCredAdj",
                                   shiny::strong("Credibility-weighted termination rates"),
-                                  value = FALSE)
+                                  value = FALSE),
+              bslib::input_switch("tableColorful",
+                                  shiny::strong("Include color scales"),
+                                  value = TRUE),
+              shiny::sliderInput("tableDecimals",
+                                 shiny::strong("Decimals:"),
+                                 value = 1, min = 0, max = 5),
+              shiny::sliderInput("tableFontsize",
+                                 shiny::strong("Font size multiple:"),
+                                 value = 100, min = 50, max = 150, step = 5)
             )
           ),
           bslib::card_body(
@@ -837,11 +846,20 @@ exp_shiny <- function(dat,
       width = function() if (input$plotResize) input$plotWidth else "auto")
 
     rtable <- reactive({
+      # for an unknown reason, the table doesn't react to changes in decimals
+      # alone as if it were wrapped in isolate(). force() resolves the issue
+      force(input$tableDecimals)
       if (input$study_type == "exp") {
         rxp() |> autotable(show_conf_int = input$tableCI,
-                           show_cred_adj = input$tableCredAdj)
+                           show_cred_adj = input$tableCredAdj,
+                           colorful = input$tableColorful,
+                           decimals = input$tableDecimals,
+                           fontsize = input$tableFontsize)
       } else {
-        rxp() |> autotable(show_conf_int = input$tableCI)
+        rxp() |> autotable(show_conf_int = input$tableCI,
+                           colorful = input$tableColorful,
+                           decimals = input$tableDecimals,
+                           fontsize = input$tableFontsize)
       }
     })
 
