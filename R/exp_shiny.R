@@ -69,9 +69,11 @@
 #'
 #' - y: y variable
 #' - Geometry: plotting geometry
-#' - Add Smoothing: activate to plot loess curves
 #' - Second y-axis: activate to enable a second y-axis
 #' - Second axis y: y variable to plot on the second axis
+#' - Add Smoothing: activate to plot loess curves
+#' - Confidence intervals: If available, add error bars for confidence intervals
+#'   around the selected y variable
 #' - Free y Scales: activate to enable separate y scales in each plot
 #' - Log y-axis: activate to plot all y-axes on a log-10 scale
 #'
@@ -379,9 +381,9 @@ exp_shiny <- function(dat,
     fillable = FALSE,
     shiny::tags$head(
       shiny::tags$style(shiny::HTML(".html-fill-container > .html-fill-item {
-                                    overflow: visible}
+                                    overflow: visible; }
                                     .html-fill-container > .no-overflow {
-                                    overflow: auto}"))
+                                    overflow: auto; }"))
     ),
 
     title = title,
@@ -463,48 +465,70 @@ exp_shiny <- function(dat,
       title = "Output",
       bslib::nav_panel(
         "Plot",
-        shiny::fluidRow(
-          shiny::column(
-            width = 8,
+        bslib::card(
+          bslib::card_header(
+            "Plot inputs",
+            info_tooltip(
+              shiny::markdown(
+                "**Options**
 
-            shiny::fluidRow(
-              selectPred("yVar", "y:", 6, choices = yVar_exp),
-              shiny::column(
-                width = 6,
-                shiny::radioButtons("plotGeom",
-                                    shiny::strong("Geometry:"),
-                                    choices = c("Bars" = "bars",
-                                                "Lines and Points" = "lines",
-                                                "Points" = "points"))
-              ),
-            ),
+                - `y`-axis variable selection
+                - `Second y-axis` toggle and variable
+                - `Geometry` for plotting
+                - `Add smoothing`: add smooth loess curves
+                - `Confidence intervals`: If available, draw confidence interval
+                error bars
+                - `Free y-scales`: enable separate `y` scales in each subplot
+                - `Log y-axis`: plot y-axes on a log-10 scale
 
-            shiny::fluidRow(
-              shiny::column(
-                width = 6,
-                bslib::input_switch("plot2ndY",
-                                    shiny::strong("Second y-axis"),
-                                    value = FALSE)
-              ),
-              selectPred("yVar_2nd", "Second axis y:", 6, choices = yVar_exp,
-                         selected = "exposure"),
+                The grouping variables selected above will determine the
+                variable on the `x`-axis, the color / fill variable, and
+                faceting variables used to create subplots."),
+              custom_class = "left-tip"
             )),
+          shiny::fluidRow(
+            shiny::column(
+              width = 8,
 
-          shiny::column(
-            width = 4,
-            bslib::input_switch("plotSmooth",
-                                shiny::strong("Add smoothing"),
-                                value = FALSE),
-            bslib::input_switch("plotCI",
-                                shiny::strong("Confidence intervals"),
-                                value = FALSE),
-            bslib::input_switch("plotFreeY",
-                                shiny::strong("Free y-scales"),
-                                value = FALSE),
-            bslib::input_switch("plotLogY",
-                                shiny::strong("Log y-axis"),
-                                value = FALSE)
-          )),
+              shiny::fluidRow(
+                selectPred("yVar", "y:", 6, choices = yVar_exp),
+                shiny::column(
+                  width = 6,
+                  shiny::radioButtons("plotGeom",
+                                      shiny::strong("Geometry:"),
+                                      choices = c("Bars" = "bars",
+                                                  "Lines and Points" = "lines",
+                                                  "Points" = "points"))
+                ),
+              ),
+
+              shiny::fluidRow(
+                shiny::column(
+                  width = 6,
+                  bslib::input_switch("plot2ndY",
+                                      shiny::strong("Second y-axis"),
+                                      value = FALSE)
+                ),
+                selectPred("yVar_2nd", "Second axis y:", 6, choices = yVar_exp,
+                           selected = "exposure"),
+              )),
+
+            shiny::column(
+              width = 4,
+              bslib::input_switch("plotSmooth",
+                                  shiny::strong("Add smoothing"),
+                                  value = FALSE),
+              bslib::input_switch("plotCI",
+                                  shiny::strong("Confidence intervals"),
+                                  value = FALSE),
+              bslib::input_switch("plotFreeY",
+                                  shiny::strong("Free y-scales"),
+                                  value = FALSE),
+              bslib::input_switch("plotLogY",
+                                  shiny::strong("Log y-axis"),
+                                  value = FALSE)
+            ))
+        ),
 
         bslib::card(
           class = "no-overflow",

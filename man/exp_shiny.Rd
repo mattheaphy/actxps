@@ -122,9 +122,11 @@ This tab includes a plot and various options for customization:
 \itemize{
 \item y: y variable
 \item Geometry: plotting geometry
-\item Add Smoothing: activate to plot loess curves
 \item Second y-axis: activate to enable a second y-axis
 \item Second axis y: y variable to plot on the second axis
+\item Add Smoothing: activate to plot loess curves
+\item Confidence intervals: If available, add error bars for confidence intervals
+around the selected y variable
 \item Free y Scales: activate to enable separate y scales in each plot
 \item Log y-axis: activate to plot all y-axes on a log-10 scale
 }
