@@ -13,7 +13,7 @@ exp_shiny(
   credibility = TRUE,
   conf_level = 0.95,
   cred_r = 0.05,
-  theme = "cerulean"
+  theme = "shiny"
 )
 }
 \arguments{
