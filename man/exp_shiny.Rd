@@ -71,9 +71,14 @@ containing the word "expected" are used.
 The sidebar contains filtering widgets organized by data type for all
 variables passed to the \code{predictors} argument.
 
-At the top, information is shown on the original number of exposure records,
-the number of records after filters are applied, and the percentage of
-records remaining.
+At the top of the sidebar, information is shown on the percentage of records
+remaining after applying filters. A description of all active filters is also
+provided.
+
+The top of the sidebar also includes a "play / pause" switch that can pause
+reactivity of the application. Pausing is a good option when multiple changes
+are made in quick succession, especially when the underlying data set is
+large.
 }
 
 \subsection{Grouping variables}{
@@ -83,12 +88,12 @@ experience. The "x" widget is also used as the x variable in the plot output.
 Similarly, the "Color" and "Facets" widgets are used for color and facets in
 the plot. Multiple faceting variables are allowed. For the table output,
 "x", "Color", and "Facets" have no particular meaning beyond the order in
-which of grouping variables are displayed.
+which grouping variables are displayed.
 }
 
 \subsection{Study type}{
 
-This also includes a toggle to switch between termination studies and
+This box includes a toggle to switch between termination studies and
 transaction studies (if available). Different options are available for each
 study type.
 \subsection{Termination studies}{
@@ -130,17 +135,34 @@ around the selected y variable
 \item Free y Scales: activate to enable separate y scales in each plot
 \item Log y-axis: activate to plot all y-axes on a log-10 scale
 }
+
+The gear icon above the plot contains a pop-up menu that can be used to
+change the size of the plot for exporting.
 }
 
 \subsection{Table}{
 
 This tab includes a data table.
+
+The gear icon above the table contains a pop-up menu that can be used to
+change the appearance of the table:
+\itemize{
+\item The "Confidence intervals" and "Credibility-weighted termination rates"
+switches can be used to add these outputs to the table. These values are
+hidden as a default to prevent over-crowding.
+\item The "Include color scales" switch can be used to disable or re-enable
+conditional color formatting.
+\item The "Decimals" slider controls the number of decimals displayed for
+percentage fields.
+\item The "Font size multiple" slider impacts the table's font size
+}
 }
 
-\subsection{Export Data}{
+\subsection{Export}{
 
-This tab includes a download button that will save a copy of the summarized
-experience data.
+This pop-up menu contains options for saving summarized experience data, the
+plot, or the table. Data is saved as a CSV file. The plot and table are saved
+as png files.
 }
 
 }
