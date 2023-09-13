@@ -235,7 +235,8 @@ exp_shiny <- function(dat,
         inputId, shiny::strong(x),
         min = choices[[1]],
         max = choices[[2]],
-        value = choices
+        value = choices,
+        step = if (is.integer(dat[[x]]) && info$n_unique < 100) 1L else NULL
       )
 
     } else if (lubridate::is.Date(dat[[x]])) {
@@ -279,7 +280,6 @@ exp_shiny <- function(dat,
   expr_filter <- function(x) {
 
     inputId <- paste("i", x, sep = "_")
-
 
     res <- if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
       # numeric or date
