@@ -759,7 +759,7 @@ exp_shiny <- function(dat,
     })
 
     # plot output
-    rplot <- reactive({
+    rplot <- shiny::reactive({
 
       if (input$study_type == "exp" && input$yVar %in% yVar_trx2() &
           !input$yVar == "exposure") return()
@@ -864,7 +864,7 @@ exp_shiny <- function(dat,
       height = function() if (input$plotResize) input$plotHeight else "auto",
       width = function() if (input$plotResize) input$plotWidth else "auto")
 
-    rtable <- reactive({
+    rtable <- shiny::reactive({
       # for an unknown reason, the table doesn't react to changes in decimals
       # alone as if it were wrapped in isolate(). force() resolves the issue
       force(input$tableDecimals)
