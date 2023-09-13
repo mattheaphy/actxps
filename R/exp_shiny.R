@@ -393,6 +393,11 @@ exp_shiny <- function(dat,
       title = "Filters",
       width = "300px",
 
+      bslib::input_switch("play",
+                          list("Reactivity ",
+                               shiny::icon("play"), "/",
+                               shiny::icon("pause")),
+                          value = TRUE),
       bslib::value_box(
         title = "% data remaining",
         value = shiny::textOutput("rem_pct"),
@@ -688,8 +693,22 @@ exp_shiny <- function(dat,
     ) |>
       shiny::bindEvent(input$yVar, input$ex_checks)
 
+    # notification in pause mode
+    shiny::observe({
+      if (!input$play) {
+        shiny::showNotification("Reactivity is paused...", duration = NULL,
+                                id = "paused", closeButton = FALSE)
+      } else {
+        shiny::removeNotification("paused")
+      }
+    })
+
     # reactive data
     rdat <- shiny::reactive({
+
+      shiny::validate(
+        shiny::need(input$play, "Paused")
+      )
 
       keep <- purrr::imap_lgl(preds$predictors,
                               ~ length(setdiff(preds$scope[[.y]],
