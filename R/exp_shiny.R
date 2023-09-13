@@ -398,6 +398,8 @@ exp_shiny <- function(dat,
                                shiny::icon("play"), "/",
                                shiny::icon("pause")),
                           value = TRUE),
+
+      # filter descriptions
       bslib::value_box(
         title = "% data remaining",
         value = shiny::textOutput("rem_pct"),
@@ -407,6 +409,12 @@ exp_shiny <- function(dat,
         bslib::tooltip(paste0("Original row count: ",
                               scales::label_comma()(total_rows)),
                        shiny::textOutput("rem_rows")),
+      shiny::strong(
+        shiny::textOutput("filter_desc_header")
+      ),
+      shiny::tags$small(
+        shiny::verbatimTextOutput("filter_desc")
+      ),
 
       # add filter widgets
       bslib::accordion(
@@ -703,8 +711,8 @@ exp_shiny <- function(dat,
       }
     })
 
-    # reactive data
-    rdat <- shiny::reactive({
+    # vector of active filters
+    active_filters <- reactive({
 
       shiny::validate(
         shiny::need(input$play, "Paused")
@@ -713,11 +721,18 @@ exp_shiny <- function(dat,
       keep <- purrr::imap_lgl(preds$predictors,
                               ~ length(setdiff(preds$scope[[.y]],
                                                input[[paste0("i_", .x)]])) > 0)
-      filters <- purrr::map(preds$predictors[keep], expr_filter)
+      preds$predictors[keep]
+    })
+
+    # reactive data
+    rdat <- shiny::reactive({
+
+      filters <- purrr::map(active_filters(), expr_filter)
 
       dat |>
         filter(!!!filters)
     })
+
 
     # experience study
     rxp <- shiny::reactive({
@@ -906,6 +921,65 @@ exp_shiny <- function(dat,
         ggplot2::theme(legend.position = "none") +
         ggplot2::scale_fill_manual(values = c("#BBBBBB", "#033C73"))
     }, res = 92)
+
+    # function to describe filters in words
+    describe_filter <- function(x) {
+
+      selected <- input[[paste("i", x, sep = "_")]]
+      info <- filter(preds, predictors == x)
+      choices <- info$scope[[1]]
+
+      # numeric or date
+      if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
+
+        if (selected[[1]] == selected[[2]]) {
+          # exactly equal
+          glue::glue("{x} == {selected[[1]]}")
+        } else if (selected[[1]] > choices[[1]]) {
+          if (selected[[2]] < choices[[2]]) {
+            # between
+            glue::glue("{selected[[1]]} <= {x} <= {selected[[2]]}")
+          } else {
+            # strictly greater than
+            glue::glue("{x} >= {selected[[1]]}")
+          }
+        } else {
+          # strictly less than
+          glue::glue("{x} <= {selected[[2]]}")
+        }
+
+      } else if (length(selected) == 0) {
+        # categorical
+        # nothing selected
+        glue::glue("{x} is nothing")
+      } else if (length(selected) <= 0.5 * info$n_unique) {
+        # minority selected - list all selections
+        y <- glue::glue_collapse(
+          selected, sep = ", ",
+          last = if (length(selected) > 2) ", or " else " or ")
+        glue::glue("{x} is {y}")
+      } else {
+        # majority selected - list all NOT selected
+        y <- setdiff(choices, selected)
+        y <- glue::glue_collapse(
+          y, sep = ", ",
+          last = if (length(y) > 2) ", or " else " or ")
+        glue::glue("{x} is NOT {y}")
+      }
+
+    }
+
+    # filter description output
+    output$filter_desc <- shiny::renderText({
+      purrr::map_chr(active_filters(), describe_filter) |>
+        paste0(collapse = "\n")
+    })
+
+    output$filter_desc_header <- shiny::renderText({
+      if (length(active_filters() > 0)) {
+        "Active filters"
+      }
+    })
 
     # exporting
     output$xpDownload <- shiny::downloadHandler(
