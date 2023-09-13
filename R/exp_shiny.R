@@ -712,7 +712,7 @@ exp_shiny <- function(dat,
     })
 
     # vector of active filters
-    active_filters <- reactive({
+    active_filters <- shiny::reactive({
 
       shiny::validate(
         shiny::need(input$play, "Paused")
