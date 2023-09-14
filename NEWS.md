@@ -17,6 +17,19 @@ it was observed that areas were drawn as negative values for y-values on the
 main scale less than 1.
 - `autotable.exp_df()` and `autotable.trx_df()` were updated to format 
 intervals.
+- `exp_shiny()` updates
+
+  - The layout and theme were updated in to align with changes made in shiny 
+    1.7.5 and bslib 0.5.1
+  - The function now includes the ability to customize the Bootstrap theme
+  - Plots can now be re-sized and viewed in full screen mode
+  - Tables contain new customization options and can be viewed in full screen mode
+  - Tables and plots can be exported
+  - Both the plots and tables optionally include confidence intervals
+  - Tooltips were added throughout to explain the UI
+  - A play / pause button was added to suspend interactivity on demand
+  - A description of filters was added to the sidebar
+
 - **Breaking change** - The confidence level argument `cred_p` was renamed to 
 `conf_level`. This change was made because the confidence level is no longer 
 strictly used for credibility calculations. This change impacts the functions
