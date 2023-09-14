@@ -26,7 +26,7 @@ library(lubridate)
 
 ## Policy duration functions
 
-The `pol_()` family of functions can be used to calculate policy years, months, quarters, weeks, or any other arbitrary duration. Each function accepts a vector of dates and a vector of issue dates.
+The `pol_()` family of functions calculates policy years, months, quarters, weeks, or any other arbitrary duration. Each function accepts a vector of dates and a vector of issue dates.
 
 **Example**: assume a policy was issued on 2022-05-10 and we are interested in calculating various policy duration values at the end of calendar years 2022-2032.
 
@@ -50,7 +50,7 @@ pol_wk(dates, "2022-05-10")
 
 ```
 
-The more general `pol_interval()` function can be used to calculate any arbitrary duration. This function has a third argument where the length of the policy duration can be specified. This argument must be a period object. See `lubridate::period()` for more information.
+The more general `pol_interval()` function calculates any arbitrary duration. This function has a third argument where the length of the policy duration can be specified. This argument must be a period object. See `lubridate::period()` for more information.
 
 ```{r pol-dur2}
 
@@ -64,7 +64,7 @@ pol_interval(dates, "2022-05-10", weeks(2))
 
 ## Predictive modeling support functions
 
-The `add_predictions()` function can be used to attach predictions from any model with a `predict()` method.
+The `add_predictions()` function attaches predictions from any model with a `predict()` method.
 
 Below, a very simple logistic regression model is fit to surrender experience in the first ten policy years. Predictions from this model are then added to exposure records using `add_predictions()`. This function only requires a data frame of exposure records and a model with a `predict()` method. Often, it is necessary to specify additional model-specific arguments like `type` to ensure `predict()` returns the desired output. In the example below, `type` is set to "response" to return probabilities instead of the default predictions on the log-odds scale.
 

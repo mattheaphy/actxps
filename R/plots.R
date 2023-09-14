@@ -173,6 +173,8 @@ plot_experience <- function(
   if (second_axis) {
     adj <- max(object |> dplyr::pull(!!second_y), na.rm = TRUE) /
       max(object |> dplyr::pull(!!mapping$y), na.rm = TRUE)
+    # important - re-assign color. If `mapping` was passed, it's currently NULL
+    color <- p$mapping$colour
     if (y_log10) {
       geom.fun <- function(...) {
         ggplot2::geom_ribbon(

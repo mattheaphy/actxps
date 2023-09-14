@@ -19,24 +19,32 @@
 #'
 #' ## Filters
 #'
-#' The sidebar contains filtering widgets for all variables passed
-#' to the `predictors` argument.
+#' The sidebar contains filtering widgets organized by data type for all
+#' variables passed to the `predictors` argument.
 #'
-#' ## Study options
+#' At the top of the sidebar, information is shown on the percentage of records
+#' remaining after applying filters. A description of all active filters is also
+#' provided.
 #'
-#' ### Grouping variables
+#' The top of the sidebar also includes a "play / pause" switch that can pause
+#' reactivity of the application. Pausing is a good option when multiple changes
+#' are made in quick succession, especially when the underlying data set is
+#' large.
+#'
+#' ## Grouping variables
 #'
 #' This box includes widgets to select grouping variables for summarizing
-#' experience. The "x" widget is also used as the x variable in the plot output.
-#' Similarly, the "Color" and "Facets" widgets are used for color and facets in
-#' the plot. Multiple faceting variables are allowed. For the table output,
+#' experience. The "x" widget determines the x variable in the plot output.
+#' Similarly, the "Color" and "Facets" widgets are used for color and facets.
+#' Multiple faceting variable selections are allowed. For the table output,
 #' "x", "Color", and "Facets" have no particular meaning beyond the order in
-#' which of grouping variables are displayed.
+#' which grouping variables are displayed.
 #'
-#' ### Study type
+#' ## Study type
 #'
-#' This box also includes a toggle to switch between termination studies and
-#' transaction studies (if available).
+#' This box includes a toggle to switch between termination studies and
+#' transaction studies (if available). Different options are available for each
+#' study type.
 #'
 #' #### Termination studies
 #'
@@ -55,7 +63,7 @@
 #' In the plot output, transaction type will always appear as a faceting
 #' variable. The "Transactions as % of" selector will expand the list of
 #' available "y" variables for the plot and impact the table output directly.
-#' Lastly, a checkbox exists that allows for all transaction types to be
+#' Lastly, a toggle exists that allows for all transaction types to be
 #' aggregated into a single group.
 #'
 #' ## Output
@@ -66,37 +74,53 @@
 #'
 #' - y: y variable
 #' - Geometry: plotting geometry
-#' - Add Smoothing?: activate to plot loess curves
-#' - Second y-axis?: activate to enable a second y-axis
+#' - Second y-axis: activate to enable a second y-axis
 #' - Second axis y: y variable to plot on the second axis
+#' - Add Smoothing: activate to plot loess curves
+#' - Confidence intervals: If available, add error bars for confidence intervals
+#'   around the selected y variable
 #' - Free y Scales: activate to enable separate y scales in each plot
 #' - Log y-axis: activate to plot all y-axes on a log-10 scale
+#'
+#' The gear icon above the plot contains a pop-up menu that can be used to
+#' change the size of the plot for exporting.
 #'
 #' ### Table
 #'
 #' This tab includes a data table.
 #'
-#' ### Export Data
+#' The gear icon above the table contains a pop-up menu that can be used to
+#' change the appearance of the table:
 #'
-#' This tab includes a download button that will save a copy of the summarized
-#' experience data.
+#' - The "Confidence intervals" and "Credibility-weighted termination rates"
+#' switches add these outputs to the table. These values are hidden as a default
+#' to prevent over-crowding.
+#' - The "Include color scales" switch disables or re-enables conditional color
+#' formatting.
+#' - The "Decimals" slider controls the number of decimals displayed for
+#' percentage fields.
+#' - The "Font size multiple" slider impacts the table's font size
 #'
-#' ## Filter Information
+#' ### Export
 #'
-#' This box contains information on the original number of exposure records,
-#' the number of records after filters are applied, and the percentage of
-#' records retained.
+#' This pop-up menu contains options for saving summarized experience data, the
+#' plot, or the table. Data is saved as a CSV file. The plot and table are saved
+#' as png files.
 #'
 #' @param dat An `exposed_df` object.
 #' @param predictors A character vector of independent variables in `dat` to
 #' include in the Shiny app.
 #' @param expected A character vector of expected values in `dat` to include
 #' in the Shiny app.
-#' @param distinct_max Maximum number of distinct values allowed for `predictors`
-#' to be included as "Color" and "Facets" grouping variables. This input
-#' prevents the drawing of overly complex plots. Default value = 25.
+#' @param distinct_max Maximum number of distinct values allowed for
+#' `predictors` to be included as "Color" and "Facets" grouping variables. This
+#' input prevents the drawing of overly complex plots. Default value = 25.
 #' @param title Optional. Title of the Shiny app. If no title is provided,
 #' a descriptive title will be generated based on attributes of `dat`.
+#' @param theme The name of a theme passed to the `preset` argument of
+#' `bslib::bs_theme()`. Alternatively, a complete Bootstrap theme created using
+#' `bslib::bs_theme()`.
+#'
 #' @inheritParams exp_stats
 #'
 #' @return No return value. This function is called for the side effect of
@@ -126,7 +150,8 @@ exp_shiny <- function(dat,
                       title,
                       credibility = TRUE,
                       conf_level = 0.95,
-                      cred_r = 0.05) {
+                      cred_r = 0.05,
+                      theme = "shiny") {
 
   rlang::check_installed("shiny")
   rlang::check_installed("bslib")
@@ -141,10 +166,27 @@ exp_shiny <- function(dat,
   # ungroup data if needed
   dat <- ungroup(dat)
 
+  if (is.null(predictors) || all(is.na(predictors))) {
+    rlang::warn("`predictors` cannot be NULL or NA. Reverting to the default of `predictors = names(dat)`")
+    predictors <- names(dat)
+  }
+
   if (any(!c(predictors, expected) %in% names(dat))) {
-    rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values will be removed.")
     predictors <- predictors[predictors %in% names(dat)]
     expected <- expected[expected %in% names(dat)]
+    if (length(predictors) == 0) {
+      rlang::abort("None of the selected predictors are column in `dat`.")
+    } else {
+      rlang::inform("All predictors and expected values must be columns in `dat`. Unmatched values are removed.")
+    }
+  }
+
+  if (!inherits(theme, "bs_theme")) {
+    if (is.character(theme)) {
+      theme <- bslib::bs_theme(preset = theme)
+    } else {
+      rlang::abort("`theme` must be a single character string or a `bs_theme`")
+    }
   }
 
   total_rows <- nrow(dat)
@@ -161,6 +203,12 @@ exp_shiny <- function(dat,
              class1 %in% c("character", "factor") ~ 3,
              class1 %in% c("numeric", "integer", "double") ~ 4,
              TRUE ~ 5
+           ),
+           filter_group = dplyr::case_when(
+             class1 == "Date" ~ "Dates",
+             class1 %in% c("logical", "character", "factor") ~ "Categorical",
+             class1 %in% c("numeric", "integer", "double") ~ "Numeric",
+             TRUE ~ "Unknown"
            ),
            is_number = purrr::map_lgl(predictors,
                                       ~ is.numeric(dat[[.x]])),
@@ -212,7 +260,8 @@ exp_shiny <- function(dat,
         inputId, shiny::strong(x),
         min = choices[[1]],
         max = choices[[2]],
-        value = choices
+        value = choices,
+        step = if (is.integer(dat[[x]]) && info$n_unique < 100) 1L else NULL
       )
 
     } else if (lubridate::is.Date(dat[[x]])) {
@@ -257,7 +306,6 @@ exp_shiny <- function(dat,
 
     inputId <- paste("i", x, sep = "_")
 
-
     res <- if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
       # numeric or date
       glue::glue("between({x}, input${inputId}[[1]], input${inputId}[[2]])")
@@ -285,12 +333,17 @@ exp_shiny <- function(dat,
   selectPred <- widgetPred(shiny::selectInput)
   checkboxGroupPred <- widgetPred(shiny::checkboxGroupInput)
 
+  # create a tooltip with an info icon
+  info_tooltip <- function(...) {
+    bslib::tooltip(shiny::icon("circle-info"), ...)
+  }
+
   # expected values set up
   if (length(expected) > 0) {
 
     has_expected <- TRUE
 
-    expected_widget <- checkboxGroupPred("ex_checks", "Expected values:", 4,
+    expected_widget <- checkboxGroupPred("ex_checks", "Expected values:", 6,
                                          choices = expected,
                                          selected = expected)
 
@@ -304,8 +357,14 @@ exp_shiny <- function(dat,
 
     percent_of_choices <- filter(preds, is_number)$predictors
 
-    trx_tab <- shiny::tabPanel(
-      "Transaction study",
+    trx_tab <- bslib::nav_panel(
+      list(
+        "Transaction study",
+        info_tooltip(
+          'Choose transaction types and "percent of" variables that appear in
+          the plot and table outputs. If desired, combine all transaction types
+          into a single group.')
+      ),
       value = "trx",
       shiny::fluidRow(
         checkboxGroupPred("trx_types_checks", "Transaction types:", 4,
@@ -314,9 +373,9 @@ exp_shiny <- function(dat,
                    choices = percent_of_choices, multiple = TRUE),
         shiny::column(
           width = 4,
-          shiny::checkboxInput("trx_combine",
-                               shiny::strong("Combine transactions?"),
-                               value = FALSE)
+          bslib::input_switch("trx_combine",
+                              shiny::strong("Combine transactions"),
+                              value = FALSE)
         )
       )
     )
@@ -332,133 +391,248 @@ exp_shiny <- function(dat,
               glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})
   }
 
-  ui <- shiny::fluidPage(
+  # function factory for output file names
+  export_path <- function(study_type, x, extension) {
+    function() {
+      file.path(tempdir(), paste0(study_type, "-", x, "-",
+                                  Sys.Date(), ".", extension))
+    }
+  }
 
-    theme = bslib::bs_theme(bootswatch = "flatly"),
 
-    shiny::titlePanel(title),
+  ui <- bslib::page_sidebar(
 
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
+    theme = theme,
+    fillable = FALSE,
+    shiny::tags$head(
+      shiny::tags$style(shiny::HTML(".html-fill-container > .html-fill-item {
+                                    overflow: visible; }
+                                    .html-fill-container > .no-overflow {
+                                    overflow: auto; }"))
+    ),
 
-        shiny::h3("Filters"),
+    title = title,
 
-        # add filter widgets
-        purrr::map(preds$predictors, widget),
+    sidebar = bslib::sidebar(
 
+      title = "Filters",
+      width = "300px",
+
+      bslib::input_switch("play",
+                          list("Reactivity ",
+                               shiny::icon("play"), "/",
+                               shiny::icon("pause")),
+                          value = TRUE),
+
+      # filter descriptions
+      bslib::value_box(
+        title = "% data remaining",
+        value = shiny::textOutput("rem_pct"),
+        showcase = shiny::plotOutput("filter_pie",
+                                     height = "60px", width = "60px")
+      ) |>
+        bslib::tooltip(paste0("Original row count: ",
+                              scales::label_comma()(total_rows)),
+                       shiny::textOutput("rem_rows")),
+      shiny::strong(
+        shiny::textOutput("filter_desc_header")
+      ),
+      shiny::tags$small(
+        shiny::verbatimTextOutput("filter_desc")
       ),
 
-      shiny::mainPanel(
+      # add filter widgets
+      bslib::accordion(
+        split(preds, preds$filter_group)[
+          c("Dates", "Categorical", "Numeric")] |>
+          purrr::keep(\(x) length(x) > 0) |>
+          purrr::map(\(x) bslib::accordion_panel(
+            title = x$filter_group[[1]],
+            purrr::map(x$predictors, widget)
+          ))
+      )
 
-        shiny::wellPanel(
+    ),
 
-          shiny::h3("Study options"),
+    bslib::layout_column_wrap(
+      width = 400,
+      heights_equal = "row",
 
-          shiny::h4("Grouping variables"),
-          shiny::em("The variables selected below will be used as grouping variables in the plot and table outputs. Multiple variables can be selected as facets."),
+      bslib::card(
+
+        bslib::card_header("Grouping variables",
+                           info_tooltip(
+                             "The variables selected below will be used as
+                             grouping variables in the plot and table outputs.
+                             Multiple variables can be selected as facets.")
+        ),
+        shiny::fluidRow(
+          selectPred("xVar", "x:", 4),
+          selectPred("colorVar", "Color:", 4,
+                     choices = c("None", preds_small)),
+          selectPred("facetVar", "Facets:", 4, multiple = TRUE,
+                     choices = preds_small)
+        )
+      ),
+
+      bslib::navset_card_tab(
+        id = "study_type",
+        title = "Study type",
+
+        bslib::nav_panel(
+          list("Termination study",
+               info_tooltip(
+                 "Choose expected values (if available) that appear in the plot
+                 and table outputs. If desired, select a weighting variable
+                 for summarizing experience.")
+          ),
+          value = "exp",
           shiny::fluidRow(
-            selectPred("xVar", "x:", 4),
-            selectPred("colorVar", "Color:", 4,
-                       choices = c("None", preds_small)),
-            selectPred("facetVar", "Facets:", 4, multiple = TRUE,
-                       choices = preds_small)
-          ),
+            expected_widget,
+            selectPred("weightVar", "Weight by:", 6,
+                       choices = c("None",
+                                   filter(preds, is_number)$predictors))
+          )),
 
-          shiny::h4("Study type"),
-          shiny::tabsetPanel(
-            id = "study_type",
-            type = "pills",
-
-            shiny::tabPanel("Termination study",
-                            value = "exp",
-                            shiny::fluidRow(
-                              expected_widget,
-                              selectPred("weightVar", "Weight by:", 4,
-                                         choices = c("None",
-                                                     filter(preds, is_number)$predictors))
-                            )),
-            trx_tab
-
-          )
-        ),
-
-        shiny::h3("Output"),
-
-        shiny::tabsetPanel(
-          type = "pills",
-          shiny::tabPanel(
-            "Plot",
-            shiny::br(),
-            shiny::fluidRow(
-              selectPred("yVar", "y:", 4, choices = yVar_exp),
-              shiny::column(
-                width = 4,
-                shiny::radioButtons("plotGeom",
-                                    shiny::strong("Geometry:"),
-                                    choices = c("Bars" = "bars",
-                                                "Lines and Points" = "lines"))
-              ),
-              shiny::column(
-                width = 4,
-                shiny::checkboxInput("plotSmooth",
-                                     shiny::strong("Add Smoothing?"),
-                                     value = FALSE),
-                shiny::checkboxInput("plotCI",
-                                     shiny::strong("Confidence intervals?"),
-                                     value = FALSE)
-              )
-            ),
-
-            shiny::fluidRow(
-              shiny::column(
-                width = 4,
-                shiny::checkboxInput("plot2ndY",
-                                     shiny::strong("Second y-axis?"),
-                                     value = FALSE)
-              ),
-              selectPred("yVar_2nd", "Second axis y:", 4, choices = yVar_exp,
-                         selected = "exposure"),
-              shiny::column(
-                width = 4,
-                shiny::checkboxInput("plotFreeY",
-                                     shiny::strong("Free y Scales?"),
-                                     value = FALSE),
-                shiny::checkboxInput("plotLogY",
-                                     shiny::strong("Log y-axis?"),
-                                     value = FALSE)
-              )
-
-            ),
-
-            shiny::plotOutput("xpPlot")),
-          shiny::tabPanel(
-            "Table",
-            shiny::br(),
-            shiny::fluidRow(
-              shiny::column(
-                width = 12,
-                shiny::checkboxInput("tableCI",
-                                     shiny::strong("Confidence intervals?"),
-                                     value = FALSE),
-                shiny::checkboxInput("tableCredAdj",
-                                     shiny::strong("Credibility-weighted termination rates?"),
-                                     value = FALSE)
-              )
-            ),
-            gt::gt_output("xpTable")
-          ),
-          shiny::tabPanel(
-            "Export Data",
-            shiny::br(),
-            shiny::downloadButton("xpDownload", "Download")
-          )
-        ),
-
-        shiny::h3("Filter information"),
-        shiny::verbatimTextOutput("filterInfo")
+        trx_tab
 
       )
+    ),
+
+    bslib::navset_bar(
+      title = "Output",
+      bslib::nav_panel(
+        "Plot",
+        bslib::card(
+          bslib::card_header(
+            "Plot inputs",
+            info_tooltip(
+              shiny::markdown(
+                '<div style="text-align: left">
+
+                - `y`-axis variable selection
+                - `Second y-axis` toggle and variable
+                - `Geometry` for plotting
+                - `Add smoothing`: add smooth loess curves
+                - `Confidence intervals`: If available, draw confidence interval
+                error bars
+                - `Free y-scales`: enable separate `y` scales in each subplot
+                - `Log y-axis`: plot y-axes on a log-10 scale
+                - The grouping variables selected above will determine the
+                  variable on the `x`-axis, the color variable, and faceting
+                  variables used to create subplots.
+
+                </div>'),
+              custom_class = "left-tip"
+            )),
+          shiny::fluidRow(
+            shiny::column(
+              width = 8,
+
+              shiny::fluidRow(
+                selectPred("yVar", "y:", 6, choices = yVar_exp),
+                shiny::column(
+                  width = 6,
+                  shiny::radioButtons("plotGeom",
+                                      shiny::strong("Geometry:"),
+                                      choices = c("Bars" = "bars",
+                                                  "Lines and Points" = "lines",
+                                                  "Points" = "points"))
+                ),
+              ),
+
+              shiny::fluidRow(
+                shiny::column(
+                  width = 6,
+                  bslib::input_switch("plot2ndY",
+                                      shiny::strong("Second y-axis"),
+                                      value = FALSE)
+                ),
+                selectPred("yVar_2nd", "Second axis y:", 6, choices = yVar_exp,
+                           selected = "exposure"),
+              )),
+
+            shiny::column(
+              width = 4,
+              bslib::input_switch("plotSmooth",
+                                  shiny::strong("Add smoothing"),
+                                  value = FALSE),
+              bslib::input_switch("plotCI",
+                                  shiny::strong("Confidence intervals"),
+                                  value = FALSE),
+              bslib::input_switch("plotFreeY",
+                                  shiny::strong("Free y-scales"),
+                                  value = FALSE),
+              bslib::input_switch("plotLogY",
+                                  shiny::strong("Log y-axis"),
+                                  value = FALSE)
+            ))
+        ),
+
+        bslib::card(
+          class = "no-overflow",
+          full_screen = TRUE,
+          bslib::card_header(
+            bslib::popover(
+              shiny::icon("gear"),
+              bslib::input_switch("plotResize", "Resize plot", value = FALSE),
+              shiny::sliderInput("plotHeight", "Height (pixels):",
+                                 200, 1500, value = 500, step = 50),
+              shiny::sliderInput("plotWidth", "Width (pixels):",
+                                 200, 1500, value = 1500, step = 50)
+            )
+          ),
+          bslib::card_body(
+            class = "no-overflow",
+            shiny::plotOutput("xpPlot", height = "500px")
+          )
+        )
+      ),
+
+      bslib::nav_panel(
+        "Table",
+        bslib::card(
+          class = "no-overflow",
+          full_screen = TRUE,
+          bslib::card_header(
+            bslib::popover(
+              shiny::icon("gear"),
+              bslib::input_switch("tableCI",
+                                  shiny::strong("Confidence intervals"),
+                                  value = FALSE),
+              bslib::input_switch("tableCredAdj",
+                                  shiny::strong("Credibility-weighted termination rates"),
+                                  value = FALSE),
+              bslib::input_switch("tableColorful",
+                                  shiny::strong("Include color scales"),
+                                  value = TRUE),
+              shiny::sliderInput("tableDecimals",
+                                 shiny::strong("Decimals:"),
+                                 value = 1, min = 0, max = 5),
+              shiny::sliderInput("tableFontsize",
+                                 shiny::strong("Font size multiple:"),
+                                 value = 100, min = 50, max = 150, step = 5)
+            )
+          ),
+          bslib::card_body(
+            class = "no-overflow",
+            gt::gt_output("xpTable")
+          )
+        )
+      ),
+
+      bslib::nav_spacer(),
+      bslib::nav_menu(
+        title = list(shiny::icon("download"), "Export"),
+        align = "right",
+        bslib::nav_item(
+          shiny::downloadLink("xpDownload", "Summary data (.csv)"),
+          shiny::downloadLink("plotDownload", "Plot (.png)"),
+          shiny::downloadLink("tableDownload", "Table (.png)")
+        )
+      )
     )
+
   )
 
   server <- function(input, output, session) {
@@ -470,8 +644,8 @@ exp_shiny <- function(dat,
         input$ex_checks,
         glue::glue("ae_{input$ex_checks}"),
         glue::glue("adj_{input$ex_checks}"),
-        "All termination rates",
-        if (length(input$ex_checks) > 0) "All A/E ratios")
+        if (length(input$ex_checks) > 0)
+          c("All termination rates", "All A/E ratios"))
     })
 
     yVar_trx2 <- shiny::reactive({
@@ -552,20 +726,44 @@ exp_shiny <- function(dat,
     ) |>
       shiny::bindEvent(input$yVar, input$ex_checks)
 
-    # reactive data
-    rdat <- shiny::reactive({
+    # notification in pause mode
+    shiny::observe({
+      if (!input$play) {
+        shiny::showNotification("Reactivity is paused...", duration = NULL,
+                                id = "paused", closeButton = FALSE)
+      } else {
+        shiny::removeNotification("paused")
+      }
+    })
+
+    # vector of active filters
+    active_filters <- shiny::reactive({
+
+      shiny::validate(
+        shiny::need(input$play, "Paused")
+      )
 
       keep <- purrr::imap_lgl(preds$predictors,
                               ~ length(setdiff(preds$scope[[.y]],
                                                input[[paste0("i_", .x)]])) > 0)
-      filters <- purrr::map(preds$predictors[keep], expr_filter)
+      preds$predictors[keep]
+    })
+
+    # reactive data
+    rdat <- shiny::reactive({
+
+      filters <- purrr::map(active_filters(), expr_filter)
 
       dat |>
         filter(!!!filters)
     })
 
+
     # experience study
     rxp <- shiny::reactive({
+
+      shiny::validate(shiny::need(nrow(rdat()) > 0,
+                                  "No data remaining after applying filters."))
 
       .groups <- c(input$xVar, input$colorVar, input$facetVar)
       .groups <- .groups[!.groups %in% c("None", "Series")]
@@ -600,7 +798,8 @@ exp_shiny <- function(dat,
 
     })
 
-    output$xpPlot <- shiny::renderPlot({
+    # plot output
+    rplot <- shiny::reactive({
 
       if (input$study_type == "exp" && input$yVar %in% yVar_trx2() &
           !input$yVar == "exposure") return()
@@ -679,7 +878,8 @@ exp_shiny <- function(dat,
                              second_axis = input$plot2ndY,
                              second_y = !!second_y,
                              second_y_labels = second_y_labels,
-                             y_log10 = input$plotLogY)
+                             y_log10 = input$plotLogY,
+                             conf_int_bars = input$plotCI)
       }
 
       if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
@@ -687,36 +887,148 @@ exp_shiny <- function(dat,
 
       p +
         ggplot2::theme_light() +
-        ggplot2::theme(axis.text = ggplot2::element_text(size = ggplot2::rel(0.95)),
-                       strip.text = ggplot2::element_text(size = ggplot2::rel(1)),
-                       strip.background = ggplot2::element_rect(fill = "#43536b")
+        ggplot2::theme(axis.text =
+                         ggplot2::element_text(size = ggplot2::rel(0.95)),
+                       strip.text =
+                         ggplot2::element_text(size = ggplot2::rel(1)),
+                       strip.background =
+                         ggplot2::element_rect(fill = "#43536b")
         )
 
-    }, res = 92)
+    })
 
-    output$xpTable <- gt::render_gt({
+    # table output
+    output$xpPlot <- shiny::renderPlot(
+      {rplot()},
+      res = 92,
+      height = function() if (input$plotResize) input$plotHeight else "auto",
+      width = function() if (input$plotResize) input$plotWidth else "auto")
+
+    rtable <- shiny::reactive({
+      # for an unknown reason, the table doesn't react to changes in decimals
+      # alone as if it were wrapped in isolate(). force() resolves the issue
+      force(input$tableDecimals)
       if (input$study_type == "exp") {
         rxp() |> autotable(show_conf_int = input$tableCI,
-                           show_cred_adj = input$tableCredAdj)
+                           show_cred_adj = input$tableCredAdj,
+                           colorful = input$tableColorful,
+                           decimals = input$tableDecimals,
+                           fontsize = input$tableFontsize)
       } else {
-        rxp() |> autotable(show_conf_int = input$tableCI)
+        rxp() |> autotable(show_conf_int = input$tableCI,
+                           colorful = input$tableColorful,
+                           decimals = input$tableDecimals,
+                           fontsize = input$tableFontsize)
       }
-
     })
+
+    output$xpTable <- gt::render_gt({rtable()})
 
     # filter information
-    output$filterInfo <- shiny::renderPrint({
-      glue::glue("Total records = {scales::label_comma()(total_rows)}
-                 Remaining records = {scales::label_comma()(nrow(rdat()))}
-                 % Data remaining = {scales::label_percent(accuracy=0.1)(nrow(rdat())/total_rows)}")
+    output$rem_pct <- shiny::renderText({
+      scales::label_percent(accuracy=1)(nrow(rdat()) / total_rows)
+    })
+    output$rem_rows <- shiny::renderText({
+      paste0("Remaining rows: ", scales::label_comma()(nrow(rdat())))
     })
 
+    output$filter_pie <- shiny::renderPlot({
+      data.frame(name = c("included", "excluded"),
+                 n = c(nrow(rdat()), total_rows - nrow(rdat()))) |>
+        mutate(ymax = cumsum(n) / sum(n),
+               ymin = dplyr::lag(ymax, default = 0)) |>
+        ggplot2::ggplot(ggplot2::aes(ymin = ymin, ymax = ymax,
+                                     xmin = 3, xmax = 4, fill = name)) +
+        ggplot2::geom_rect() +
+        ggplot2::coord_polar(theta = "y", direction = -1) +
+        ggplot2::xlim(c(2, 4)) +
+        ggplot2::theme_void() +
+        ggplot2::theme(legend.position = "none") +
+        ggplot2::scale_fill_manual(values = c("#BBBBBB", "#033C73"))
+    }, res = 92)
+
+    # function to describe filters in words
+    describe_filter <- function(x) {
+
+      selected <- input[[paste("i", x, sep = "_")]]
+      info <- filter(preds, predictors == x)
+      choices <- info$scope[[1]]
+
+      # numeric or date
+      if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
+
+        if (selected[[1]] == selected[[2]]) {
+          # exactly equal
+          glue::glue("{x} == {selected[[1]]}")
+        } else if (selected[[1]] > choices[[1]]) {
+          if (selected[[2]] < choices[[2]]) {
+            # between
+            glue::glue("{selected[[1]]} <= {x} <= {selected[[2]]}")
+          } else {
+            # strictly greater than
+            glue::glue("{x} >= {selected[[1]]}")
+          }
+        } else {
+          # strictly less than
+          glue::glue("{x} <= {selected[[2]]}")
+        }
+
+      } else if (length(selected) == 0) {
+        # categorical
+        # nothing selected
+        glue::glue("{x} is nothing")
+      } else if (length(selected) <= 0.5 * info$n_unique) {
+        # minority selected - list all selections
+        y <- glue::glue_collapse(
+          selected, sep = ", ",
+          last = if (length(selected) > 2) ", or " else " or ")
+        glue::glue("{x} is {y}")
+      } else {
+        # majority selected - list all NOT selected
+        y <- setdiff(choices, selected)
+        y <- glue::glue_collapse(
+          y, sep = ", ",
+          last = if (length(y) > 2) ", or " else " or ")
+        glue::glue("{x} is NOT {y}")
+      }
+
+    }
+
+    # filter description output
+    output$filter_desc <- shiny::renderText({
+      purrr::map_chr(active_filters(), describe_filter) |>
+        paste0(collapse = "\n")
+    })
+
+    output$filter_desc_header <- shiny::renderText({
+      if (length(active_filters() > 0)) {
+        "Active filters"
+      }
+    })
+
+    # exporting
     output$xpDownload <- shiny::downloadHandler(
-      filename = function() {
-        file.path(tempdir(), paste0(input$study_type, "-data-", Sys.Date(), ".csv"))
-      },
+      filename = export_path(input$study_type, "data", "csv"),
       content = function(file) {
         readr::write_csv(rxp(), file)
+      }
+    )
+
+    output$plotDownload <- shiny::downloadHandler(
+      filename = export_path(input$study_type, "plot", "png"),
+      content = function(file) {
+        ggplot2::ggsave(file, plot = rplot(),
+                        height = if (input$plotResize) input$plotHeight else NA,
+                        width = if (input$plotResize) input$plotWidth else NA,
+                        units = "px",
+                        dpi = 92)
+      }
+    )
+
+    output$tableDownload <- shiny::downloadHandler(
+      filename = export_path(input$study_type, "table", "png"),
+      content = function(file) {
+        gt::gtsave(rtable(), file)
       }
     )
 

@@ -221,7 +221,7 @@ trx_res |>
 
 ### `plot_utilization_rates()`
 
-The `plot_utilization_rates()` function can be used to create a side-by-side view of both transaction frequency and severity. This type of plot is useful for answering questions like, *"what percentage of customers are taking withdrawals each quarter, and of those taking withdrawals, what is the average percentage of account value taken out?"*.
+The `plot_utilization_rates()` function creates a side-by-side view of both transaction frequency and severity. This type of plot is useful for answering questions like, *"what percentage of customers are taking withdrawals each quarter, and of those taking withdrawals, what is the average percentage of account value taken out?"*.
 
 Transaction frequency is represented by utilization rates (`trx_util`). Severity is represented by transaction amounts as a percentage of one or more other columns in the data. All severity series begin with the prefix `pct_of_` and end with the suffix `_w_trx`. The suffix refers to the fact that the denominator only includes records with non-zero transactions. Severity series are automatically selected based on column names passed to the `percent_of` argument in `trx_stats()`. If no "percentage of" columns exist, this function will only plot utilization rates.
 
@@ -246,7 +246,7 @@ The `autotable()` function creates summary tables of termination or transaction 
 
 **Arguments**:
 
-- `fontsize` is a multiple that can be used to increase or decrease the font size. Values less than 100 decrease the font size, and values greater than 100 increase the font size.
+- `fontsize` is a multiple that increases or decreases the font size. Values less than 100 decrease the font size, and values greater than 100 increase the font size.
 - `decimals` controls the number of decimal places displayed for percentage columns (default = 1)
 - If `colorful` is `TRUE`, conditional color formatting will be added to the table.
 
@@ -261,16 +261,43 @@ The `autotable()` function creates summary tables of termination or transaction 
 
 ## Interactive Shiny app
 
-`exp_shiny()` is a powerful function that launches an interactive Shiny app containing filters, grouping variables, plots produced by `autoplot()`, tables produced by `autotable()`, and a data export button. This function requires an `exposed_df` object^[See `expose()` or `as_exposed_df()` for more information].
+`exp_shiny()` is a powerful function that launches an interactive Shiny app containing filters, grouping variables, plots produced by `autoplot()`, tables produced by `autotable()`, and exporting capabilities. This function requires an `exposed_df` object^[See `expose()` or `as_exposed_df()` for more information].
 
-The left sidebar of the app contains filtering widgets for all variables passed to the `predictors` argument. If `predictors` is not specified, all columns in the data except policy numbers, statuses, termination dates, exposures, and transaction columns will be used. The type of widget will vary depending on the data type and number of unique values of each predictor.
+The left sidebar of the app contains filtering widgets organized by data type for all variables passed to the `predictors` argument. If `predictors` is not specified, all columns in the data except policy numbers, statuses, termination dates, exposures, and transaction columns will be used. The type of widget will vary depending on the data type and number of unique values in each predictor.
 
-In the "Study options" box, grouping variables and study type options are shown. Grouping variables are used to specify aesthetic elements for the plot and groups for the table output. The study type section will always include a section for termination studies. If transactions are attached to the `exposed_df` object^[See `add_transactions()` for information on attaching transactions to an `exposed_df` object.], an additional section will be displayed for transaction studies.
+At the top of the sidebar, information is shown on the percentage of records remaining after applying filters. A text description of all active filters is also provided.
 
-- Termination study options include the ability to activate and deactivate expected values and the selection of an optional numeric weighting variable for exposures. Expected values are dictated by the `expected` argument. If this argument is not specified, any columns containing the word "expected" are assumed to be expected values.
+The top of the sidebar also includes a "play / pause" switch that can pause reactivity of the app. Pausing is a good option when multiple changes are made in quick succession, especially when the underlying data set is large.
+
+The "Grouping variables" box includes widgets to select grouping variables for summarizing experience. The "x" widget determines the x variable in the plot output. Similarly, the "Color" and "Facets" widgets are used for color and facets. Multiple faceting variable selections are allowed. For the table output, "x", "Color", and "Facets" have no particular meaning beyond the order in which grouping variables are displayed.
+
+The "Study type" box will always include a tab for termination studies. If transactions are attached to the `exposed_df` object^[See `add_transactions()` for information on attaching transactions to an `exposed_df` object.], an additional section will be displayed for transaction studies.
+
+- Termination study options include the ability to activate and deactivate expected values and the selection of an optional numeric weighting variable for claims and exposures. Available expected value choices are dictated by the `expected` argument. If this argument is not specified, any columns containing the word "expected" are assumed to be expected values.
 - Transaction study options include the ability to activate and deactivate transaction types, optional numeric columns to use in "percentage of" statistics, and an option to lump all transaction types into a single category.
 
-The output section includes tabs for plots, tables, and exporting data. The plot tab includes options for changing the plot's `y`-variable, adding a second axis, changing the geometry type, adding a smoothing curve, and more.
+The output section includes tabs for plots, tables, and exporting results. 
+
+The plot tab includes a plot and various options for customization:
+
+- y: y variable
+- Geometry: plotting geometry - bars, points and lines, or points only
+- Second y-axis: enables a second y-axis
+- Second axis y: y variable to plot on the second axis using an area geometry. The default is exposures.
+- Add Smoothing: plots smooth loess curves
+- Confidence intervals: If available, add confidence intervals error bars for around the selected y variable
+- Free y Scales: enables separate y scales in each plot
+- Log y-axis: plots all y-axes on a log-10 scale
+- The gear icon above the plot contains a pop-up menu for updating the size of the plot.
+
+The table tab includes the table itself plus a pop-up menu for changing the table's appearance:
+
+- The "Confidence intervals" and "Credibility-weighted termination rates" switches add these outputs to the table. These values are hidden as a default to prevent over-crowding.
+- The "Include color scales" switch disables or re-enables conditional color formatting.
+- The "Decimals" slider controls the number of decimals displayed for percentage fields.
+- The "Font size multiple" slider impacts the table's font size
+
+The export pop-up menu contains options for saving summarized experience data, the plot, or the table. Data is saved as a CSV file. The plot and table are saved as png files.
 
 <img src="../man/figures/exp_shiny.png" width="100%" />
 
@@ -281,3 +308,4 @@ The output section includes tabs for plots, tables, and exporting data. The plot
 - `title`: an optional title for the app
 - `credibility`, `conf_level`, `cred_r`: credibility options for termination studies. See `exp_stats()` for more information. Limited fluctuation credibility estimates at a 95% confidence within 5% of the theoretical mean assuming a binomial distribution are used as a default.
 - The `conf_level` argument is also used for confidence intervals for both termination and transaction studies.
+- `theme`: replace the default theme of the app by passing the name of a theme accepted by the `preset` argument in `bslib::bs_theme()`. Alternatively, a complete theme created by `bslib::bs_theme()` can be passed as well.

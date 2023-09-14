@@ -203,7 +203,7 @@ exposed_trx_w_av |>
 
 ## `autoplot()` and `autotable()`
 
-The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables from `trx_df` objects. See `vignette("visualizations")` for full details on these functions.
+The `autoplot()` and `autotable()` functions create visualizations and summary tables from `trx_df` objects. See `vignette("visualizations")` for full details on these functions.
 
 ```{r trx-plot, warning=FALSE, message=FALSE, fig.height=5.5, fig.width=7}
 
@@ -230,7 +230,7 @@ trx_res |>
 
 ### Selecting and combining transaction types
 
-The `trx_types` argument of `trx_stats()` can be used to select a subset of transaction types that will appear in the output.
+The `trx_types` argument of `trx_stats()` selects a subset of transaction types that will appear in the output.
 
 ```{r select-trx-type}
 trx_stats(exposed_trx, trx_types = "Base")

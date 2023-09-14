@@ -12,7 +12,8 @@ exp_shiny(
   title,
   credibility = TRUE,
   conf_level = 0.95,
-  cred_r = 0.05
+  cred_r = 0.05,
+  theme = "shiny"
 )
 }
 \arguments{
@@ -24,9 +25,9 @@ include in the Shiny app.}
 \item{expected}{A character vector of expected values in \code{dat} to include
 in the Shiny app.}
 
-\item{distinct_max}{Maximum number of distinct values allowed for \code{predictors}
-to be included as "Color" and "Facets" grouping variables. This input
-prevents the drawing of overly complex plots. Default value = 25.}
+\item{distinct_max}{Maximum number of distinct values allowed for
+\code{predictors} to be included as "Color" and "Facets" grouping variables. This
+input prevents the drawing of overly complex plots. Default value = 25.}
 
 \item{title}{Optional. Title of the Shiny app. If no title is provided,
 a descriptive title will be generated based on attributes of \code{dat}.}
@@ -39,6 +40,10 @@ credibility method and confidence intervals}
 
 \item{cred_r}{Error tolerance under the Limited Fluctuation credibility
 method}
+
+\item{theme}{The name of a theme passed to the \code{preset} argument of
+\code{bslib::bs_theme()}. Alternatively, a complete Bootstrap theme created using
+\code{bslib::bs_theme()}.}
 }
 \value{
 No return value. This function is called for the side effect of
@@ -63,25 +68,34 @@ containing the word "expected" are used.
 \section{Layout}{
 \subsection{Filters}{
 
-The sidebar contains filtering widgets for all variables passed
-to the \code{predictors} argument.
+The sidebar contains filtering widgets organized by data type for all
+variables passed to the \code{predictors} argument.
+
+At the top of the sidebar, information is shown on the percentage of records
+remaining after applying filters. A description of all active filters is also
+provided.
+
+The top of the sidebar also includes a "play / pause" switch that can pause
+reactivity of the application. Pausing is a good option when multiple changes
+are made in quick succession, especially when the underlying data set is
+large.
 }
 
-\subsection{Study options}{
 \subsection{Grouping variables}{
 
 This box includes widgets to select grouping variables for summarizing
-experience. The "x" widget is also used as the x variable in the plot output.
-Similarly, the "Color" and "Facets" widgets are used for color and facets in
-the plot. Multiple faceting variables are allowed. For the table output,
+experience. The "x" widget determines the x variable in the plot output.
+Similarly, the "Color" and "Facets" widgets are used for color and facets.
+Multiple faceting variable selections are allowed. For the table output,
 "x", "Color", and "Facets" have no particular meaning beyond the order in
-which of grouping variables are displayed.
+which grouping variables are displayed.
 }
 
 \subsection{Study type}{
 
-This box also includes a toggle to switch between termination studies and
-transaction studies (if available).
+This box includes a toggle to switch between termination studies and
+transaction studies (if available). Different options are available for each
+study type.
 \subsection{Termination studies}{
 
 The expected values checkboxes are used to activate and deactivate expected
@@ -100,10 +114,8 @@ transaction types are taken from the \code{trx_types} attribute of \code{dat}.
 In the plot output, transaction type will always appear as a faceting
 variable. The "Transactions as \% of" selector will expand the list of
 available "y" variables for the plot and impact the table output directly.
-Lastly, a checkbox exists that allows for all transaction types to be
+Lastly, a toggle exists that allows for all transaction types to be
 aggregated into a single group.
-}
-
 }
 
 }
@@ -115,32 +127,44 @@ This tab includes a plot and various options for customization:
 \itemize{
 \item y: y variable
 \item Geometry: plotting geometry
-\item Add Smoothing?: activate to plot loess curves
-\item Second y-axis?: activate to enable a second y-axis
+\item Second y-axis: activate to enable a second y-axis
 \item Second axis y: y variable to plot on the second axis
+\item Add Smoothing: activate to plot loess curves
+\item Confidence intervals: If available, add error bars for confidence intervals
+around the selected y variable
 \item Free y Scales: activate to enable separate y scales in each plot
 \item Log y-axis: activate to plot all y-axes on a log-10 scale
 }
+
+The gear icon above the plot contains a pop-up menu that can be used to
+change the size of the plot for exporting.
 }
 
 \subsection{Table}{
 
 This tab includes a data table.
+
+The gear icon above the table contains a pop-up menu that can be used to
+change the appearance of the table:
+\itemize{
+\item The "Confidence intervals" and "Credibility-weighted termination rates"
+switches add these outputs to the table. These values are hidden as a default
+to prevent over-crowding.
+\item The "Include color scales" switch disables or re-enables conditional color
+formatting.
+\item The "Decimals" slider controls the number of decimals displayed for
+percentage fields.
+\item The "Font size multiple" slider impacts the table's font size
+}
 }
 
-\subsection{Export Data}{
+\subsection{Export}{
 
-This tab includes a download button that will save a copy of the summarized
-experience data.
+This pop-up menu contains options for saving summarized experience data, the
+plot, or the table. Data is saved as a CSV file. The plot and table are saved
+as png files.
 }
 
-}
-
-\subsection{Filter Information}{
-
-This box contains information on the original number of exposure records,
-the number of records after filters are applied, and the percentage of
-records retained.
 }
 }
 
