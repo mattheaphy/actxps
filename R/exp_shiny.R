@@ -172,7 +172,7 @@ exp_shiny <- function(dat,
   }
 
   if (any(!c(predictors, expected) %in% names(dat))) {
-    rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values will be removed.")
+    rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values are removed.")
     predictors <- predictors[predictors %in% names(dat)]
     expected <- expected[expected %in% names(dat)]
   }
@@ -640,8 +640,8 @@ exp_shiny <- function(dat,
         input$ex_checks,
         glue::glue("ae_{input$ex_checks}"),
         glue::glue("adj_{input$ex_checks}"),
-        "All termination rates",
-        if (length(input$ex_checks) > 0) "All A/E ratios")
+        if (length(input$ex_checks) > 0)
+          c("All termination rates", "All A/E ratios"))
     })
 
     yVar_trx2 <- shiny::reactive({
