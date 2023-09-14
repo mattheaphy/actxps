@@ -173,7 +173,7 @@ toy_census[2, ] |>
 
 ### Convenience functions
 
-The following functions are convenience wrappers around `expose()` that can be used to target a specific exposure type without specifying `cal_expo` and `expo_length`.
+The following functions are convenience wrappers around `expose()` that target a specific exposure type without specifying `cal_expo` and `expo_length`.
 
 - `expose_py` = exposures by policy year
 - `expose_pq` = exposures by policy quarter
@@ -186,7 +186,7 @@ The following functions are convenience wrappers around `expose()` that can be u
 
 ## Tidymodels recipe step
 
-For machine learning feature engineering, the actxps package contains a function called `step_expose()` that is compatible with the recipes package from tidymodels. This function can be used to apply the `expose()` function within a recipe.
+For machine learning feature engineering, the actxps package contains a function called `step_expose()` that is compatible with the recipes package from tidymodels. This function applies the `expose()` function within a recipe.
 
 ```{r rec-expose}
 

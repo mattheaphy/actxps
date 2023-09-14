@@ -84,9 +84,9 @@ large.
 \subsection{Grouping variables}{
 
 This box includes widgets to select grouping variables for summarizing
-experience. The "x" widget is also used as the x variable in the plot output.
-Similarly, the "Color" and "Facets" widgets are used for color and facets in
-the plot. Multiple faceting variables are allowed. For the table output,
+experience. The "x" widget determines the x variable in the plot output.
+Similarly, the "Color" and "Facets" widgets are used for color and facets.
+Multiple faceting variable selections are allowed. For the table output,
 "x", "Color", and "Facets" have no particular meaning beyond the order in
 which grouping variables are displayed.
 }
@@ -148,10 +148,10 @@ The gear icon above the table contains a pop-up menu that can be used to
 change the appearance of the table:
 \itemize{
 \item The "Confidence intervals" and "Credibility-weighted termination rates"
-switches can be used to add these outputs to the table. These values are
-hidden as a default to prevent over-crowding.
-\item The "Include color scales" switch can be used to disable or re-enable
-conditional color formatting.
+switches add these outputs to the table. These values are hidden as a default
+to prevent over-crowding.
+\item The "Include color scales" switch disables or re-enables conditional color
+formatting.
 \item The "Decimals" slider controls the number of decimals displayed for
 percentage fields.
 \item The "Font size multiple" slider impacts the table's font size

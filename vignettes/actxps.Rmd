@@ -126,7 +126,7 @@ exp_res
 
 ### `autoplot()` and `autotable()`
 
-The `autoplot()` and `autotable()` functions can be used to create visualizations and summary tables. See `vignette("visualizations")` for full details on these functions.
+The `autoplot()` and `autotable()` functions create visualizations and summary tables. See `vignette("visualizations")` for full details on these functions.
 
 ```{r plot, warning=FALSE, message=FALSE, dpi = 300}
 autoplot(exp_res)
