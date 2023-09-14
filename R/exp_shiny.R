@@ -172,9 +172,13 @@ exp_shiny <- function(dat,
   }
 
   if (any(!c(predictors, expected) %in% names(dat))) {
-    rlang::inform("All predictors and expected values must be columns in `dat`. Unexpected values are removed.")
     predictors <- predictors[predictors %in% names(dat)]
     expected <- expected[expected %in% names(dat)]
+    if (length(predictors) == 0) {
+      rlang::abort("None of the selected predictors are column in `dat`.")
+    } else {
+      rlang::inform("All predictors and expected values must be columns in `dat`. Unmatched values are removed.")
+    }
   }
 
   if (!inherits(theme, "bs_theme")) {
