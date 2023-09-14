@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -426,9 +426,8 @@ calendar-based exposures.</p>
 <h3 id="convenience-functions">Convenience functions<a class="anchor" aria-label="anchor" href="#convenience-functions"></a>
 </h3>
 <p>The following functions are convenience wrappers around
-<code><a href="../reference/expose.html">expose()</a></code> that can be used to target a specific exposure
-type without specifying <code>cal_expo</code> and
-<code>expo_length</code>.</p>
+<code><a href="../reference/expose.html">expose()</a></code> that target a specific exposure type without
+specifying <code>cal_expo</code> and <code>expo_length</code>.</p>
 <ul>
 <li>
 <code>expose_py</code> = exposures by policy year</li>
@@ -454,7 +453,7 @@ type without specifying <code>cal_expo</code> and
 </h2>
 <p>For machine learning feature engineering, the actxps package contains
 a function called <code><a href="../reference/step_expose.html">step_expose()</a></code> that is compatible with the
-recipes package from tidymodels. This function can be used to apply the
+recipes package from tidymodels. This function applies the
 <code><a href="../reference/expose.html">expose()</a></code> function within a recipe.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>

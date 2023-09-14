@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -373,12 +373,12 @@ transaction type found in the data.</p>
 <h3 id="plot_utilization_rates">
 <code>plot_utilization_rates()</code><a class="anchor" aria-label="anchor" href="#plot_utilization_rates"></a>
 </h3>
-<p>The <code><a href="../reference/plot_special_trx.html">plot_utilization_rates()</a></code> function can be used to
-create a side-by-side view of both transaction frequency and severity.
-This type of plot is useful for answering questions like, <em>“what
-percentage of customers are taking withdrawals each quarter, and of
-those taking withdrawals, what is the average percentage of account
-value taken out?”</em>.</p>
+<p>The <code><a href="../reference/plot_special_trx.html">plot_utilization_rates()</a></code> function creates a
+side-by-side view of both transaction frequency and severity. This type
+of plot is useful for answering questions like, <em>“what percentage of
+customers are taking withdrawals each quarter, and of those taking
+withdrawals, what is the average percentage of account value taken
+out?”</em>.</p>
 <p>Transaction frequency is represented by utilization rates
 (<code>trx_util</code>). Severity is represented by transaction amounts
 as a percentage of one or more other columns in the data. All severity
@@ -424,9 +424,9 @@ function with methods specific to <code>exp_df</code> and
 </center>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><p><code>fontsize</code> is a multiple that can be used to increase
-or decrease the font size. Values less than 100 decrease the font size,
-and values greater than 100 increase the font size.</p></li>
+<li><p><code>fontsize</code> is a multiple that increases or decreases
+the font size. Values less than 100 decrease the font size, and values
+greater than 100 increase the font size.</p></li>
 <li><p><code>decimals</code> controls the number of decimal places
 displayed for percentage columns (default = 1)</p></li>
 <li>
@@ -465,38 +465,81 @@ included to avoid producing overcrowded tables.</p></li>
 <p><code><a href="../reference/exp_shiny.html">exp_shiny()</a></code> is a powerful function that launches an
 interactive Shiny app containing filters, grouping variables, plots
 produced by <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>, tables produced by
-<code><a href="../reference/autotable.html">autotable()</a></code>, and a data export button. This function
+<code><a href="../reference/autotable.html">autotable()</a></code>, and exporting capabilities. This function
 requires an <code>exposed_df</code> object<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;See &lt;code&gt;&lt;a href="../reference/expose.html"&gt;expose()&lt;/a&gt;&lt;/code&gt; or
 &lt;code&gt;&lt;a href="../reference/is_exposed_df.html"&gt;as_exposed_df()&lt;/a&gt;&lt;/code&gt; for more information&lt;/p&gt;'><sup>5</sup></a>.</p>
-<p>The left sidebar of the app contains filtering widgets for all
-variables passed to the <code>predictors</code> argument. If
-<code>predictors</code> is not specified, all columns in the data except
-policy numbers, statuses, termination dates, exposures, and transaction
-columns will be used. The type of widget will vary depending on the data
-type and number of unique values of each predictor.</p>
-<p>In the “Study options” box, grouping variables and study type options
-are shown. Grouping variables are used to specify aesthetic elements for
-the plot and groups for the table output. The study type section will
-always include a section for termination studies. If transactions are
-attached to the <code>exposed_df</code> object<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;See &lt;code&gt;&lt;a href="../reference/add_transactions.html"&gt;add_transactions()&lt;/a&gt;&lt;/code&gt; for information on
-attaching transactions to an &lt;code&gt;exposed_df&lt;/code&gt; object.&lt;/p&gt;'><sup>6</sup></a>, an additional section
-will be displayed for transaction studies.</p>
+<p>The left sidebar of the app contains filtering widgets organized by
+data type for all variables passed to the <code>predictors</code>
+argument. If <code>predictors</code> is not specified, all columns in
+the data except policy numbers, statuses, termination dates, exposures,
+and transaction columns will be used. The type of widget will vary
+depending on the data type and number of unique values in each
+predictor.</p>
+<p>At the top of the sidebar, information is shown on the percentage of
+records remaining after applying filters. A text description of all
+active filters is also provided.</p>
+<p>The top of the sidebar also includes a “play / pause” switch that can
+pause reactivity of the app. Pausing is a good option when multiple
+changes are made in quick succession, especially when the underlying
+data set is large.</p>
+<p>The “Grouping variables” box includes widgets to select grouping
+variables for summarizing experience. The “x” widget determines the x
+variable in the plot output. Similarly, the “Color” and “Facets” widgets
+are used for color and facets. Multiple faceting variable selections are
+allowed. For the table output, “x”, “Color”, and “Facets” have no
+particular meaning beyond the order in which grouping variables are
+displayed.</p>
+<p>The “Study type” box will always include a tab for termination
+studies. If transactions are attached to the <code>exposed_df</code>
+object<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;See &lt;code&gt;&lt;a href="../reference/add_transactions.html"&gt;add_transactions()&lt;/a&gt;&lt;/code&gt; for information on
+attaching transactions to an &lt;code&gt;exposed_df&lt;/code&gt; object.&lt;/p&gt;'><sup>6</sup></a>,
+an additional section will be displayed for transaction studies.</p>
 <ul>
 <li>Termination study options include the ability to activate and
 deactivate expected values and the selection of an optional numeric
-weighting variable for exposures. Expected values are dictated by the
-<code>expected</code> argument. If this argument is not specified, any
-columns containing the word “expected” are assumed to be expected
-values.</li>
+weighting variable for claims and exposures. Available expected value
+choices are dictated by the <code>expected</code> argument. If this
+argument is not specified, any columns containing the word “expected”
+are assumed to be expected values.</li>
 <li>Transaction study options include the ability to activate and
 deactivate transaction types, optional numeric columns to use in
 “percentage of” statistics, and an option to lump all transaction types
 into a single category.</li>
 </ul>
 <p>The output section includes tabs for plots, tables, and exporting
-data. The plot tab includes options for changing the plot’s
-<code>y</code>-variable, adding a second axis, changing the geometry
-type, adding a smoothing curve, and more.</p>
+results.</p>
+<p>The plot tab includes a plot and various options for
+customization:</p>
+<ul>
+<li>y: y variable</li>
+<li>Geometry: plotting geometry - bars, points and lines, or points
+only</li>
+<li>Second y-axis: enables a second y-axis</li>
+<li>Second axis y: y variable to plot on the second axis using an area
+geometry. The default is exposures.</li>
+<li>Add Smoothing: plots smooth loess curves</li>
+<li>Confidence intervals: If available, add confidence intervals error
+bars for around the selected y variable</li>
+<li>Free y Scales: enables separate y scales in each plot</li>
+<li>Log y-axis: plots all y-axes on a log-10 scale</li>
+<li>The gear icon above the plot contains a pop-up menu for updating the
+size of the plot.</li>
+</ul>
+<p>The table tab includes the table itself plus a pop-up menu for
+changing the table’s appearance:</p>
+<ul>
+<li>The “Confidence intervals” and “Credibility-weighted termination
+rates” switches add these outputs to the table. These values are hidden
+as a default to prevent over-crowding.</li>
+<li>The “Include color scales” switch disables or re-enables conditional
+color formatting.</li>
+<li>The “Decimals” slider controls the number of decimals displayed for
+percentage fields.</li>
+<li>The “Font size multiple” slider impacts the table’s font size</li>
+</ul>
+<p>The export pop-up menu contains options for saving summarized
+experience data, the plot, or the table. Data is saved as a CSV file.
+The plot and table are saved as png files.</p>
 <p><img src="../reference/figures/exp_shiny.png" width="100%"></p>
 <p><strong>Other arguments</strong></p>
 <ul>
@@ -514,6 +557,11 @@ credibility estimates at a 95% confidence within 5% of the theoretical
 mean assuming a binomial distribution are used as a default.</li>
 <li>The <code>conf_level</code> argument is also used for confidence
 intervals for both termination and transaction studies.</li>
+<li>
+<code>theme</code>: replace the default theme of the app by passing
+the name of a theme accepted by the <code>preset</code> argument in
+<code><a href="https://rdrr.io/pkg/bslib/man/bs_theme.html" class="external-link">bslib::bs_theme()</a></code>. Alternatively, a complete theme created
+by <code><a href="https://rdrr.io/pkg/bslib/man/bs_theme.html" class="external-link">bslib::bs_theme()</a></code> can be passed as well.</li>
 </ul>
 </div>
 

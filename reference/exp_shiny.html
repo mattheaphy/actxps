@@ -30,7 +30,7 @@ containing the word "expected" are used.'><meta property="og:image" content="htt
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,7 +102,8 @@ containing the word "expected" are used.</p>
 <span>  <span class="va">title</span>,</span>
 <span>  credibility <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  cred_r <span class="op">=</span> <span class="fl">0.05</span></span>
+<span>  cred_r <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  theme <span class="op">=</span> <span class="st">"shiny"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -123,9 +124,9 @@ in the Shiny app.</p></dd>
 
 
 <dt>distinct_max</dt>
-<dd><p>Maximum number of distinct values allowed for <code>predictors</code>
-to be included as "Color" and "Facets" grouping variables. This input
-prevents the drawing of overly complex plots. Default value = 25.</p></dd>
+<dd><p>Maximum number of distinct values allowed for
+<code>predictors</code> to be included as "Color" and "Facets" grouping variables. This
+input prevents the drawing of overly complex plots. Default value = 25.</p></dd>
 
 
 <dt>title</dt>
@@ -147,6 +148,12 @@ credibility method and confidence intervals</p></dd>
 <dd><p>Error tolerance under the Limited Fluctuation credibility
 method</p></dd>
 
+
+<dt>theme</dt>
+<dd><p>The name of a theme passed to the <code>preset</code> argument of
+<code><a href="https://rdrr.io/pkg/bslib/man/bs_theme.html" class="external-link">bslib::bs_theme()</a></code>. Alternatively, a complete Bootstrap theme created using
+<code><a href="https://rdrr.io/pkg/bslib/man/bs_theme.html" class="external-link">bslib::bs_theme()</a></code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -162,32 +169,37 @@ launching a Shiny application.</p>
 <h3 id="filters">Filters<a class="anchor" aria-label="anchor" href="#filters"></a></h3>
 
 
-<p>The sidebar contains filtering widgets for all variables passed
-to the <code>predictors</code> argument.</p>
+<p>The sidebar contains filtering widgets organized by data type for all
+variables passed to the <code>predictors</code> argument.</p>
+<p>At the top of the sidebar, information is shown on the percentage of records
+remaining after applying filters. A description of all active filters is also
+provided.</p>
+<p>The top of the sidebar also includes a "play / pause" switch that can pause
+reactivity of the application. Pausing is a good option when multiple changes
+are made in quick succession, especially when the underlying data set is
+large.</p>
 </div>
 
 <div class="section">
-<h3 id="study-options">Study options<a class="anchor" aria-label="anchor" href="#study-options"></a></h3>
-
-<div class="section">
-<h4 id="grouping-variables">Grouping variables<a class="anchor" aria-label="anchor" href="#grouping-variables"></a></h4>
+<h3 id="grouping-variables">Grouping variables<a class="anchor" aria-label="anchor" href="#grouping-variables"></a></h3>
 
 
 <p>This box includes widgets to select grouping variables for summarizing
-experience. The "x" widget is also used as the x variable in the plot output.
-Similarly, the "Color" and "Facets" widgets are used for color and facets in
-the plot. Multiple faceting variables are allowed. For the table output,
+experience. The "x" widget determines the x variable in the plot output.
+Similarly, the "Color" and "Facets" widgets are used for color and facets.
+Multiple faceting variable selections are allowed. For the table output,
 "x", "Color", and "Facets" have no particular meaning beyond the order in
-which of grouping variables are displayed.</p>
+which grouping variables are displayed.</p>
 </div>
 
 <div class="section">
-<h4 id="study-type">Study type<a class="anchor" aria-label="anchor" href="#study-type"></a></h4>
+<h3 id="study-type">Study type<a class="anchor" aria-label="anchor" href="#study-type"></a></h3>
 
 
-<p>This box also includes a toggle to switch between termination studies and
-transaction studies (if available).</p><div class="section">
-<h5 id="termination-studies">Termination studies<a class="anchor" aria-label="anchor" href="#termination-studies"></a></h5>
+<p>This box includes a toggle to switch between termination studies and
+transaction studies (if available). Different options are available for each
+study type.</p><div class="section">
+<h4 id="termination-studies">Termination studies<a class="anchor" aria-label="anchor" href="#termination-studies"></a></h4>
 
 
 <p>The expected values checkboxes are used to activate and deactivate expected
@@ -199,7 +211,7 @@ summarizing experience.</p>
 </div>
 
 <div class="section">
-<h5 id="transaction-studies">Transaction studies<a class="anchor" aria-label="anchor" href="#transaction-studies"></a></h5>
+<h4 id="transaction-studies">Transaction studies<a class="anchor" aria-label="anchor" href="#transaction-studies"></a></h4>
 
 
 <p>The transaction types checkboxes are used to activate and deactivate
@@ -208,11 +220,8 @@ transaction types are taken from the <code>trx_types</code> attribute of <code>d
 In the plot output, transaction type will always appear as a faceting
 variable. The "Transactions as % of" selector will expand the list of
 available "y" variables for the plot and impact the table output directly.
-Lastly, a checkbox exists that allows for all transaction types to be
+Lastly, a toggle exists that allows for all transaction types to be
 aggregated into a single group.</p>
-</div>
-
-
 </div>
 
 
@@ -227,38 +236,43 @@ aggregated into a single group.</p>
 
 <p>This tab includes a plot and various options for customization:</p><ul><li><p>y: y variable</p></li>
 <li><p>Geometry: plotting geometry</p></li>
-<li><p>Add Smoothing?: activate to plot loess curves</p></li>
-<li><p>Second y-axis?: activate to enable a second y-axis</p></li>
+<li><p>Second y-axis: activate to enable a second y-axis</p></li>
 <li><p>Second axis y: y variable to plot on the second axis</p></li>
+<li><p>Add Smoothing: activate to plot loess curves</p></li>
+<li><p>Confidence intervals: If available, add error bars for confidence intervals
+around the selected y variable</p></li>
 <li><p>Free y Scales: activate to enable separate y scales in each plot</p></li>
 <li><p>Log y-axis: activate to plot all y-axes on a log-10 scale</p></li>
-</ul></div>
+</ul><p>The gear icon above the plot contains a pop-up menu that can be used to
+change the size of the plot for exporting.</p>
+</div>
 
 <div class="section">
 <h4 id="table">Table<a class="anchor" aria-label="anchor" href="#table"></a></h4>
 
 
 <p>This tab includes a data table.</p>
-</div>
+<p>The gear icon above the table contains a pop-up menu that can be used to
+change the appearance of the table:</p><ul><li><p>The "Confidence intervals" and "Credibility-weighted termination rates"
+switches add these outputs to the table. These values are hidden as a default
+to prevent over-crowding.</p></li>
+<li><p>The "Include color scales" switch disables or re-enables conditional color
+formatting.</p></li>
+<li><p>The "Decimals" slider controls the number of decimals displayed for
+percentage fields.</p></li>
+<li><p>The "Font size multiple" slider impacts the table's font size</p></li>
+</ul></div>
 
 <div class="section">
-<h4 id="export-data">Export Data<a class="anchor" aria-label="anchor" href="#export-data"></a></h4>
+<h4 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a></h4>
 
 
-<p>This tab includes a download button that will save a copy of the summarized
-experience data.</p>
+<p>This pop-up menu contains options for saving summarized experience data, the
+plot, or the table. Data is saved as a CSV file. The plot and table are saved
+as png files.</p>
 </div>
 
 
-</div>
-
-<div class="section">
-<h3 id="filter-information">Filter Information<a class="anchor" aria-label="anchor" href="#filter-information"></a></h3>
-
-
-<p>This box contains information on the original number of exposure records,
-the number of records after filters are applied, and the percentage of
-records retained.</p>
 </div>
 
     </div>
