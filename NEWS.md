@@ -1,4 +1,4 @@
-# actxps (development version)
+# actxps 1.3.0
 
 - A new `conf_int` argument was added to `exp_stats()` and that creates confidence 
 intervals around observed termination rates, credibility-weighted termination 
