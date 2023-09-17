@@ -1,6 +1,8 @@
+# actxps (development version)
+
 # actxps 1.3.0
 
-- A new `conf_int` argument was added to `exp_stats()` and that creates confidence 
+- A new `conf_int` argument was added to `exp_stats()` that creates confidence 
 intervals around observed termination rates, credibility-weighted termination 
 rates, and any actual-to-expected ratios.
 - Similarly, `conf_int` was added to `trx_stats()` to create confidence intervals around utilization rates and any "percentage of" output columns. A `conf_level`
