@@ -132,3 +132,14 @@ test_that("exposed_df persists in a grouped and ungrouped context after using dp
   expect_s3_class(anti_join(grouped, join_frame, by = "pol_num"), "exposed_df")
 
 })
+
+test_that("as_exposed_df default_status works", {
+
+  expect_equal(as_exposed_df(expo2, "2022-12-31") |> attr("default_status"),
+               "Active")
+  expect_equal(as_exposed_df(expo2, "2022-12-31", default_status = "Inforce") |>
+                 attr("default_status"),
+               "Inforce")
+  expect_equal(attr(expo, "default_status"), "Active")
+
+})

@@ -49,9 +49,11 @@ expose_cw(...)
 
 \item{start_date}{Experience study start date. Default value = 1900-01-01.}
 
-\item{target_status}{Character vector of target status values. Default value = \code{NULL}.}
+\item{target_status}{Character vector of target status values. Default value
+= \code{NULL}.}
 
-\item{cal_expo}{Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
+\item{cal_expo}{Set to TRUE for calendar year exposures. Otherwise policy
+year exposures are assumed.}
 
 \item{expo_length}{Exposure period length}
 
@@ -61,9 +63,11 @@ expose_cw(...)
 
 \item{col_issue_date}{Name of the column in \code{.data} containing the issue date}
 
-\item{col_term_date}{Name of the column in \code{.data} containing the termination date}
+\item{col_term_date}{Name of the column in \code{.data} containing the termination
+date}
 
-\item{default_status}{Optional scalar character representing the default active status code}
+\item{default_status}{Optional scalar character representing the default
+active status code. If not provided, the most common status is assumed.}
 
 \item{...}{Arguments passed to \code{expose()}}
 }
@@ -102,7 +106,7 @@ always applied regardless of status.
 
 \code{default_status} is used to indicate the default active status that
 should be used when exposure records are created. If left blank, then the
-first status level will be assumed to be the default active status.
+most common status level will be assumed as the default active status.
 }
 \section{Policy period and calendar period variations}{
 The functions \code{expose_py()}, \code{expose_pq()}, \code{expose_pm()},

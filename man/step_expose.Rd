@@ -35,7 +35,8 @@ preprocessing have been estimated.}
 
 \item{start_date}{Experience study start date. Default value = 1900-01-01.}
 
-\item{target_status}{Character vector of target status values. Default value = \code{NULL}.}
+\item{target_status}{Character vector of target status values. Default value
+= \code{NULL}.}
 
 \item{options}{A named list of additional arguments passed to \code{\link[=expose]{expose()}}.}
 

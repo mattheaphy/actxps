@@ -60,7 +60,8 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
                           col_pol_per,
                           cols_dates,
                           col_trx_n_ = "trx_n_",
-                          col_trx_amt_ = "trx_amt_") {
+                          col_trx_amt_ = "trx_amt_",
+                          default_status) {
 
   if (is_exposed_df(x)) return(x)
 
@@ -129,14 +130,19 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
                    i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
   }
 
+  if (missing(default_status)) {
+    default_status <- most_common(x$status)
+  }
+
   new_exposed_df(x, end_date, start_date, target_status, cal_expo,
-                 expo_length, trx_types)
+                 expo_length, trx_types, default_status)
 
 }
 
 # low-level class constructor
 new_exposed_df <- function(x, end_date, start_date, target_status,
-                           cal_expo, expo_length, trx_types = NULL) {
+                           cal_expo, expo_length, trx_types = NULL,
+                           default_status) {
 
 
   date_cols <- make_date_col_names(cal_expo, expo_length)
@@ -149,7 +155,8 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
                      start_date = start_date,
                      end_date = end_date,
                      date_cols = date_cols,
-                     trx_types = trx_types)
+                     trx_types = trx_types,
+                     default_status = as.character(default_status))
 
 }
 
@@ -328,9 +335,10 @@ exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   split_type <- strsplit(expo_type, "_")[[1]]
   cal_expo <- split_type[[1]] == "calendar"
   expo_length <- split_type[[2]]
+  default_status <- attr(x, "default_status")
 
   new_exposed_df(out, end_date, start_date, target_status, cal_expo,
-                 expo_length, trx_types)
+                 expo_length, trx_types, default_status)
 }
 
 
@@ -357,9 +365,10 @@ exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   split_type <- strsplit(expo_type, "_")[[1]]
   cal_expo <- split_type[[1]] == "calendar"
   expo_length <- split_type[[2]]
+  default_status <- attr(to, "default_status")
 
   new_exposed_df(out, end_date, start_date, target_status, cal_expo,
-                 expo_length, trx_types)
+                 expo_length, trx_types, default_status)
 }
 
 # exposed_df | exposed_df
