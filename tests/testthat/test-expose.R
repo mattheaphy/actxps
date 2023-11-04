@@ -133,3 +133,10 @@ test_that("expose_split() warns about transactions attached too early", {
     expose_split(study_cy),
     regexp = "This will lead to duplication of transactions")
 })
+
+test_that("split exposures error when passed to summary functions without clarifying the exposure basis", {
+  expect_error(exp_stats(study_split),
+               regexp = "A `split_exposed_df` was passed without clarifying")
+  expect_error(trx_stats(study_split),
+               regexp = "A `split_exposed_df` was passed without clarifying")
+})

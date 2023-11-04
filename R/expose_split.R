@@ -120,3 +120,12 @@ expose_split <- function(dat) {
   dat
 
 }
+
+# This internal function sends a warning if a `split_exposed_df` is passed
+# without clarifying which exposure basis should be used.
+check_warn_split_expose <- function(dat, col_exposure) {
+  if (inherits(dat, "split_exposed_df") && col_exposure == "exposure") {
+    rlang::abort(c(x = "A `split_exposed_df` was passed without clarifying whether policy or calendar year exposures should be used to summarize results.",
+                   i = 'Pass "exposure_pol" (for policy year exposures) or "exposure_cal" (for calendar year exposures) to the `col_exposure` argument.'))
+  }
+}
