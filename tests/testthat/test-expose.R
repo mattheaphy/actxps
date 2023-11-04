@@ -104,3 +104,26 @@ test_that("Renaming and name conflict warnings work", {
   expect_warning(expose_cy(toy_census |> mutate(cal_yr = 1), "2020-12-31"))
   expect_warning(expose_cy(toy_census |> mutate(cal_yr_end = 1), "2020-12-31"))
 })
+
+# split exposure tests
+
+test_that("expose_split() fails when passed non-CY exposures", {
+  expect_error(expose_split(1, regexp = "must be an `exposed_df`"))
+  expect_error(expose_py(toy_census, "2022-12-31") |> expose_split(),
+               regexp = "must contain calendar year exposures")
+  expect_no_error(expose_cy(toy_census, "2022-12-31") |> expose_split())
+})
+
+
+study_split <- expose_split(study_cy) |> add_transactions(withdrawals)
+study_cy <- add_transactions(study_cy, withdrawals)
+
+test_that("expose_split() is consistent with expose_cy()", {
+  expect_equal(sum(study_cy$exposure), sum(study_split$exposure_cal))
+  expect_equal(sum(study_cy$status != "Active"),
+               sum(study_split$status != "Active"))
+  expect_equal(sum(study_cy$trx_amt_Base),
+               sum(study_split$trx_amt_Base))
+  expect_equal(sum(study_cy$trx_amt_Rider),
+               sum(study_split$trx_amt_Rider))
+})
