@@ -33,6 +33,12 @@ expose_split <- function(dat) {
                    i = "Hint: Try passing an `exposed_df` object that was created by `expose_cy()`."))
   }
 
+  if (!is.null(attr(dat, "trx_types"))) {
+    rlang::warn(c("!" = "`dat` has transactions attached. This will lead to duplication of transactions after exposures are split.",
+                  "i" = "Try calling `add_transactions()` after calling `expose_split()` instead of beforehand.")
+    )
+  }
+
   cal_frac <- cal_frac("year")
   target_status <- attr(dat, "target_status")
   default_status <- attr(dat, "default_status")

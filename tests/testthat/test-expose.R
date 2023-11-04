@@ -127,3 +127,9 @@ test_that("expose_split() is consistent with expose_cy()", {
   expect_equal(sum(study_cy$trx_amt_Rider),
                sum(study_split$trx_amt_Rider))
 })
+
+test_that("expose_split() warns about transactions attached too early", {
+  expect_warning(
+    expose_split(study_cy),
+    regexp = "This will lead to duplication of transactions")
+})
