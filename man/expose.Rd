@@ -105,8 +105,7 @@ in the observation period. If the annual exposure method isn't desired,
 always applied regardless of status.
 
 \code{default_status} is used to indicate the default active status that
-should be used when exposure records are created. If left blank, then the
-most common status level will be assumed as the default active status.
+should be used when exposure records are created.
 }
 \section{Policy period and calendar period variations}{
 The functions \code{expose_py()}, \code{expose_pq()}, \code{expose_pm()},

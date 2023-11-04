@@ -1,3 +1,30 @@
+#' Split calendar year exposures by policy year
+#'
+#' @description Convert a calendar year exposed data frame into a split exposed
+#' data frame that divides each calendar year into two pieces: a pre-anniversary
+#' record and a post-anniversary record.
+#'
+#' @details `dat` must be an `exposed_df` with calendar year exposure records.
+#' Calendar year exposures are created by the function [expose_cy()] (or
+#' [expose()] when `expo_length = "year"` and `cal_expo = TRUE`).
+#'
+#' @param dat An `exposed_df` object with calendar year exposures.
+#'
+#' @return A tibble with class `split_exposed_df`, `exposed_df`, `tbl_df`,
+#' `tbl`, and `data.frame`. The results include all columns in `dat` except that
+#' `exposure` has been renamed to `exposure_cal`. Additional columns include:
+#'
+#' - `exposure_pol` - policy year exposures
+#' - `pol_yr` - policy year
+#' - `piece` - a factor containing 2 levels: "pre_anniv" (pre-anniversary
+#' records) and "post_anniv" (post-anniversary records)
+#'
+#' @examples
+#' toy_census |> expose_cy("2022-12-31") |> expose_split()
+#'
+#' @seealso [expose()]
+#'
+#' @export
 expose_split <- function(dat) {
 
   verify_exposed_df(dat)
@@ -33,18 +60,18 @@ expose_split <- function(dat) {
            cal_yr = pmax(issue_date, cal_yr),
            cal_yr_end = anniv - 1,
            exposure = h,
-           exposure_py = 1 - pol_frac(cal_yr - 1L,
-                                      anniv %m-% lubridate::years(1),
-                                      anniv - 1L)
+           exposure_pol = 1 - pol_frac(cal_yr - 1L,
+                                       anniv %m-% lubridate::years(1),
+                                       anniv - 1L)
     )
 
   post_anniv <- dat |>
     mutate(piece = 2L,
            cal_yr = anniv,
            exposure = 1 - h,
-           exposure_py = pol_frac(cal_yr_end,
-                                  anniv,
-                                  anniv %m+% lubridate::years(1) - 1L))
+           exposure_pol = pol_frac(cal_yr_end,
+                                   anniv,
+                                   anniv %m+% lubridate::years(1) - 1L))
 
   dat <- dplyr::bind_rows(pre_anniv, post_anniv) |>
     filter(cal_yr <= cal_yr_end,
@@ -58,19 +85,19 @@ expose_split <- function(dat) {
                                           levels = levels(dat$status)),
                                    status),
            claims = status %in% target_status,
-           exposure_cy = dplyr::case_when(
+           exposure_cal = dplyr::case_when(
              claims ~ dplyr::if_else(piece == 1 | cal_yr == issue_date,
                                      1, 1 - h),
              is.na(term_date) ~ exposure,
              piece == 1 ~ v,
              .default = v - h
            ),
-           exposure_py = dplyr::case_when(
-             claims ~ dplyr::if_else(piece == 2, 1, exposure_py),
-             is.na(term_date) ~ exposure_py,
+           exposure_pol = dplyr::case_when(
+             claims ~ dplyr::if_else(piece == 2, 1, exposure_pol),
+             is.na(term_date) ~ exposure_pol,
              piece == 1 ~ pol_frac(term_date,
                                    anniv %m-% lubridate::years(1),
-                                   anniv - 1L) - (1 - exposure_py),
+                                   anniv - 1L) - (1 - exposure_pol),
              .default = pol_frac(term_date,
                                  anniv,
                                  anniv %m+% lubridate::years(1) - 1L)
