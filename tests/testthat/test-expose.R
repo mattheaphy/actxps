@@ -140,3 +140,19 @@ test_that("split exposures error when passed to summary functions without clarif
   expect_error(trx_stats(study_split),
                regexp = "A `split_exposed_df` was passed without clarifying")
 })
+
+check_period_end_split <- expose_cy(toy_census, "2020-12-31",
+                                    target_status = "Surrender") |>
+  expose_split() |>
+  select(pol_num, cal_yr, cal_yr_end) |>
+  group_by(pol_num) |>
+  mutate(x = dplyr::lead(cal_yr)) |>
+  ungroup() |>
+  na.omit() |>
+  filter(x != cal_yr_end + 1) |>
+  nrow()
+
+test_that("Split period start and end dates roll", {
+  expect_true(all(study_split$cal_yr <= study_split$cal_yr_end))
+  expect_equal(check_period_end_split, 0)
+})
