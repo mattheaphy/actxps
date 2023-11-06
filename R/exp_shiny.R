@@ -754,9 +754,20 @@ exp_shiny <- function(dat,
         shiny::need(input$play, "Paused")
       )
 
-      keep <- purrr::imap_lgl(preds$predictors,
-                              ~ length(setdiff(preds$scope[[.y]],
-                                               input[[paste0("i_", .x)]])) > 0)
+      keep <- preds |> select(predictors, scope, is_number) |>
+        purrr::pmap_lgl(\(predictors, scope, is_number) {
+
+          selected <- input[[paste0("i_", predictors)]]
+
+          if (is_number) {
+            !dplyr::near(scope[[1]], selected[[1]]) ||
+              !dplyr::near(scope[[2]], selected[[2]])
+          } else {
+            length(setdiff(scope, selected)) > 0
+          }
+
+        })
+
       preds$predictors[keep]
     })
 

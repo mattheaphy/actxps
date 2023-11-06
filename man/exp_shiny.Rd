@@ -13,7 +13,8 @@ exp_shiny(
   credibility = TRUE,
   conf_level = 0.95,
   cred_r = 0.05,
-  theme = "shiny"
+  theme = "shiny",
+  col_exposure = "exposure"
 )
 }
 \arguments{
@@ -44,6 +45,11 @@ method}
 \item{theme}{The name of a theme passed to the \code{preset} argument of
 \code{bslib::bs_theme()}. Alternatively, a complete Bootstrap theme created using
 \code{bslib::bs_theme()}.}
+
+\item{col_exposure}{Name of the column in \code{dat} containing exposures. This
+input is only used to clarify the exposure basis when \code{dat} is a
+\code{split_exposed_df} object. For more information on split exposures, see
+\code{\link[=expose_split]{expose_split()}}.}
 }
 \value{
 No return value. This function is called for the side effect of
