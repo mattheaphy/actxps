@@ -170,7 +170,7 @@ trx_stats <- function(.data,
     }
   }
 
-  check_warn_split_expose(.data, col_exposure)
+  check_split_expose_basis(.data, col_exposure)
 
   start_date <- attr(.data, "start_date")
   end_date <- attr(.data, "end_date")

@@ -120,6 +120,10 @@
 #' @param theme The name of a theme passed to the `preset` argument of
 #' `bslib::bs_theme()`. Alternatively, a complete Bootstrap theme created using
 #' `bslib::bs_theme()`.
+#' @param col_exposure Name of the column in `dat` containing exposures. This
+#' input is only used to clarify the exposure basis when `dat` is a
+#' `split_exposed_df` object. For more information on split exposures, see
+#' [expose_split()].
 #'
 #' @inheritParams exp_stats
 #'
@@ -151,13 +155,20 @@ exp_shiny <- function(dat,
                       credibility = TRUE,
                       conf_level = 0.95,
                       cred_r = 0.05,
-                      theme = "shiny") {
+                      theme = "shiny",
+                      col_exposure = "exposure") {
 
   rlang::check_installed("shiny")
   rlang::check_installed("bslib")
   rlang::check_installed("thematic")
 
   verify_exposed_df(dat)
+  check_split_expose_basis(dat, col_exposure)
+  if (inherits(dat, "split_exposed_df")) {
+    dat <- rename(dat,
+                  exposure = {{col_exposure}})
+  }
+
   # check for presence of transactions
   all_trx_types <- verify_get_trx_types(dat, required = FALSE)
   has_trx <- !is.null(all_trx_types)

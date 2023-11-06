@@ -131,7 +131,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
     rlang::abort(c(x = glue::glue("Only 1 column can be passed to `wt`. You supplied {length(wt)} values.")))
   }
 
-  check_warn_split_expose(.data, col_exposure)
+  check_split_expose_basis(.data, col_exposure)
 
   res <- .data |>
     rename(exposure = {{col_exposure}},
