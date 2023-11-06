@@ -163,10 +163,18 @@ exp_shiny <- function(dat,
   rlang::check_installed("thematic")
 
   verify_exposed_df(dat)
-  check_split_expose_basis(dat, col_exposure)
+
+  # special logic required for split exposed data frames
   if (inherits(dat, "split_exposed_df")) {
+    check_split_expose_basis(dat, col_exposure)
     dat <- rename(dat,
                   exposure = {{col_exposure}})
+
+    if (col_exposure == "exposure_cal") {
+      dat$exposure_pol <- NULL
+    } else {
+      dat$exposure_cal <- NULL
+    }
   }
 
   # check for presence of transactions
