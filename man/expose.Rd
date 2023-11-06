@@ -139,3 +139,7 @@ census_dat |> expose_py("2019-12-31", target_status = "Surrender")
 Atkinson and McGarry (2016). Experience Study Calculations.
 \url{https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf}
 }
+\seealso{
+\code{\link[=expose_split]{expose_split()}} for information on splitting calendar year
+exposures by policy year.
+}

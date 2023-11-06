@@ -1,8 +1,9 @@
 #' Split calendar year exposures by policy year
 #'
-#' @description Convert a calendar year exposed data frame into a split exposed
-#' data frame that divides each calendar year into two pieces: a pre-anniversary
-#' record and a post-anniversary record.
+#' @description Convert a data frame of calendar year exposure-level records
+#' into a split exposed data frame that divides each calendar year into two
+#' pieces based on policy years: a pre-anniversary record and a post-anniversary
+#' record.
 #'
 #' @details `dat` must be an `exposed_df` with calendar year exposure records.
 #' Calendar year exposures are created by the function [expose_cy()] (or

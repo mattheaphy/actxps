@@ -21,9 +21,10 @@ records) and "post_anniv" (post-anniversary records)
 }
 }
 \description{
-Convert a calendar year exposed data frame into a split exposed
-data frame that divides each calendar year into two pieces: a pre-anniversary
-record and a post-anniversary record.
+Convert a data frame of calendar year exposure-level records
+into a split exposed data frame that divides each calendar year into two
+pieces based on policy years: a pre-anniversary record and a post-anniversary
+record.
 }
 \details{
 \code{dat} must be an \code{exposed_df} with calendar year exposure records.

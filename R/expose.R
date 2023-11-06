@@ -75,6 +75,9 @@
 #'
 #' census_dat |> expose_py("2019-12-31", target_status = "Surrender")
 #'
+#' @seealso [expose_split()] for information on splitting calendar year
+#' exposures by policy year.
+#'
 #' @references Atkinson and McGarry (2016). Experience Study Calculations.
 #' <https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf>
 #'
