@@ -282,7 +282,7 @@ finish_exp_stats <- function(.data, target_status, expected,
       ci <- rlang::exprs(
         # For binomial N
         # Var(S) = n * p * (Var(X) + E(X)^2 * (1 - p))
-        sd_agg = (claims * (
+        sd_agg = (n_claims * (
           (ex2_wt - ex_wt ^ 2) + ex_wt ^ 2 * (1 - q_obs))) ^ 0.5,
         q_obs_lower = stats::qnorm(p[[1]], claims, sd_agg) / exposure,
         q_obs_upper = stats::qnorm(p[[2]], claims, sd_agg) / exposure
