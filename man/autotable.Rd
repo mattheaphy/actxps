@@ -18,6 +18,8 @@ autotable(object, ...)
   rename_cols = rlang::list2(...),
   show_conf_int = FALSE,
   show_cred_adj = FALSE,
+  decimals_amt = 0,
+  suffix_amt = FALSE,
   ...
 )
 
@@ -30,6 +32,8 @@ autotable(object, ...)
   color_pct_of = "RColorBrewer::RdBu",
   rename_cols = rlang::list2(...),
   show_conf_int = FALSE,
+  decimals_amt = 0,
+  suffix_amt = FALSE,
   ...
 )
 }
@@ -63,6 +67,17 @@ assuming they are available on \code{object}.}
 
 \item{show_cred_adj}{If \code{TRUE} credibility-weighted termination rates will
 be displayed assuming they are available on \code{object}.}
+
+\item{decimals_amt}{Number of decimals to display for amount columns (number
+of claims, claim amounts, exposures, transaction counts, total transactions,
+and average transactions)}
+
+\item{suffix_amt}{This argument has the same meaning as the \code{suffixing}
+argument in \code{\link[gt:fmt_number]{gt::fmt_number()}} for amount columns. If \code{FALSE} (the default),
+no scaling or suffixing are applied to amount columns. If \code{TRUE}, all amount
+columns are automatically scaled and suffixed by "K" (thousands), "M"
+(millions), "B" (billions), or "T" (trillions). See \code{\link[gt:fmt_number]{gt::fmt_number()}} for
+more information.}
 
 \item{color_util}{Color palette used for utilization rates.}
 
