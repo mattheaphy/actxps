@@ -2,12 +2,12 @@
 % Please edit documentation in R/expose_split.R
 \name{expose_split}
 \alias{expose_split}
-\title{Split calendar year exposures by policy year}
+\title{Split calendar exposures by policy year}
 \usage{
 expose_split(dat)
 }
 \arguments{
-\item{dat}{An \code{exposed_df} object with calendar year exposures.}
+\item{dat}{An \code{exposed_df} object with calendar period exposures.}
 }
 \value{
 A tibble with class \code{split_exposed_df}, \code{exposed_df}, \code{tbl_df},
@@ -16,20 +16,27 @@ A tibble with class \code{split_exposed_df}, \code{exposed_df}, \code{tbl_df},
 \itemize{
 \item \code{exposure_pol} - policy year exposures
 \item \code{pol_yr} - policy year
-\item \code{piece} - a factor containing 2 levels: "pre_anniv" (pre-anniversary
-records) and "post_anniv" (post-anniversary records)
 }
 }
 \description{
-Convert a data frame of calendar year exposure-level records
-into a split exposed data frame that divides each calendar year into two
-pieces based on policy years: a pre-anniversary record and a post-anniversary
-record.
+Split calendar period exposures that cross a policy anniversary
+into a pre-anniversary record and a post-anniversary record.
+
+After splitting the data, the resulting data frame will contain both calendar
+exposures and policy year exposures. These columns will be named
+\code{exposure_cal} and \code{exposure_pol}, respectively. Calendar exposures will be
+in the original units passed to \code{expose_split()}. Policy exposures will
+always be expressed in years.
+
+After splitting exposures, downstream functions like \code{exp_stats()} and
+\code{exp_shiny()} will require clarification as to which exposure basis should
+be used to summarize results.
 }
 \details{
-\code{dat} must be an \code{exposed_df} with calendar year exposure records.
-Calendar year exposures are created by the function \code{\link[=expose_cy]{expose_cy()}} (or
-\code{\link[=expose]{expose()}} when \code{expo_length = "year"} and \code{cal_expo = TRUE}).
+\code{dat} must be an \code{exposed_df} with calendar year, quarter, month,
+or week exposure records. Calendar year exposures are created by the
+functions \code{\link[=expose_cy]{expose_cy()}}, \code{\link[=expose_cq]{expose_cq()}}, \code{\link[=expose_cm]{expose_cm()}}, or \code{\link[=expose_cw]{expose_cw()}}, (or
+\code{\link[=expose]{expose()}} when \code{cal_expo = TRUE}).
 }
 \examples{
 toy_census |> expose_cy("2022-12-31") |> expose_split()

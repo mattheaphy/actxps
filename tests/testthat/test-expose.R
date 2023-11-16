@@ -110,7 +110,7 @@ test_that("Renaming and name conflict warnings work", {
 test_that("expose_split() fails when passed non-CY exposures", {
   expect_error(expose_split(1, regexp = "must be an `exposed_df`"))
   expect_error(expose_py(toy_census, "2022-12-31") |> expose_split(),
-               regexp = "must contain calendar year exposures")
+               regexp = "must contain calendar exposures")
   expect_no_error(expose_cy(toy_census, "2022-12-31") |> expose_split())
 })
 
