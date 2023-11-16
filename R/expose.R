@@ -108,12 +108,7 @@ expose <- function(.data,
 
   # set up exposure period lengths
   expo_length <- rlang::arg_match(expo_length)
-  expo_step <- switch(expo_length,
-                      "year" = lubridate::years(1),
-                      "quarter" = months(3),
-                      "month" = months(1),
-                      "week" = lubridate::days(7))
-
+  expo_step <- expo_step(expo_length)
   cal_frac <- cal_frac(expo_length)
 
   # column renames and name conflicts
@@ -330,4 +325,13 @@ abbr_period <- function(x) {
 most_common <- function(x) {
   y <- table(x) |> sort(decreasing = TRUE) |> names()
   factor(y[[1]], levels(x))
+}
+
+# helper function for determining exposure step lengths
+expo_step <- function(x) {
+  switch(x,
+         "year" = lubridate::years(1),
+         "quarter" = months(3),
+         "month" = months(1),
+         "week" = lubridate::days(7))
 }
