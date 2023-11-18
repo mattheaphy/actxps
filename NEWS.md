@@ -1,5 +1,21 @@
 # actxps (development version)
 
+- actxps now supports split exposures that divide calendar periods crossing 
+policy anniversaries into pre-anniversary and post-anniversary records. The 
+function `expose_split()` can convert any `exposed_df` object with calendar 
+period exposures (yearly, quarterly, monthly, or weekly) into a 
+`split_exposed_df` object. Split exposure data frames contain columns for 
+exposures both on a calendar period and policy year basis.
+- `exp_stats()` and `exp_shiny()` now require clarification as to which exposure
+basis should be used when passed a `split_exposed_df` object.
+- All `expose_df` objects now contains a `default_status` attribute.
+- `autotable()` functions now contain the arguments `decimals_amt` and 
+`suffix_amt`. The former allows one to specify the number of decimals appearing
+after amount columns. The latter is used to automatically scale large numbers 
+into by thousands, millions, billions, or trillions.
+- Corrected an error in the calculation of the standard deviations of claims 
+when `exp_stats()` is passed a weighting variable.
+
 # actxps 1.3.0
 
 - A new `conf_int` argument was added to `exp_stats()` that creates confidence 
