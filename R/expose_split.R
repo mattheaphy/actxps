@@ -22,6 +22,7 @@
 #' [expose()] when `cal_expo = TRUE`).
 #'
 #' @param dat An `exposed_df` object with calendar period exposures.
+#' @param x Any object
 #'
 #' @return For `expose_split()`, a tibble with class `split_exposed_df`,
 #' `exposed_df`, `tbl_df`, `tbl`, and `data.frame`. The results include all

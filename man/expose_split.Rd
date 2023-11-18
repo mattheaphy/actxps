@@ -11,6 +11,8 @@ is_split_exposed_df(x)
 }
 \arguments{
 \item{dat}{An \code{exposed_df} object with calendar period exposures.}
+
+\item{x}{Any object}
 }
 \value{
 For \code{expose_split()}, a tibble with class \code{split_exposed_df},
