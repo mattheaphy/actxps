@@ -156,8 +156,14 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
     "policy"
   }
 
+  new_class <- if (exposure_type == "split") {
+    c("split_exposed_df", "exposed_df")
+  } else {
+    "exposed_df"
+  }
+
   tibble::new_tibble(x,
-                     class = "exposed_df",
+                     class = new_class,
                      target_status = target_status,
                      exposure_type = paste(exposure_type, expo_length,
                                            sep = "_"),
@@ -189,7 +195,12 @@ print.exposed_df <- function(x, ...) {
 #' @export
 group_by.exposed_df <- function(.data, ..., .add, .drop) {
   x <- NextMethod()
-  class(x) <- c("exposed_df", class(x))
+  if (is_split_exposed_df(.data)) {
+    class(x) <- c("split_exposed_df", "exposed_df", class(x))
+  } else {
+    class(x) <- c("exposed_df", class(x))
+  }
+
   x
 }
 
@@ -379,7 +390,7 @@ exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
 
   new_exposed_df(out, end_date, start_date, target_status, cal_expo,
                  expo_length, trx_types, default_status,
-                 is_split_exposed_df(x))
+                 is_split_exposed_df(to))
 }
 
 
@@ -391,6 +402,17 @@ vec_ptype2.exposed_df.exposed_df <- function(x, y, ...) {
 
 #' @export
 vec_cast.exposed_df.exposed_df <- function(x, to, ...) {
+  exposed_df_cast(x, to, ...)
+}
+
+# split_exposed_df | split_exposed_df
+#' @export
+vec_ptype2.split_exposed_df.split_exposed_df <- function(x, y, ...) {
+  exposed_df_ptype2(x, y, ...)
+}
+
+#' @export
+vec_cast.split_exposed_df.split_exposed_df <- function(x, to, ...) {
   exposed_df_cast(x, to, ...)
 }
 
