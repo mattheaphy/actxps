@@ -165,7 +165,7 @@ exp_shiny <- function(dat,
   verify_exposed_df(dat)
 
   # special logic required for split exposed data frames
-  if (inherits(dat, "split_exposed_df")) {
+  if (is_split_exposed_df(dat)) {
     check_split_expose_basis(dat, col_exposure)
     dat <- rename(dat,
                   exposure = {{col_exposure}})

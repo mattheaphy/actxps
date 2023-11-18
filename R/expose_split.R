@@ -13,6 +13,9 @@
 #' `exp_shiny()` will require clarification as to which exposure basis should
 #' be used to summarize results.
 #'
+#' `is_split_exposed_df()` will return `TRUE` if `x` is a `split_exposed_df`
+#' object.
+#'
 #' @details `dat` must be an `exposed_df` with calendar year, quarter, month,
 #' or week exposure records. Calendar year exposures are created by the
 #' functions [expose_cy()], [expose_cq()], [expose_cm()], or [expose_cw()], (or
@@ -20,12 +23,15 @@
 #'
 #' @param dat An `exposed_df` object with calendar period exposures.
 #'
-#' @return A tibble with class `split_exposed_df`, `exposed_df`, `tbl_df`,
-#' `tbl`, and `data.frame`. The results include all columns in `dat` except that
-#' `exposure` has been renamed to `exposure_cal`. Additional columns include:
+#' @return For `expose_split()`, a tibble with class `split_exposed_df`,
+#' `exposed_df`, `tbl_df`, `tbl`, and `data.frame`. The results include all
+#' columns in `dat` except that `exposure` has been renamed to `exposure_cal`.
+#' Additional columns include:
 #'
 #' - `exposure_pol` - policy year exposures
 #' - `pol_yr` - policy year
+#'
+#' For `is_split_exposed_df()`, a length-1 logical vector.
 #'
 #' @examples
 #' toy_census |> expose_cy("2022-12-31") |> expose_split()
@@ -155,10 +161,17 @@ expose_split <- function(dat) {
 
 }
 
+#' @rdname expose_split
+#' @export
+is_split_exposed_df <- function(x) {
+  inherits(x, "split_exposed_df")
+}
+
+
 # This internal function sends an error if a `split_exposed_df` is passed
 # without clarifying which exposure basis should be used.
 check_split_expose_basis <- function(dat, col_exposure) {
-  if (inherits(dat, "split_exposed_df") &&
+  if (is_split_exposed_df(dat) &&
       !col_exposure %in% c("exposure_cal", "exposure_pol")) {
     rlang::abort(c(x = "A `split_exposed_df` was passed without clarifying which exposure basis should be used to summarize results.",
                    i = 'Pass "exposure_pol" to `col_exposure` for policy year exposures.',
