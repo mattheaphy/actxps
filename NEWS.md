@@ -15,6 +15,7 @@ after amount columns. The latter is used to automatically scale large numbers
 into by thousands, millions, billions, or trillions.
 - Corrected an error in the calculation of the standard deviations of claims 
 when `exp_stats()` is passed a weighting variable.
+- Added a `summary()` method for `exposed_df` objects that calls `exp_stats()`.
 
 # actxps 1.3.0
 

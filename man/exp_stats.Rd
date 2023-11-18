@@ -130,7 +130,7 @@ data while retaining any grouping variables passed to the "dots"
 }
 
 \examples{
-toy_census |> expose("2020-12-31", target_status = "Surrender") |>
+toy_census |> expose("2022-12-31", target_status = "Surrender") |>
     exp_stats()
 
 exp_res <- census_dat |>
