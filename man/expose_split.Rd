@@ -5,19 +5,19 @@
 \alias{is_split_exposed_df}
 \title{Split calendar exposures by policy year}
 \usage{
-expose_split(dat)
+expose_split(.data)
 
 is_split_exposed_df(x)
 }
 \arguments{
-\item{dat}{An \code{exposed_df} object with calendar period exposures.}
+\item{.data}{An \code{exposed_df} object with calendar period exposures.}
 
 \item{x}{Any object}
 }
 \value{
 For \code{expose_split()}, a tibble with class \code{split_exposed_df},
 \code{exposed_df}, \code{tbl_df}, \code{tbl}, and \code{data.frame}. The results include all
-columns in \code{dat} except that \code{exposure} has been renamed to \code{exposure_cal}.
+columns in \code{.data} except that \code{exposure} has been renamed to \code{exposure_cal}.
 Additional columns include:
 \itemize{
 \item \code{exposure_pol} - policy year exposures
@@ -44,7 +44,7 @@ be used to summarize results.
 object.
 }
 \details{
-\code{dat} must be an \code{exposed_df} with calendar year, quarter, month,
+\code{.data} must be an \code{exposed_df} with calendar year, quarter, month,
 or week exposure records. Calendar year exposures are created by the
 functions \code{\link[=expose_cy]{expose_cy()}}, \code{\link[=expose_cq]{expose_cq()}}, \code{\link[=expose_cm]{expose_cm()}}, or \code{\link[=expose_cw]{expose_cw()}}, (or
 \code{\link[=expose]{expose()}} when \code{cal_expo = TRUE}).

@@ -16,17 +16,17 @@
 #' `is_split_exposed_df()` will return `TRUE` if `x` is a `split_exposed_df`
 #' object.
 #'
-#' @details `dat` must be an `exposed_df` with calendar year, quarter, month,
+#' @details `.data` must be an `exposed_df` with calendar year, quarter, month,
 #' or week exposure records. Calendar year exposures are created by the
 #' functions [expose_cy()], [expose_cq()], [expose_cm()], or [expose_cw()], (or
 #' [expose()] when `cal_expo = TRUE`).
 #'
-#' @param dat An `exposed_df` object with calendar period exposures.
+#' @param .data An `exposed_df` object with calendar period exposures.
 #' @param x Any object
 #'
 #' @return For `expose_split()`, a tibble with class `split_exposed_df`,
 #' `exposed_df`, `tbl_df`, `tbl`, and `data.frame`. The results include all
-#' columns in `dat` except that `exposure` has been renamed to `exposure_cal`.
+#' columns in `.data` except that `exposure` has been renamed to `exposure_cal`.
 #' Additional columns include:
 #'
 #' - `exposure_pol` - policy year exposures
@@ -40,25 +40,25 @@
 #' @seealso [expose()]
 #'
 #' @export
-expose_split <- function(dat) {
+expose_split <- function(.data) {
 
-  verify_exposed_df(dat)
-  expo_type <- strsplit(attr(dat, "exposure_type"), "_")[[1]]
+  verify_exposed_df(.data)
+  expo_type <- strsplit(attr(.data, "exposure_type"), "_")[[1]]
 
   if (expo_type[[1]] != "calendar") {
-    rlang::abort(c(x = "`dat` must contain calendar exposures.",
+    rlang::abort(c(x = "`.data` must contain calendar exposures.",
                    i = "Hint: Try passing an `exposed_df` object that was created by `expose_cy()`, `expose_cq()`, `expose_cm()`, or `expose_cw()`."))
   }
 
-  if (!is.null(attr(dat, "trx_types"))) {
-    rlang::warn(c("!" = "`dat` has transactions attached. This will lead to duplication of transactions after exposures are split.",
+  if (!is.null(attr(.data, "trx_types"))) {
+    rlang::warn(c("!" = "`.data` has transactions attached. This will lead to duplication of transactions after exposures are split.",
                   "i" = "Try calling `add_transactions()` after calling `expose_split()` instead of beforehand.")
     )
   }
 
-  target_status <- attr(dat, "target_status")
-  default_status <- attr(dat, "default_status")
-  date_cols <- attr(dat, "date_cols") |> rlang::parse_exprs()
+  target_status <- attr(.data, "target_status")
+  default_status <- attr(.data, "default_status")
+  date_cols <- attr(.data, "date_cols") |> rlang::parse_exprs()
   expo_length <- expo_type[[2]]
 
   pol_frac <- function(x, start, end, y) {
@@ -75,7 +75,7 @@ expose_split <- function(dat) {
   # h = yearfrac from boy to anniv
   # v = yearfrac from boy to term
 
-  dat <- dat |>
+  .data <- .data |>
     # temporary generic date column names
     rename(cal_b = !!date_cols[[1]],
            cal_e = !!date_cols[[2]]) |>
@@ -88,7 +88,7 @@ expose_split <- function(dat) {
       v = cal_frac(term_date)
     )
 
-  pre_anniv <- dat |>
+  pre_anniv <- .data |>
     filter(split) |>
     mutate(piece = 1L,
            cal_b = pmax(issue_date, cal_b),
@@ -99,7 +99,7 @@ expose_split <- function(dat) {
                                        anniv - 1L)
     )
 
-  post_anniv <- dat |>
+  post_anniv <- .data |>
     mutate(piece = 2L,
            cal_b = dplyr::if_else(split, anniv, cal_b),
            exposure = dplyr::if_else(split, 1 - h, 1),
@@ -112,7 +112,7 @@ expose_split <- function(dat) {
                                    cal_b - 1L)
     )
 
-  dat <- dplyr::bind_rows(pre_anniv, post_anniv) |>
+  .data <- dplyr::bind_rows(pre_anniv, post_anniv) |>
     filter(cal_b <= cal_e,
            is.na(term_date) | term_date >= cal_b) |>
     mutate(term_date = dplyr::if_else(between(term_date, cal_b, cal_e),
@@ -121,7 +121,7 @@ expose_split <- function(dat) {
              piece - 1L,
            status = dplyr::if_else(is.na(term_date),
                                    factor(default_status,
-                                          levels = levels(dat$status)),
+                                          levels = levels(.data$status)),
                                    status),
            claims = status %in% target_status,
            exposure_cal = dplyr::case_when(
@@ -150,15 +150,16 @@ expose_split <- function(dat) {
     ) |>
     arrange(pol_num, cal_b, piece) |>
     select(-h, -v, -split, -anniv, -claims, -exposure, -piece) |>
+    relocate(pol_yr, .after = cal_e) |>
     # restore date column names
     rename(!!date_cols[[1]] := cal_b,
            !!date_cols[[2]] := cal_e)
 
   # update exposure type and update class
-  class(dat) <- c("split_exposed_df", class(dat))
-  attr(dat, "exposure_type") <- paste0("split_", expo_length)
+  class(.data) <- c("split_exposed_df", class(.data))
+  attr(.data, "exposure_type") <- paste0("split_", expo_length)
 
-  dat
+  .data
 
 }
 
