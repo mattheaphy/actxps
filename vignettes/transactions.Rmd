@@ -41,7 +41,6 @@ In this example, we'll be using the `census_dat`, `withdrawals`, and `account_va
 The `add_transactions()` function attaches transactions to a data frame with exposure-level records. This data frame must have the class `exposed_df`. For our example, we first need to convert `census_dat` into exposure records using the `expose()` function.^[See `vignette('exposures')` for more information on creating `exposed_df` objects.] This example will use policy year exposures.
 
 ```{r packages}
-
 library(actxps)
 library(dplyr)
 
@@ -119,7 +118,6 @@ If the data frame passed into `trx_stats()` is grouped using `dplyr::group_by()`
 In the following, `exposed_trx` is grouped by the presence of an income guarantee (`inc_guar`) before being passed to `trx_stats()`. This results in four rows because we have two types of transactions and two distinct values of `inc_guar`.
 
 ```{r grouped-1}
-
 exposed_trx |> 
   group_by(inc_guar) |> 
   trx_stats()
@@ -129,7 +127,6 @@ exposed_trx |>
 Multiple grouping variables are allowed. Below, policy year (`pol_yr`) is added as a second grouping variable.
 
 ```{r grouped-2}
-
 exposed_trx |> 
   group_by(pol_yr, inc_guar) |> 
   trx_stats()
@@ -150,7 +147,6 @@ If column names are passed to the `percent_of` argument of `trx_stats()`, the ou
 For our example, let's assume we're interested in examining withdrawal transactions as a percentage of account values, which are available in the `account_vals` data frame in the column `av_anniv`.
 
 ```{r pct-of}
-
 # attach account values data
 exposed_trx_w_av <- exposed_trx |> 
   left_join(account_vals, by = c("pol_num", "pol_date_yr"))
@@ -206,7 +202,6 @@ exposed_trx_w_av |>
 The `autoplot()` and `autotable()` functions create visualizations and summary tables from `trx_df` objects. See `vignette("visualizations")` for full details on these functions.
 
 ```{r trx-plot, warning=FALSE, message=FALSE, fig.height=5.5, fig.width=7}
-
 library(ggplot2)
 
 trx_res |>

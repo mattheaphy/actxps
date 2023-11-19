@@ -108,7 +108,6 @@ exp_res
 To derive actual-to-expected rates, first attach one or more columns of expected termination rates to the exposure data. Then, pass these column names to the `expected` argument of `exp_stats()`.
 
 ```{r stats-ae}
-
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 # using 2 different expected termination rates
