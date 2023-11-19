@@ -140,7 +140,7 @@ exposed_data2 |>
 ```
 
 
-## Other exposures periods
+## Other exposure periods
 
 The default exposure basis used by `expose()` is policy years. Using the arguments `cal_expo` and `expo_length` other exposure periods can be used.
 
@@ -152,8 +152,10 @@ Looking at the second policy, we can see that the first year is left-censored be
 
 ```{r expo-cal}
 
-toy_census[2, ] |> 
+exposed_cal <- toy_census |> 
   expose(end_date = "2022-12-31", cal_expo = TRUE, target_status = "Surrender")
+
+exposed_cal |> filter(pol_num == 2)
 
 ```
 
@@ -164,25 +166,82 @@ toy_census[2, ] |>
 The length of the exposure period can be decreased by passing `"quarter"`, `"month"`, or `"week"` to the `expo_length` argument. This can be used with policy or calendar-based exposures.
 
 ```{r expo-mth}
-toy_census[2, ] |> 
+toy_census |> 
   expose(end_date = "2022-12-31", 
          cal_expo = TRUE,
          expo_length = "quarter", 
-         target_status = "Surrender")
+         target_status = "Surrender") |> 
+  filter(pol_num == 2)
 ```
 
 ### Convenience functions
 
 The following functions are convenience wrappers around `expose()` that target a specific exposure type without specifying `cal_expo` and `expo_length`.
 
-- `expose_py` = exposures by policy year
-- `expose_pq` = exposures by policy quarter
-- `expose_pm` = exposures by policy month
-- `expose_pw` = exposures by policy week
-- `expose_cy` = exposures by calendar year
-- `expose_cq` = exposures by calendar quarter
-- `expose_cm` = exposures by calendar month
-- `expose_cw` = exposures by calendar week
+- `expose_py()` = exposures by policy year
+- `expose_pq()` = exposures by policy quarter
+- `expose_pm()` = exposures by policy month
+- `expose_pw()` = exposures by policy week
+- `expose_cy()` = exposures by calendar year
+- `expose_cq()` = exposures by calendar quarter
+- `expose_cm()` = exposures by calendar month
+- `expose_cw()` = exposures by calendar week
+
+## Split exposures by calendar period and policy year
+
+A common technique used in experience studies is to split calendar years into two records: a pre-anniversary record and a post-anniversary record. In actxps, this can be accomplished using the `expose_split()` function. 
+
+Let's continue examining the second policy. `exposed_cal`, which contains calendar year exposures, is passed into `expose_split()`. The resulting data frame now contains 19 records instead of 10. There is one record for 2011 and 2 records for all other years. The year 2011 only has a single record because the policy was issued in this year, so there can only be a post-anniversary record.
+
+```{r expo-split}
+split <- expose_split(exposed_cal)
+
+split |> filter(pol_num == 2) |> 
+  select(cal_yr, cal_yr_end, pol_yr, exposure_pol, exposure_cal)
+```
+
+The output of `expose_split()` contains two exposure columns.
+
+- `exposure_pol` contains policy year exposures
+- `exposure_cal` contains calendar year exposures
+
+The two exposure bases will often not match for two reasons:
+
+1. Calendar years and policy years have different start and end dates that may or may not include a leap day. In the first row, the calendar year exposure is 0.6 years of the year 2011, which does not include a leap day. In the second row, the policy year exposure is 0.5984 years of the policy year spanning 2011-05-27 to 2012-05-26, which does include a leap day.
+
+2. Application of the annual exposure method. If the termination event of interest appears on a post-anniversary record, policy exposures will be 1 and calendar exposures will be the fraction of the year spanning the anniversary to December 31st. Conversely, if the termination event of interest appears on a pre-anniversary record, calendar exposures will be 1 and policy exposures will be the fraction of the policy year from January 1st to the last day of the current policy year. While it may sound confusing at first, these rules are important to ensure that the termination event of interest always has an exposure of 1 when the data is grouped on a calendar year or policy year basis.
+
+Some downstream functions like `exp_stats()` expect `exposed_df` objects to have a single column for exposures. For split exposures, the exposure basis must be specified using the `col_exposure` argument.
+
+```{r, split-stats-unclear, eval = FALSE}
+
+exp_stats(split)
+```
+
+
+```{r split-stats-unclear-cat, echo = FALSE}
+
+tryCatch(exp_stats(split),
+         error = function(e) cat(e$message))
+```
+
+
+```{r, split-stats-clear, eval = FALSE}
+
+exp_stats(split, col_exposure = "exposure_pol")
+```
+
+`expose_split()` doesn't just work with calendar year exposures. Calendar quarters, months, or weeks can also be split. For periods shorter than a year, a record is only split into pre- and post-anniversary segments if a policy anniversary appears in the middle of the period.
+
+```{r, split-qtr}
+
+expose_cq(toy_census, "2022-12-31", target_status = "Surrender") |> 
+  expose_split() |> 
+  filter(pol_num == 2) |> 
+  select(cal_qtr, cal_qtr_end, pol_yr, exposure_pol, exposure_cal)
+```
+
+Note, however, that calendar period exposures will always be expressed in the original units and policy exposures will always be expressed in years. Above, calendar exposures are quarters whereas policy exposures are years.
 
 ## Tidymodels recipe step
 

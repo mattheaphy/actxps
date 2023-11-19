@@ -20,8 +20,7 @@
 #' always applied regardless of status.
 #'
 #' `default_status` is used to indicate the default active status that
-#' should be used when exposure records are created. If left blank, then the
-#' first status level will be assumed to be the default active status.
+#' should be used when exposure records are created.
 #'
 #' # Policy period and calendar period variations
 #'
@@ -46,14 +45,18 @@
 #' @param .data A data frame with census-level records
 #' @param end_date Experience study end date
 #' @param start_date Experience study start date. Default value = 1900-01-01.
-#' @param target_status Character vector of target status values. Default value = `NULL`.
-#' @param cal_expo Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.
+#' @param target_status Character vector of target status values. Default value
+#'  = `NULL`.
+#' @param cal_expo Set to TRUE for calendar year exposures. Otherwise policy
+#' year exposures are assumed.
 #' @param expo_length Exposure period length
 #' @param col_pol_num Name of the column in `.data` containing the policy number
 #' @param col_status Name of the column in `.data` containing the policy status
 #' @param col_issue_date Name of the column in `.data` containing the issue date
-#' @param col_term_date Name of the column in `.data` containing the termination date
-#' @param default_status Optional scalar character representing the default active status code
+#' @param col_term_date Name of the column in `.data` containing the termination
+#' date
+#' @param default_status Optional scalar character representing the default
+#' active status code. If not provided, the most common status is assumed.
 #' @param ... Arguments passed to `expose()`
 #'
 #' @return A tibble with class `exposed_df`, `tbl_df`, `tbl`,
@@ -72,10 +75,13 @@
 #'
 #' census_dat |> expose_py("2019-12-31", target_status = "Surrender")
 #'
+#' @seealso [expose_split()] for information on splitting calendar year
+#' exposures by policy year.
+#'
 #' @references Atkinson and McGarry (2016). Experience Study Calculations.
 #' <https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf>
 #'
-#' @importFrom lubridate %m+%
+#' @importFrom lubridate %m+% %m-%
 #'
 #' @export
 expose <- function(.data,
@@ -102,32 +108,22 @@ expose <- function(.data,
 
   # set up exposure period lengths
   expo_length <- rlang::arg_match(expo_length)
-  expo_step <- switch(expo_length,
-                      "year" = lubridate::years(1),
-                      "quarter" = months(3),
-                      "month" = months(1),
-                      "week" = lubridate::days(7))
-
-  cal_frac <- switch(expo_length,
-                     "year" = year_frac,
-                     "quarter" = quarter_frac,
-                     "month" = month_frac,
-                     'week' = week_frac)
+  expo_step <- expo_step(expo_length)
+  cal_frac <- cal_frac(expo_length)
 
   # column renames and name conflicts
   .data <- .data |>
     rename(pol_num = {{col_pol_num}},
-                  status = {{col_status}},
-                  issue_date = {{col_issue_date}},
-                  term_date = {{col_term_date}}) |>
+           status = {{col_status}},
+           issue_date = {{col_issue_date}},
+           term_date = {{col_term_date}}) |>
     .expo_name_conflict(cal_expo, expo_length)
 
   # set up statuses
   if (!is.factor(.data$status)) .data$status <- factor(.data$status)
 
   if (missing(default_status)) {
-    default_status <- factor(levels(.data$status)[[1]],
-                             levels = levels(.data$status))
+    default_status <- most_common(.data$status)
   } else {
     status_levels <- union(levels(.data$status), default_status)
     default_status <- factor(default_status,
@@ -138,7 +134,7 @@ expose <- function(.data,
   # pre-exposure updates
   res <- .data |>
     filter(issue_date < end_date,
-                  is.na(term_date) | term_date > start_date) |>
+           is.na(term_date) | term_date > start_date) |>
     mutate(
       term_date = dplyr::if_else(term_date > end_date,
                                  lubridate::NA_Date_, term_date),
@@ -176,17 +172,18 @@ expose <- function(.data,
   if (cal_expo) {
     res <- res |>
       mutate(first_per = .time == 1,
-                    cal_e = cal_b %m+% (expo_step * .time) - 1,
-                    cal_b = cal_b %m+% (expo_step * (.time - 1)),
-                    exposure = dplyr::case_when(
-                      status %in% target_status ~ 1,
-                      first_per & last_per ~ cal_frac(last_date) - cal_frac(first_date, 1),
-                      first_per ~ 1 - cal_frac(first_date, 1),
-                      last_per ~ cal_frac(last_date),
-                      TRUE ~ 1)
+             cal_e = cal_b %m+% (expo_step * .time) - 1,
+             cal_b = cal_b %m+% (expo_step * (.time - 1)),
+             exposure = dplyr::case_when(
+               status %in% target_status ~ 1,
+               first_per & last_per ~ cal_frac(last_date) -
+                 cal_frac(first_date, 1),
+               first_per ~ 1 - cal_frac(first_date, 1),
+               last_per ~ cal_frac(last_date),
+               TRUE ~ 1)
       ) |>
       select(-rep_n, -first_date, -last_date, -first_per, -last_per,
-                    -.time, -tot_per) |>
+             -.time, -tot_per) |>
       relocate(cal_e, .after = cal_b) |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_b, prefix = "cal") |>
       dplyr::rename_with(.fn = rename_col, .cols = cal_e, prefix = "cal",
@@ -214,7 +211,7 @@ expose <- function(.data,
   # set up S3 object
   new_exposed_df(res, end_date, start_date,
                  target_status, cal_expo, expo_length,
-                 trx_types = NULL)
+                 trx_types = NULL, default_status)
 
 }
 
@@ -267,6 +264,7 @@ expose_cw <- function(...) {
   expose(cal_expo = TRUE, expo_length = "week", ...)
 }
 
+# helper functions for calendar year fractions - do not export
 year_frac <- function(x, .offset = 0) {
   (lubridate::yday(x) - .offset) / (365 + lubridate::leap_year(x))
 }
@@ -283,6 +281,14 @@ month_frac <- function(x, .offset = 0) {
 
 week_frac <- function(x, .offset = 0) {
   (lubridate::wday(x) - .offset) / 7
+}
+
+cal_frac <- function(x) {
+  switch(x,
+         "year" = year_frac,
+         "quarter" = quarter_frac,
+         "month" = month_frac,
+         'week' = week_frac)
 }
 
 # helper function to handle name conflicts
@@ -313,4 +319,19 @@ abbr_period <- function(x) {
          "quarter" = "qtr",
          "month" = "mth",
          'week' = "wk")
+}
+
+# determine the most common status
+most_common <- function(x) {
+  y <- table(x) |> sort(decreasing = TRUE) |> names()
+  factor(y[[1]], levels(x))
+}
+
+# helper function for determining exposure step lengths
+expo_step <- function(x) {
+  switch(x,
+         "year" = lubridate::years(1),
+         "quarter" = months(3),
+         "month" = months(1),
+         "week" = lubridate::days(7))
 }

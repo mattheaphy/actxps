@@ -15,6 +15,15 @@
 #' [trx_stats()] function.
 #' @param fontsize Font size percentage multiplier.
 #' @param decimals Number of decimals to display for percentages
+#' @param decimals_amt Number of decimals to display for amount columns (number
+#' of claims, claim amounts, exposures, transaction counts, total transactions,
+#' and average transactions)
+#' @param suffix_amt This argument has the same meaning as the `suffixing`
+#' argument in [gt::fmt_number()] for amount columns. If `FALSE` (the default),
+#' no scaling or suffixing are applied to amount columns. If `TRUE`, all amount
+#' columns are automatically scaled and suffixed by "K" (thousands), "M"
+#' (millions), "B" (billions), or "T" (trillions). See [gt::fmt_number()] for
+#' more information.
 #' @param colorful If `TRUE`, color will be added to the the observed
 #' termination rate and actual-to-expected columns for termination studies, and
 #' the utilization rate and "percentage of" columns for transaction studies.
@@ -80,6 +89,8 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                              rename_cols = rlang::list2(...),
                              show_conf_int = FALSE,
                              show_cred_adj = FALSE,
+                             decimals_amt = 0,
+                             suffix_amt = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -110,7 +121,8 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   tab <- object |>
     select(-dplyr::starts_with(".weight")) |>
     gt::gt(...) |>
-    gt::fmt_number(c(claims, exposure), decimals = 0) |>
+    gt::fmt_number(c(n_claims, claims, exposure),
+                   decimals = decimals_amt, suffixing = suffix_amt) |>
     gt::fmt_percent(c(q_obs,
                       dplyr::ends_with("_lower"),
                       dplyr::ends_with("_upper"),
@@ -211,6 +223,8 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
                              color_pct_of = "RColorBrewer::RdBu",
                              rename_cols = rlang::list2(...),
                              show_conf_int = FALSE,
+                             decimals_amt = 0,
+                             suffix_amt = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -240,7 +254,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
     arrange(trx_type) |>
     gt::gt(groupname_col = "trx_type") |>
     gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
-                   decimals = 0) |>
+                   decimals = decimals_amt, suffixing = suffix_amt) |>
     gt::fmt_number(trx_freq, decimals = 1) |>
     gt::fmt_percent(c(dplyr::starts_with("trx_util"),
                       dplyr::starts_with("pct_of_")),

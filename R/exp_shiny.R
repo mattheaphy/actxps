@@ -120,6 +120,10 @@
 #' @param theme The name of a theme passed to the `preset` argument of
 #' `bslib::bs_theme()`. Alternatively, a complete Bootstrap theme created using
 #' `bslib::bs_theme()`.
+#' @param col_exposure Name of the column in `dat` containing exposures. This
+#' input is only used to clarify the exposure basis when `dat` is a
+#' `split_exposed_df` object. For more information on split exposures, see
+#' [expose_split()].
 #'
 #' @inheritParams exp_stats
 #'
@@ -151,13 +155,28 @@ exp_shiny <- function(dat,
                       credibility = TRUE,
                       conf_level = 0.95,
                       cred_r = 0.05,
-                      theme = "shiny") {
+                      theme = "shiny",
+                      col_exposure = "exposure") {
 
   rlang::check_installed("shiny")
   rlang::check_installed("bslib")
   rlang::check_installed("thematic")
 
   verify_exposed_df(dat)
+
+  # special logic required for split exposed data frames
+  if (is_split_exposed_df(dat)) {
+    check_split_expose_basis(dat, col_exposure)
+    dat <- rename(dat,
+                  exposure = {{col_exposure}})
+
+    if (col_exposure == "exposure_cal") {
+      dat$exposure_pol <- NULL
+    } else {
+      dat$exposure_cal <- NULL
+    }
+  }
+
   # check for presence of transactions
   all_trx_types <- verify_get_trx_types(dat, required = FALSE)
   has_trx <- !is.null(all_trx_types)
@@ -743,9 +762,20 @@ exp_shiny <- function(dat,
         shiny::need(input$play, "Paused")
       )
 
-      keep <- purrr::imap_lgl(preds$predictors,
-                              ~ length(setdiff(preds$scope[[.y]],
-                                               input[[paste0("i_", .x)]])) > 0)
+      keep <- preds |> select(predictors, scope, is_number) |>
+        purrr::pmap_lgl(\(predictors, scope, is_number) {
+
+          selected <- input[[paste0("i_", predictors)]]
+
+          if (is_number) {
+            !dplyr::near(scope[[1]], selected[[1]]) ||
+              !dplyr::near(scope[[2]], selected[[2]])
+          } else {
+            length(setdiff(scope, selected)) > 0
+          }
+
+        })
+
       preds$predictors[keep]
     })
 

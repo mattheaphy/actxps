@@ -104,3 +104,55 @@ test_that("Renaming and name conflict warnings work", {
   expect_warning(expose_cy(toy_census |> mutate(cal_yr = 1), "2020-12-31"))
   expect_warning(expose_cy(toy_census |> mutate(cal_yr_end = 1), "2020-12-31"))
 })
+
+# split exposure tests
+
+test_that("expose_split() fails when passed non-calendar exposures", {
+  expect_error(expose_split(1, regexp = "must be an `exposed_df`"))
+  expect_error(expose_py(toy_census, "2022-12-31") |> expose_split(),
+               regexp = "must contain calendar exposures")
+  expect_no_error(expose_cy(toy_census, "2022-12-31") |> expose_split())
+})
+
+
+study_split <- expose_split(study_cy) |> add_transactions(withdrawals)
+study_cy <- add_transactions(study_cy, withdrawals)
+
+test_that("expose_split() is consistent with expose_cy()", {
+  expect_equal(sum(study_cy$exposure), sum(study_split$exposure_cal))
+  expect_equal(sum(study_cy$status != "Active"),
+               sum(study_split$status != "Active"))
+  expect_equal(sum(study_cy$trx_amt_Base),
+               sum(study_split$trx_amt_Base))
+  expect_equal(sum(study_cy$trx_amt_Rider),
+               sum(study_split$trx_amt_Rider))
+})
+
+test_that("expose_split() warns about transactions attached too early", {
+  expect_warning(
+    expose_split(study_cy),
+    regexp = "This will lead to duplication of transactions")
+})
+
+test_that("split exposures error when passed to summary functions without clarifying the exposure basis", {
+  expect_error(exp_stats(study_split),
+               regexp = "A `split_exposed_df` was passed without clarifying")
+  expect_error(trx_stats(study_split),
+               regexp = "A `split_exposed_df` was passed without clarifying")
+})
+
+check_period_end_split <- expose_cy(toy_census, "2020-12-31",
+                                    target_status = "Surrender") |>
+  expose_split() |>
+  select(pol_num, cal_yr, cal_yr_end) |>
+  group_by(pol_num) |>
+  mutate(x = dplyr::lead(cal_yr)) |>
+  ungroup() |>
+  na.omit() |>
+  filter(x != cal_yr_end + 1) |>
+  nrow()
+
+test_that("Split period start and end dates roll", {
+  expect_true(all(study_split$cal_yr <= study_split$cal_yr_end))
+  expect_equal(check_period_end_split, 0)
+})

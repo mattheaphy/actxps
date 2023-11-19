@@ -21,7 +21,8 @@ as_exposed_df(
   col_pol_per,
   cols_dates,
   col_trx_n_ = "trx_n_",
-  col_trx_amt_ = "trx_amt_"
+  col_trx_amt_ = "trx_amt_",
+  default_status
 )
 }
 \arguments{
@@ -31,9 +32,11 @@ as_exposed_df(
 
 \item{start_date}{Experience study start date. Default value = 1900-01-01.}
 
-\item{target_status}{Character vector of target status values. Default value = \code{NULL}.}
+\item{target_status}{Character vector of target status values. Default value
+= \code{NULL}.}
 
-\item{cal_expo}{Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.}
+\item{cal_expo}{Set to TRUE for calendar year exposures. Otherwise policy
+year exposures are assumed.}
 
 \item{expo_length}{Exposure period length}
 
@@ -69,6 +72,9 @@ counts.}
 
 \item{col_trx_amt_}{Optional. Prefix to use for columns containing transaction
 amounts.}
+
+\item{default_status}{Optional scalar character representing the default
+active status code. If not provided, the most common status is assumed.}
 }
 \value{
 For \code{is_exposed_df()}, a length-1 logical vector. For
