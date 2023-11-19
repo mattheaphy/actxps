@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,8 @@
 <span>  <span class="va">col_pol_per</span>,</span>
 <span>  <span class="va">cols_dates</span>,</span>
 <span>  col_trx_n_ <span class="op">=</span> <span class="st">"trx_n_"</span>,</span>
-<span>  col_trx_amt_ <span class="op">=</span> <span class="st">"trx_amt_"</span></span>
+<span>  col_trx_amt_ <span class="op">=</span> <span class="st">"trx_amt_"</span>,</span>
+<span>  <span class="va">default_status</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -99,11 +100,13 @@
 
 
 <dt>target_status</dt>
-<dd><p>Character vector of target status values. Default value = <code>NULL</code>.</p></dd>
+<dd><p>Character vector of target status values. Default value
+= <code>NULL</code>.</p></dd>
 
 
 <dt>cal_expo</dt>
-<dd><p>Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.</p></dd>
+<dd><p>Set to TRUE for calendar year exposures. Otherwise policy
+year exposures are assumed.</p></dd>
 
 
 <dt>expo_length</dt>
@@ -157,6 +160,11 @@ counts.</p></dd>
 <dt>col_trx_amt_</dt>
 <dd><p>Optional. Prefix to use for columns containing transaction
 amounts.</p></dd>
+
+
+<dt>default_status</dt>
+<dd><p>Optional scalar character representing the default
+active status code. If not provided, the most common status is assumed.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -22,7 +22,7 @@ presentation-friendly format."><meta property="og:image" content="https://matthe
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,6 +95,8 @@ presentation-friendly format.</p>
 <span>  rename_cols <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/list2.html" class="external-link">list2</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>,</span>
 <span>  show_conf_int <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show_cred_adj <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  decimals_amt <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  suffix_amt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -108,6 +110,8 @@ presentation-friendly format.</p>
 <span>  color_pct_of <span class="op">=</span> <span class="st">"RColorBrewer::RdBu"</span>,</span>
 <span>  rename_cols <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/list2.html" class="external-link">list2</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>,</span>
 <span>  show_conf_int <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  decimals_amt <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  suffix_amt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -162,6 +166,21 @@ assuming they are available on <code>object</code>.</p></dd>
 <dt>show_cred_adj</dt>
 <dd><p>If <code>TRUE</code> credibility-weighted termination rates will
 be displayed assuming they are available on <code>object</code>.</p></dd>
+
+
+<dt>decimals_amt</dt>
+<dd><p>Number of decimals to display for amount columns (number
+of claims, claim amounts, exposures, transaction counts, total transactions,
+and average transactions)</p></dd>
+
+
+<dt>suffix_amt</dt>
+<dd><p>This argument has the same meaning as the <code>suffixing</code>
+argument in <code><a href="https://gt.rstudio.com/reference/fmt_number.html" class="external-link">gt::fmt_number()</a></code> for amount columns. If <code>FALSE</code> (the default),
+no scaling or suffixing are applied to amount columns. If <code>TRUE</code>, all amount
+columns are automatically scaled and suffixed by "K" (thousands), "M"
+(millions), "B" (billions), or "T" (trillions). See <code><a href="https://gt.rstudio.com/reference/fmt_number.html" class="external-link">gt::fmt_number()</a></code> for
+more information.</p></dd>
 
 
 <dt>color_util</dt>

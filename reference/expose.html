@@ -12,7 +12,7 @@ records."><meta property="og:image" content="https://mattheaphy.github.io/actxps
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -113,11 +113,13 @@ records.</p>
 
 
 <dt>target_status</dt>
-<dd><p>Character vector of target status values. Default value = <code>NULL</code>.</p></dd>
+<dd><p>Character vector of target status values. Default value
+= <code>NULL</code>.</p></dd>
 
 
 <dt>cal_expo</dt>
-<dd><p>Set to TRUE for calendar year exposures. Otherwise policy year exposures are assumed.</p></dd>
+<dd><p>Set to TRUE for calendar year exposures. Otherwise policy
+year exposures are assumed.</p></dd>
 
 
 <dt>expo_length</dt>
@@ -137,11 +139,13 @@ records.</p>
 
 
 <dt>col_term_date</dt>
-<dd><p>Name of the column in <code>.data</code> containing the termination date</p></dd>
+<dd><p>Name of the column in <code>.data</code> containing the termination
+date</p></dd>
 
 
 <dt>default_status</dt>
-<dd><p>Optional scalar character representing the default active status code</p></dd>
+<dd><p>Optional scalar character representing the default
+active status code. If not provided, the most common status is assumed.</p></dd>
 
 
 <dt>...</dt>
@@ -181,8 +185,7 @@ in the observation period. If the annual exposure method isn't desired,
 <code>target_status</code> can be ignored. In this case, partial exposures are
 always applied regardless of status.</p>
 <p><code>default_status</code> is used to indicate the default active status that
-should be used when exposure records are created. If left blank, then the
-first status level will be assumed to be the default active status.</p>
+should be used when exposure records are created.</p>
     </div>
     <div class="section level2">
     <h2 id="policy-period-and-calendar-period-variations">Policy period and calendar period variations<a class="anchor" aria-label="anchor" href="#policy-period-and-calendar-period-variations"></a></h2>
@@ -202,6 +205,11 @@ underscore describe the exposure type and exposure period, respectively.</p>
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Atkinson and McGarry (2016). Experience Study Calculations.
 <a href="https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf" class="external-link">https://www.soa.org/49378a/globalassets/assets/files/research/experience-study-calculations.pdf</a></p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="expose_split.html">expose_split()</a></code> for information on splitting calendar year
+exposures by policy year.</p></div>
     </div>
 
     <div class="section level2">

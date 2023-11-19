@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -350,7 +350,7 @@ increased to 100% in the last exposure period.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="other-exposures-periods">Other exposures periods<a class="anchor" aria-label="anchor" href="#other-exposures-periods"></a>
+<h2 id="other-exposure-periods">Other exposure periods<a class="anchor" aria-label="anchor" href="#other-exposure-periods"></a>
 </h2>
 <p>The default exposure basis used by <code><a href="../reference/expose.html">expose()</a></code> is policy
 years. Using the arguments <code>cal_expo</code> and
@@ -366,8 +366,10 @@ through the year, and the last period is right-censored because the
 policy terminated roughly seven-tenths of the way through the year.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">toy_census</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">exposed_cal</span> <span class="op">&lt;-</span> <span class="va">toy_census</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span>end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, cal_expo <span class="op">=</span> <span class="cn">TRUE</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">exposed_cal</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Exposure type: calendar_year </span></span>
@@ -396,11 +398,12 @@ policy terminated roughly seven-tenths of the way through the year.</p>
 the <code>expo_length</code> argument. This can be used with policy or
 calendar-based exposures.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">toy_census</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">toy_census</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span>end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, </span>
 <span>         cal_expo <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>         expo_length <span class="op">=</span> <span class="st">"quarter"</span>, </span>
-<span>         target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
+<span>         target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Exposure type: calendar_quarter </span></span>
@@ -430,23 +433,147 @@ calendar-based exposures.</p>
 specifying <code>cal_expo</code> and <code>expo_length</code>.</p>
 <ul>
 <li>
-<code>expose_py</code> = exposures by policy year</li>
+<code><a href="../reference/expose.html">expose_py()</a></code> = exposures by policy year</li>
 <li>
-<code>expose_pq</code> = exposures by policy quarter</li>
+<code><a href="../reference/expose.html">expose_pq()</a></code> = exposures by policy quarter</li>
 <li>
-<code>expose_pm</code> = exposures by policy month</li>
+<code><a href="../reference/expose.html">expose_pm()</a></code> = exposures by policy month</li>
 <li>
-<code>expose_pw</code> = exposures by policy week</li>
+<code><a href="../reference/expose.html">expose_pw()</a></code> = exposures by policy week</li>
 <li>
-<code>expose_cy</code> = exposures by calendar year</li>
+<code><a href="../reference/expose.html">expose_cy()</a></code> = exposures by calendar year</li>
 <li>
-<code>expose_cq</code> = exposures by calendar quarter</li>
+<code><a href="../reference/expose.html">expose_cq()</a></code> = exposures by calendar quarter</li>
 <li>
-<code>expose_cm</code> = exposures by calendar month</li>
+<code><a href="../reference/expose.html">expose_cm()</a></code> = exposures by calendar month</li>
 <li>
-<code>expose_cw</code> = exposures by calendar week</li>
+<code><a href="../reference/expose.html">expose_cw()</a></code> = exposures by calendar week</li>
 </ul>
 </div>
+</div>
+<div class="section level2">
+<h2 id="split-exposures-by-calendar-period-and-policy-year">Split exposures by calendar period and policy year<a class="anchor" aria-label="anchor" href="#split-exposures-by-calendar-period-and-policy-year"></a>
+</h2>
+<p>A common technique used in experience studies is to split calendar
+years into two records: a pre-anniversary record and a post-anniversary
+record. In actxps, this can be accomplished using the
+<code><a href="../reference/expose_split.html">expose_split()</a></code> function.</p>
+<p>Let’s continue examining the second policy. <code>exposed_cal</code>,
+which contains calendar year exposures, is passed into
+<code><a href="../reference/expose_split.html">expose_split()</a></code>. The resulting data frame now contains 19
+records instead of 10. There is one record for 2011 and 2 records for
+all other years. The year 2011 only has a single record because the
+policy was issued in this year, so there can only be a post-anniversary
+record.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">split</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expose_split.html">expose_split</a></span><span class="op">(</span><span class="va">exposed_cal</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">split</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cal_yr</span>, <span class="va">cal_yr_end</span>, <span class="va">pol_yr</span>, <span class="va">exposure_pol</span>, <span class="va">exposure_cal</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Exposure data</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Exposure type: split_year </span></span>
+<span><span class="co">#&gt;  Target status: Surrender </span></span>
+<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 5</span></span></span>
+<span><span class="co">#&gt;    cal_yr     cal_yr_end pol_yr exposure_pol exposure_cal</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2011-05-27 2011-12-31      1        0.598        0.6  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2012-01-01 2012-05-26      1        0.402        0.402</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2012-05-27 2012-12-31      2        0.6          0.598</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2013-01-01 2013-05-26      2        0.4          0.4  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2013-05-27 2013-12-31      3        0.6          0.6  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2014-01-01 2014-05-26      3        0.4          0.4  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2014-05-27 2014-12-31      4        0.6          0.6  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2015-01-01 2015-05-26      4        0.4          0.4  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2015-05-27 2015-12-31      5        0.598        0.6  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2016-01-01 2016-05-26      5        0.402        0.402</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> 2016-05-27 2016-12-31      6        0.6          0.598</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> 2017-01-01 2017-05-26      6        0.4          0.4  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> 2017-05-27 2017-12-31      7        0.6          0.6  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> 2018-01-01 2018-05-26      7        0.4          0.4  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> 2018-05-27 2018-12-31      8        0.6          0.6  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> 2019-01-01 2019-05-26      8        0.4          0.4  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> 2019-05-27 2019-12-31      9        0.598        0.6  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> 2020-01-01 2020-05-26      9        0.402        0.402</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> 2020-05-27 2020-12-31     10        0.304        0.303</span></span></code></pre></div>
+<p>The output of <code><a href="../reference/expose_split.html">expose_split()</a></code> contains two exposure
+columns.</p>
+<ul>
+<li>
+<code>exposure_pol</code> contains policy year exposures</li>
+<li>
+<code>exposure_cal</code> contains calendar year exposures</li>
+</ul>
+<p>The two exposure bases will often not match for two reasons:</p>
+<ol style="list-style-type: decimal">
+<li><p>Calendar years and policy years have different start and end
+dates that may or may not include a leap day. In the first row, the
+calendar year exposure is 0.6 years of the year 2011, which does not
+include a leap day. In the second row, the policy year exposure is
+0.5984 years of the policy year spanning 2011-05-27 to 2012-05-26, which
+does include a leap day.</p></li>
+<li><p>Application of the annual exposure method. If the termination
+event of interest appears on a post-anniversary record, policy exposures
+will be 1 and calendar exposures will be the fraction of the year
+spanning the anniversary to December 31st. Conversely, if the
+termination event of interest appears on a pre-anniversary record,
+calendar exposures will be 1 and policy exposures will be the fraction
+of the policy year from January 1st to the last day of the current
+policy year. While it may sound confusing at first, these rules are
+important to ensure that the termination event of interest always has an
+exposure of 1 when the data is grouped on a calendar year or policy year
+basis.</p></li>
+</ol>
+<p>Some downstream functions like <code><a href="../reference/exp_stats.html">exp_stats()</a></code> expect
+<code>exposed_df</code> objects to have a single column for exposures.
+For split exposures, the exposure basis must be specified using the
+<code>col_exposure</code> argument.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> A `split_exposed_df` was passed without clarifying which exposure basis should be used to summarize results.</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Pass "exposure_pol" to `col_exposure` for policy year exposures.</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Pass "exposure_cal" to `col_exposure` for calendar exposures.</span></span></code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="va">split</span>, col_exposure <span class="op">=</span> <span class="st">"exposure_pol"</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/expose_split.html">expose_split()</a></code> doesn’t just work with calendar year
+exposures. Calendar quarters, months, or weeks can also be split. For
+periods shorter than a year, a record is only split into pre- and
+post-anniversary segments if a policy anniversary appears in the middle
+of the period.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="../reference/expose.html">expose_cq</a></span><span class="op">(</span><span class="va">toy_census</span>, <span class="st">"2022-12-31"</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/expose_split.html">expose_split</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cal_qtr</span>, <span class="va">cal_qtr_end</span>, <span class="va">pol_yr</span>, <span class="va">exposure_pol</span>, <span class="va">exposure_cal</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Exposure data</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Exposure type: split_quarter </span></span>
+<span><span class="co">#&gt;  Target status: Surrender </span></span>
+<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 47 × 5</span></span></span>
+<span><span class="co">#&gt;    cal_qtr    cal_qtr_end pol_yr exposure_pol exposure_cal</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2011-05-27 2011-06-30       1       0.095<span style="text-decoration: underline;">6</span>        0.385</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2011-07-01 2011-09-30       1       0.251         1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2011-10-01 2011-12-31       1       0.251         1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2012-01-01 2012-03-31       1       0.249         1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2012-04-01 2012-05-26       1       0.153         0.615</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2012-05-27 2012-06-30       2       0.095<span style="text-decoration: underline;">9</span>        0.385</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2012-07-01 2012-09-30       2       0.252         1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2012-10-01 2012-12-31       2       0.252         1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2013-01-01 2013-03-31       2       0.247         1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2013-04-01 2013-05-26       2       0.153         0.615</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 37 more rows</span></span></span></code></pre></div>
+<p>Note, however, that calendar period exposures will always be
+expressed in the original units and policy exposures will always be
+expressed in years. Above, calendar exposures are quarters whereas
+policy exposures are years.</p>
 </div>
 <div class="section level2">
 <h2 id="tidymodels-recipe-step">Tidymodels recipe step<a class="anchor" aria-label="anchor" href="#tidymodels-recipe-step"></a>
@@ -455,7 +582,7 @@ specifying <code>cal_expo</code> and <code>expo_length</code>.</p>
 a function called <code><a href="../reference/step_expose.html">step_expose()</a></code> that is compatible with the
 recipes package from tidymodels. This function applies the
 <code><a href="../reference/expose.html">expose()</a></code> function within a recipe.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/recipes" class="external-link">recipes</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -531,7 +658,7 @@ data frame uses the following naming conventions:</p>
 arguments.</p>
 <p>For example, if the policy number column was called <code>id</code>
 in our census-level data, we could write:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census</span>, end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, </span>
 <span>       target <span class="op">=</span> <span class="st">"Surrender"</span>,</span>
 <span>       col_pol_num <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span></code></pre></div>
@@ -545,7 +672,7 @@ periods. Depending on the nature of the data, this may or may not be
 desirable. Constant policy attributes like plan type make sense to
 broadcast, but numeric values may or may not depending on the
 circumstances.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">toy_census2</span> <span class="op">&lt;-</span> <span class="va">toy_census</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>plan_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X"</span>, <span class="st">"Y"</span>, <span class="st">"Z"</span><span class="op">)</span>, </span>
 <span>         policy_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">125</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span>
@@ -577,7 +704,7 @@ circumstances.</p>
 <p>If your experience study requires a numeric feature that varies over
 time (ex: policy values, crediting rates, etc.), you can always attach
 it to an <code>exposed_df</code> object using a join function.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Illustrative example - assume `values` is a data frame containing the columns pol_num and pol_yr.</span></span>
 <span></span>
@@ -604,7 +731,7 @@ status of “Surrender” whereas <code>exposed_data</code> has none.</p>
 <p>When <code><a href="https://vctrs.r-lib.org/reference/vec_bind.html" class="external-link">vctrs::vec_rbind()</a></code> is used to combine
 <code>exposed_data</code> and <code>exposed_data2</code>, the result
 combines attributes across both objects.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">exposed_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census</span>, </span>
 <span>                        end_date <span class="op">=</span> <span class="st">"2023-12-31"</span>, </span>
@@ -636,7 +763,7 @@ combines attributes across both objects.</p>
 <p>If <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">dplyr::bind_rows()</a></code> were used instead, the attributes
 of <code>exposed_data</code> only are shown, which is likely
 incorrect.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">exposed_data</span>, <span class="va">exposed_data2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
