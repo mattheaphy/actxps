@@ -16,6 +16,8 @@ into by thousands, millions, billions, or trillions.
 - Corrected an error in the calculation of the standard deviations of claims 
 when `exp_stats()` is passed a weighting variable.
 - Added a `summary()` method for `exposed_df` objects that calls `exp_stats()`.
+- The assumed default status in `expose()` functions was changed from the first
+observed status to the most common status.
 
 # actxps 1.3.0
 
