@@ -332,7 +332,23 @@ finish_exp_stats <- function(.data, target_status, expected,
                .after = dplyr::last_col())
   }
 
-  tibble::new_tibble(res,
+  new_exp_df(res,
+             .groups = .groups,
+             target_status = target_status,
+             start_date = start_date,
+             expected = expected,
+             end_date = end_date,
+             wt = wt,
+             credibility = credibility,
+             conf_level = conf_level, cred_r = cred_r,
+             conf_int = conf_int)
+}
+
+# low level class constructor
+new_exp_df <- function(x, .groups, target_status, start_date, expected,
+                       end_date, wt, credibility, conf_level,
+                       cred_r = cred_r, conf_int) {
+  tibble::new_tibble(x,
                      class = "exp_df",
                      groups = .groups,
                      target_status = target_status,
@@ -341,7 +357,8 @@ finish_exp_stats <- function(.data, target_status, expected,
                      end_date = end_date,
                      wt = wt,
                      xp_params = list(credibility = credibility,
-                                      conf_level = conf_level, cred_r = cred_r,
+                                      conf_level = conf_level,
+                                      cred_r = cred_r,
                                       conf_int = conf_int))
 }
 
