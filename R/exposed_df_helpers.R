@@ -42,6 +42,7 @@
 #' `as_exposed_df()`, an `exposed_df` object.
 #'
 #' @importFrom vctrs vec_ptype2 vec_cast
+#' @seealso expose
 #'
 #' @export
 is_exposed_df <- function(x) {
