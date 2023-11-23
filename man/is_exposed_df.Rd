@@ -92,3 +92,6 @@ policy periods (for policy exposures only), and exposure start / end dates.
 Optionally, if \code{x} has transaction counts and amounts by type, these can
 be specified without calling \code{\link[=add_transactions]{add_transactions()}}.
 }
+\seealso{
+expose
+}
