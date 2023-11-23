@@ -119,16 +119,11 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
 
   # check required columns
   # pol_num, status, exposure, 2 date cols, policy period (policy expo only)
-  unmatched <- c("pol_num", "status", "exposure",
+  req_names <- c("pol_num", "status", "exposure",
                  exp_col_pol_per,
                  exp_cols_dates,
                  exp_cols_trx)
-  unmatched <- setdiff(unmatched, names(x))
-
-  if (length(unmatched) > 0) {
-    rlang::abort(c(x = glue::glue("The following columns are missing from `x`: {paste(unmatched, collapse = ', ')}."),
-                   i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
-  }
+  verify_col_names(names(x), req_names)
 
   if (missing(default_status)) {
     default_status <- most_common(x$status)
@@ -611,4 +606,14 @@ verify_get_trx_types <- function(.data, required = TRUE) {
     return(NULL)
   }
   trx_types
+}
+
+# function to verify that required names exist and to send an error if not
+verify_col_names <- function(x_names, required) {
+  unmatched <- setdiff(required, x_names)
+
+  if (length(unmatched) > 0) {
+    rlang::abort(c(x = glue::glue("The following columns are missing: {paste(unmatched, collapse = ', ')}."),
+                   i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
+  }
 }
