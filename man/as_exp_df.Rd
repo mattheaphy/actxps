@@ -8,8 +8,12 @@
 as_exp_df(
   x,
   expected = NULL,
+  wt = NULL,
   col_claims,
   col_exposure,
+  col_n_claims,
+  col_weight_sq,
+  col_weight_n,
   target_status = NULL,
   start_date = NULL,
   end_date = NULL,
@@ -27,11 +31,25 @@ is_exp_df(x)
 \item{expected}{A character vector containing column names in x with
 expected values}
 
+\item{wt}{Optional. Length 1 character vector. Name of the column in \code{x}
+containing weights to use in the calculation of claims, exposures, partial
+credibility, and confidence intervals.}
+
 \item{col_claims}{Optional. Name of the column in \code{x} containing claims. The
 assumed default is "claims".}
 
 \item{col_exposure}{Optional. Name of the column in \code{x} containing exposures.
 The assumed default is "exposure".}
+
+\item{col_n_claims}{Optional and only used used when \code{wt} is passed. Name of
+the column in \code{x} containing the number of claims.}
+
+\item{col_weight_sq}{Optional and only used used when \code{wt} is passed. Name of
+the column in \code{x} containing the sum of squared weights (also not multiplied
+by exposures).}
+
+\item{col_weight_n}{Optional and only used used when \code{wt} is passed. Name of
+the column in \code{x} containing exposure record counts.}
 
 \item{target_status}{Character vector of target status values. Default value
 = \code{NULL}.}
@@ -66,8 +84,36 @@ Test for and coerce to the \code{exp_df} class.
 \code{as_exp_df()} will coerce a data frame to an \code{exp_df} object if that
 data frame has columns for exposures and claims.
 
-\code{as_exp_df()} is most useful for converting existing aggregate summaries of
+\code{as_exp_df()} is most useful for working with existing aggregate summaries of
 experience where individual policy information is not available.
+
+If nothing is passed to \code{wt}, the data frame \code{x} must include columns
+containing:
+\itemize{
+\item Exposures (\code{exposure})
+\item Claim counts (\code{claims})
+}
+
+If \code{wt} is passed, the data must include columns containing:
+\itemize{
+\item Weighted exposures (\code{exposure})
+\item Weighted claims (\code{claims})
+\item Claim counts (\code{n_claims})
+\item The raw sum of weights \strong{NOT} multiplied by exposures
+\item Exposure record counts (\code{.weight_n})
+\item The raw sum of squared weights (\code{.weight_sq})
+}
+
+The names in parentheses above are expected column names. If the data
+frame passed to \code{as_exp_df()} uses different column names, these can be
+specified using the \verb{col_*} arguments.
+
+When a column name is passed to \code{wt}, the columns \code{.weight}, \code{.weight_n},
+and \code{.weight_sq} are used to calculate credibility and confidence intervals.
+If credibility and confidence intervals aren't required, then it is not
+necessary to pass anything to \code{wt}. The results of \code{as_exp_df()} and any
+downstream summaries will still be weighted as long as the exposures and
+claims are pre-weighted.
 }
 \seealso{
 exp_stats
