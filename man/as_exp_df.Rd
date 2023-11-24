@@ -121,6 +121,36 @@ claims are pre-weighted.
 \code{target_status}, \code{start_date}, and \code{end_date} are optional arguments that are
 only used for printing the resulting \code{exp_df} object.
 }
+\examples{
+# convert pre-aggregated experience into an exp_df object
+dat <- as_exp_df(agg_sim_dat, col_exposure = "exposure_n",
+                 col_claims = "claims_n",
+                 target_status = "Surrender",
+                 start_date = 2005, end_date = 2019,
+                 conf_int = TRUE)
+dat
+is_exp_df(dat)
+
+# summary by policy year
+summary(dat, pol_yr)
+
+# repeat the prior exercise on a weighted basis
+dat_wt <- as_exp_df(agg_sim_dat, wt = "av",
+                    col_exposure = "exposure_amt",
+                    col_claims = "claims_amt",
+                    col_n_claims = "claims_n",
+                    col_weight_sq = "av_sq",
+                    col_weight_n = "n",
+                    target_status = "Surrender",
+                    start_date = 2005, end_date = 2019,
+                    conf_int = TRUE)
+dat_wt
+
+# summary by policy year
+summary(dat_wt, pol_yr)
+
+
+}
 \seealso{
 \code{\link[=exp_stats]{exp_stats()}} for information on how \code{exp_df} objects are typically
 created from individual exposure records.

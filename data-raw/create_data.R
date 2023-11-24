@@ -23,3 +23,20 @@ source("data-raw/simulate_data.R")
 usethis::use_data(census_dat, overwrite = TRUE)
 usethis::use_data(withdrawals, overwrite = TRUE)
 usethis::use_data(account_vals, overwrite = TRUE)
+
+agg_sim_dat <- expose_py(census_dat, "2019-12-31",
+                         target_status = "Surrender") |>
+  add_transactions(withdrawals) |>
+  left_join(account_vals, by = c("pol_num", "pol_date_yr")) |>
+  group_by(pol_yr, inc_guar, qual, product) |>
+  summarize(exposure_n = sum(exposure),
+            claims_n = sum(status == "Surrender"),
+            wd = sum(trx_amt_Rider) + sum(trx_amt_Base),
+            av = sum(av_anniv),
+            exposure_amt = sum(exposure * av_anniv),
+            claims_amt = sum((status == "Surrender") * av_anniv),
+            av_sq = sum(av_anniv ^ 2),
+            n = n(),
+            .groups = "drop")
+
+usethis::use_data(agg_sim_dat, overwrite = TRUE)
