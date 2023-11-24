@@ -348,14 +348,32 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
       relocate(trx_amt_sq, .after = dplyr::last_col())
   }
 
-  tibble::new_tibble(res,
+  new_trx_df(res,
+             .groups = .groups,
+             trx_types = trx_types,
+             start_date = start_date,
+             percent_of = percent_of,
+             end_date = end_date,
+             conf_level = conf_level,
+             conf_int = conf_int)
+
+}
+
+# low level class constructor
+new_trx_df <- function(x, .groups, trx_types,
+                       start_date, percent_of, end_date,
+                       conf_level, conf_int) {
+
+  tibble::new_tibble(x,
                      class = "trx_df",
-                     groups = .groups, trx_types = trx_types,
+                     groups = .groups,
+                     trx_types = trx_types,
                      start_date = start_date,
                      percent_of = percent_of,
                      end_date = end_date,
                      xp_params = list(conf_level = conf_level,
                                       conf_int = conf_int))
+
 }
 
 verify_trx_df <- function(.data) {
