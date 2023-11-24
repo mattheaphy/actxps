@@ -37,7 +37,8 @@
 #' @examples
 #' toy_census |> expose_cy("2022-12-31") |> expose_split()
 #'
-#' @seealso [expose()]
+#' @seealso [expose()] for information on creating exposure records from census
+#' data.
 #'
 #' @export
 expose_split <- function(.data) {

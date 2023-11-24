@@ -93,5 +93,6 @@ Optionally, if \code{x} has transaction counts and amounts by type, these can
 be specified without calling \code{\link[=add_transactions]{add_transactions()}}.
 }
 \seealso{
-expose
+\code{\link[=expose]{expose()}} for information on how \code{exposed_df} objects are typically
+created from census data.
 }

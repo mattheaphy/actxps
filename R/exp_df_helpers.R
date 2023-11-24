@@ -1,14 +1,17 @@
 #' Termination summary helper functions
 #'
-#' Test for and coerce to the `exp_df` class.
+#' Convert aggregate experience studies to the `exp_df` class.
 #'
 #' `is_exp_df()` will return `TRUE` if `x` is an `exp_df` object.
 #'
 #' `as_exp_df()` will coerce a data frame to an `exp_df` object if that
 #' data frame has columns for exposures and claims.
 #'
-#' `as_exp_df()` is most useful for working with existing aggregate summaries of
-#' experience where individual policy information is not available.
+#' `as_exp_df()` is most useful for working with aggregate summaries of
+#' experience that were not created by actxps where individual policy
+#' information is not available. After converting the data to the `exp_df`
+#' class, [summary()] can be used to summarize data by any grouping variables,
+#' and [autoplot()] and [autotable()] are available for reporting.
 #'
 #' If nothing is passed to `wt`, the data frame `x` must include columns
 #' containing:
@@ -35,6 +38,9 @@
 #' necessary to pass anything to `wt`. The results of `as_exp_df()` and any
 #' downstream summaries will still be weighted as long as the exposures and
 #' claims are pre-weighted.
+#'
+#' `target_status`, `start_date`, and `end_date` are optional arguments that are
+#' only used for printing the resulting `exp_df` object.
 #'
 #' @param x An object. For `as_exp_df()`, `x` must be a data frame.
 #' @param expected A character vector containing column names in x with
@@ -67,7 +73,8 @@
 #' @return For `is_exp_df()`, a length-1 logical vector. For `as_exp_df()`,
 #' an `exp_df` object.
 #'
-#' @seealso exp_stats
+#' @seealso [exp_stats()] for information on how `exp_df` objects are typically
+#' created from individual exposure records.
 #'
 #' @export
 as_exp_df <- function(x, expected = NULL, wt = NULL,

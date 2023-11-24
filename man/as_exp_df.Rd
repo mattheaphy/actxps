@@ -76,7 +76,7 @@ For \code{is_exp_df()}, a length-1 logical vector. For \code{as_exp_df()},
 an \code{exp_df} object.
 }
 \description{
-Test for and coerce to the \code{exp_df} class.
+Convert aggregate experience studies to the \code{exp_df} class.
 }
 \details{
 \code{is_exp_df()} will return \code{TRUE} if \code{x} is an \code{exp_df} object.
@@ -84,8 +84,11 @@ Test for and coerce to the \code{exp_df} class.
 \code{as_exp_df()} will coerce a data frame to an \code{exp_df} object if that
 data frame has columns for exposures and claims.
 
-\code{as_exp_df()} is most useful for working with existing aggregate summaries of
-experience where individual policy information is not available.
+\code{as_exp_df()} is most useful for working with aggregate summaries of
+experience that were not created by actxps where individual policy
+information is not available. After converting the data to the \code{exp_df}
+class, \code{\link[=summary]{summary()}} can be used to summarize data by any grouping variables,
+and \code{\link[=autoplot]{autoplot()}} and \code{\link[=autotable]{autotable()}} are available for reporting.
 
 If nothing is passed to \code{wt}, the data frame \code{x} must include columns
 containing:
@@ -114,7 +117,11 @@ If credibility and confidence intervals aren't required, then it is not
 necessary to pass anything to \code{wt}. The results of \code{as_exp_df()} and any
 downstream summaries will still be weighted as long as the exposures and
 claims are pre-weighted.
+
+\code{target_status}, \code{start_date}, and \code{end_date} are optional arguments that are
+only used for printing the resulting \code{exp_df} object.
 }
 \seealso{
-exp_stats
+\code{\link[=exp_stats]{exp_stats()}} for information on how \code{exp_df} objects are typically
+created from individual exposure records.
 }

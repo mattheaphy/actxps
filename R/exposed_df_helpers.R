@@ -42,7 +42,8 @@
 #' `as_exposed_df()`, an `exposed_df` object.
 #'
 #' @importFrom vctrs vec_ptype2 vec_cast
-#' @seealso expose
+#' @seealso [expose()] for information on how `exposed_df` objects are typically
+#' created from census data.
 #'
 #' @export
 is_exposed_df <- function(x) {
