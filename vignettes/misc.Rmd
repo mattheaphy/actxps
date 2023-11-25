@@ -24,6 +24,42 @@ library(actxps)
 library(lubridate)
 ```
 
+## Working with aggregate experience data
+
+Seriatim-level policy experience data is often not available for analysis. This is almost always the case with industry studies that contain experience data submitted by multiple parties. In these cases, experience is grouped by a several common policy attributes and aggregated accordingly.
+
+The typical workflow in actxps of `expose() |> exp_stats()` for termination studies or `expose() |> add_transactions() |> trx_stats()` for transaction studies doesn't apply if the starting data is aggregated. That is because another party has already gone through the steps of creating exposure records and performing an initial level of aggregation.
+
+Actxps provides two functions designed to work with aggregate experience data.
+
+- For termination studies, `as_exp_df()` converts a data frame of aggregate experience into an `exp_df` object, which is the class returned by `exp_stats()`
+= For transaction studies, `as_trx_df()` converts a data frame of aggregate experience into a `trx_df` object, which is the class returned by `trx_stats()`
+
+Both object classes have a `summary()` method which summarizes experience across any grouping variables passed to the function. The output of `summary()` will always be another `exp_df` (or `trx_df`) object, and will look just like the results of `exp_stats()` (or `trx_stats()`). For downstream reporting, summary results can be passed to the visualization functions `autoplot()` and `autotable()`.
+
+The `agg_sim_dat` data set contains aggregate experience on a theoretical block of deferred annuity contracts. Below, `as_exp_df()` is used to convert the data to an `exp_df`, and `summary()` is called using multiple grouping variables.
+
+```{r agg-exp-1}
+agg_sim_exp_df <- agg_sim_dat |> 
+  as_exp_df(col_exposure = "exposure_n", col_claims = "claims_n",
+            conf_int = TRUE,
+            start_date = 2005, end_date = 2019, target_status = "Surrender")
+```
+
+Results summarized by policy year
+
+```{r agg-exp-2}
+summary(agg_sim_exp_df, pol_yr)
+```
+
+Results summarized by income guarantee presence and product
+
+```{r agg-exp-3}
+summary(agg_sim_exp_df, inc_guar, product)
+```
+
+`as_exp_df()` and `as_trx_df()` contain several arguments for optional calculations like confidence intervals, expected values, weighting variables, and more. These arguments mirror the functionality in `exp_stats()` and `trx_stats()`. Both functions also contain multiple arguments for specifying column names associated with required values like exposures and claims.
+
 ## Policy duration functions
 
 The `pol_()` family of functions calculates policy years, months, quarters, weeks, or any other arbitrary duration. Each function accepts a vector of dates and a vector of issue dates.
@@ -31,8 +67,6 @@ The `pol_()` family of functions calculates policy years, months, quarters, week
 **Example**: assume a policy was issued on 2022-05-10 and we are interested in calculating various policy duration values at the end of calendar years 2022-2032.
 
 ```{r pol-dur1}
-
-
 dates <- ymd("2022-12-31") + years(0:10)
 
 # policy years
@@ -53,7 +87,6 @@ pol_wk(dates, "2022-05-10")
 The more general `pol_interval()` function calculates any arbitrary duration. This function has a third argument where the length of the policy duration can be specified. This argument must be a period object. See `lubridate::period()` for more information.
 
 ```{r pol-dur2}
-
 # days
 pol_interval(dates, "2022-05-10", days(1))
 
@@ -71,7 +104,6 @@ Below, a very simple logistic regression model is fit to surrender experience in
 The `col_expected` argument is used to rename the column(s) containing predicted values. If no names are specified, the default name is "expected".
 
 ```{r add-preds, fig.height=4, fig.width=5}
-
 # create exposure records
 exposed_data <- expose(census_dat, end_date = "2019-12-31",
                        target_status = "Surrender") |> 

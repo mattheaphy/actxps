@@ -20,16 +20,20 @@ test_that("as_exposed_df works", {
            start = pol_date_yr,
            end = pol_date_yr_end)
 
-  expect_error(as_exposed_df(data.frame(a = 1:3), Sys.Date()))
+  expect_error(as_exposed_df(data.frame(a = 1:3), Sys.Date()),
+               regexp = "The following columns are missing")
 
   expect_true(is_exposed_df(as_exposed_df(expo)))
 
   expect_false(is_exposed_df(expo2))
-  expect_error(as_exposed_df(expo2, end_date = "2022-12-31", expo_length = "yr"))
+  expect_error(as_exposed_df(expo2, end_date = "2022-12-31",
+                             expo_length = "yr"),
+               regexp = "`expo_length` must be one of")
 
   expect_true(is_exposed_df(expo3))
 
-  expect_error(as_exposed_df(expo4))
+  expect_error(as_exposed_df(expo4,
+                             regexp = "The following columns are missing"))
   expect_no_error(as_exposed_df(expo4, end_date = "2022-12-31",
                                 col_pol_num = "pnum"))
   expect_no_error(as_exposed_df(expo5, end_date = "2022-12-31",
@@ -39,7 +43,7 @@ test_that("as_exposed_df works", {
                                 col_pol_per = "py",
                                 cols_dates = c("start", "end")))
 
-  expect_error(as_exposed_df(1))
+  expect_error(as_exposed_df(1), regexp = "`x` must be a data frame.")
 
 })
 
@@ -53,12 +57,14 @@ test_that("as_exposed_df works with transactions", {
       trx_amt_B = 4)
 
   expect_no_error(as_exposed_df(expo6, "2022-12-31", trx_types = c("A", "B")))
-  expect_error(as_exposed_df(expo6, "2022-12-31", trx_types = c("A", "C")))
+  expect_error(as_exposed_df(expo6, "2022-12-31", trx_types = c("A", "C")),
+               regexp = "The following columns are missing")
 
   expo7 <- expo6 |>
     rename(n_A = trx_n_A, n_B = trx_n_B,
            amt_A = trx_amt_A, amt_B = trx_amt_B)
-  expect_error(as_exposed_df(expo7, "2022-12-31", trx_types = c("A", "B")))
+  expect_error(as_exposed_df(expo7, "2022-12-31", trx_types = c("A", "B")),
+               regexp = "The following columns are missing")
   expect_no_error(as_exposed_df(expo7, "2022-12-31", trx_types = c("A", "B"),
                                 col_trx_n_ = "n_",
                                 col_trx_amt_ = "amt_"))

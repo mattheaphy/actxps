@@ -63,4 +63,7 @@ does not represent the experience on any specific product.
 }
 }
 
+\seealso{
+\link{census_dat}
+}
 \keyword{datasets}

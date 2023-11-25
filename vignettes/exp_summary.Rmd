@@ -78,7 +78,6 @@ If the data frame passed into `exp_stats()` is grouped using `dplyr::group_by()`
 In the following, `exposed_data` is grouped by policy year before being passed to `exp_stats()`. This results in one row per policy year found in the data.
 
 ```{r grouped-1}
-
 exposed_data |> 
   group_by(pol_yr) |> 
   exp_stats()
@@ -88,7 +87,6 @@ exposed_data |>
 Multiple grouping variables are allowed. Below, the presence of an income guarantee (`inc_guar`) is added as a second grouping variable.
 
 ```{r grouped-2}
-
 exposed_data |> 
   group_by(inc_guar, pol_yr) |> 
   exp_stats()
@@ -105,7 +103,6 @@ Even if the target status exists on the input data, it can be overridden. Howeve
 Using the example data, a total termination rate can be estimated by including both death and surrender statuses in `target_status`. To ensure exposures are accurate, an adjustment is made to fully expose deaths prior to calling `exp_stats()`^[This adjustment is not necessary on surrenders because the `expose()` function previously did this for us.].
 
 ```{r targ-status}
-
 exposed_data |> 
   mutate(exposure = ifelse(status == "Death", 1, status)) |> 
   group_by(pol_yr) |> 
@@ -121,7 +118,6 @@ Experience studies often weight output by key policy values. Examples include ac
 Our sample data contains a column called `premium` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
 
 ```{r weight-res}
-
 exposed_data |> 
   group_by(pol_yr) |> 
   exp_stats(wt = 'premium')
@@ -145,7 +141,6 @@ In the output, 4 new columns are created for expected rates and A/E ratios.
 
 
 ```{r act-exp}
-
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 # using 2 different expected termination assumption sets
@@ -167,7 +162,6 @@ exp_res |>
 As noted above, if weights are passed to `exp_stats()` then A/E ratios will also be weighted.
 
 ```{r act-exp-wt}
-
 exposed_data2 |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"), 
@@ -305,7 +299,6 @@ exposed_data |>
 `exp_stats()` can still work when given a non-`exposed_df` data frame. However, it will be unable to infer certain attributes like the target status and the study dates. For target status, all statuses except the first level are assumed to be terminations. Since this may not be desirable, a warning message will appear informing what statuses were assumed to be terminated.
 
 ```{r not-exposed_df}
-
 not_exposed_df <- data.frame(exposed_data)
 
 exp_stats(not_exposed_df)

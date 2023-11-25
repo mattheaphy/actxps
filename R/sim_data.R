@@ -43,7 +43,7 @@
 #'   \item{av_anniv}{Account value on the policy anniversary date}
 #' }
 #'
-
+#' @seealso [census_dat]
 #' @name sim_data
 
 NULL

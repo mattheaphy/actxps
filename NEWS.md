@@ -18,6 +18,13 @@ when `exp_stats()` is passed a weighting variable.
 - Added a `summary()` method for `exposed_df` objects that calls `exp_stats()`.
 - The assumed default status in `expose()` functions was changed from the first
 observed status to the most common status.
+- The functions `as_exp_df()` and `as_trx_df()` were added to convert 
+pre-aggregated experience studies to the `exp_df` and `trx_df` formats, 
+respectively.
+- `agg_sim_dat` - a new simulated data set of pre-aggregated experience was 
+added for testing `as_exp_df()` and `as_trx_df()`.
+- `is_exp_df()` and `as_trx_df()` were added to test for the `exp_df` and 
+`trx_df` classes.
 
 # actxps 1.3.0
 

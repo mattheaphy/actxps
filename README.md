@@ -112,7 +112,6 @@ Create a summary grouped by policy year and the presence of a guaranteed
 income rider.
 
 ``` r
-
 exp_res <- exposed_data |> 
   group_by(pol_yr, inc_guar) |> 
   exp_stats()
@@ -147,7 +146,6 @@ exposure data. Then, pass these column names to the `expected` argument
 of `exp_stats()`.
 
 ``` r
-
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 # using 2 different expected termination rates
