@@ -84,13 +84,13 @@ are allowed per exposure period, \code{trx_flag} will be less than \code{trx_n}.
 \item Exposures (\code{exposure})
 }
 
-If transactions amounts should be expressed as a percentage of another
+If transaction amounts should be expressed as a percentage of another
 variable (i.e. to calculate utilization rates or actual-to-expected ratios),
 additional columns are required:
 \itemize{
-\item A denominator "percent of" column. For example, the sum of account value.
+\item A denominator "percent of" column. For example, the sum of account values.
 \item A denominator "percent of" column for exposure records with transactions.
-For example, the sum of account value across all records with non-zero
+For example, the sum of account values across all records with non-zero
 transaction amounts.
 }
 
@@ -105,7 +105,7 @@ specified using the \verb{col_*} arguments.
 \code{start_date}, and \code{end_date} are optional arguments that are
 only used for printing the resulting \code{trx_df} object.
 
-Unlike \code{\link[=trx_stats]{trx_stats()}}, \code{as_trx_df} only permits a single transaction type and
+Unlike \code{\link[=trx_stats]{trx_stats()}}, \code{as_trx_df()} only permits a single transaction type and
 a single \code{percent_of} column.
 }
 \examples{

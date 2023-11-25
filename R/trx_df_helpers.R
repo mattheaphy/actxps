@@ -22,13 +22,13 @@
 #' are allowed per exposure period, `trx_flag` will be less than `trx_n`.
 #' - Exposures (`exposure`)
 #'
-#' If transactions amounts should be expressed as a percentage of another
+#' If transaction amounts should be expressed as a percentage of another
 #' variable (i.e. to calculate utilization rates or actual-to-expected ratios),
 #' additional columns are required:
 #'
-#' - A denominator "percent of" column. For example, the sum of account value.
+#' - A denominator "percent of" column. For example, the sum of account values.
 #' - A denominator "percent of" column for exposure records with transactions.
-#' For example, the sum of account value across all records with non-zero
+#' For example, the sum of account values across all records with non-zero
 #' transaction amounts.
 #'
 #' If confidence intervals are desired and "percent of" columns are passed, an
@@ -42,7 +42,7 @@
 #' `start_date`, and `end_date` are optional arguments that are
 #' only used for printing the resulting `trx_df` object.
 #'
-#' Unlike [trx_stats()], `as_trx_df` only permits a single transaction type and
+#' Unlike [trx_stats()], `as_trx_df()` only permits a single transaction type and
 #' a single `percent_of` column.
 #'
 #' @param x An object. For `as_trx_df()`, `x` must be a data frame.
