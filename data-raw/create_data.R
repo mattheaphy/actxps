@@ -31,12 +31,16 @@ agg_sim_dat <- expose_py(census_dat, "2019-12-31",
   group_by(pol_yr, inc_guar, qual, product) |>
   summarize(exposure_n = sum(exposure),
             claims_n = sum(status == "Surrender"),
-            wd = sum(trx_amt_Rider) + sum(trx_amt_Base),
             av = sum(av_anniv),
             exposure_amt = sum(exposure * av_anniv),
             claims_amt = sum((status == "Surrender") * av_anniv),
             av_sq = sum(av_anniv ^ 2),
             n = n(),
+            wd = sum(trx_amt_Rider) + sum(trx_amt_Base),
+            wd_n = sum(trx_n_Rider) + sum(trx_n_Base),
+            wd_flag = sum(trx_amt_Rider > 0 | trx_amt_Base > 0),
+            wd_sq = sum(trx_amt_Rider ^ 2) + sum(trx_amt_Base ^ 2),
+            av_w_wd = sum(av_anniv[trx_amt_Rider > 0 | trx_amt_Base > 0]),
             .groups = "drop")
 
 usethis::use_data(agg_sim_dat, overwrite = TRUE)
