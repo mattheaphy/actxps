@@ -45,8 +45,7 @@ The assumed default is "exposure".}
 the column in \code{x} containing the number of claims.}
 
 \item{col_weight_sq}{Optional and only used used when \code{wt} is passed. Name of
-the column in \code{x} containing the sum of squared weights (also not multiplied
-by exposures).}
+the column in \code{x} containing the sum of squared weights.}
 
 \item{col_weight_n}{Optional and only used used when \code{wt} is passed. Name of
 the column in \code{x} containing exposure record counts.}
@@ -76,7 +75,7 @@ For \code{is_exp_df()}, a length-1 logical vector. For \code{as_exp_df()},
 an \code{exp_df} object.
 }
 \description{
-Convert aggregate experience studies to the \code{exp_df} class.
+Convert aggregate termination experience studies to the \code{exp_df} class.
 }
 \details{
 \code{is_exp_df()} will return \code{TRUE} if \code{x} is an \code{exp_df} object.

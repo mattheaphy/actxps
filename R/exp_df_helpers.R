@@ -1,6 +1,6 @@
 #' Termination summary helper functions
 #'
-#' Convert aggregate experience studies to the `exp_df` class.
+#' Convert aggregate termination experience studies to the `exp_df` class.
 #'
 #' `is_exp_df()` will return `TRUE` if `x` is an `exp_df` object.
 #'
@@ -55,8 +55,7 @@
 #' @param col_n_claims Optional and only used used when `wt` is passed. Name of
 #' the column in `x` containing the number of claims.
 #' @param col_weight_sq Optional and only used used when `wt` is passed. Name of
-#' the column in `x` containing the sum of squared weights (also not multiplied
-#' by exposures).
+#' the column in `x` containing the sum of squared weights.
 #' @param col_weight_n Optional and only used used when `wt` is passed. Name of
 #' the column in `x` containing exposure record counts.
 #' @param credibility If `TRUE`, future calls to [summary()] will include
