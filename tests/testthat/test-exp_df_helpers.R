@@ -17,7 +17,7 @@ test_that("as_exp_df works", {
   res5 <- res4 |>
     rename(clms = claims)
 
-  expect_error(as_exp_df(data.frame(a = 1:3), Sys.Date()),
+  expect_error(as_exp_df(data.frame(a = 1:3)),
                regexp = "The following columns are missing")
 
   expect_true(is_exp_df(as_exp_df(res)))
@@ -47,7 +47,6 @@ res_wt3 <- as_exp_df(res_wt2, wt = "premium", expected = "ex",
                      conf_int = TRUE, credibility = TRUE)
 
 test_that("as_exp_df with weights works", {
-
 
   res_wt4 <- res_wt2 |>
     rename(expo = exposure)
