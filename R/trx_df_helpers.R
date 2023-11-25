@@ -98,7 +98,7 @@ as_trx_df <- function(x,
                       col_percent_of = NULL,
                       col_percent_of_w_trx = NULL,
                       col_trx_amt_sq = "trx_amt_sq",
-                      start_date = NULL,
+                      start_date = as.Date("1900-01-01"),
                       end_date = NULL,
                       conf_int = FALSE,
                       conf_level = 0.95) {

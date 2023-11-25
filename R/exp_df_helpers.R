@@ -109,7 +109,7 @@ as_exp_df <- function(x, expected = NULL, wt = NULL,
                       col_claims, col_exposure,
                       col_n_claims, col_weight_sq, col_weight_n,
                       target_status = NULL,
-                      start_date = NULL, end_date = NULL,
+                      start_date = as.Date("1900-01-01"), end_date = NULL,
                       credibility = FALSE,
                       conf_level = 0.95, cred_r = 0.05, conf_int = FALSE) {
 

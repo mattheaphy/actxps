@@ -15,7 +15,7 @@ as_exp_df(
   col_weight_sq,
   col_weight_n,
   target_status = NULL,
-  start_date = NULL,
+  start_date = as.Date("1900-01-01"),
   end_date = NULL,
   credibility = FALSE,
   conf_level = 0.95,
