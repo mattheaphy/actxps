@@ -1,4 +1,4 @@
-# actxps (development version)
+# actxps 1.4.0
 
 - actxps now supports split exposures that divide calendar periods crossing 
 policy anniversaries into pre-anniversary and post-anniversary records. The 
