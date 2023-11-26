@@ -13,7 +13,7 @@
 #' - If `NULL`, names from the result of [predict()] will be used. If there are
 #'  no names, a default name of "expected" is assumed. In the event that
 #'  [predict()] returns multiple values, the default name will be suffixed by
-#'  "_{x}", where x = 1 to the number of values returned.
+#'  "_x", where x = 1 to the number of values returned.
 #' - If a value is passed, it must be a character vector of same length as
 #'   the result of [predict()]
 #'
