@@ -35,7 +35,7 @@ The \code{col_expected} argument is optional.
 \item If \code{NULL}, names from the result of \code{\link[=predict]{predict()}} will be used. If there are
 no names, a default name of "expected" is assumed. In the event that
 \code{\link[=predict]{predict()}} returns multiple values, the default name will be suffixed by
-"_{x}", where x = 1 to the number of values returned.
+"_x", where x = 1 to the number of values returned.
 \item If a value is passed, it must be a character vector of same length as
 the result of \code{\link[=predict]{predict()}}
 }
