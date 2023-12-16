@@ -1,3 +1,7 @@
+# actxps 1.4.0.9000
+
+- Small vignette clean-ups
+
 # actxps 1.4.0
 
 - actxps now supports split exposures that divide calendar periods crossing 

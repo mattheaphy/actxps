@@ -94,8 +94,6 @@ See `vignette("exp_summary")` for further details on exposure calculations.
 If the data frame passed into `exp_stats()` is grouped using `dplyr::group_by()`, the resulting output will contain one record for each unique group.
 
 ```{r stats-grouped}
-library(dplyr)
-
 exp_res <- exposed_data |>
   group_by(pol_yr, inc_guar) |>
   exp_stats()
