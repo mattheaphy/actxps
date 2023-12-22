@@ -87,7 +87,7 @@
 #'
 #' @param combine_trx If `FALSE` (default), the results will contain output rows
 #' for each transaction type. If `TRUE`, the results will contains aggregated
-#' results across all transaction types.
+#' experience across all transaction types.
 #'
 #' @param col_exposure Name of the column in `.data` containing exposures
 #'
