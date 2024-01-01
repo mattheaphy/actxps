@@ -44,9 +44,6 @@ test_that("Experience study summary method checks", {
 })
 
 
-toy_expo <- toy_census |> expose("2022-12-31", target_status = "Surrender") |>
-  rename(a = exposure, b = status)
-
 test_that("Confidence intervals work", {
   expect_true(all(exp_res$q_obs_lower < exp_res$q_obs))
   expect_true(all(exp_res$q_obs_upper > exp_res$q_obs))
