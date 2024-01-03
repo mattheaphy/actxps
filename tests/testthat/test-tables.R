@@ -18,6 +18,17 @@ test_that("Autotable works", {
                   c("gt_tbl", "list"))
 })
 
+test_that("Renaming works", {
+  expect_s3_class(
+    autotable(exp_res2,
+              rename_cols = list(pol_yr = "Policy year", inc_guar = "GLWB")),
+    c("gt_tbl", "list"))
+  expect_s3_class(
+    autotable(trx_res2,
+              rename_cols = list(pol_yr = "Policy year", inc_guar = "GLWB")),
+    c("gt_tbl", "list"))
+})
+
 test_that("Table confidence interval warning works", {
   expect_warning(autotable(exp_res, show_conf_int = TRUE),
                  regex = "has no confidence intervals")

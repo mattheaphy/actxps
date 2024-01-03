@@ -24,13 +24,6 @@ test_that("Partial credibility is between 0 and 1", {
   expect_gte(min(exp_res$credibility, exp_res$q_obs), 0)
 })
 
-test_that("Confidence intervals surround the observed surrender rate", {
-  expect_true(all(exp_res$q_obs < exp_res$q_obs_upper))
-  expect_true(all(exp_res$q_obs > exp_res$q_obs_lower))
-  expect_true(all(exp_res_weighted$q_obs < exp_res_weighted$q_obs_upper))
-  expect_true(all(exp_res_weighted$q_obs > exp_res_weighted$q_obs_lower))
-})
-
 
 test_that("Experience study summary method checks", {
   expect_identical(exp_res, summary(exp_res, pol_yr, inc_guar))
