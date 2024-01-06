@@ -10,9 +10,10 @@ res <- expo |>
 
 test_that("trx_stats error checks work", {
 
-  expect_error(trx_stats(1))
-  expect_error(trx_stats(no_trx))
-  expect_error(trx_stats(expo, trx_types = c("abc", "def")))
+  expect_error(trx_stats(1), regexp = 'must be an `exposed_df')
+  expect_error(trx_stats(no_trx), regexp = 'No transactions')
+  expect_error(trx_stats(expo, trx_types = c("abc", "def")),
+               regexp = 'The following transactions do not exist')
   expect_no_error(trx_stats(expo))
 
 })
@@ -27,7 +28,7 @@ test_that("Experience study summary method checks", {
 expo2 <- head(expo) |> rename(ex = exposure)
 
 test_that("Renaming works", {
-  expect_error(trx_stats(expo2))
+  expect_error(trx_stats(expo2), regexp = "Can't rename columns")
   expect_no_error(trx_stats(expo2, col_exposure = "ex"))
 })
 
