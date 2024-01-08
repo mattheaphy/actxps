@@ -58,7 +58,8 @@
 #' @param col_percent_of_w_trx Optional. Name of the column in `x` containing a
 #' numeric variable to use in "percent of" calculations with transactions.
 #' @param col_trx_amt_sq  Optional and only required when `col_percent_of` is
-#' passed. Name of the column in `x` containing squared transaction amounts.
+#' passed and `conf_int` is `TRUE`. Name of the column in `x` containing squared
+#' transaction amounts.
 #' @param conf_int If `TRUE`, future calls to [summary()] will include
 #' confidence intervals around the observed utilization rates and any
 #' `percent_of` output columns.
