@@ -95,7 +95,7 @@ exposed_data |> filter(pol_num == 3)
 
 ### Study start date
 
-The previous section only supplied data and a study `end_date` to `expose()`. These are the minimum required arguments for the function. Optionally, a `start_date` can be supplied that will drop exposure periods that begin before a specified date.
+The previous section only supplied data and a study `end_date` to `expose()`. Optionally, a `start_date` can be supplied that will drop exposure periods that begin before a specified date.
 
 ```{r expose-start}
 expose(toy_census, end_date = "2022-12-31", start_date = "2019-12-31")
@@ -127,7 +127,7 @@ Let's assume we are performing a surrender study.
 
 ```{r expose-targ}
 exposed_data2 <- expose(toy_census, end_date = "2022-12-31", 
-                        target = "Surrender")
+                        target_status = "Surrender")
 ```
 
 Now let's verify that the exposure on the surrendered policy increased to 100% in the last exposure period.
@@ -277,7 +277,7 @@ For example, if the policy number column was called `id` in our census-level dat
 
 ```{r col-names, eval=FALSE}
 expose(toy_census, end_date = "2022-12-31", 
-       target = "Surrender",
+       target_status = "Surrender",
        col_pol_num = "id")
 ```
 
@@ -293,7 +293,7 @@ toy_census2 <- toy_census |>
          policy_value = c(100, 125, 90))
 
 expose(toy_census2, end_date = "2022-12-31", 
-       target = "Surrender")
+       target_status = "Surrender")
 ```
 
 
@@ -362,6 +362,4 @@ Generally speaking, any dplyr verbs that aren't listed that return data frames w
 
 ### Limitations
 
-The `expose()` family does not support:
-
-- Studies with multiple changes from an active to an inactive status. For example, these functions do not support changes from an active status to an impaired status, and back to an active status.
+The `expose()` family does not support studies with multiple changes between an active status and an inactive status.
