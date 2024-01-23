@@ -53,7 +53,7 @@ expose_split <- function(.data) {
 
   if (!is.null(attr(.data, "trx_types"))) {
     rlang::warn(c("!" = "`.data` has transactions attached. This will lead to duplication of transactions after exposures are split.",
-                  "i" = "Try calling `add_transactions()` after calling `expose_split()` instead of beforehand.")
+                  "i" = "The appropriate order of operations is to call `add_transactions()` after `expose_split()`.")
     )
   }
 
