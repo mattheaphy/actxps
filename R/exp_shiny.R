@@ -252,11 +252,8 @@ exp_shiny <- function(dat,
   if (has_trx) {
     yVar_trx <- c("trx_util", "trx_freq", "trx_n", "trx_flag",
                   "trx_amt", "avg_trx", "avg_all", "exposure")
-    available_studies <- c("Termination study" = "exp",
-                           "Transaction study" = "trx")
   } else {
     yVar_trx <- NULL
-    available_studies <- c("Termination study" = "exp")
   }
 
   # function to make input widgets
