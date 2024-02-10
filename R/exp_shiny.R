@@ -924,13 +924,14 @@ exp_shiny <- function(dat,
 
     })
 
-    # table output
+
     output$xpPlot <- shiny::renderPlot(
       {rplot()},
       res = 92,
       height = function() if (input$plotResize) input$plotHeight else "auto",
       width = function() if (input$plotResize) input$plotWidth else "auto")
 
+    # table output
     rtable <- shiny::reactive({
       # for an unknown reason, the table doesn't react to changes in decimals
       # alone as if it were wrapped in isolate(). force() resolves the issue
