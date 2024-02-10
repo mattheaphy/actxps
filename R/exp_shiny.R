@@ -444,8 +444,9 @@ exp_shiny <- function(dat,
       bslib::value_box(
         title = "% data remaining",
         value = shiny::textOutput("rem_pct"),
-        showcase = shiny::plotOutput("filter_pie",
-                                     height = "60px", width = "60px")
+        showcase_layout = bslib::showcase_left_center(width = 1,
+                                                      max_height = "200px"),
+        showcase = shiny::plotOutput("filter_pie")
       ) |>
         bslib::tooltip(paste0("Original row count: ",
                               scales::label_comma()(total_rows)),
