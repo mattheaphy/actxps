@@ -68,7 +68,7 @@
 #'
 #' ## Output
 #'
-#' ### Plot Tab
+#' ### Plot
 #'
 #' This tab includes a plot and various options for customization:
 #'

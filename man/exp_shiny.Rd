@@ -127,7 +127,7 @@ aggregated into a single group.
 }
 
 \subsection{Output}{
-\subsection{Plot Tab}{
+\subsection{Plot}{
 
 This tab includes a plot and various options for customization:
 \itemize{
