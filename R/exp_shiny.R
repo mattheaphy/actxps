@@ -821,7 +821,8 @@ exp_shiny <- function(dat,
           trx_stats(percent_of = input$pct_checks,
                     trx_types = input$trx_types_checks,
                     combine_trx = input$trx_combine,
-                    conf_int = TRUE)
+                    conf_int = TRUE,
+                    conf_level = conf_level)
       }
 
     })
