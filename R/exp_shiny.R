@@ -432,7 +432,7 @@ exp_shiny <- function(dat,
     sidebar = bslib::sidebar(
 
       title = "Filters",
-      width = "300px",
+      width = 370,
 
       bslib::input_switch("play",
                           list("Reactivity ",
@@ -443,10 +443,10 @@ exp_shiny <- function(dat,
       # filter descriptions
       bslib::value_box(
         title = "% data remaining",
+        theme = "primary",
         value = shiny::textOutput("rem_pct"),
-        showcase_layout = bslib::showcase_left_center(width = 1,
-                                                      max_height = "200px"),
-        showcase = shiny::plotOutput("filter_pie")
+        showcase = shiny::plotOutput("filter_pie",
+                                     width = "75px", height = "75px")
       ) |>
         bslib::tooltip(paste0("Original row count: ",
                               scales::label_comma()(total_rows)),
@@ -518,6 +518,7 @@ exp_shiny <- function(dat,
 
     bslib::navset_bar(
       title = "Output",
+      inverse = TRUE,
       bslib::nav_panel(
         "Plot",
         bslib::card(
