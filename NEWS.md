@@ -1,5 +1,7 @@
 # actxps 1.4.0.9000
 
+- To improve the speed of date calculations, lubridate was replaced with the clock package. Lubridate is no longer included in Imports.
+- **Breaking change** - The `pol_interval()` function is no longer exported. As part of the removal of lubridate, this function's `dur_length` argument only accepts, "year", "quarter", "month", or "week".
 - Small vignette clean-ups
 
 # actxps 1.4.0
