@@ -28,8 +28,7 @@ Suggests:
     testthat (>= 3.0.0),
     shiny (>= 1.7.5),
     bslib (>= 0.5.1),
-    thematic,
-    lubridate
+    thematic
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
