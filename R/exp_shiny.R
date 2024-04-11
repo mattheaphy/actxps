@@ -256,9 +256,8 @@ exp_shiny <- function(dat,
     yVar_trx <- NULL
   }
 
-  # code from lubridate
   is.Date <- function(x) {
-    methods::is(x, "Date")
+    inherits(x, "Date")
   }
 
   # function to make input widgets

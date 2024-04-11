@@ -28,12 +28,12 @@ Suggests:
     testthat (>= 3.0.0),
     shiny (>= 1.7.5),
     bslib (>= 0.5.1),
-    thematic
+    thematic,
+    lubridate
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
 Imports: 
-    lubridate,
     dplyr (>= 1.1.1),
     ggplot2,
     tibble,
