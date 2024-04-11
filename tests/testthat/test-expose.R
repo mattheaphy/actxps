@@ -76,6 +76,13 @@ test_that("Start and end dates work.", {
   expect_lte(max(with_start_date$pol_date_yr), as.Date("2019-12-31"))
 })
 
+test_that("All terminations have termination dates", {
+  expect_equal(sum(study_py$status != "Active"),
+               sum(!is.na(study_py$term_date)))
+  expect_equal(sum(study_cy$status != "Active"),
+               sum(!is.na(study_cy$term_date)))
+})
+
 exposed_strings <- expose(toy_census, "2020-12-31", "2016-04-01")
 exposed_dates <- expose(toy_census, as.Date("2020-12-31"),
                         as.Date("2016-04-01"))
