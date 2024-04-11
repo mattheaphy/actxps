@@ -7,9 +7,12 @@ test_that("Leap years work", {
   expect_equal(pol_yr("2024-02-29", "2023-02-28"), 2)
 })
 
+
 test_that("pol_interval works", {
   expect_equal(pol_yr("2021-02-28", "2020-02-29"),
-               pol_interval("2021-02-28", "2020-02-29", lubridate::years(1)))
-  expect_equal(pol_interval("2022-03-14", "2022-01-05", lubridate::minutes(3)),
-               69L * 24L * 20L)
+               pol_interval("2021-02-28", "2020-02-29", "year"))
+  expect_equal(pol_qtr("2022-04-14", "2022-01-05"),
+               pol_interval("2022-04-14", "2022-01-05", "quarter"))
+  expect_equal(pol_wk("2022-01-19", "2022-01-05"),
+               pol_interval("2022-01-19", "2022-01-05", "week"))
 })

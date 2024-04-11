@@ -13,7 +13,7 @@
 #'
 #' @param x A vector of dates
 #' @param issue_date A vector of issue dates
-#' @param dur_length A period object. See [lubridate::period()].
+#' @param dur_length Duration length
 #'
 #' @return An integer vector
 #'
@@ -26,30 +26,32 @@
 #' @rdname pol_yr
 #' @export
 pol_yr <- function(x, issue_date) {
-  pol_interval(x, issue_date, lubridate::years(1))
+  pol_interval(x, issue_date, "year")
 }
 
 #' @rdname pol_yr
 #' @export
 pol_qtr <- function(x, issue_date) {
-  pol_interval(x, issue_date, months(3))
+  pol_interval(x, issue_date, "quarter")
 }
 
 #' @rdname pol_yr
 #' @export
 pol_mth <- function(x, issue_date) {
-  pol_interval(x, issue_date, months(1))
+  pol_interval(x, issue_date, "month")
 }
 
 #' @rdname pol_yr
 #' @export
 pol_wk <- function(x, issue_date) {
-  pol_interval(x, issue_date, lubridate::days(7))
+  pol_interval(x, issue_date, "week")
 }
 
 #' @rdname pol_yr
 #' @export
-pol_interval <- function(x, issue_date, dur_length) {
-  ceiling(lubridate::interval(as.Date(issue_date) - 1, x) / dur_length)
+pol_interval <- function(x, issue_date,
+                         dur_length = c("year", "quarter", "month", "week")) {
+  dur_length <- rlang::arg_match(dur_length)
+  clock::date_count_between(as.Date(issue_date), as.Date(x), dur_length) + 1L
 }
 

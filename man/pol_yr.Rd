@@ -16,14 +16,14 @@ pol_mth(x, issue_date)
 
 pol_wk(x, issue_date)
 
-pol_interval(x, issue_date, dur_length)
+pol_interval(x, issue_date, dur_length = c("year", "quarter", "month", "week"))
 }
 \arguments{
 \item{x}{A vector of dates}
 
 \item{issue_date}{A vector of issue dates}
 
-\item{dur_length}{A period object. See \code{\link[lubridate:period]{lubridate::period()}}.}
+\item{dur_length}{Duration length}
 }
 \value{
 An integer vector
