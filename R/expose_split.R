@@ -72,6 +72,9 @@ expose_split <- function(.data) {
   }
   cal_frac <- cal_frac(expo_length)
 
+  # clock::add_years with invalid pre-populated
+  add_years <- \(x, n) clock::add_years(x, n, invalid = "previous")
+
   # time fractions
   # h = yearfrac from boy to anniv
   # v = yearfrac from boy to term
@@ -81,9 +84,9 @@ expose_split <- function(.data) {
     rename(cal_b = !!date_cols[[1]],
            cal_e = !!date_cols[[2]]) |>
     mutate(
-      anniv = issue_date %m+%
-        (lubridate::years(1) *
-           (lubridate::year(cal_b) - lubridate::year(issue_date))),
+      anniv = add_years(
+        issue_date,
+        clock::get_year(cal_b) - clock::get_year(issue_date)),
       split = between(anniv, cal_b, cal_e),
       h = cal_frac(anniv, 1),
       v = cal_frac(term_date)
@@ -96,7 +99,7 @@ expose_split <- function(.data) {
            cal_e = anniv - 1,
            exposure = h,
            exposure_pol = 1 - pol_frac(cal_b - 1L,
-                                       anniv %m-% lubridate::years(1),
+                                       add_years(anniv, -1),
                                        anniv - 1L)
     )
 
@@ -105,11 +108,11 @@ expose_split <- function(.data) {
            cal_b = dplyr::if_else(split, anniv, cal_b),
            exposure = dplyr::if_else(split, 1 - h, 1),
            anniv = dplyr::if_else(anniv > cal_e,
-                                  anniv %m-% lubridate::years(1),
+                                  add_years(anniv, -1),
                                   anniv),
            exposure_pol = pol_frac(cal_e,
                                    anniv,
-                                   anniv %m+% lubridate::years(1) - 1L,
+                                   add_years(anniv, 1) - 1L,
                                    cal_b - 1L)
     )
 
@@ -117,8 +120,8 @@ expose_split <- function(.data) {
     filter(cal_b <= cal_e,
            is.na(term_date) | term_date >= cal_b) |>
     mutate(term_date = dplyr::if_else(between(term_date, cal_b, cal_e),
-                                      term_date, lubridate::NA_Date_),
-           pol_yr = lubridate::year(anniv) - lubridate::year(issue_date) +
+                                      term_date, as.Date(NA)),
+           pol_yr = clock::get_year(anniv) - clock::get_year(issue_date) +
              piece - 1L,
            status = dplyr::if_else(is.na(term_date),
                                    factor(default_status,
@@ -138,15 +141,15 @@ expose_split <- function(.data) {
                split ~ 1,
                TRUE ~ 1 - pol_frac(cal_b - 1L,
                                    anniv,
-                                   anniv %m+% lubridate::years(1) - 1L)
+                                   add_years(anniv, 1) - 1L)
              ),
              is.na(term_date) ~ exposure_pol,
              piece == 1 ~ pol_frac(term_date,
-                                   anniv %m-% lubridate::years(1),
+                                   add_years(anniv, -1),
                                    anniv - 1L) - (1 - exposure_pol),
              TRUE ~ pol_frac(term_date,
                              anniv,
-                             anniv %m+% lubridate::years(1) - 1L)
+                             add_years(anniv, 1) - 1L)
            )
     ) |>
     arrange(pol_num, cal_b, piece) |>
