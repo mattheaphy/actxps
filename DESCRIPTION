@@ -47,6 +47,7 @@ Imports:
     generics,
     readr,
     tidyr,
-    vctrs
+    vctrs,
+    clock
 LazyData: true
 VignetteBuilder: knitr
