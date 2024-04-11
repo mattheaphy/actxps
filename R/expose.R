@@ -191,7 +191,7 @@ expose <- function(.data,
         exposure = dplyr::if_else(
           last_per & !status %in% target_status,
           as.integer((last_date - cal_b + 1))  /
-            as.integer(add_period(last_date, 1) - last_date),
+            as.integer(cal_e - cal_b + 1),
           1),
         # exposure = 0 is possible if exactly 1 period has elapsed. replace these with 1's
         exposure = dplyr::if_else(exposure == 0, 1, exposure)
