@@ -256,6 +256,11 @@ exp_shiny <- function(dat,
     yVar_trx <- NULL
   }
 
+  # code from lubridate
+  is.Date <- function(x) {
+    methods::is(x, "Date")
+  }
+
   # function to make input widgets
   widget <- function(x,
                      checkbox_limit = 8) {
@@ -280,7 +285,7 @@ exp_shiny <- function(dat,
         step = if (is.integer(dat[[x]]) && info$n_unique < 100) 1L else NULL
       )
 
-    } else if (lubridate::is.Date(dat[[x]])) {
+    } else if (is.Date(dat[[x]])) {
 
       shiny::dateRangeInput(
         inputId, shiny::strong(x),
@@ -322,7 +327,7 @@ exp_shiny <- function(dat,
 
     inputId <- paste("i", x, sep = "_")
 
-    res <- if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
+    res <- if (is.numeric(dat[[x]]) || is.Date(dat[[x]])) {
       # numeric or date
       glue::glue("between({x}, input${inputId}[[1]], input${inputId}[[2]])")
     } else {
@@ -986,7 +991,7 @@ exp_shiny <- function(dat,
       choices <- info$scope[[1]]
 
       # numeric or date
-      if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
+      if (is.numeric(dat[[x]]) || is.Date(dat[[x]])) {
 
         if (selected[[1]] == selected[[2]]) {
           # exactly equal
