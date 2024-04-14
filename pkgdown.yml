@@ -1,14 +1,14 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.0.8
 pkgdown_sha: ~
 articles:
   actxps: actxps.html
-  visualizations: visualizations.html
   exp_summary: exp_summary.html
   exposures: exposures.html
   misc: misc.html
   transactions: transactions.html
-last_built: 2023-11-26T16:32Z
+  visualizations: visualizations.html
+last_built: 2024-04-14T21:21Z
 urls:
   reference: https://mattheaphy.github.io/actxps/reference
   article: https://mattheaphy.github.io/actxps/articles

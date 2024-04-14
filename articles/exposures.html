@@ -29,11 +29,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -277,8 +277,7 @@ a third of a year elapsed between the last anniversary date on
 <h3 id="study-start-date">Study start date<a class="anchor" aria-label="anchor" href="#study-start-date"></a>
 </h3>
 <p>The previous section only supplied data and a study
-<code>end_date</code> to <code><a href="../reference/expose.html">expose()</a></code>. These are the minimum
-required arguments for the function. Optionally, a
+<code>end_date</code> to <code><a href="../reference/expose.html">expose()</a></code>. Optionally, a
 <code>start_date</code> can be supplied that will drop exposure periods
 that begin before a specified date.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -325,7 +324,7 @@ vector of target statuses to the <code><a href="../reference/expose.html">expose
 <p>Let’s assume we are performing a surrender study.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposed_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census</span>, end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, </span>
-<span>                        target <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span></code></pre></div>
+<span>                        target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s verify that the exposure on the surrendered policy
 increased to 100% in the last exposure period.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -476,7 +475,7 @@ record.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 5</span></span></span>
 <span><span class="co">#&gt;    cal_yr     cal_yr_end pol_yr exposure_pol exposure_cal</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2011-05-27 2011-12-31      1        0.598        0.6  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2012-01-01 2012-05-26      1        0.402        0.402</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2012-05-27 2012-12-31      2        0.6          0.598</span></span>
@@ -562,7 +561,7 @@ of the period.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 47 × 5</span></span></span>
 <span><span class="co">#&gt;    cal_qtr    cal_qtr_end pol_yr exposure_pol exposure_cal</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2011-05-27 2011-06-30       1       0.095<span style="text-decoration: underline;">6</span>        0.385</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2011-07-01 2011-09-30       1       0.251         1    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2011-10-01 2011-12-31       1       0.251         1    </span></span>
@@ -663,7 +662,7 @@ arguments.</p>
 in our census-level data, we could write:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census</span>, end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, </span>
-<span>       target <span class="op">=</span> <span class="st">"Surrender"</span>,</span>
+<span>       target_status <span class="op">=</span> <span class="st">"Surrender"</span>,</span>
 <span>       col_pol_num <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -681,7 +680,7 @@ circumstances.</p>
 <span>         policy_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">125</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census2</span>, end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, </span>
-<span>       target <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
+<span>       target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Exposure type: policy_year </span></span>
@@ -840,12 +839,8 @@ and convert the data to an <code>exposed_df</code> using
 <div class="section level3">
 <h3 id="limitations">Limitations<a class="anchor" aria-label="anchor" href="#limitations"></a>
 </h3>
-<p>The <code><a href="../reference/expose.html">expose()</a></code> family does not support:</p>
-<ul>
-<li>Studies with multiple changes from an active to an inactive status.
-For example, these functions do not support changes from an active
-status to an impaired status, and back to an active status.</li>
-</ul>
+<p>The <code><a href="../reference/expose.html">expose()</a></code> family does not support studies with
+multiple changes between an active status and an inactive status.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -861,7 +856,7 @@ status to an impaired status, and back to an active status.</li>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
 </div>
 
     </footer>

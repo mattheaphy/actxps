@@ -6,11 +6,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.4.0" id="actxps-140">actxps 1.4.0<a class="anchor" aria-label="anchor" href="#actxps-140"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.4.0.9000" id="actxps-1409000">actxps 1.4.0.9000<a class="anchor" aria-label="anchor" href="#actxps-1409000"></a></h2>
+<ul><li>To improve the speed of date calculations, lubridate was replaced with the clock package. Lubridate is no longer included in Imports.</li>
+<li>
+<strong>Breaking change</strong> - The <code>pol_interval()</code> function is no longer exported. As part of the removal of lubridate, this function’s <code>dur_length</code> argument only accepts, “year”, “quarter”, “month”, or “week”.</li>
+<li>Shiny app layout updates</li>
+<li>Small vignette and documentation clean-ups</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.4.0" id="actxps-140">actxps 1.4.0<a class="anchor" aria-label="anchor" href="#actxps-140"></a></h2><p class="text-muted">CRAN release: 2023-11-26</p>
 <ul><li>actxps now supports split exposures that divide calendar periods crossing policy anniversaries into pre-anniversary and post-anniversary records. The function <code><a href="../reference/expose_split.html">expose_split()</a></code> can convert any <code>exposed_df</code> object with calendar period exposures (yearly, quarterly, monthly, or weekly) into a <code>split_exposed_df</code> object. Split exposure data frames contain columns for exposures both on a calendar period and policy year basis.</li>
 <li>
 <code><a href="../reference/exp_stats.html">exp_stats()</a></code> and <code><a href="../reference/exp_shiny.html">exp_shiny()</a></code> now require clarification as to which exposure basis should be used when passed a <code>split_exposed_df</code> object.</li>
@@ -127,7 +135,7 @@
 <li>New sample data sets were added with transactions (<code>withdrawals</code>) and sample policy values (<code>account_vals</code>). These are meant to be paired with <code>census_dat</code>.</li>
 <li>Added <code><a href="../articles/transactions.html">vignette("transactions")</a></code>.</li>
 </ul><p>Other changes</p>
-<ul><li>A new family of functions were added to calculate policy durations. These include <code><a href="../reference/pol_yr.html">pol_interval()</a></code> (a generic version), <code><a href="../reference/pol_yr.html">pol_yr()</a></code>, <code><a href="../reference/pol_yr.html">pol_qtr()</a></code>, <code><a href="../reference/pol_yr.html">pol_mth()</a></code>, and <code><a href="../reference/pol_yr.html">pol_wk()</a></code>. See <code><a href="../articles/misc.html">vignette("misc")</a></code>.</li>
+<ul><li>A new family of functions were added to calculate policy durations. These include <code>pol_interval()</code> (a generic version), <code><a href="../reference/pol_yr.html">pol_yr()</a></code>, <code><a href="../reference/pol_yr.html">pol_qtr()</a></code>, <code><a href="../reference/pol_yr.html">pol_mth()</a></code>, and <code><a href="../reference/pol_yr.html">pol_wk()</a></code>. See <code><a href="../articles/misc.html">vignette("misc")</a></code>.</li>
 <li>Several updates were made to the <code><a href="../reference/is_exposed_df.html">as_exposed_df()</a></code> function to include stricter input requirements and helpful error messages.</li>
 <li>S3 methods for several dplyr functions were added for <code>exposed_df</code> objects to ensure class persistence, especially on grouped data frames. These include: <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">right_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">full_join()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter-joins.html" class="external-link">semi_join()</a></code>, and <code><a href="https://dplyr.tidyverse.org/reference/filter-joins.html" class="external-link">anti_join()</a></code>.</li>
 <li>The conditional formatting for color in <code><a href="../reference/autotable.html">autotable.exp_df()</a></code> was updated to be consistent across like columns.</li>
@@ -163,7 +171,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
 </div>
 
     </footer></div>
