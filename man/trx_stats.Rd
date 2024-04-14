@@ -34,7 +34,7 @@ actual-to-expected ratios.}
 
 \item{combine_trx}{If \code{FALSE} (default), the results will contain output rows
 for each transaction type. If \code{TRUE}, the results will contains aggregated
-results across all transaction types.}
+experience across all transaction types.}
 
 \item{col_exposure}{Name of the column in \code{.data} containing exposures}
 

@@ -5,7 +5,6 @@
 \alias{pol_qtr}
 \alias{pol_mth}
 \alias{pol_wk}
-\alias{pol_interval}
 \title{Calculate policy duration}
 \usage{
 pol_yr(x, issue_date)
@@ -15,31 +14,24 @@ pol_qtr(x, issue_date)
 pol_mth(x, issue_date)
 
 pol_wk(x, issue_date)
-
-pol_interval(x, issue_date, dur_length)
 }
 \arguments{
 \item{x}{A vector of dates}
 
 \item{issue_date}{A vector of issue dates}
-
-\item{dur_length}{A period object. See \code{\link[lubridate:period]{lubridate::period()}}.}
 }
 \value{
 An integer vector
 }
 \description{
 Given a vector of dates and a vector of issue dates, calculate
-policy years, quarters, months, weeks, or other durations.
+policy years, quarters, months, or weeks.
 }
 \details{
 These functions assume the first day of each policy year is the
 anniversary date (or issue date in the first year). The last day of each
 policy year is the day before the next anniversary date. Analogous rules
 are used for policy quarters, policy months, and policy weeks.
-
-The \code{\link[=pol_interval]{pol_interval()}} function can be used to determine any arbitrary
-duration passed to the \code{dur_length} argument.
 }
 \examples{
 pol_yr(as.Date("2021-02-28") + 0:2, "2020-02-29")

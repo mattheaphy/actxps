@@ -144,14 +144,14 @@ In the output, 4 new columns are created for expected rates and A/E ratios.
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 # using 2 different expected termination assumption sets
-exposed_data2 <- exposed_data |>
+exposed_data <- exposed_data |>
   mutate(expected_1 = expected_table[pol_yr],
          expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
 
-exp_res <- exposed_data2 |>
+exp_res <- exposed_data |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"))
-  
+
 
 exp_res |> 
   select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
@@ -162,7 +162,7 @@ exp_res |>
 As noted above, if weights are passed to `exp_stats()` then A/E ratios will also be weighted.
 
 ```{r act-exp-wt}
-exposed_data2 |>
+exposed_data |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"), 
             wt = "premium") |> 
@@ -176,7 +176,7 @@ exposed_data2 |>
 If the `credibility` argument is set to `TRUE`, `exp_stats()` will produce an estimate of partial credibility under the Limited Fluctuation credibility method (also known as Classical Credibility) assuming a binomial distribution of claims.^[See Herzog, Thomas (1999). Introduction to Credibility Theory for more information on Limited Fluctuation Credibility.]
 
 ```{r cred1}
-exposed_data2 |> 
+exposed_data |> 
   group_by(pol_yr, inc_guar) |>
   exp_stats(credibility = TRUE) |> 
   select(pol_yr, inc_guar, claims, q_obs, credibility)
@@ -185,7 +185,7 @@ exposed_data2 |>
 Under the default arguments, credibility calculations assume a 95% confidence of being within 5% of the true value. These parameters can be overridden using the `conf_level` and `cred_r` arguments, respectively.
 
 ```{r cred2}
-exposed_data2 |> 
+exposed_data |> 
   group_by(pol_yr, inc_guar) |>
   exp_stats(credibility = TRUE, conf_level = 0.98, cred_r = 0.03) |> 
   select(pol_yr, inc_guar, claims, q_obs, credibility)
@@ -198,14 +198,14 @@ q^{adj} = Z^{cred} \times q^{obs} + (1-Z^{cred}) \times q^{exp}
 $$
 where,
 
-  - $q^{adj}$ = credibility-weighted estimate
-  - $Z^{cred}$ = partial credibility factor
-  - $q^{obs}$ = observed termination rate
-  - $q^{exp}$ = expected termination rate
+- $q^{adj}$ = credibility-weighted estimate
+- $Z^{cred}$ = partial credibility factor
+- $q^{obs}$ = observed termination rate
+- $q^{exp}$ = expected termination rate
 
 
 ```{r cred3}
-exposed_data2 |> 
+exposed_data |> 
   group_by(pol_yr, inc_guar) |>
   exp_stats(credibility = TRUE, expected = "expected_1") |> 
   select(pol_yr, inc_guar, claims, q_obs, credibility, adj_expected_1, 
@@ -218,7 +218,7 @@ exposed_data2 |>
 If `conf_int` is set to `TRUE`, `exp_stats()` will produce lower and upper confidence interval limits for the observed termination rate.
 
 ```{r conf1}
-exposed_data2 |> 
+exposed_data |> 
   group_by(pol_yr, inc_guar) |>
   exp_stats(conf_int = TRUE) |> 
   select(pol_yr, inc_guar, q_obs, q_obs_lower, q_obs_upper)
@@ -235,7 +235,7 @@ Where `S` is the aggregate claim random variable, `X` is the weighting variable 
 The default confidence level is 95%. This can be changed using the `conf_level` argument. Below, tighter confidence intervals are constructed by decreasing the confidence level to 90%.
 
 ```{r conf2}
-exposed_data2 |> 
+exposed_data |> 
   group_by(pol_yr, inc_guar) |>
   exp_stats(conf_int = TRUE, conf_level = 0.9) |> 
   select(pol_yr, inc_guar, q_obs, q_obs_lower, q_obs_upper)
@@ -244,13 +244,13 @@ exposed_data2 |>
 If expected values are passed to `expected`, the output will also contain confidence intervals around any actual-to-expected ratios. 
 
 ```{r conf3}
-exposed_data2 |> 
+exposed_data |> 
   group_by(pol_yr, inc_guar) |>
   exp_stats(conf_int = TRUE, expected = "expected_1") |> 
   select(pol_yr, inc_guar, starts_with("ae_"))
 ```
 
-Lastly, if `credibility` is `TRUE` *and* expected values are passed to `expected`,  confidence intervals will also be calculated for any credibility-weighted termination rates.
+Lastly, if `credibility` is `TRUE` *and* expected values are passed to `expected`, confidence intervals will also be calculated for any credibility-weighted termination rates.
 
 ## Miscellaneous
 

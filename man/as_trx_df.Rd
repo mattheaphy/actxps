@@ -43,7 +43,8 @@ numeric variable to use in "percent of" calculations.}
 numeric variable to use in "percent of" calculations with transactions.}
 
 \item{col_trx_amt_sq}{Optional and only required when \code{col_percent_of} is
-passed. Name of the column in \code{x} containing squared transaction amounts.}
+passed and \code{conf_int} is \code{TRUE}. Name of the column in \code{x} containing squared
+transaction amounts.}
 
 \item{start_date}{Experience study start date. Default value = 1900-01-01.}
 

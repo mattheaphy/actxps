@@ -95,9 +95,6 @@ plot_actual_to_expected <- function(object, ..., add_hline = TRUE) {
 # passed to special plotting functions
 #' @param object An `exp_df` or `trx_df` object
 #' @param piv_cols A primary set of columns to pivot longer
-#' @param extra_piv_cols A secondary set of pivot columns corresponding to the
-#' upper and lower confidence interval limits of the primary set of columns.
-#' These column names must all end in `_upper` or `_lower`.
 #' @param values_to Name of the values column in the pivoted object.
 #' @noRd
 pivot_plot_special <- function(object, piv_cols, values_to = "Rate") {

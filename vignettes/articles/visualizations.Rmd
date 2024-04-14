@@ -89,7 +89,7 @@ autoplot(exp_res2)
 
 **`autoplot.exp_df()` arguments**
 
-There are two ways of overriding the default aesthetics selected by `autoplot.exp_df()`.
+There are two means of overriding the default aesthetics selected by `autoplot.exp_df()`.
 
 1. The `x`, `y`, `color`, and `...` arguments can be passed unquoted column names or expressions to use as the x, y, color / fill, and faceting variables, respectively.
 2. The `mapping` argument can be passed an aesthetic mapping using `ggplot2::aes()`. If this argument is supplied, the `x`, `y`, and `color` arguments are ignored.

@@ -68,7 +68,7 @@
 #'
 #' ## Output
 #'
-#' ### Plot Tab
+#' ### Plot
 #'
 #' This tab includes a plot and various options for customization:
 #'
@@ -252,11 +252,12 @@ exp_shiny <- function(dat,
   if (has_trx) {
     yVar_trx <- c("trx_util", "trx_freq", "trx_n", "trx_flag",
                   "trx_amt", "avg_trx", "avg_all", "exposure")
-    available_studies <- c("Termination study" = "exp",
-                           "Transaction study" = "trx")
   } else {
     yVar_trx <- NULL
-    available_studies <- c("Termination study" = "exp")
+  }
+
+  is.Date <- function(x) {
+    inherits(x, "Date")
   }
 
   # function to make input widgets
@@ -283,7 +284,7 @@ exp_shiny <- function(dat,
         step = if (is.integer(dat[[x]]) && info$n_unique < 100) 1L else NULL
       )
 
-    } else if (lubridate::is.Date(dat[[x]])) {
+    } else if (is.Date(dat[[x]])) {
 
       shiny::dateRangeInput(
         inputId, shiny::strong(x),
@@ -325,7 +326,7 @@ exp_shiny <- function(dat,
 
     inputId <- paste("i", x, sep = "_")
 
-    res <- if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
+    res <- if (is.numeric(dat[[x]]) || is.Date(dat[[x]])) {
       # numeric or date
       glue::glue("between({x}, input${inputId}[[1]], input${inputId}[[2]])")
     } else {
@@ -435,7 +436,7 @@ exp_shiny <- function(dat,
     sidebar = bslib::sidebar(
 
       title = "Filters",
-      width = "300px",
+      width = 370,
 
       bslib::input_switch("play",
                           list("Reactivity ",
@@ -446,9 +447,10 @@ exp_shiny <- function(dat,
       # filter descriptions
       bslib::value_box(
         title = "% data remaining",
+        theme = "primary",
         value = shiny::textOutput("rem_pct"),
         showcase = shiny::plotOutput("filter_pie",
-                                     height = "60px", width = "60px")
+                                     width = "75px", height = "75px")
       ) |>
         bslib::tooltip(paste0("Original row count: ",
                               scales::label_comma()(total_rows)),
@@ -520,6 +522,7 @@ exp_shiny <- function(dat,
 
     bslib::navset_bar(
       title = "Output",
+      inverse = TRUE,
       bslib::nav_panel(
         "Plot",
         bslib::card(
@@ -823,7 +826,8 @@ exp_shiny <- function(dat,
           trx_stats(percent_of = input$pct_checks,
                     trx_types = input$trx_types_checks,
                     combine_trx = input$trx_combine,
-                    conf_int = TRUE)
+                    conf_int = TRUE,
+                    conf_level = conf_level)
       }
 
     })
@@ -927,13 +931,14 @@ exp_shiny <- function(dat,
 
     })
 
-    # table output
+
     output$xpPlot <- shiny::renderPlot(
       {rplot()},
       res = 92,
       height = function() if (input$plotResize) input$plotHeight else "auto",
       width = function() if (input$plotResize) input$plotWidth else "auto")
 
+    # table output
     rtable <- shiny::reactive({
       # for an unknown reason, the table doesn't react to changes in decimals
       # alone as if it were wrapped in isolate(). force() resolves the issue
@@ -985,7 +990,7 @@ exp_shiny <- function(dat,
       choices <- info$scope[[1]]
 
       # numeric or date
-      if (is.numeric(dat[[x]]) || lubridate::is.Date(dat[[x]])) {
+      if (is.numeric(dat[[x]]) || is.Date(dat[[x]])) {
 
         if (selected[[1]] == selected[[2]]) {
           # exactly equal

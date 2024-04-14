@@ -132,9 +132,8 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                       expected),
                     decimals = decimals) |>
     gt::tab_options(table.font.size = gt::pct(fontsize),
-                    row.striping.include_table_body = TRUE) |>
-    gt::tab_style(list(gt::cell_text(weight = "bold")),
-                  locations = gt::cells_column_labels()) |>
+                    row.striping.include_table_body = TRUE,
+                    column_labels.font.weight = "bold") |>
     gt::cols_label(q_obs = gt::md("*q<sup>obs</sup>*"),
                    claims = "Claims",
                    exposure = "Exposures") |>
@@ -177,11 +176,6 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
       gt::cols_label(credibility = gt::md("*Z<sup>cred</sup>*"))
   }
 
-  if (length(expected > 0)) {
-    tab <- tab |>
-      gt::tab_style(list(gt::cell_text(weight = "bold")),
-                    locations = gt::cells_column_spanners())
-  }
   if (colorful) {
 
     ae_cols <- paste0("ae_", expected)
@@ -261,9 +255,8 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
                     decimals = decimals) |>
     gt::sub_missing() |>
     gt::tab_options(table.font.size = gt::pct(fontsize),
-                    row.striping.include_table_body = TRUE) |>
-    gt::tab_style(list(gt::cell_text(weight = "bold")),
-                  locations = gt::cells_column_labels()) |>
+                    row.striping.include_table_body = TRUE,
+                    column_labels.font.weight = "bold") |>
     gt::tab_spanner(gt::md("**Counts**"), c("trx_n", "trx_flag")) |>
     gt::tab_spanner(gt::md("**Averages**"), c("avg_trx", "avg_all")) |>
     gt::cols_label(trx_n = "Total",

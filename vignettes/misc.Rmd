@@ -21,7 +21,7 @@ This vignette features functions that are not covered in other vignettes.
 
 ```{r packages}
 library(actxps)
-library(lubridate)
+library(clock)
 ```
 
 ## Working with aggregate experience data
@@ -62,12 +62,12 @@ summary(agg_sim_exp_df, inc_guar, product)
 
 ## Policy duration functions
 
-The `pol_()` family of functions calculates policy years, months, quarters, weeks, or any other arbitrary duration. Each function accepts a vector of dates and a vector of issue dates.
+The `pol_()` family of functions calculates policy years, months, quarters, or weeks. Each function accepts a vector of dates and a vector of issue dates.
 
 **Example**: assume a policy was issued on 2022-05-10 and we are interested in calculating various policy duration values at the end of calendar years 2022-2032.
 
 ```{r pol-dur1}
-dates <- ymd("2022-12-31") + years(0:10)
+dates <- date_build(2022 + 0:10, 12, 31)
 
 # policy years
 pol_yr(dates, "2022-05-10")
@@ -80,18 +80,6 @@ pol_mth(dates, "2022-05-10")
 
 # policy weeks
 pol_wk(dates, "2022-05-10")
-
-
-```
-
-The more general `pol_interval()` function calculates any arbitrary duration. This function has a third argument where the length of the policy duration can be specified. This argument must be a period object. See `lubridate::period()` for more information.
-
-```{r pol-dur2}
-# days
-pol_interval(dates, "2022-05-10", days(1))
-
-# fortnights
-pol_interval(dates, "2022-05-10", weeks(2))
 
 ```
 
