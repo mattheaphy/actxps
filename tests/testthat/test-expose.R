@@ -133,6 +133,20 @@ test_that("expose_split() is consistent with expose_cy()", {
                sum(study_split$trx_amt_Base))
   expect_equal(sum(study_cy$trx_amt_Rider),
                sum(study_split$trx_amt_Rider))
+  expect_true(all(between(study_split$exposure_cal, 0, 1)))
+  expect_true(all(between(study_split$exposure_pol, 0, 1)))
+})
+
+study_cy2 <- expose_cq(census_dat, "2019-02-27", target_status = "Surrender",
+                      start_date = "2010-06-15")
+study_split2 <- expose_split(study_cy2)
+
+test_that("expose_split() is consistent with expose_cy() when using atypical start and end dates", {
+  expect_equal(sum(study_cy2$exposure), sum(study_split2$exposure_cal))
+  expect_equal(sum(study_cy2$status != "Active"),
+               sum(study_split2$status != "Active"))
+  expect_true(all(between(study_split2$exposure_cal, 0, 1)))
+  expect_true(all(between(study_split2$exposure_pol, 0, 1)))
 })
 
 test_that("expose_split() warns about transactions attached too early", {

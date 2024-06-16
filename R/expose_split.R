@@ -60,15 +60,12 @@ expose_split <- function(.data) {
   target_status <- attr(.data, "target_status")
   default_status <- attr(.data, "default_status")
   date_cols <- attr(.data, "date_cols") |> rlang::parse_exprs()
+  start_date <- attr(.data, "start_date")
+  end_date <- attr(.data, "end_date")
   expo_length <- expo_type[[2]]
 
-  pol_frac <- function(x, start, end, y) {
-    if (missing(y)) {
-      as.integer(x - start + 1) / as.integer(end - start + 1)
-    } else {
-      as.integer(x - y) / as.integer(end - start + 1)
-    }
-
+  pol_frac <- function(x, start, end, y = start - 1) {
+    as.integer(x - y) / as.integer(end - start + 1)
   }
   cal_frac <- cal_frac(expo_length)
 
@@ -76,8 +73,10 @@ expose_split <- function(.data) {
   add_years <- \(x, n) clock::add_years(x, n, invalid = "previous")
 
   # time fractions
-  # h = yearfrac from boy to anniv
-  # v = yearfrac from boy to term
+  # b = fraction from boy to cal_b
+  #     - usually zero except for new contracts and a truncated start date
+  # h = fraction from boy to anniv
+  # v = fraction from boy to the earlier of termination and cal_e
 
   .data <- .data |>
     # temporary generic date column names
@@ -88,25 +87,28 @@ expose_split <- function(.data) {
         issue_date,
         clock::get_year(cal_b) - clock::get_year(issue_date)),
       split = between(anniv, cal_b, cal_e),
-      h = cal_frac(anniv, 1),
-      v = cal_frac(term_date)
+      cal_b = pmax(start_date, issue_date, cal_b),
+      cal_e = pmin(end_date, cal_e),
+      b = cal_frac(cal_b, 1),
+      h = dplyr::if_else(split, cal_frac(anniv, 1), 0),
+      v = dplyr::if_else(is.na(term_date), cal_e, term_date) |> cal_frac()
     )
 
   pre_anniv <- .data |>
     filter(split) |>
     mutate(piece = 1L,
-           cal_b = pmax(issue_date, cal_b),
-           cal_e = anniv - 1,
-           exposure = h,
-           exposure_pol = 1 - pol_frac(cal_b - 1L,
-                                       add_years(anniv, -1),
-                                       anniv - 1L)
+           cal_e = pmin(end_date, anniv - 1),
+           exposure = pmin(h, v) - b,
+           exposure_pol = pol_frac(cal_e,
+                                   add_years(anniv, -1),
+                                   anniv - 1L,
+                                   cal_b - 1L)
     )
 
   post_anniv <- .data |>
     mutate(piece = 2L,
-           cal_b = dplyr::if_else(split, anniv, cal_b),
-           exposure = dplyr::if_else(split, 1 - h, 1),
+           cal_b = dplyr::if_else(split, pmax(anniv, start_date), cal_b),
+           exposure = v - pmax(h, b),
            anniv = dplyr::if_else(anniv > cal_e,
                                   add_years(anniv, -1),
                                   anniv),
@@ -129,11 +131,12 @@ expose_split <- function(.data) {
                                    status),
            claims = status %in% target_status,
            exposure_cal = dplyr::case_when(
-             claims ~ dplyr::if_else(piece == 1 | cal_b == issue_date,
-                                     1, 1 - h),
+             claims ~ dplyr::if_else(piece == 1 | cal_b == issue_date |
+                                       cal_b == start_date,
+                                     1, 1 - (h - b)),
              is.na(term_date) ~ exposure,
-             piece == 1 ~ v,
-             .default = v - h
+             piece == 1 ~ v - b,
+             .default = v - pmax(h, b)
            ),
            exposure_pol = dplyr::case_when(
              claims ~ dplyr::case_when(
@@ -153,7 +156,7 @@ expose_split <- function(.data) {
            )
     ) |>
     arrange(pol_num, cal_b, piece) |>
-    select(-h, -v, -split, -anniv, -claims, -exposure, -piece) |>
+    select(-b, -h, -v, -split, -anniv, -claims, -exposure, -piece) |>
     relocate(pol_yr, .after = cal_e) |>
     # restore date column names
     rename(!!date_cols[[1]] := cal_b,
