@@ -144,6 +144,12 @@ expose <- function(.data,
     levels(.data$status) <- status_levels
   }
 
+  if (default_status %in% target_status) {
+    rlang::abort(
+      "`default_status` is not allowed to be the same as `target_status`"
+    )
+  }
+
   # pre-exposure updates
   res <- .data |>
     filter(issue_date < end_date,

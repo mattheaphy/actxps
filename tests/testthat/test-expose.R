@@ -119,6 +119,17 @@ test_that("Date format checks work", {
                regexp = "Missing values are not allowed in the `issue_date`")
 })
 
+test_that("An error is thrown if the default status is a target status", {
+  all_deaths <- dplyr::tribble(
+    ~pol_num, ~status, ~issue_date, ~term_date,
+    1, "Death", as.Date("2011-05-27"), as.Date("2012-03-17"),
+    2, "Death", as.Date("2011-05-27"), as.Date("2012-09-17"))
+  expect_error(all_deaths |>
+    expose(end_date = "2022-12-31", target_status = c("Death", "Surrender")),
+    regexp = "`default_status` is not allowed to be the same as `target_status"
+  )
+})
+
 # split exposure tests
 
 test_that("expose_split() fails when passed non-calendar exposures", {
