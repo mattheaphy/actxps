@@ -83,9 +83,8 @@ expose_split <- function(.data) {
     rename(cal_b = !!date_cols[[1]],
            cal_e = !!date_cols[[2]]) |>
     mutate(
-      anniv = add_years(
-        issue_date,
-        clock::get_year(cal_b) - clock::get_year(issue_date)),
+      pol_yr = clock::get_year(cal_b) - clock::get_year(issue_date),
+      anniv = add_years(issue_date, pol_yr),
       split = between(anniv, cal_b, cal_e),
       cal_b = pmax(start_date, issue_date, cal_b),
       cal_e = pmin(end_date, cal_e),
@@ -97,34 +96,25 @@ expose_split <- function(.data) {
   pre_anniv <- .data |>
     filter(split) |>
     mutate(piece = 1L,
-           cal_e = pmin(end_date, anniv - 1),
-           exposure = pmin(h, v) - b,
-           exposure_pol = pol_frac(cal_e,
-                                   add_years(anniv, -1),
-                                   anniv - 1L,
-                                   cal_b - 1L)
+           next_anniv = anniv,
+           cal_e = pmin(end_date, next_anniv - 1),
+           exposure = pmin(h, v) - b
     )
 
   post_anniv <- .data |>
     mutate(piece = 2L,
            cal_b = dplyr::if_else(split, pmax(anniv, start_date), cal_b),
+           pol_yr = pol_yr + (cal_b >= anniv),
            exposure = v - pmax(h, b),
-           anniv = dplyr::if_else(anniv > cal_e,
-                                  add_years(anniv, -1),
-                                  anniv),
-           exposure_pol = pol_frac(cal_e,
-                                   anniv,
-                                   add_years(anniv, 1) - 1L,
-                                   cal_b - 1L)
+           next_anniv = add_years(issue_date, pol_yr)
     )
 
   .data <- dplyr::bind_rows(pre_anniv, post_anniv) |>
     filter(cal_b <= cal_e,
            is.na(term_date) | term_date >= cal_b) |>
-    mutate(term_date = dplyr::if_else(between(term_date, cal_b, cal_e),
+    mutate(anniv = add_years(issue_date, pol_yr - 1L),
+           term_date = dplyr::if_else(between(term_date, cal_b, cal_e),
                                       term_date, as.Date(NA)),
-           pol_yr = clock::get_year(anniv) - clock::get_year(issue_date) +
-             piece - 1L,
            status = dplyr::if_else(is.na(term_date),
                                    factor(default_status,
                                           levels = levels(.data$status)),
@@ -138,25 +128,20 @@ expose_split <- function(.data) {
              piece == 1 ~ v - b,
              .default = v - pmax(h, b)
            ),
-           exposure_pol = dplyr::case_when(
-             claims ~ dplyr::case_when(
-               piece == 1 ~ exposure_pol,
-               split ~ 1,
-               TRUE ~ 1 - pol_frac(cal_b - 1L,
-                                   anniv,
-                                   add_years(anniv, 1) - 1L)
-             ),
-             is.na(term_date) ~ exposure_pol,
-             piece == 1 ~ pol_frac(term_date,
-                                   add_years(anniv, -1),
-                                   anniv - 1L) - (1 - exposure_pol),
-             TRUE ~ pol_frac(term_date,
-                             anniv,
-                             add_years(anniv, 1) - 1L)
+           exposure_pol = dplyr::if_else(
+             claims,
+             1 - pol_frac(cal_b - 1L,
+                          anniv,
+                          next_anniv - 1L),
+             pol_frac(pmin(cal_e, term_date, na.rm = TRUE),
+                      anniv,
+                      next_anniv - 1L,
+                      cal_b - 1L)
            )
     ) |>
     arrange(pol_num, cal_b, piece) |>
-    select(-b, -h, -v, -split, -anniv, -claims, -exposure, -piece) |>
+    select(-b, -h, -v, -split, -anniv, -next_anniv,
+           -claims, -exposure, -piece) |>
     relocate(pol_yr, .after = cal_e) |>
     # restore date column names
     rename(!!date_cols[[1]] := cal_b,
