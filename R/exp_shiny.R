@@ -256,10 +256,6 @@ exp_shiny <- function(dat,
     yVar_trx <- NULL
   }
 
-  is.Date <- function(x) {
-    inherits(x, "Date")
-  }
-
   # function to make input widgets
   widget <- function(x,
                      checkbox_limit = 8) {

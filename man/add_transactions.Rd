@@ -53,6 +53,8 @@ for each transaction type. These columns have names of the pattern
 
 Transactions are associated with the \code{exposed_df} object by matching
 transactions dates with exposure dates ranges found in \code{exposed_df}.
+
+All columns containing dates must be in YYYY-MM-DD format.
 }
 \examples{
 expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender")

@@ -112,6 +112,13 @@ test_that("Renaming and name conflict warnings work", {
   expect_warning(expose_cy(toy_census |> mutate(cal_yr_end = 1), "2020-12-31"))
 })
 
+test_that("Date format checks work", {
+  toy_census3 <- toy_census
+  toy_census3$issue_date[[1]] <- NA
+  expect_error(expose_py(toy_census3, "2020-12-31"),
+               regexp = "Missing values are not allowed in the `issue_date`")
+})
+
 # split exposure tests
 
 test_that("expose_split() fails when passed non-calendar exposures", {

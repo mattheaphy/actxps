@@ -12,6 +12,8 @@
 #' Transactions are associated with the `exposed_df` object by matching
 #' transactions dates with exposure dates ranges found in `exposed_df`.
 #'
+#' All columns containing dates must be in YYYY-MM-DD format.
+#'
 #' @param .data A data frame with exposure-level records with the class
 #' `exposed_df`. Use [as_exposed_df()] to convert a data frame to an
 #' `exposed_df` object if necessary.
@@ -64,8 +66,10 @@ add_transactions <- function(.data, trx_data,
     rename(pol_num = {{col_pol_num}},
            trx_date = {{col_trx_date}},
            trx_type = {{col_trx_type}},
-           trx_amt = {{col_trx_amt}})
+           trx_amt = {{col_trx_amt}}) |>
+    mutate(trx_date = .convert_date(trx_date))
 
+  .check_missing_dates(trx_data$trx_date, "trx_date")
 
   # check for conflicting transaction types
   existing_trx_types <- attr(.data, "trx_types")

@@ -127,6 +127,8 @@ For exposure periods:
 \item \code{m} = months
 \item \code{w} = weeks
 }
+
+All columns containing dates must be in YYYY-MM-DD format.
 }
 
 \examples{
