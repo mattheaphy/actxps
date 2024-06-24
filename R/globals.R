@@ -12,4 +12,4 @@ utils::globalVariables(c("issue_date", "term_date", "last_date",
                          "sd_all", "sd_trx", "trx_amt_sq",
                          "n", "name", "ymax", "ymin",
                          "cal_yr", "anniv", "cal_yr_end", "h", "piece", "v",
-                         "scope"))
+                         "scope", "next_anniv", "b"))

@@ -50,3 +50,10 @@ test_that("exposed_df persists after adding transactions", {
   expect_s3_class(add_transactions(expo |> group_by(pol_yr), withdrawals),
                   "exposed_df")
 })
+
+test_that("Date format checks work", {
+  withdrawals5 <- withdrawals
+  withdrawals5$trx_date[[42]] <- NA
+  expect_error(add_transactions(expo, withdrawals5),
+               regexp = "Missing values are not allowed in the `trx_date`")
+})

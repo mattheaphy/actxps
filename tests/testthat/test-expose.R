@@ -47,7 +47,7 @@ test_that("Period start and end dates roll", {
 leap_day <- data.frame(pol_num = 1L,
                        status = 'Active',
                        issue_date = as.Date("2020-02-29"),
-                       term_date = NA)
+                       term_date = NA_character_)
 
 leap_expose <- expose_pm(leap_day, end_date = "2021-02-28")
 
@@ -56,7 +56,7 @@ leap_expose <- expose_pm(leap_day, end_date = "2021-02-28")
 march_1 <- data.frame(pol_num = 1L,
                       status = 'Active',
                       issue_date = as.Date("2019-03-01"),
-                      term_date = NA)
+                      term_date = NA_character_)
 march_1_expose <- expose_pm(march_1, end_date = "2020-02-29")
 
 
@@ -112,6 +112,24 @@ test_that("Renaming and name conflict warnings work", {
   expect_warning(expose_cy(toy_census |> mutate(cal_yr_end = 1), "2020-12-31"))
 })
 
+test_that("Date format checks work", {
+  toy_census3 <- toy_census
+  toy_census3$issue_date[[1]] <- NA
+  expect_error(expose_py(toy_census3, "2020-12-31"),
+               regexp = "Missing values are not allowed in the `issue_date`")
+})
+
+test_that("An error is thrown if the default status is a target status", {
+  all_deaths <- dplyr::tribble(
+    ~pol_num, ~status, ~issue_date, ~term_date,
+    1, "Death", as.Date("2011-05-27"), as.Date("2012-03-17"),
+    2, "Death", as.Date("2011-05-27"), as.Date("2012-09-17"))
+  expect_error(all_deaths |>
+    expose(end_date = "2022-12-31", target_status = c("Death", "Surrender")),
+    regexp = "`default_status` is not allowed to be the same as `target_status"
+  )
+})
+
 # split exposure tests
 
 test_that("expose_split() fails when passed non-calendar exposures", {
@@ -125,6 +143,19 @@ test_that("expose_split() fails when passed non-calendar exposures", {
 study_split <- expose_split(study_cy) |> add_transactions(withdrawals)
 study_cy <- add_transactions(study_cy, withdrawals)
 
+py_sum_check <- function(py, split) {
+  py_sums <- py |>
+    dplyr::summarize(exposure = sum(exposure),
+                     .by = c(pol_num, pol_yr))
+  split_sums <- split |>
+    dplyr::summarize(exposure_pol = sum(exposure_pol),
+                     .by = c(pol_num, pol_yr))
+  py_sums |> inner_join(split_sums, by = c("pol_num", "pol_yr"),
+                        relationship = "one-to-one") |>
+    filter(!dplyr::near(exposure, exposure_pol)) |>
+    nrow()
+}
+
 test_that("expose_split() is consistent with expose_cy()", {
   expect_equal(sum(study_cy$exposure), sum(study_split$exposure_cal))
   expect_equal(sum(study_cy$status != "Active"),
@@ -133,6 +164,63 @@ test_that("expose_split() is consistent with expose_cy()", {
                sum(study_split$trx_amt_Base))
   expect_equal(sum(study_cy$trx_amt_Rider),
                sum(study_split$trx_amt_Rider))
+  expect_true(all(between(study_split$exposure_cal, 0, 1)))
+  expect_true(all(between(study_split$exposure_pol, 0, 1)))
+  expect_equal(py_sum_check(study_py, study_split), 0)
+
+})
+
+study_py2 <- expose_py(census_dat, "2019-02-27", target_status = "Surrender",
+                       start_date = "2010-06-15")
+study_cy2 <- expose_cq(census_dat, "2019-02-27", target_status = "Surrender",
+                       start_date = "2010-06-15")
+study_split2 <- expose_split(study_cy2)
+
+test_that(
+  paste0("expose_split() is consistent with expose_cy() when using ",
+         "atypical start and end dates"),
+  {
+    expect_equal(sum(study_cy2$exposure), sum(study_split2$exposure_cal))
+    expect_equal(sum(study_cy2$status != "Active"),
+                 sum(study_split2$status != "Active"))
+    expect_true(all(between(study_split2$exposure_cal, 0, 1)))
+    expect_true(all(between(study_split2$exposure_pol, 0, 1)))
+    expect_equal(py_sum_check(study_py2, study_split2), 0)
+  })
+
+# odd census
+odd_census <- dplyr::tribble(
+  ~pol_num, ~status, ~issue_date, ~term_date,
+  # death in first month
+  "D1", "Death", "2022-04-15", "2022-04-25",
+  # death in first year
+  "D2", "Death", "2022-04-15", "2022-09-25",
+  # death after 18 months
+  "D3", "Death", "2022-04-15", "2023-09-25",
+  # surrender in first month
+  "S1", "Surrender", "2022-11-10", "2022-11-20",
+  # surrender in first year
+  "S2", "Surrender", "2022-11-10", "2023-3-20",
+  # surrender after 18 months
+  "S3", "Surrender", "2022-11-10", "2024-3-20",
+  # active
+  "A", "Active", "2022-6-20", NA
+)
+
+odd_study <- expose_cm(odd_census, "2024-05-19", target_status = "Surrender",
+                       default_status = "Active", start_date = "2022-04-10")
+odd_py <- expose_py(odd_census, "2024-05-19", target_status = "Surrender",
+                    default_status = "Active", start_date = "2022-04-10")
+odd_split <- expose_split(odd_study)
+
+test_that("expose_split() checks with odd dates", {
+  expect_equal(sum(odd_study$exposure), sum(odd_split$exposure_cal))
+  expect_equal(sum(odd_study$status != "Active"),
+               sum(odd_split$status != "Active"))
+  expect_true(all(between(odd_split$exposure_cal, 0, 1)))
+  expect_true(all(between(odd_split$exposure_pol, 0, 1)))
+  expect_equal(odd_py |> dplyr::pull(exposure) |> sum(),
+               odd_split |> dplyr::pull(exposure_pol) |> sum())
 })
 
 test_that("expose_split() warns about transactions attached too early", {

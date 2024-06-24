@@ -42,6 +42,8 @@
 #' - `m` = months
 #' - `w` = weeks
 #'
+#' All columns containing dates must be in YYYY-MM-DD format.
+#'
 #' @param .data A data frame with census-level records
 #' @param end_date Experience study end date
 #' @param start_date Experience study start date. Default value = 1900-01-01.
@@ -109,13 +111,26 @@ expose <- function(.data,
   cal_floor <- cal_floor(expo_length)
   add_period <- add_period(expo_length)
 
+  n_term_dates <- sum(!is.na(.data[[col_term_date]]))
+
   # column renames and name conflicts
   .data <- .data |>
     rename(pol_num = {{col_pol_num}},
            status = {{col_status}},
            issue_date = {{col_issue_date}},
            term_date = {{col_term_date}}) |>
-    .expo_name_conflict(cal_expo, expo_length)
+    .expo_name_conflict(cal_expo, expo_length) |>
+    # convert to dates if needed
+    mutate(dplyr::across(c(issue_date, term_date), .convert_date))
+
+  .check_missing_dates(.data$issue_date, "issue_date")
+
+  if (n_term_dates != sum(!is.na(.data$term_date))) {
+    rlang::abort(c(
+      "Bad termination date formats were detected.",
+      i = "Make sure all dates are in YYYY-MM-DD format.")
+    )
+  }
 
   # set up statuses
   if (!is.factor(.data$status)) .data$status <- factor(.data$status)
@@ -127,6 +142,12 @@ expose <- function(.data,
     default_status <- factor(default_status,
                              levels = status_levels)
     levels(.data$status) <- status_levels
+  }
+
+  if (default_status %in% target_status) {
+    rlang::abort(
+      "`default_status` is not allowed to be the same as `target_status`"
+    )
   }
 
   # pre-exposure updates
@@ -368,4 +389,22 @@ abbr_period <- function(x) {
 most_common <- function(x) {
   y <- table(x) |> sort(decreasing = TRUE) |> names()
   factor(y[[1]], levels(x))
+}
+
+is.Date <- function(x) {
+  inherits(x, "Date")
+}
+
+.convert_date <- function(x) {
+  if (is.Date(x)) return(x)
+  clock::date_parse(x, format = "%Y-%m-%d")
+}
+
+.check_missing_dates <- function(x, name) {
+  if (any(is.na(x))) {
+    rlang::abort(c(
+      glue::glue("Missing values are not allowed in the `{name}` column."),
+      i = "Make sure all dates are in YYYY-MM-DD format.")
+    )
+  }
 }
