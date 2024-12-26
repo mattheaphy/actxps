@@ -20,8 +20,10 @@ test_that("add_predictions works with exposed_df and data frames", {
 })
 
 test_that("add_predictions works with matrix output", {
-  expect_s3_class(add_predictions(expo, mod, type = 'terms'),
-                  'exposed_df')
+  suppressMessages(
+    expect_s3_class(add_predictions(expo, mod, type = 'terms'),
+                    'exposed_df')
+  )
 })
 
 test_that("add_predictions col_expected works", {
