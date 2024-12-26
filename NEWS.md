@@ -1,3 +1,7 @@
+# actxps (development version)
+
+- Added the "cli" package to replace "rlang" for certain errors, warnings, and messages.
+
 # actxps 1.5.0
 
 - `expose_split()` bug fixes: 

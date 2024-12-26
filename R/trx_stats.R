@@ -166,7 +166,7 @@ trx_stats <- function(.data,
   } else {
     unmatched <- setdiff(trx_types, all_trx_types)
     if (length(unmatched) > 0) {
-      rlang::abort(c(x = glue::glue("The following transactions do not exist in `.data`: {paste0(unmatched, collapse = ', ')}")))
+      cli::cli_abort(c(x = "The following transactions do not exist in `.data`: {.val {unmatched}}"))
     }
   }
 
@@ -378,8 +378,8 @@ new_trx_df <- function(x, .groups, trx_types,
 
 verify_trx_df <- function(.data) {
   if (!inherits(.data, "trx_df")) {
-    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be a `trx_df` object."),
-                   i = "Hint: Use `trx_stats()` to create `trx_df` objects."
+    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be a `trx_df` object.",
+                     i = "Hint: Use `trx_stats()` to create `trx_df` objects."
     ))
   }
 }

@@ -589,8 +589,8 @@ make_date_col_names <- function(cal_expo, expo_length) {
 
 verify_exposed_df <- function(.data) {
   if (!is_exposed_df(.data)) {
-    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be an `exposed_df` object."),
-                   i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
+    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be an `exposed_df` object.",
+                     i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
     ))
   }
 }
@@ -602,8 +602,8 @@ verify_get_trx_types <- function(.data, required = TRUE) {
   trx_types <- attr(.data, "trx_types")
   if (is.null(trx_types)) {
     if (required) {
-      rlang::abort(c(x = "No transactions have been attached to `.data`.",
-                     i = "Add transaction data using `add_transactions()` before calling this function."))
+      cli::cli_abort(c(x = "No transactions have been attached to `.data`.",
+                       i = "Add transaction data using `add_transactions()` before calling this function."))
     }
     return(NULL)
   }
@@ -615,7 +615,7 @@ verify_col_names <- function(x_names, required) {
   unmatched <- setdiff(required, x_names)
 
   if (length(unmatched) > 0) {
-    rlang::abort(c(x = glue::glue("The following columns are missing: {paste(unmatched, collapse = ', ')}."),
-                   i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
+    cli::cli_abort(c(x = "The following columns are missing: {.val {unmatched}}.",
+                     i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
   }
 }

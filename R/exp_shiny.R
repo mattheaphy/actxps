@@ -265,8 +265,8 @@ exp_shiny <- function(dat,
     choices <- info$scope[[1]]
 
     if (is.null(dat[[x]])) {
-      rlang::abort(
-        glue::glue("Error creating an input widget for {x}. {x} does not exist in the input data.")
+      cli::cli_abort(
+        "Error creating an input widget for {x}. {x} does not exist in the input data."
       )
     }
 
@@ -309,8 +309,8 @@ exp_shiny <- function(dat,
 
     } else {
 
-      rlang::abort(
-        glue::glue("Error creating an input widget for {x}. {x} is of class {class(dat[[x]]) |> paste(collapse = ', ')}, which is not supported.")
+      cli::cli_abort(
+        "Error creating an input widget for {x}. {x} is of class {class(dat[[x]])}, which is not supported."
       )
 
     }

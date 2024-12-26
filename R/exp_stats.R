@@ -123,12 +123,12 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
-    rlang::warn(c(x = "No target status was provided.",
-                  i = glue::glue("{paste(target_status, collapse = ', ')} was assumed.")))
+    cli::cli_warn(c(x = "No target status was provided.",
+                    i = "{.val {target_status}} was assumed."))
   }
 
   if (length(wt) > 1) {
-    rlang::abort(c(x = glue::glue("Only 1 column can be passed to `wt`. You supplied {length(wt)} values.")))
+    cli::cli_abort(c(x = "Only 1 column can be passed to `wt`. You supplied {length(wt)} values."))
   }
 
   check_split_expose_basis(.data, col_exposure)
@@ -382,8 +382,8 @@ exp_form <- function(form, new_col, .col) {
 
 verify_exp_df <- function(.data) {
   if (!inherits(.data, "exp_df")) {
-    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be an `exp_df` object."),
-                   i = "Hint: Use `exp_stats()` to create `exp_df` objects."
+    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be an `exp_df` object.",
+                     i = "Hint: Use `exp_stats()` to create `exp_df` objects."
     ))
   }
 }
