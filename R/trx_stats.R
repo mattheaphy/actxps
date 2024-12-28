@@ -218,7 +218,7 @@ trx_stats <- function(.data,
 #' @export
 print.trx_df <- function(x, ...) {
 
-  cli::cli_h2("Transaction study results\n\n")
+  cli::cli_h2("Transaction study results")
   if (length(groups(x)) > 0) {
     cli::cli_ul("{.field Groups}: {groups(x)}")
   }
