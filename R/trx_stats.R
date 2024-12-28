@@ -218,17 +218,18 @@ trx_stats <- function(.data,
 #' @export
 print.trx_df <- function(x, ...) {
 
-  cat("Transaction study results\n\n")
+  cli::cli_h2("Transaction study results\n\n")
   if (length(groups(x)) > 0) {
-    cat(" Groups:", paste(groups(x), collapse = ", "), "\n")
+    cli::cli_ul("{.field Groups}: {groups(x)}")
   }
-  cat(" Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")), "\n",
-      "Transaction types:", paste(attr(x, "trx_types"), collapse = ", "), "\n")
+  cli::cli_ul(c(
+    "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}",
+    "{.field Transaction types}: {attr(x, 'trx_types')}"))
   if (!is.null(attr(x, "percent_of"))) {
-    cat(" Transactions as % of:", paste(attr(x, "percent_of"), collapse = ", "), "\n")
+    cli::cli_ul("{.field Transactions as % of}: {attr(x, 'percent_of')}")
   }
 
+  cat("\n")
   NextMethod()
 }
 

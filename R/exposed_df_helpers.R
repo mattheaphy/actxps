@@ -174,18 +174,19 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
 
 #' @export
 print.exposed_df <- function(x, ...) {
-  cat("Exposure data\n\n",
-      "Exposure type:", attr(x, "exposure_type"), "\n",
-      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
-      "Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")))
+  cli::cli_h2("Exposure data")
+  cli::cli_ul(c(
+    "{.field Exposure type}: {attr(x, 'exposure_type')}",
+    "{.field Target status}: {attr(x, 'target_status')}",
+    "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}"
+  ))
 
   trx_types <- attr(x, "trx_types")
   if (!is.null(trx_types)) {
-    cat("\n", "Transaction types:", paste(trx_types, collapse = ", "), "\n")
+    cli::cli_ul("{.field Transaction types}: {trx_types}")
   }
 
-  cat("\n\n")
+  cat("\n")
   NextMethod()
 }
 

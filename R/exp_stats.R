@@ -124,7 +124,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
     cli::cli_warn(c(x = "No target status was provided.",
-                    i = "{.val {target_status}} was assumed."))
+                    i = "{.val {target_status}} {?was/were} assumed."))
   }
 
   if (length(wt) > 1) {
@@ -160,22 +160,21 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 #' @export
 print.exp_df <- function(x, ...) {
 
-  cat("Experience study results\n\n")
+  cli::cli_h2("Experience study results")
   if (length(groups(x)) > 0) {
-    cat(" Groups:", paste(groups(x), collapse = ", "), "\n")
+    cli::cli_ul("{.field Groups}: {groups(x)}")
   }
-  cat(" Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
-      "Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")), "\n")
+  cli::cli_ul(c(
+    "{.field Target status}: {attr(x, 'target_status')}",
+    "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}"))
   if (!is.null(attr(x, "expected"))) {
-    cat(" Expected values:", paste(attr(x, "expected"), collapse = ", "), "\n")
+    cli::cli_ul("{.field Expected values}: {attr(x, 'expected')}")
   }
-  if (is.null(attr(x, "wt"))) {
-    cat("\n")
-  } else {
-    cat(" Weighted by:", attr(x, "wt"), "\n\n")
+  if (!is.null(attr(x, "wt"))) {
+    cli::cli_ul("{.field Weighted by}: {attr(x, 'wt')}\n")
   }
 
+  cat("\n")
   NextMethod()
 }
 
