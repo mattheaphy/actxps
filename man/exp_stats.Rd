@@ -15,7 +15,9 @@ exp_stats(
   credibility = FALSE,
   conf_level = 0.95,
   cred_r = 0.05,
-  conf_int = FALSE
+  conf_int = FALSE,
+  control_vars,
+  control_distinct_max = 25L
 )
 
 \method{summary}{exp_df}(object, ...)
@@ -49,6 +51,12 @@ method}
 \item{conf_int}{If \code{TRUE}, the output will include confidence intervals
 around the observed termination rates and any actual-to-expected ratios.}
 
+\item{control_vars}{A character vector containing column names in \code{.data}
+to use as control variables}
+
+\item{control_distinct_max}{Maximum number of unique values allowed for
+control variables}
+
 \item{object}{An \code{exp_df} object}
 
 \item{...}{Groups to retain after \code{summary()} is called}
@@ -58,8 +66,9 @@ A tibble with class \code{exp_df}, \code{tbl_df}, \code{tbl},
 and \code{data.frame}. The results include columns for any grouping variables,
 claims, exposures, and observed termination rates (\code{q_obs}).
 \itemize{
-\item If any values are passed to \code{expected}, expected termination rates and
-actual-to-expected ratios.
+\item If any values are passed to \code{expected} or \code{control_vars}, additional
+columns are added for expected termination rates and actual-to-expected
+(A/E) ratios. A/E ratios are prefixed by \code{ae_}.
 \item If \code{credibility} is set to \code{TRUE}, additional columns are added
 for partial credibility and credibility-weighted termination rates
 (assuming values are passed to \code{expected}). Credibility-weighted termination
@@ -91,8 +100,33 @@ This will produce a warning message.
 }
 \section{Expected values}{
 The \code{expected} argument is optional. If provided, this argument must
-be a character vector with values corresponding to columns in \code{.data}
+be a character vector with values corresponding to column names in \code{.data}
 containing expected experience. More than one expected basis can be provided.
+}
+
+\section{Control variables}{
+The \code{control_vars} argument is optional. If provided, this argument must
+be a character vector with values corresponding to column names in \code{.data}.
+Control variables are used to estimate the impact of any grouping variables
+on observed experience \emph{after adjusting for} the impact of control variables.
+
+Mechanically, when values are passed to \code{control_vars}, a separate call
+is made to \code{\link[=exp_stats]{exp_stats()}} using the control variables as grouping variables.
+This is used to derive a new expected values basis called \code{control}, which is
+both added to \code{.data} and appended to the \code{expected} argument. In the final
+output, a column called \code{ae_control} shows the relative impact of any
+grouping variables after accounting for the control variables.
+
+The \code{control_distinct_max} argument places an upper limit on the number of
+unique values that a control variable is allowed to have. This limit exists
+to prevent an excessive number of groups on continuous or high-cardinality
+features.
+
+It should be noted that usage of control variables is a rough approximation
+and not a substitute for rigorous statistical models. The impact of control
+variables is calculated in isolation and does consider other features or
+possible confounding variables. As such, control variables are most useful
+for exploratory data analysis.
 }
 
 \section{Credibility}{
@@ -136,7 +170,7 @@ toy_census |> expose("2022-12-31", target_status = "Surrender") |>
 exp_res <- census_dat |>
            expose("2019-12-31", target_status = "Surrender") |>
            group_by(pol_yr, inc_guar) |>
-           exp_stats()
+           exp_stats(control_vars = "product")
 
 exp_res
 summary(exp_res)

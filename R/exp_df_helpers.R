@@ -149,7 +149,8 @@ as_exp_df <- function(x, expected = NULL, wt = NULL,
              wt = wt,
              credibility = credibility,
              conf_level = conf_level, cred_r = cred_r,
-             conf_int = conf_int)
+             conf_int = conf_int,
+             control_vars = NULL)
 
 }
 

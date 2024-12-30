@@ -616,7 +616,17 @@ verify_col_names <- function(x_names, required) {
   unmatched <- setdiff(required, x_names)
 
   if (length(unmatched) > 0) {
-    cli::cli_abort(c(x = "The following columns are missing: {.val {unmatched}}.",
+    cli::cli_abort(c(x = "The following column{?s} {?is/are} missing: {.val {unmatched}}.",
                      i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
+  }
+}
+
+# similar to the above, but with a different context in the error message
+verify_col_exist <- function(x_names, required, what = "column") {
+  unmatched <- setdiff(required, x_names)
+  n <- length(unmatched)
+
+  if (length(unmatched) > 0) {
+    cli::cli_abort(c(x = "The following {what}{cli::qty(n)}{?s} {?was/were} not found in the data: {.val {unmatched}}."))
   }
 }
