@@ -113,7 +113,7 @@
 #' - `avg_trx`: mean transaction amount (`trx_amt / trx_flag`)
 #' - `avg_all`: mean transaction amount over all records (`trx_amt / exposure`)
 #' - `trx_freq`: transaction frequency when a transaction occurs (`trx_n / trx_flag`)
-#' - `trx_utilization`: transaction utilization per observation period (`trx_flag / exposure`)
+#' - `trx_util`: transaction utilization per observation period (`trx_flag / exposure`)
 #'
 #' If `percent_of` is provided, the results will also include:
 #'

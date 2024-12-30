@@ -62,7 +62,7 @@ variables and transaction types, plus the following:
 \item \code{avg_trx}: mean transaction amount (\code{trx_amt / trx_flag})
 \item \code{avg_all}: mean transaction amount over all records (\code{trx_amt / exposure})
 \item \code{trx_freq}: transaction frequency when a transaction occurs (\code{trx_n / trx_flag})
-\item \code{trx_utilization}: transaction utilization per observation period (\code{trx_flag / exposure})
+\item \code{trx_util}: transaction utilization per observation period (\code{trx_flag / exposure})
 }
 
 If \code{percent_of} is provided, the results will also include:
