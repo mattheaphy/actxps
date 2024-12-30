@@ -26,7 +26,7 @@ test_that("as_exp_df works", {
 
   expect_true(is_exp_df(res3))
 
-  expect_error(as_exp_df(res4), regexp = "The following columns are missing")
+  expect_error(as_exp_df(res4), regexp = "The following column is missing")
   expect_no_error(as_exp_df(res4, col_exposure = "expo"))
   expect_no_error(as_exp_df(res5, col_exposure = "expo", col_claims = "clms"))
 
