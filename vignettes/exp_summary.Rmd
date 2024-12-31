@@ -33,7 +33,7 @@ Optionally, an `exp_df` can also include:
 To demonstrate this function, we're going to use a data frame containing simulated census data for a theoretical deferred annuity product that has an optional guaranteed income rider. Before `exp_stats()` can be used, we must convert our census data into exposure records using the `expose()` function^[See `vignette('exposures')` for more information on creating exposure records.]. In addition, let's assume we're interested in studying surrender rates, so we'll pass the argument `target_status = 'Surrender'` to `expose()`.
 
 
-```{r packages, message=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(actxps)
 library(dplyr)
 

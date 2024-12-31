@@ -25,7 +25,7 @@ comes with the actxps package. For information on transaction studies, see
 
 The actxps package includes a data frame containing simulated census data for a theoretical deferred annuity product with an optional guaranteed income rider. The grain of this data is one row per policy.
 
-```{r packages, message=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(actxps)
 library(dplyr)
 
