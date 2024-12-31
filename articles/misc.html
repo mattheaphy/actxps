@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="actxps">
 <title>Other functions • actxps</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,68 +14,50 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Other functions">
-<meta property="og:description" content="actxps">
-<meta property="og:image" content="https://mattheaphy.github.io/actxps/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Other functions">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0.9000</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/actxps.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/actxps.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
-    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
-    <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
-    <a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a>
-    <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a></li>
+    <li><a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a></li>
+    <li><a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a></li>
+    <li><a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a></li>
+    <li><a class="dropdown-item" href="../articles/misc.html">Other functions</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/mattheaphy/actxps/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/mattheaphy/actxps/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -88,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Other functions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/mattheaphy/actxps/blob/HEAD/vignettes/misc.Rmd" class="external-link"><code>vignettes/misc.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mattheaphy/actxps/blob/main/vignettes/misc.Rmd" class="external-link"><code>vignettes/misc.Rmd</code></a></small>
       <div class="d-none name"><code>misc.Rmd</code></div>
     </div>
 
@@ -102,9 +83,8 @@ vignettes.</p>
 <span><span class="co">#&gt; Attaching package: 'actxps'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://clock.r-lib.org" class="external-link">clock</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;     filter</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://clock.r-lib.org" class="external-link">clock</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="working-with-aggregate-experience-data">Working with aggregate experience data<a class="anchor" aria-label="anchor" href="#working-with-aggregate-experience-data"></a>
 </h2>
@@ -144,19 +124,20 @@ on a theoretical block of deferred annuity contracts. Below,
 <code><a href="../reference/as_exp_df.html">as_exp_df()</a></code> is used to convert the data to an
 <code>exp_df</code>, and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> is called using multiple
 grouping variables.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">agg_sim_exp_df</span> <span class="op">&lt;-</span> <span class="va">agg_sim_dat</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/as_exp_df.html">as_exp_df</a></span><span class="op">(</span>col_exposure <span class="op">=</span> <span class="st">"exposure_n"</span>, col_claims <span class="op">=</span> <span class="st">"claims_n"</span>,</span>
 <span>            conf_int <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>            start_date <span class="op">=</span> <span class="fl">2005</span>, end_date <span class="op">=</span> <span class="fl">2019</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span></code></pre></div>
 <p>Results summarized by policy year</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">agg_sim_exp_df</span>, <span class="va">pol_yr</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 2005 to 2019 </span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Experience study results</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Groups</span>: pol_yr</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 2005 to 2019</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 × 7</span></span></span>
 <span><span class="co">#&gt;    pol_yr n_claims claims exposure   q_obs q_obs_lower q_obs_upper</span></span>
@@ -177,13 +158,14 @@ grouping variables.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>     14       62     62     872. 0.071<span style="text-decoration: underline;">1</span>      0.055<span style="text-decoration: underline;">1</span>      0.088<span style="text-decoration: underline;">3</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>     15       17     17     268. 0.063<span style="text-decoration: underline;">4</span>      0.037<span style="text-decoration: underline;">3</span>      0.093<span style="text-decoration: underline;">2</span></span></span></code></pre></div>
 <p>Results summarized by income guarantee presence and product</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">agg_sim_exp_df</span>, <span class="va">inc_guar</span>, <span class="va">product</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: inc_guar, product </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 2005 to 2019 </span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Experience study results</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Groups</span>: inc_guar and product</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 2005 to 2019</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
 <span><span class="co">#&gt;   inc_guar product n_claims claims exposure  q_obs q_obs_lower q_obs_upper</span></span>
@@ -210,24 +192,21 @@ a vector of issue dates.</p>
 <p><strong>Example</strong>: assume a policy was issued on 2022-05-10
 and we are interested in calculating various policy duration values at
 the end of calendar years 2022-2032.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://clock.r-lib.org/reference/date_build.html" class="external-link">date_build</a></span><span class="op">(</span><span class="fl">2022</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">12</span>, <span class="fl">31</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># policy years</span></span>
 <span><span class="fu"><a href="../reference/pol_yr.html">pol_yr</a></span><span class="op">(</span><span class="va">dates</span>, <span class="st">"2022-05-10"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11</span></span>
+<span></span>
 <span><span class="co"># policy quarters</span></span>
 <span><span class="fu"><a href="../reference/pol_yr.html">pol_qtr</a></span><span class="op">(</span><span class="va">dates</span>, <span class="st">"2022-05-10"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1]  3  7 11 15 19 23 27 31 35 39 43</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;  [1]  3  7 11 15 19 23 27 31 35 39 43</span></span>
+<span></span>
 <span><span class="co"># policy months</span></span>
 <span><span class="fu"><a href="../reference/pol_yr.html">pol_mth</a></span><span class="op">(</span><span class="va">dates</span>, <span class="st">"2022-05-10"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1]   8  20  32  44  56  68  80  92 104 116 128</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;  [1]   8  20  32  44  56  68  80  92 104 116 128</span></span>
+<span></span>
 <span><span class="co"># policy weeks</span></span>
 <span><span class="fu"><a href="../reference/pol_yr.html">pol_wk</a></span><span class="op">(</span><span class="va">dates</span>, <span class="st">"2022-05-10"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1]  34  86 139 191 243 295 347 399 452 504 556</span></span></code></pre></div>
@@ -249,7 +228,7 @@ of the default predictions on the log-odds scale.</p>
 <p>The <code>col_expected</code> argument is used to rename the
 column(s) containing predicted values. If no names are specified, the
 default name is “expected”.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create exposure records</span></span>
 <span><span class="va">exposed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">census_dat</span>, end_date <span class="op">=</span> <span class="st">"2019-12-31"</span>,</span>
 <span>                       target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -275,7 +254,7 @@ default name is “expected”.</p>
 package includes a recipe step function, <code><a href="../reference/step_expose.html">step_expose()</a></code>,
 that can apply the <code><a href="../reference/expose.html">expose()</a></code> function during data
 preprocessing.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/recipes" class="external-link">recipes</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: dplyr</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -290,9 +269,8 @@ preprocessing.</p>
 <span><span class="co">#&gt; Attaching package: 'recipes'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     step</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;     step</span></span>
+<span></span>
 <span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html" class="external-link">recipe</a></span><span class="op">(</span><span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">census_dat</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/step_expose.html">step_expose</a></span><span class="op">(</span>end_date <span class="op">=</span> <span class="st">"2019-12-31"</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -305,7 +283,7 @@ preprocessing.</p>
 <span><span class="co">#&gt; ── Operations</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Exposed data based on policy years for target status Surrender: <span style="color: #0000BB;">&lt;none&gt;</span></span></span></code></pre></div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -316,15 +294,15 @@ preprocessing.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

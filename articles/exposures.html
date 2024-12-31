@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="actxps">
 <title>Exposure calculations • actxps</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,68 +14,50 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Exposure calculations">
-<meta property="og:description" content="actxps">
-<meta property="og:image" content="https://mattheaphy.github.io/actxps/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Exposure calculations">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0.9000</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/actxps.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/actxps.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a>
-    <a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a>
-    <a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a>
-    <a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a>
-    <a class="dropdown-item" href="../articles/misc.html">Other functions</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/exposures.html">Exposure calculations</a></li>
+    <li><a class="dropdown-item" href="../articles/exp_summary.html">Experience summaries</a></li>
+    <li><a class="dropdown-item" href="../articles/transactions.html">Transaction studies</a></li>
+    <li><a class="dropdown-item" href="../articles/visualizations.html">Data visualizations</a></li>
+    <li><a class="dropdown-item" href="../articles/misc.html">Other functions</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/mattheaphy/actxps/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/mattheaphy/actxps/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -88,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Exposure calculations</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/mattheaphy/actxps/blob/HEAD/vignettes/exposures.Rmd" class="external-link"><code>vignettes/exposures.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mattheaphy/actxps/blob/main/vignettes/exposures.Rmd" class="external-link"><code>vignettes/exposures.Rmd</code></a></small>
       <div class="d-none name"><code>exposures.Rmd</code></div>
     </div>
 
@@ -143,6 +124,8 @@ policies</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mattheaphy/actxps/" class="external-link">actxps</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
+<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">toy_census</span></span>
@@ -189,11 +172,12 @@ since this policy was active for all 13 years.</p>
 <code>exposed_df</code> class are displayed.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposed_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status:  </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>:</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 8</span></span></span>
 <span><span class="co">#&gt;    pol_num status issue_date term_date pol_yr pol_date_yr pol_date_yr_end</span></span>
@@ -221,11 +205,12 @@ third of a year elapsed between the last anniversary date on 2020-05-27
 and the termination date on 2020-09-14.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposed_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status:  </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>:</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 8</span></span></span>
 <span><span class="co">#&gt;    pol_num status issue_date term_date  pol_yr pol_date_yr pol_date_yr_end</span></span>
@@ -250,11 +235,12 @@ a third of a year elapsed between the last anniversary date on
 2021-11-10 and the termination date on 2022-02-25.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposed_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status:  </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>:</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 8</span></span></span>
 <span><span class="co">#&gt;    pol_num status    issue_date term_date  pol_yr pol_date_yr pol_date_yr_end</span></span>
@@ -282,11 +268,12 @@ a third of a year elapsed between the last anniversary date on
 that begin before a specified date.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census</span>, end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, start_date <span class="op">=</span> <span class="st">"2019-12-31"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status:  </span></span>
-<span><span class="co">#&gt;  Study range: 2019-12-31 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>:</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 2019-12-31 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
 <span><span class="co">#&gt;   pol_num status    issue_date term_date  pol_yr pol_date_yr pol_date_yr_end</span></span>
@@ -311,14 +298,14 @@ the course of one year. Let’s assume that policy terminated due to
 surrender half way through the year.</p>
 <p>If we don’t apply the annual exposure method, we would calculate a
 termination rate as:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>q</mi><mrow><mi>s</mi><mi>u</mi><mi>r</mi><mi>r</mi></mrow></msup><mo>=</mo><mfrac><mrow><mi>c</mi><mi>l</mi><mi>a</mi><mi>i</mi><mi>m</mi><mi>s</mi></mrow><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mi>o</mi><mi>s</mi><mi>u</mi><mi>r</mi><mi>e</mi><mi>s</mi></mrow></mfrac><mo>=</mo><mfrac><mn>1</mn><mn>0.5</mn></mfrac><mo>=</mo><mn>200</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">
 q^{surr} = \frac{claims}{exposures} = \frac{1}{0.5} = 200\%
-\]</span></p>
+</annotation></semantics></math></p>
 <p>A termination rate of 200% doesn’t make any sense. Under the annual
 exposure method we would see a rate of 100%, which is intuitive.</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>q</mi><mrow><mi>s</mi><mi>u</mi><mi>r</mi><mi>r</mi></mrow></msup><mo>=</mo><mfrac><mrow><mi>c</mi><mi>l</mi><mi>a</mi><mi>i</mi><mi>m</mi><mi>s</mi></mrow><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mi>o</mi><mi>s</mi><mi>u</mi><mi>r</mi><mi>e</mi><mi>s</mi></mrow></mfrac><mo>=</mo><mfrac><mn>1</mn><mn>1</mn></mfrac><mo>=</mo><mn>100</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">
 q^{surr} = \frac{claims}{exposures} = \frac{1}{1} = 100\%
-\]</span></p>
+</annotation></semantics></math></p>
 <p>The annual exposure method can be applied by passing a character
 vector of target statuses to the <code><a href="../reference/expose.html">expose()</a></code> function.</p>
 <p>Let’s assume we are performing a surrender study.</p>
@@ -331,11 +318,12 @@ increased to 100% in the last exposure period.</p>
 <code class="sourceCode R"><span><span class="va">exposed_data2</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_num</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 8</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># Groups:   pol_num [3]</span></span></span>
@@ -367,11 +355,12 @@ policy terminated roughly seven-tenths of the way through the year.</p>
 <span>  <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span>end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, cal_expo <span class="op">=</span> <span class="cn">TRUE</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">exposed_cal</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: calendar_year </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: calendar_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 7</span></span></span>
 <span><span class="co">#&gt;    pol_num status issue_date term_date  cal_yr     cal_yr_end exposure</span></span>
@@ -401,11 +390,12 @@ calendar-based exposures.</p>
 <span>         expo_length <span class="op">=</span> <span class="st">"quarter"</span>, </span>
 <span>         target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: calendar_quarter </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: calendar_quarter</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 38 × 7</span></span></span>
 <span><span class="co">#&gt;    pol_num status issue_date term_date cal_qtr    cal_qtr_end exposure</span></span>
@@ -467,11 +457,12 @@ record.</p>
 <span></span>
 <span><span class="va">split</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cal_yr</span>, <span class="va">cal_yr_end</span>, <span class="va">pol_yr</span>, <span class="va">exposure_pol</span>, <span class="va">exposure_cal</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: split_year </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: split_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 5</span></span></span>
 <span><span class="co">#&gt;    cal_yr     cal_yr_end pol_yr exposure_pol exposure_cal</span></span>
@@ -534,10 +525,11 @@ For split exposures, the exposure basis must be specified using the
 <span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Pass "exposure_cal" to `col_exposure` for calendar exposures.</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="va">split</span>, col_exposure <span class="op">=</span> <span class="st">"exposure_pol"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31 </span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Experience study results</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
 <span><span class="co">#&gt;   n_claims claims exposure  q_obs</span></span>
@@ -553,11 +545,12 @@ of the period.</p>
 <span>  <span class="fu"><a href="../reference/expose_split.html">expose_split</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_num</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cal_qtr</span>, <span class="va">cal_qtr_end</span>, <span class="va">pol_yr</span>, <span class="va">exposure_pol</span>, <span class="va">exposure_cal</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: split_quarter </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: split_quarter</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 47 × 5</span></span></span>
 <span><span class="co">#&gt;    cal_qtr    cal_qtr_end pol_yr exposure_pol exposure_cal</span></span>
@@ -591,9 +584,8 @@ recipes package from tidymodels. This function applies the
 <span><span class="co">#&gt; Attaching package: 'recipes'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     step</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;     step</span></span>
+<span></span>
 <span><span class="va">expo_rec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html" class="external-link">recipe</a></span><span class="op">(</span><span class="va">status</span> <span class="op">~</span> <span class="va">.</span>, <span class="va">toy_census</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/step_expose.html">step_expose</a></span><span class="op">(</span>end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span>,</span>
 <span>              options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>expo_length <span class="op">=</span> <span class="st">"month"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -613,16 +605,14 @@ recipes package from tidymodels. This function applies the
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Operations</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Exposed data based on policy months for target status Surrender: <span style="color: #0000BB;">&lt;none&gt;</span> |</span></span>
-<span><span class="co">#&gt;   <span style="font-style: italic;">Trained</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;   <span style="font-style: italic;">Trained</span></span></span>
+<span></span>
 <span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">expo_rec</span>, number <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
 <span><span class="co">#&gt;   exposure_type target_status start_date end_date  </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> policy_month  Surrender     1900-01-01 2022-12-31</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> policy_month  Surrender     1900-01-01 2022-12-31</span></span>
+<span></span>
 <span><span class="fu"><a href="https://recipes.tidymodels.org/reference/bake.html" class="external-link">bake</a></span><span class="op">(</span><span class="va">expo_rec</span>, new_data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 416 × 7</span></span></span>
 <span><span class="co">#&gt;    issue_date term_date status pol_mth pol_date_mth pol_date_mth_end exposure</span></span>
@@ -663,7 +653,7 @@ data frame uses the following naming conventions:</p>
 arguments.</p>
 <p>For example, if the policy number column was called <code>id</code>
 in our census-level data, we could write:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census</span>, end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, </span>
 <span>       target_status <span class="op">=</span> <span class="st">"Surrender"</span>,</span>
 <span>       col_pol_num <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span></code></pre></div>
@@ -677,18 +667,19 @@ periods. Depending on the nature of the data, this may or may not be
 desirable. Constant policy attributes like plan type make sense to
 broadcast, but numeric values may or may not depending on the
 circumstances.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">toy_census2</span> <span class="op">&lt;-</span> <span class="va">toy_census</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>plan_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X"</span>, <span class="st">"Y"</span>, <span class="st">"Z"</span><span class="op">)</span>, </span>
 <span>         policy_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">125</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census2</span>, end_date <span class="op">=</span> <span class="st">"2022-12-31"</span>, </span>
 <span>       target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 36 × 10</span></span></span>
 <span><span class="co">#&gt;    pol_num status issue_date term_date plan_type policy_value pol_yr</span></span>
@@ -709,7 +700,7 @@ circumstances.</p>
 <p>If your experience study requires a numeric feature that varies over
 time (ex: policy values, crediting rates, etc.), you can always attach
 it to an <code>exposed_df</code> object using a join function.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Illustrative example - assume `values` is a data frame containing the columns pol_num and pol_yr.</span></span>
 <span></span>
@@ -736,18 +727,19 @@ status of “Surrender” whereas <code>exposed_data</code> has none.</p>
 <p>When <code><a href="https://vctrs.r-lib.org/reference/vec_bind.html" class="external-link">vctrs::vec_rbind()</a></code> is used to combine
 <code>exposed_data</code> and <code>exposed_data2</code>, the result
 combines attributes across both objects.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposed_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">toy_census</span>, </span>
 <span>                        end_date <span class="op">=</span> <span class="st">"2023-12-31"</span>, </span>
 <span>                        start_date <span class="op">=</span> <span class="st">"1890-01-01"</span>,</span>
 <span>                        target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="https://vctrs.r-lib.org/reference/vec_bind.html" class="external-link">vec_rbind</a></span><span class="op">(</span><span class="va">exposed_data</span>, <span class="va">exposed_data2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1890-01-01 to 2023-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>: Surrender</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1890-01-01 to 2023-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 73 × 8</span></span></span>
 <span><span class="co">#&gt;    pol_num status issue_date term_date pol_yr pol_date_yr pol_date_yr_end</span></span>
@@ -767,13 +759,14 @@ combines attributes across both objects.</p>
 <p>If <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">dplyr::bind_rows()</a></code> were used instead, the attributes
 of <code>exposed_data</code> only are shown, which is likely
 incorrect.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">exposed_data</span>, <span class="va">exposed_data2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status:  </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2022-12-31</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Exposure data</span> ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Exposure type</span>: policy_year</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Target status</span>:</span></span>
+<span><span class="co">#&gt; • <span style="color: #00BB00;">Study range</span>: 1900-01-01 to 2022-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 73 × 8</span></span></span>
 <span><span class="co">#&gt;    pol_num status issue_date term_date pol_yr pol_date_yr pol_date_yr_end</span></span>
@@ -846,7 +839,7 @@ and convert the data to an <code>exposed_df</code> using
 multiple changes between an active status and an inactive status.</p>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -857,15 +850,15 @@ multiple changes between an active status and an inactive status.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
