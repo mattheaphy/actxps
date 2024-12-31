@@ -5,7 +5,7 @@
   - `exp_stats()` has two new arguments: `control_vars` and 
     `control_distinct_max`.
   - Control variables are used to estimate the impact of any grouping variables 
-    on observed experience *after adjusting for* the impact of control 
+    on observed experience after accounting for the impact of control 
     variables. The idea here is that experience is first summarized across the
     control variables to derive a new expected values basis. This expected
     values basis is then used to calculate actual-to-expected ratios.
