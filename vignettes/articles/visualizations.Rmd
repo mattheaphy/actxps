@@ -273,7 +273,7 @@ The "Grouping variables" box includes widgets to select grouping variables for s
 
 The "Study type" box will always include a tab for termination studies. If transactions are attached to the `exposed_df` object^[See `add_transactions()` for information on attaching transactions to an `exposed_df` object.], an additional section will be displayed for transaction studies.
 
-- Termination study options include the ability to activate and deactivate expected values and the selection of an optional numeric weighting variable for claims and exposures. Available expected value choices are dictated by the `expected` argument. If this argument is not specified, any columns containing the word "expected" are assumed to be expected values.
+- Termination study options include the ability to activate and deactivate expected values, the selection of an optional numeric weighting variable for claims and exposures, and the selection of control variables. Available expected value choices are dictated by the `expected` argument. If this argument is not specified, any columns containing the word "expected" are assumed to be expected values.
 - Transaction study options include the ability to activate and deactivate transaction types, optional numeric columns to use in "percentage of" statistics, and an option to lump all transaction types into a single category.
 
 The output section includes tabs for plots, tables, and exporting results. 

@@ -1,3 +1,22 @@
+# actxps (development version)
+
+- New feature - control variables
+
+  - `exp_stats()` has two new arguments: `control_vars` and 
+    `control_distinct_max`.
+  - Control variables are used to estimate the impact of any grouping variables 
+    on observed experience after accounting for the impact of control 
+    variables. The idea here is that experience is first summarized across the
+    control variables to derive a new expected values basis. This expected
+    values basis is then used to calculate actual-to-expected ratios.
+  - The `control_distinct_max` argument places an upper limit on the maximum
+    number of unique values allowed in any control variable.
+  - `exp_shiny()` now includes a control variable selection widget.
+
+- Added the "cli" package to replace "rlang" for certain errors, warnings, and 
+  messages.
+- Various small typo fixes.
+
 # actxps 1.5.0
 
 - `expose_split()` bug fixes: 

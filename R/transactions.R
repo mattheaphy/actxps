@@ -76,8 +76,8 @@ add_transactions <- function(.data, trx_data,
   new_trx_types <- unique(trx_data$trx_type)
   conflict_trx_types <- intersect(new_trx_types, existing_trx_types)
   if (length(conflict_trx_types) > 0) {
-    rlang::abort(c(x = glue::glue("`trx_data` contains transaction types that have already been attached to `.data`: {paste(conflict_trx_types, collapse = ', ')}."),
-                   i = "Update `trx_data` with unique transaction types."))
+    cli::cli_abort(c(x = "`trx_data` contains transaction types that have already been attached to `.data`: {.val {conflict_trx_types}}.",
+                     i = "Update `trx_data` with unique transaction types."))
   }
 
   # add dates to transaction data

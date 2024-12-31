@@ -174,18 +174,19 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
 
 #' @export
 print.exposed_df <- function(x, ...) {
-  cat("Exposure data\n\n",
-      "Exposure type:", attr(x, "exposure_type"), "\n",
-      "Target status:", paste(attr(x, "target_status"), collapse = ", "), "\n",
-      "Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")))
+  cli::cli_h2("Exposure data")
+  cli::cli_ul(c(
+    "{.field Exposure type}: {attr(x, 'exposure_type')}",
+    "{.field Target status}: {attr(x, 'target_status')}",
+    "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}"
+  ))
 
   trx_types <- attr(x, "trx_types")
   if (!is.null(trx_types)) {
-    cat("\n", "Transaction types:", paste(trx_types, collapse = ", "), "\n")
+    cli::cli_ul("{.field Transaction types}: {trx_types}")
   }
 
-  cat("\n\n")
+  cat("\n")
   NextMethod()
 }
 
@@ -589,8 +590,8 @@ make_date_col_names <- function(cal_expo, expo_length) {
 
 verify_exposed_df <- function(.data) {
   if (!is_exposed_df(.data)) {
-    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be an `exposed_df` object."),
-                   i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
+    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be an `exposed_df` object.",
+                     i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
     ))
   }
 }
@@ -602,8 +603,8 @@ verify_get_trx_types <- function(.data, required = TRUE) {
   trx_types <- attr(.data, "trx_types")
   if (is.null(trx_types)) {
     if (required) {
-      rlang::abort(c(x = "No transactions have been attached to `.data`.",
-                     i = "Add transaction data using `add_transactions()` before calling this function."))
+      cli::cli_abort(c(x = "No transactions have been attached to `.data`.",
+                       i = "Add transaction data using `add_transactions()` before calling this function."))
     }
     return(NULL)
   }
@@ -615,7 +616,17 @@ verify_col_names <- function(x_names, required) {
   unmatched <- setdiff(required, x_names)
 
   if (length(unmatched) > 0) {
-    rlang::abort(c(x = glue::glue("The following columns are missing: {paste(unmatched, collapse = ', ')}."),
-                   i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
+    cli::cli_abort(c(x = "The following column{?s} {?is/are} missing: {.val {unmatched}}.",
+                     i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
+  }
+}
+
+# similar to the above, but with a different context in the error message
+verify_col_exist <- function(x_names, required, what = "column") {
+  unmatched <- setdiff(required, x_names)
+  n <- length(unmatched)
+
+  if (length(unmatched) > 0) {
+    cli::cli_abort(c(x = "The following {what}{cli::qty(n)}{?s} {?was/were} not found in the data: {.val {unmatched}}."))
   }
 }

@@ -105,11 +105,13 @@ study type.
 \subsection{Termination studies}{
 
 The expected values checkboxes are used to activate and deactivate expected
-values passed to the \code{expected} argument. This impacts the table output
-directly and the available "y" variables for the plot. If there are no
-expected values available, this widget will not appear. The "Weight by"
-widget is used to specify which column, if any, contains weights for
-summarizing experience.
+values passed to the \code{expected} argument. These checkboxes also include a
+a "control" item for expected values derived using control variables.
+These boxes impact the table output directly and the available "y" variables
+for the plot. The "Weight by" widget is used to specify which column, if any,
+contains weights for summarizing experience. The "Control variables" widget
+is used to specify which columns, if any, are used as control variables (
+see \code{\link[=exp_stats]{exp_stats()}} for more information).
 }
 
 \subsection{Transaction studies}{

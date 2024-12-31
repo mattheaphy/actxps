@@ -29,7 +29,7 @@ test_that("as_trx_df works", {
 
   expect_true(is_trx_df(res3))
 
-  expect_error(as_trx_df(res4), regexp = "The following columns are missing")
+  expect_error(as_trx_df(res4), regexp = "The following column is missing")
   expect_no_error(as_trx_df(res4, col_exposure = "expo"))
   expect_no_error(as_trx_df(res5, col_exposure = "expo", col_trx_amt = "tamt",
                             col_trx_n = "tn"))

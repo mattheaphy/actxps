@@ -113,7 +113,7 @@
 #' - `avg_trx`: mean transaction amount (`trx_amt / trx_flag`)
 #' - `avg_all`: mean transaction amount over all records (`trx_amt / exposure`)
 #' - `trx_freq`: transaction frequency when a transaction occurs (`trx_n / trx_flag`)
-#' - `trx_utilization`: transaction utilization per observation period (`trx_flag / exposure`)
+#' - `trx_util`: transaction utilization per observation period (`trx_flag / exposure`)
 #'
 #' If `percent_of` is provided, the results will also include:
 #'
@@ -166,7 +166,7 @@ trx_stats <- function(.data,
   } else {
     unmatched <- setdiff(trx_types, all_trx_types)
     if (length(unmatched) > 0) {
-      rlang::abort(c(x = glue::glue("The following transactions do not exist in `.data`: {paste0(unmatched, collapse = ', ')}")))
+      cli::cli_abort(c(x = "The following transactions do not exist in `.data`: {.val {unmatched}}"))
     }
   }
 
@@ -218,17 +218,18 @@ trx_stats <- function(.data,
 #' @export
 print.trx_df <- function(x, ...) {
 
-  cat("Transaction study results\n\n")
+  cli::cli_h2("Transaction study results")
   if (length(groups(x)) > 0) {
-    cat(" Groups:", paste(groups(x), collapse = ", "), "\n")
+    cli::cli_ul("{.field Groups}: {groups(x)}")
   }
-  cat(" Study range:", as.character(attr(x, "start_date")), "to",
-      as.character(attr(x, "end_date")), "\n",
-      "Transaction types:", paste(attr(x, "trx_types"), collapse = ", "), "\n")
+  cli::cli_ul(c(
+    "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}",
+    "{.field Transaction types}: {attr(x, 'trx_types')}"))
   if (!is.null(attr(x, "percent_of"))) {
-    cat(" Transactions as % of:", paste(attr(x, "percent_of"), collapse = ", "), "\n")
+    cli::cli_ul("{.field Transactions as % of}: {attr(x, 'percent_of')}")
   }
 
+  cat("\n")
   NextMethod()
 }
 
@@ -378,8 +379,8 @@ new_trx_df <- function(x, .groups, trx_types,
 
 verify_trx_df <- function(.data) {
   if (!inherits(.data, "trx_df")) {
-    rlang::abort(c(x = glue::glue("`{deparse(substitute(.data))}` must be a `trx_df` object."),
-                   i = "Hint: Use `trx_stats()` to create `trx_df` objects."
+    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be a `trx_df` object.",
+                     i = "Hint: Use `trx_stats()` to create `trx_df` objects."
     ))
   }
 }

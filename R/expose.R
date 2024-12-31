@@ -370,8 +370,8 @@ add_period <- function(expo_length) {
   x <- x[x %in% names(.data)]
   .data[x] <- NULL
   if (length(x > 0)) {
-    rlang::warn(c(x = glue::glue("`.data` contains the following conflicting columns that will be overridden: {paste(x, collapse = ', ')}."),
-                  i = "If you don't want this to happen, rename these columns prior to calling the applicable expose function."))
+    cli::cli_warn(c(x = "`.data` contains the following conflicting columns that will be overridden: {.val {x}}.",
+                    i = "If you don't want this to happen, rename these columns prior to calling the applicable expose function."))
   }
   .data
 }
@@ -402,8 +402,8 @@ is.Date <- function(x) {
 
 .check_missing_dates <- function(x, name) {
   if (any(is.na(x))) {
-    rlang::abort(c(
-      glue::glue("Missing values are not allowed in the `{name}` column."),
+    cli::cli_abort(c(
+      "Missing values are not allowed in the `{name}` column.",
       i = "Make sure all dates are in YYYY-MM-DD format.")
     )
   }
