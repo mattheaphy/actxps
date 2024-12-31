@@ -191,7 +191,7 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   if (missing(expected) || is.null(expected)) {
     expected <- NULL
   } else {
-    verify_col_exist(names(res), expected, "expected value column")
+    verify_col_exist(names(res), expected, "expected values column")
   }
 
   if (!missing(control_vars) && !is.null(control_vars)) {
