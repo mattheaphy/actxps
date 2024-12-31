@@ -11,6 +11,7 @@
     values basis is then used to calculate actual-to-expected ratios.
   - The `control_distinct_max` argument places an upper limit on the maximum
     number of unique values allowed in any control variable.
+  - `exp_shiny()` now includes a control variable selection widget.
 
 - Added the "cli" package to replace "rlang" for certain errors, warnings, and 
   messages.
