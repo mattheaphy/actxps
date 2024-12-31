@@ -51,8 +51,8 @@ method}
 \item{conf_int}{If \code{TRUE}, the output will include confidence intervals
 around the observed termination rates and any actual-to-expected ratios.}
 
-\item{control_vars}{".none" or a character vector containing column names in
-\code{.data} to use as control variables}
+\item{control_vars}{\code{".none"} or a character vector containing column names
+in \code{.data} to use as control variables}
 
 \item{control_distinct_max}{Maximum number of unique values allowed for
 control variables}
@@ -106,10 +106,10 @@ containing expected experience. More than one expected basis can be provided.
 
 \section{Control variables}{
 The \code{control_vars} argument is optional. If provided, this argument must
-be ".none" (more on this below) or a character vector with values
+be \code{".none"} (more on this below) or a character vector with values
 corresponding to column names in \code{.data}. Control variables are used to
 estimate the impact of any grouping variables on observed experience
-\emph{after adjusting for} the impact of control variables.
+\emph{after accounting for} the impact of control variables.
 
 Mechanically, when values are passed to \code{control_vars}, a separate call
 is made to \code{\link[=exp_stats]{exp_stats()}} using the control variables as grouping variables.
@@ -118,9 +118,9 @@ both added to \code{.data} and appended to the \code{expected} argument. In the 
 output, a column called \code{ae_control} shows the relative impact of any
 grouping variables after accounting for the control variables.
 
-\strong{About ".none"}: If ".none" is passed to \code{control_vars}, a single aggregate
-termination rate is calculated for the entire data set and used to compute
-\code{control} and \code{ae_control}.
+\strong{About \code{".none"}}: If \code{".none"} is passed to \code{control_vars}, a single
+aggregate termination rate is calculated for the entire data set and used to
+compute \code{control} and \code{ae_control}.
 
 The \code{control_distinct_max} argument places an upper limit on the number of
 unique values that a control variable is allowed to have. This limit exists

@@ -127,7 +127,7 @@ exposed_data |>
 
 ## Expected values and A/E ratios
 
-As common metric in experience studies is the actual-to-expected, or A/E ratio.
+A common metric in experience studies is the actual-to-expected, or A/E ratio.
 
 $$
 A/E\ ratio = \frac{observed\ value}{expected\ value}
@@ -170,6 +170,48 @@ exposed_data |>
          ae_expected_1, ae_expected_2)
 
 ```
+
+### Control variables
+
+Control variables are a related concept to expected values. Control variables are used to estimate the impact of any grouping variables on observed experience *after accounting for* the impact of other (control) variables. 
+
+Control variables can help answer questions like, "How much lower are surrender rates by policy year for contracts with a guaranteed income rider relative to contracts without a rider?". Here, the presence of a guaranteed income rider is a grouping variable and policy year is a control variable.
+
+Control variables are specified using the optional `control_vars` argument. If provided, this argument must be `".none"` (more on this below) or a character vector with values corresponding to column names in `.data`.
+
+To answer the question above, we can group the data by `inc_guar` and add `control_vars = "pol_yr"` in a call to `exp_stats()`.
+
+```{r act-exp-ctrl}
+exposed_data |>
+  group_by(inc_guar) |>
+  exp_stats(control_vars = "pol_yr") |> 
+  select(inc_guar, q_obs, control, ae_control)
+```
+
+In the resulting output two new columns appeared:
+
+- `control`: Observed surrender rates considering the control variables (`pol_yr`) only. The fact that the two values of `control` above do not match is not surprising and simply represents the fact that the distributions of `pol_yr` across the levels of `inc_guar` are not identical.
+- `ae_control`: The A/E ratio of observed experience versus `control`. This is an estimate of the impact of `inc_guar` after accounting for `pol_yr` effects.
+
+These results show that the presence of a guaranteed income rider decreases surrender rates by a very significant amount. The converse is true for contracts without a rider.
+
+As an alternative, if `".none"` is passed to `control_vars`, a single aggregate termination rate is calculated for the entire data set and used to compute `control` and `ae_control`.
+
+```{r act-exp-ctrl2}
+exposed_data |>
+  group_by(inc_guar) |>
+  exp_stats(control_vars = ".none") |> 
+  select(inc_guar, q_obs, control, ae_control)
+```
+
+Note that:
+
+- `control` is now a constant value
+- Different results are yielded for `ae_control`
+
+The `control_distinct_max` argument places an upper limit on the number of unique values that a control variable is allowed to have. This limit exists to prevent an excessive number of groups on continuous or high-cardinality features.
+
+It should be noted that usage of control variables is a rough approximation and not a substitute for rigorous statistical models. The impact of control variables is calculated in isolation and does consider other features or possible confounding variables. As such, control variables are most useful for exploratory data analysis.
 
 ## Credibility
 
