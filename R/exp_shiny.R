@@ -49,11 +49,13 @@
 #' #### Termination studies
 #'
 #' The expected values checkboxes are used to activate and deactivate expected
-#' values passed to the `expected` argument. This impacts the table output
-#' directly and the available "y" variables for the plot. If there are no
-#' expected values available, this widget will not appear. The "Weight by"
-#' widget is used to specify which column, if any, contains weights for
-#' summarizing experience.
+#' values passed to the `expected` argument. These checkboxes also include a
+#' a "control" item for expected values derived using control variables.
+#' These boxes impact the table output directly and the available "y" variables
+#' for the plot. The "Weight by" widget is used to specify which column, if any,
+#' contains weights for summarizing experience. The "Control variables" widget
+#' is used to specify which columns, if any, are used as control variables (
+#' see [exp_stats()] for more information).
 #'
 #' #### Transaction studies
 #'
@@ -355,18 +357,10 @@ exp_shiny <- function(dat,
   }
 
   # expected values set up
-  if (length(expected) > 0) {
-
-    has_expected <- TRUE
-
-    expected_widget <- checkboxGroupPred("ex_checks", "Expected values:", 6,
-                                         choices = expected,
-                                         selected = expected)
-
-  } else {
-    has_expected <- FALSE
-    expected_widget <- NULL
-  }
+  expected <- c(expected, "control")
+  expected_widget <- checkboxGroupPred(
+    "ex_checks", "Expected values:", 4,
+    choices = expected, selected = expected[expected != "control"])
 
   # transactions set up
   if (has_trx) {
@@ -506,9 +500,12 @@ exp_shiny <- function(dat,
           value = "exp",
           shiny::fluidRow(
             expected_widget,
-            selectPred("weightVar", "Weight by:", 6,
+            selectPred("weightVar", "Weight by:", 4,
                        choices = c("None",
-                                   filter(preds, is_number)$predictors))
+                                   filter(preds, is_number)$predictors)),
+            selectPred("controlVars", "Control variables:", 4,
+                       multiple = TRUE,
+                       choices = preds_small)
           )),
 
         trx_tab
@@ -806,8 +803,9 @@ exp_shiny <- function(dat,
         }
       }
 
-      ex <- if (has_expected) {
-        input$ex_checks
+      ex <- input$ex_checks[input$ex_checks != "control"]
+      ctrl <- if ("control" %in% input$ex_checks) {
+        input$controlVars %||% ".none"
       }
 
       if (input$study_type == "exp") {
@@ -815,7 +813,7 @@ exp_shiny <- function(dat,
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
           exp_stats(wt = wt, credibility = credibility, expected = ex,
                     conf_level = conf_level, cred_r = cred_r,
-                    conf_int = TRUE)
+                    conf_int = TRUE, control_vars = ctrl)
       } else {
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
