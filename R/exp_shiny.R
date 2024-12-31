@@ -525,16 +525,16 @@ exp_shiny <- function(dat,
               shiny::markdown(
                 '<div style="text-align: left">
 
-                - `y`-axis variable selection
-                - `Second y-axis` toggle and variable
-                - `Geometry` for plotting
-                - `Add smoothing`: add smooth loess curves
-                - `Confidence intervals`: If available, draw confidence interval
-                error bars
-                - `Free y-scales`: enable separate `y` scales in each subplot
-                - `Log y-axis`: plot y-axes on a log-10 scale
-                - The grouping variables selected above will determine the
-                  variable on the `x`-axis, the color variable, and faceting
+                - **y-axis** variable selection
+                - **Second y-axis** toggle and variable
+                - **Geometry** for plotting
+                - **Add smoothing**: add smooth loess curves
+                - **Confidence intervals**: If available, draw confidence
+                interval error bars
+                - **Free y-scales**: enable separate y scales in each subplot
+                - **Log y-axis**: plot y-axes on a log-10 scale
+                - The **grouping variables** selected above will determine the
+                  variable on the x-axis, the color variable, and faceting
                   variables used to create subplots.
 
                 </div>'),
