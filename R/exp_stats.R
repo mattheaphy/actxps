@@ -20,9 +20,10 @@
 #' # Control variables
 #'
 #' The `control_vars` argument is optional. If provided, this argument must
-#' be a character vector with values corresponding to column names in `.data`.
-#' Control variables are used to estimate the impact of any grouping variables
-#' on observed experience *after adjusting for* the impact of control variables.
+#' be ".none" (more on this below) or a character vector with values
+#' corresponding to column names in `.data`. Control variables are used to
+#' estimate the impact of any grouping variables on observed experience
+#' *after adjusting for* the impact of control variables.
 #'
 #' Mechanically, when values are passed to `control_vars`, a separate call
 #' is made to [exp_stats()] using the control variables as grouping variables.
@@ -30,6 +31,10 @@
 #' both added to `.data` and appended to the `expected` argument. In the final
 #' output, a column called `ae_control` shows the relative impact of any
 #' grouping variables after accounting for the control variables.
+#'
+#' **About ".none"**: If ".none" is passed to `control_vars`, a single aggregate
+#' termination rate is calculated for the entire data set and used to compute
+#' `control` and `ae_control`.
 #'
 #' The `control_distinct_max` argument places an upper limit on the number of
 #' unique values that a control variable is allowed to have. This limit exists
@@ -94,8 +99,8 @@
 #' method
 #' @param conf_int If `TRUE`, the output will include confidence intervals
 #' around the observed termination rates and any actual-to-expected ratios.
-#' @param control_vars A character vector containing column names in `.data`
-#' to use as control variables
+#' @param control_vars ".none" or a character vector containing column names in
+#' `.data` to use as control variables
 #' @param control_distinct_max Maximum number of unique values allowed for
 #' control variables
 #' @param object An `exp_df` object
@@ -191,7 +196,25 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
 
   if (!missing(control_vars) && !is.null(control_vars)) {
 
-    verify_col_exist(names(res), control_vars, "control variable")
+    # special handling for aggregates
+    if (all(control_vars == ".none")) {
+      if (".none" %in% names(res)) {
+        cli::cli_abort(
+          "Name conflict error: {.val .none} cannot be passed to `control_vars`
+          because there is also column in the data with the same name."
+        )
+      }
+      control_vars <- "None"
+      res[["None"]] <- 1L
+    } else {
+      if (".none" %in% control_vars) {
+        cli::cli_abort(
+          "If {.val .none} is passed to `control_vars`, then no other values
+          are allowed."
+        )
+      }
+      verify_col_exist(names(res), control_vars, "control variable")
+    }
 
     # throw an error if too many unique values
     nd_ctrl <- res |>
