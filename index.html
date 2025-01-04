@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">actxps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,7 +99,6 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mattheaphy/actxps/" class="external-link">actxps</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'dplyr' was built under R version 4.2.3</span></span>
 <span></span>
 <span><span class="va">census_dat</span></span>
 <span><span class="co">#&gt; # A tibble: 20,000 × 11</span></span>
@@ -123,11 +122,12 @@
 <span>                        target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">exposed_data</span></span>
-<span><span class="co">#&gt; Exposure data</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Exposure type: policy_year </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31</span></span>
+<span><span class="co">#&gt; ── Exposure data ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • Exposure type: policy_year</span></span>
+<span><span class="co">#&gt; • Target status: Surrender</span></span>
+<span><span class="co">#&gt; • Study range: 1900-01-01 to 2019-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # A tibble: 141,252 × 15</span></span>
 <span><span class="co">#&gt;    pol_num status issue_date inc_guar qual    age product gender wd_age premium</span></span>
@@ -152,11 +152,12 @@
 <span>  <span class="fu"><a href="reference/exp_stats.html">exp_stats</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">exp_res</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
+<span><span class="co">#&gt; ── Experience study results ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • Groups: pol_yr and inc_guar</span></span>
+<span><span class="co">#&gt; • Target status: Surrender</span></span>
+<span><span class="co">#&gt; • Study range: 1900-01-01 to 2019-12-31</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # A tibble: 30 × 6</span></span>
 <span><span class="co">#&gt;    pol_yr inc_guar n_claims claims exposure   q_obs</span></span>
@@ -187,12 +188,13 @@
 <span>  <span class="fu"><a href="reference/exp_stats.html">exp_stats</a></span><span class="op">(</span>expected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expected_1"</span>, <span class="st">"expected_2"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">exp_res</span></span>
-<span><span class="co">#&gt; Experience study results</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Groups: pol_yr, inc_guar </span></span>
-<span><span class="co">#&gt;  Target status: Surrender </span></span>
-<span><span class="co">#&gt;  Study range: 1900-01-01 to 2019-12-31 </span></span>
-<span><span class="co">#&gt;  Expected values: expected_1, expected_2 </span></span>
+<span><span class="co">#&gt; ── Experience study results ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • Groups: pol_yr and inc_guar</span></span>
+<span><span class="co">#&gt; • Target status: Surrender</span></span>
+<span><span class="co">#&gt; • Study range: 1900-01-01 to 2019-12-31</span></span>
+<span><span class="co">#&gt; • Expected values: expected_1 and expected_2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # A tibble: 30 × 10</span></span>
 <span><span class="co">#&gt;    pol_yr inc_guar n_claims claims exposure   q_obs expected_1 expected_2</span></span>
