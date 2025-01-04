@@ -259,6 +259,8 @@ The `autotable()` function creates summary tables of termination or transaction 
 
 - `show_conf_int` and `show_cred_adj` can be used to include any confidence intervals and credibility-weighted termination rates, if available. As a default, these columns are not included to avoid producing overcrowded tables.
 
+- `show_total` can be used to add grand total rows to tables.
+
 ## Interactive Shiny app
 
 `exp_shiny()` is a powerful function that launches an interactive Shiny app containing filters, grouping variables, plots produced by `autoplot()`, tables produced by `autotable()`, and exporting capabilities. This function requires an `exposed_df` object^[See `expose()` or `as_exposed_df()` for more information].
@@ -292,7 +294,7 @@ The plot tab includes a plot and various options for customization:
 
 The table tab includes the table itself plus a pop-up menu for changing the table's appearance:
 
-- The "Confidence intervals" and "Credibility-weighted termination rates" switches add these outputs to the table. These values are hidden as a default to prevent over-crowding.
+- The "Total row", "Confidence intervals", and "Credibility-weighted termination rates" switches add these outputs to the table. These values are hidden as a default to prevent over-crowding.
 - The "Include color scales" switch disables or re-enables conditional color formatting.
 - The "Decimals" slider controls the number of decimals displayed for percentage fields.
 - The "Font size multiple" slider impacts the table's font size

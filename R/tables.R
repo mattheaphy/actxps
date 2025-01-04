@@ -40,6 +40,7 @@
 #' assuming they are available on `object`.
 #' @param show_cred_adj If `TRUE` credibility-weighted termination rates will
 #' be displayed assuming they are available on `object`.
+#' @param show_total If `TRUE` the table will include grand total row(s).
 #' @param ... Additional arguments passed to [gt::gt()].
 #'
 #' @details
@@ -91,6 +92,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
                              show_cred_adj = FALSE,
                              decimals_amt = 0,
                              suffix_amt = FALSE,
+                             show_total = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -100,6 +102,14 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   wt <- attr(object, "wt")
   cred <- attr(object, "xp_params")$credibility
   conf_int <- attr(object, "xp_params")$conf_int
+
+  if (length(groups(object)) == 0L) show_total <- FALSE
+  if (show_total) {
+    object <- append_total(object)
+    rowname_col <- ".row_label"
+  } else {
+    rowname_col <- "rowname"
+  }
 
   if (show_conf_int && !conf_int) {
     conf_int_warning()
@@ -120,7 +130,7 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
 
   tab <- object |>
     select(-dplyr::starts_with(".weight")) |>
-    gt::gt(...) |>
+    gt::gt(rowname_col = rowname_col, ...) |>
     gt::fmt_number(c(n_claims, claims, exposure),
                    decimals = decimals_amt, suffixing = suffix_amt) |>
     gt::fmt_percent(c(q_obs,
@@ -205,6 +215,10 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
       )
   }
 
+  if (show_total) {
+    tab <- format_total(tab)
+  }
+
   tab
 
 }
@@ -219,6 +233,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
                              show_conf_int = FALSE,
                              decimals_amt = 0,
                              suffix_amt = FALSE,
+                             show_total = FALSE,
                              ...) {
 
   rlang::check_installed("RColorBrewer")
@@ -226,6 +241,14 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   percent_of <- attr(object, "percent_of")
   trx_types <- attr(object, "trx_types")
   conf_int <- attr(object, "xp_params")$conf_int
+
+  if (length(groups(object)) == 0L) show_total <- FALSE
+  if (show_total) {
+    object <- append_total(object)
+    rowname_col <- ".row_label"
+  } else {
+    rowname_col <- "rowname"
+  }
 
   if (show_conf_int && !conf_int) {
     conf_int_warning()
@@ -246,7 +269,7 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   tab <- object |>
     select(-exposure, -dplyr::any_of("trx_amt_sq")) |>
     arrange(trx_type) |>
-    gt::gt(groupname_col = "trx_type") |>
+    gt::gt(groupname_col = "trx_type", rowname_col = rowname_col) |>
     gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
                    decimals = decimals_amt, suffixing = suffix_amt) |>
     gt::fmt_number(trx_freq, decimals = 1) |>
@@ -321,6 +344,10 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
       )
   }
 
+  if (show_total) {
+    tab <- format_total(tab)
+  }
+
   tab
 
 }
@@ -389,5 +416,27 @@ span_percent_of <- function(tab, pct_of, conf_int) {
   }
 
   tab
+
+}
+
+# internal functions for supporting grand totals
+append_total <- function(object) {
+  object <- dplyr::bind_rows(object |> mutate(.row_label = ''),
+                             summary(object) |>
+                               mutate(.row_label = 'Total'))
+}
+
+format_total <- function(tab) {
+  tab <- tab |>
+    gt::tab_style(locations = list(
+      gt::cells_body(rows = .row_label == "Total"),
+      gt::cells_stub(rows = .row_label == "Total")
+    ),
+    style = list(gt::cell_text(weight = "bold"),
+                 gt::cell_borders(sides = "top",
+                                  style = "double",
+                                  color = "#D3D3D3",
+                                  weight = gt::px(6)))) |>
+    gt::sub_missing(missing_text = "")
 
 }

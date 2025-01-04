@@ -127,7 +127,7 @@ autoplot(exp_res)
 exp_res |> head(10) |> autotable()
 ```
 
-```{r table2, echo = FALSE}
+```{r table2, echo = FALSE, include=FALSE}
 exp_res |> head(10) |> autotable() |> gt::gtsave("man/figures/exp_gt.png")
 ```
 

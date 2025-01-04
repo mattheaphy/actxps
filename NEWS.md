@@ -1,4 +1,4 @@
-# actxps (development version)
+# actxps 1.6.0
 
 - New feature - control variables
 
@@ -12,6 +12,9 @@
   - The `control_distinct_max` argument places an upper limit on the maximum
     number of unique values allowed in any control variable.
   - `exp_shiny()` now includes a control variable selection widget.
+  
+- New feature - `autotable()` methods for termination and transaction studies 
+  now include a `show_total` argument that appends grand total rows.
 
 - Added the "cli" package to replace "rlang" for certain errors, warnings, and 
   messages.

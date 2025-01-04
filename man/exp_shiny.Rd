@@ -155,9 +155,9 @@ This tab includes a data table.
 The gear icon above the table contains a pop-up menu that can be used to
 change the appearance of the table:
 \itemize{
-\item The "Confidence intervals" and "Credibility-weighted termination rates"
-switches add these outputs to the table. These values are hidden as a default
-to prevent over-crowding.
+\item The "Total row", "Confidence intervals", and "Credibility-weighted
+termination rates" switches add these outputs to the table. These values are
+hidden as a default to prevent over-crowding.
 \item The "Include color scales" switch disables or re-enables conditional color
 formatting.
 \item The "Decimals" slider controls the number of decimals displayed for

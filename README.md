@@ -56,7 +56,6 @@ grain of this data is one row *per policy*.
 ``` r
 library(actxps)
 library(dplyr)
-#> Warning: package 'dplyr' was built under R version 4.2.3
 
 census_dat
 #> # A tibble: 20,000 × 11
@@ -84,11 +83,12 @@ exposed_data <- expose(census_dat, end_date = "2019-12-31",
                         target_status = "Surrender")
 
 exposed_data
-#> Exposure data
 #> 
-#>  Exposure type: policy_year 
-#>  Target status: Surrender 
-#>  Study range: 1900-01-01 to 2019-12-31
+#> ── Exposure data ──
+#> 
+#> • Exposure type: policy_year
+#> • Target status: Surrender
+#> • Study range: 1900-01-01 to 2019-12-31
 #> 
 #> # A tibble: 141,252 × 15
 #>    pol_num status issue_date inc_guar qual    age product gender wd_age premium
@@ -117,11 +117,12 @@ exp_res <- exposed_data |>
   exp_stats()
 
 exp_res
-#> Experience study results
 #> 
-#>  Groups: pol_yr, inc_guar 
-#>  Target status: Surrender 
-#>  Study range: 1900-01-01 to 2019-12-31 
+#> ── Experience study results ──
+#> 
+#> • Groups: pol_yr and inc_guar
+#> • Target status: Surrender
+#> • Study range: 1900-01-01 to 2019-12-31
 #> 
 #> # A tibble: 30 × 6
 #>    pol_yr inc_guar n_claims claims exposure   q_obs
@@ -158,12 +159,13 @@ exp_res <- exposed_data |>
   exp_stats(expected = c("expected_1", "expected_2"))
 
 exp_res
-#> Experience study results
 #> 
-#>  Groups: pol_yr, inc_guar 
-#>  Target status: Surrender 
-#>  Study range: 1900-01-01 to 2019-12-31 
-#>  Expected values: expected_1, expected_2 
+#> ── Experience study results ──
+#> 
+#> • Groups: pol_yr and inc_guar
+#> • Target status: Surrender
+#> • Study range: 1900-01-01 to 2019-12-31
+#> • Expected values: expected_1 and expected_2
 #> 
 #> # A tibble: 30 × 10
 #>    pol_yr inc_guar n_claims claims exposure   q_obs expected_1 expected_2

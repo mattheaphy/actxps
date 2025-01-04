@@ -19,7 +19,7 @@ actxps:::set_actxps_plot_theme()
 
 This vignette features functions that are not covered in other vignettes.
 
-```{r packages}
+```{r packages, warning=FALSE, message=FALSE}
 library(actxps)
 library(clock)
 ```

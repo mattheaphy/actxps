@@ -94,9 +94,9 @@
 #' The gear icon above the table contains a pop-up menu that can be used to
 #' change the appearance of the table:
 #'
-#' - The "Confidence intervals" and "Credibility-weighted termination rates"
-#' switches add these outputs to the table. These values are hidden as a default
-#' to prevent over-crowding.
+#' - The "Total row", "Confidence intervals", and "Credibility-weighted
+#' termination rates" switches add these outputs to the table. These values are
+#' hidden as a default to prevent over-crowding.
 #' - The "Include color scales" switch disables or re-enables conditional color
 #' formatting.
 #' - The "Decimals" slider controls the number of decimals displayed for
@@ -612,6 +612,9 @@ exp_shiny <- function(dat,
           bslib::card_header(
             bslib::popover(
               shiny::icon("gear"),
+              bslib::input_switch("tableTotal",
+                                  shiny::strong("Total row"),
+                                  value = TRUE),
               bslib::input_switch("tableCI",
                                   shiny::strong("Confidence intervals"),
                                   value = FALSE),
@@ -942,12 +945,14 @@ exp_shiny <- function(dat,
                            show_cred_adj = input$tableCredAdj,
                            colorful = input$tableColorful,
                            decimals = input$tableDecimals,
-                           fontsize = input$tableFontsize)
+                           fontsize = input$tableFontsize,
+                           show_total = input$tableTotal)
       } else {
         rxp() |> autotable(show_conf_int = input$tableCI,
                            colorful = input$tableColorful,
                            decimals = input$tableDecimals,
-                           fontsize = input$tableFontsize)
+                           fontsize = input$tableFontsize,
+                           show_total = input$tableTotal)
       }
     })
 
