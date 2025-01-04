@@ -94,9 +94,9 @@
 #' The gear icon above the table contains a pop-up menu that can be used to
 #' change the appearance of the table:
 #'
-#' - The "Confidence intervals" and "Credibility-weighted termination rates"
-#' switches add these outputs to the table. These values are hidden as a default
-#' to prevent over-crowding.
+#' - The "Total row", "Confidence intervals", and "Credibility-weighted
+#' termination rates" switches add these outputs to the table. These values are
+#' hidden as a default to prevent over-crowding.
 #' - The "Include color scales" switch disables or re-enables conditional color
 #' formatting.
 #' - The "Decimals" slider controls the number of decimals displayed for
