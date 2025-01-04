@@ -20,6 +20,7 @@ autotable(object, ...)
   show_cred_adj = FALSE,
   decimals_amt = 0,
   suffix_amt = FALSE,
+  show_total = FALSE,
   ...
 )
 
@@ -34,6 +35,7 @@ autotable(object, ...)
   show_conf_int = FALSE,
   decimals_amt = 0,
   suffix_amt = FALSE,
+  show_total = FALSE,
   ...
 )
 }
@@ -78,6 +80,8 @@ no scaling or suffixing are applied to amount columns. If \code{TRUE}, all amoun
 columns are automatically scaled and suffixed by "K" (thousands), "M"
 (millions), "B" (billions), or "T" (trillions). See \code{\link[gt:fmt_number]{gt::fmt_number()}} for
 more information.}
+
+\item{show_total}{If \code{TRUE} the table will include grand total row(s).}
 
 \item{color_util}{Color palette used for utilization rates.}
 

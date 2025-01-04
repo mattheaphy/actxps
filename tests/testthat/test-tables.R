@@ -40,3 +40,8 @@ test_that("Table credibility-weighted termination rates warning works", {
   expect_warning(autotable(exp_res, show_cred_adj = TRUE),
                  regex = "has no credibility-weighted")
 })
+
+test_that("Totals are shown in tables", {
+  expect_s3_class(autotable(exp_res, show_total = TRUE), c("gt_tbl", "list"))
+  expect_s3_class(autotable(trx_res, show_total = TRUE), c("gt_tbl", "list"))
+})
