@@ -1,4 +1,4 @@
-# actxps (development version)
+# actxps 1.6.0
 
 - New feature - control variables
 
