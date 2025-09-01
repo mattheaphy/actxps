@@ -162,7 +162,7 @@ exp_shiny <- function(
   col_exposure = "exposure"
 ) {
   rlang::check_installed("shiny")
-  rlang::check_installed("bslib")
+  rlang::check_installed("bslib", version = "0.9.0")
   rlang::check_installed("thematic")
 
   verify_exposed_df(dat)
@@ -571,7 +571,7 @@ exp_shiny <- function(
 
     bslib::navset_bar(
       title = "Output",
-      inverse = TRUE,
+      navbar_options = bslib::navbar_options(theme = "dark"),
       bslib::nav_panel(
         "Plot",
         bslib::card(
