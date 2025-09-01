@@ -105,53 +105,82 @@
 #'
 #'
 #' @export
-as_exp_df <- function(x, expected = NULL, wt = NULL,
-                      col_claims, col_exposure,
-                      col_n_claims, col_weight_sq, col_weight_n,
-                      target_status = NULL,
-                      start_date = as.Date("1900-01-01"), end_date = NULL,
-                      credibility = FALSE,
-                      conf_level = 0.95, cred_r = 0.05, conf_int = FALSE) {
-
-  if (is_exp_df(x)) return(x)
+as_exp_df <- function(
+  x,
+  expected = NULL,
+  wt = NULL,
+  col_claims,
+  col_exposure,
+  col_n_claims,
+  col_weight_sq,
+  col_weight_n,
+  target_status = NULL,
+  start_date = as.Date("1900-01-01"),
+  end_date = NULL,
+  credibility = FALSE,
+  conf_level = 0.95,
+  cred_r = 0.05,
+  conf_int = FALSE
+) {
+  if (is_exp_df(x)) {
+    return(x)
+  }
 
   if (!is.data.frame(x)) {
     rlang::abort("`x` must be a data frame.")
   }
 
   # column name alignment
-  if (!missing(col_exposure)) x <- x |> rename(exposure = {{col_exposure}})
-  if (!missing(col_claims)) x <- x |> rename(claims = {{col_claims}})
+  if (!missing(col_exposure)) {
+    x <- x |> rename(exposure = {{ col_exposure }})
+  }
+  if (!missing(col_claims)) {
+    x <- x |> rename(claims = {{ col_claims }})
+  }
 
   if (is.null(wt)) {
     req_names <- c("exposure", "claims")
   } else {
-    req_names <- c("exposure", "claims", "n_claims", ".weight",
-                   ".weight_sq", ".weight_n")
-    if (!missing(col_n_claims)) x <- x |> rename(n_claims = {{col_n_claims}})
-    x <- x |> rename(.weight = {{wt}})
-    if (!missing(col_weight_sq)) x <- x |>
-        rename(.weight_sq = {{col_weight_sq}})
-    if (!missing(col_weight_n)) x <- x |> rename(.weight_n = {{col_weight_n}})
+    req_names <- c(
+      "exposure",
+      "claims",
+      "n_claims",
+      ".weight",
+      ".weight_sq",
+      ".weight_n"
+    )
+    if (!missing(col_n_claims)) {
+      x <- x |> rename(n_claims = {{ col_n_claims }})
+    }
+    x <- x |> rename(.weight = {{ wt }})
+    if (!missing(col_weight_sq)) {
+      x <- x |>
+        rename(.weight_sq = {{ col_weight_sq }})
+    }
+    if (!missing(col_weight_n)) x <- x |> rename(.weight_n = {{ col_weight_n }})
   }
 
   # check required columns
   verify_col_names(names(x), req_names)
 
-  if (is.null(wt)) x$n_claims <- x$claims
+  if (is.null(wt)) {
+    x$n_claims <- x$claims
+  }
 
-  new_exp_df(x,
-             .groups = list(),
-             target_status = target_status,
-             start_date = start_date,
-             expected = expected,
-             end_date = end_date,
-             wt = wt,
-             credibility = credibility,
-             conf_level = conf_level, cred_r = cred_r,
-             conf_int = conf_int,
-             control_vars = NULL)
-
+  new_exp_df(
+    x,
+    .groups = list(),
+    target_status = target_status,
+    start_date = start_date,
+    expected = expected,
+    end_date = end_date,
+    wt = wt,
+    credibility = credibility,
+    conf_level = conf_level,
+    cred_r = cred_r,
+    conf_int = conf_int,
+    control_vars = NULL
+  )
 }
 
 #' @export

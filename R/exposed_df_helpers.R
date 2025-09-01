@@ -52,20 +52,26 @@ is_exposed_df <- function(x) {
 
 #' @rdname is_exposed_df
 #' @export
-as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
-                          target_status = NULL, cal_expo = FALSE,
-                          expo_length = c("year", "quarter", "month", "week"),
-                          trx_types = NULL,
-                          col_pol_num,
-                          col_status,
-                          col_exposure,
-                          col_pol_per,
-                          cols_dates,
-                          col_trx_n_ = "trx_n_",
-                          col_trx_amt_ = "trx_amt_",
-                          default_status) {
-
-  if (is_exposed_df(x)) return(x)
+as_exposed_df <- function(
+  x,
+  end_date,
+  start_date = as.Date("1900-01-01"),
+  target_status = NULL,
+  cal_expo = FALSE,
+  expo_length = c("year", "quarter", "month", "week"),
+  trx_types = NULL,
+  col_pol_num,
+  col_status,
+  col_exposure,
+  col_pol_per,
+  cols_dates,
+  col_trx_n_ = "trx_n_",
+  col_trx_amt_ = "trx_amt_",
+  default_status
+) {
+  if (is_exposed_df(x)) {
+    return(x)
+  }
 
   expo_length <- rlang::arg_match(expo_length)
 
@@ -74,9 +80,15 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
   }
 
   # column name alignment
-  if (!missing(col_pol_num)) x <- x |> rename(pol_num = {{col_pol_num}})
-  if (!missing(col_status)) x <- x |> rename(status = {{col_status}})
-  if (!missing(col_exposure)) x <- x |> rename(exposure = {{col_exposure}})
+  if (!missing(col_pol_num)) {
+    x <- x |> rename(pol_num = {{ col_pol_num }})
+  }
+  if (!missing(col_status)) {
+    x <- x |> rename(status = {{ col_status }})
+  }
+  if (!missing(col_exposure)) {
+    x <- x |> rename(exposure = {{ col_exposure }})
+  }
 
   # column name alignment - policy exposure periods
   exp_col_pol_per <- if (!cal_expo) {
@@ -84,13 +96,12 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     paste0("pol_", abbrev)
   }
   if (!missing(col_pol_per) && !cal_expo) {
-    x <- x |> rename({{exp_col_pol_per}} := {{col_pol_per}})
+    x <- x |> rename({{ exp_col_pol_per }} := {{ col_pol_per }})
   }
 
   # column name alignment - period start and end dates
   exp_cols_dates <- make_date_col_names(cal_expo, expo_length)
   if (!missing(cols_dates)) {
-
     if (length(cols_dates) != 2 && is.character(cols_dates)) {
       rlang::abort("`cols_dates` must be a length 2 character vector")
     }
@@ -98,13 +109,15 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
     q_exp_cols_dates <- rlang::syms(exp_cols_dates)
     q_cols_dates <- rlang::syms(cols_dates)
 
-    x <- x |> rename(!!q_exp_cols_dates[[1]] := !!q_cols_dates[[1]],
-                     !!q_exp_cols_dates[[2]] := !!q_cols_dates[[2]])
+    x <- x |>
+      rename(
+        !!q_exp_cols_dates[[1]] := !!q_cols_dates[[1]],
+        !!q_exp_cols_dates[[2]] := !!q_cols_dates[[2]]
+      )
   }
 
   # check transaction types
   if (!is.null(trx_types)) {
-
     trx_renamer <- function(x) {
       x <- gsub(paste0("^", col_trx_n_), "trx_n_", x)
       gsub(paste0("^", col_trx_amt_), "trx_amt_", x)
@@ -121,27 +134,44 @@ as_exposed_df <- function(x, end_date, start_date = as.Date("1900-01-01"),
 
   # check required columns
   # pol_num, status, exposure, 2 date cols, policy period (policy expo only)
-  req_names <- c("pol_num", "status", "exposure",
-                 exp_col_pol_per,
-                 exp_cols_dates,
-                 exp_cols_trx)
+  req_names <- c(
+    "pol_num",
+    "status",
+    "exposure",
+    exp_col_pol_per,
+    exp_cols_dates,
+    exp_cols_trx
+  )
   verify_col_names(names(x), req_names)
 
   if (missing(default_status)) {
     default_status <- most_common(x$status)
   }
 
-  new_exposed_df(x, end_date, start_date, target_status, cal_expo,
-                 expo_length, trx_types, default_status)
-
+  new_exposed_df(
+    x,
+    end_date,
+    start_date,
+    target_status,
+    cal_expo,
+    expo_length,
+    trx_types,
+    default_status
+  )
 }
 
 # low-level class constructor
-new_exposed_df <- function(x, end_date, start_date, target_status,
-                           cal_expo, expo_length, trx_types = NULL,
-                           default_status, split = FALSE) {
-
-
+new_exposed_df <- function(
+  x,
+  end_date,
+  start_date,
+  target_status,
+  cal_expo,
+  expo_length,
+  trx_types = NULL,
+  default_status,
+  split = FALSE
+) {
   date_cols <- make_date_col_names(cal_expo, expo_length)
   exposure_type <- if (cal_expo) {
     if (split) {
@@ -159,17 +189,17 @@ new_exposed_df <- function(x, end_date, start_date, target_status,
     "exposed_df"
   }
 
-  tibble::new_tibble(x,
-                     class = new_class,
-                     target_status = target_status,
-                     exposure_type = paste(exposure_type, expo_length,
-                                           sep = "_"),
-                     start_date = start_date,
-                     end_date = end_date,
-                     date_cols = date_cols,
-                     trx_types = trx_types,
-                     default_status = as.character(default_status))
-
+  tibble::new_tibble(
+    x,
+    class = new_class,
+    target_status = target_status,
+    exposure_type = paste(exposure_type, expo_length, sep = "_"),
+    start_date = start_date,
+    end_date = end_date,
+    date_cols = date_cols,
+    trx_types = trx_types,
+    default_status = as.character(default_status)
+  )
 }
 
 #' @export
@@ -242,7 +272,7 @@ select.exposed_df <- function(.data, ...) {
 }
 
 #' @export
-slice.exposed_df <- function (.data, ..., .by = NULL, .preserve = FALSE)  {
+slice.exposed_df <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   if (dplyr::is_grouped_df(.data)) {
     NextMethod(.by = NULL) |> vec_cast(.data)
   } else {
@@ -278,40 +308,68 @@ rebuild_mutate_join <- function(.data, res) {
 }
 
 #' @export
-left_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
-                                 suffix = c(".x", ".y"), ..., keep = NULL) {
+left_join.exposed_df <- function(
+  x,
+  y,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y"),
+  ...,
+  keep = NULL
+) {
   res <- NextMethod()
   rebuild_mutate_join(x, res)
 }
 
 #' @export
-right_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
-                                  suffix = c(".x", ".y"), ..., keep = NULL) {
+right_join.exposed_df <- function(
+  x,
+  y,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y"),
+  ...,
+  keep = NULL
+) {
   res <- NextMethod()
   rebuild_mutate_join(x, res)
 }
 
 #' @export
-inner_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
-                                  suffix = c(".x", ".y"), ..., keep = NULL) {
+inner_join.exposed_df <- function(
+  x,
+  y,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y"),
+  ...,
+  keep = NULL
+) {
   res <- NextMethod()
   rebuild_mutate_join(x, res)
 }
 
 #' @export
-full_join.exposed_df <- function(x, y, by = NULL, copy = FALSE,
-                                 suffix = c(".x", ".y"), ..., keep = NULL) {
+full_join.exposed_df <- function(
+  x,
+  y,
+  by = NULL,
+  copy = FALSE,
+  suffix = c(".x", ".y"),
+  ...,
+  keep = NULL
+) {
   res <- NextMethod()
   rebuild_mutate_join(x, res)
 }
 
 #' @export
-semi_join.exposed_df <- function (x, y, by = NULL, copy = FALSE, ...) {
+semi_join.exposed_df <- function(x, y, by = NULL, copy = FALSE, ...) {
   NextMethod() |> vec_cast(x)
 }
 
 #' @export
-anti_join.exposed_df <- function (x, y, by = NULL, copy = FALSE, ...) {
+anti_join.exposed_df <- function(x, y, by = NULL, copy = FALSE, ...) {
   NextMethod() |> vec_cast(x)
 }
 
@@ -328,7 +386,6 @@ has_compatible_expo <- function(x, y) {
 }
 
 exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-
   out <- vctrs::tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 
   if (!has_compatible_expo(x, y)) {
@@ -341,10 +398,11 @@ exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     )
   }
 
-  end_date <- max(as.Date(attr(x, "end_date")),
-                  as.Date(attr(y, "end_date")))
-  start_date <- min(as.Date(attr(x, "start_date")),
-                    as.Date(attr(y, "start_date")))
+  end_date <- max(as.Date(attr(x, "end_date")), as.Date(attr(y, "end_date")))
+  start_date <- min(
+    as.Date(attr(x, "start_date")),
+    as.Date(attr(y, "start_date"))
+  )
   target_status <- union(attr(x, "target_status"), attr(y, "target_status"))
   trx_types <- union(attr(x, "trx_types"), attr(y, "trx_types"))
 
@@ -355,14 +413,21 @@ exposed_df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   expo_length <- split_type[[2]]
   default_status <- attr(x, "default_status")
 
-  new_exposed_df(out, end_date, start_date, target_status, cal_expo,
-                 expo_length, trx_types, default_status,
-                 is_split_exposed_df(x))
+  new_exposed_df(
+    out,
+    end_date,
+    start_date,
+    target_status,
+    cal_expo,
+    expo_length,
+    trx_types,
+    default_status,
+    is_split_exposed_df(x)
+  )
 }
 
 
 exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-
   out <- vctrs::tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 
   if (!has_compatible_expo(x, to)) {
@@ -386,9 +451,17 @@ exposed_df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
   expo_length <- split_type[[2]]
   default_status <- attr(to, "default_status")
 
-  new_exposed_df(out, end_date, start_date, target_status, cal_expo,
-                 expo_length, trx_types, default_status,
-                 is_split_exposed_df(to))
+  new_exposed_df(
+    out,
+    end_date,
+    start_date,
+    target_status,
+    cal_expo,
+    expo_length,
+    trx_types,
+    default_status,
+    is_split_exposed_df(to)
+  )
 }
 
 
@@ -590,8 +663,9 @@ make_date_col_names <- function(cal_expo, expo_length) {
 
 verify_exposed_df <- function(.data) {
   if (!is_exposed_df(.data)) {
-    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be an `exposed_df` object.",
-                     i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
+    cli::cli_abort(c(
+      x = "`{deparse(substitute(.data))}` must be an `exposed_df` object.",
+      i = "Hint: Use `as_exposed_df()` to convert your data to the required format."
     ))
   }
 }
@@ -603,8 +677,10 @@ verify_get_trx_types <- function(.data, required = TRUE) {
   trx_types <- attr(.data, "trx_types")
   if (is.null(trx_types)) {
     if (required) {
-      cli::cli_abort(c(x = "No transactions have been attached to `.data`.",
-                       i = "Add transaction data using `add_transactions()` before calling this function."))
+      cli::cli_abort(c(
+        x = "No transactions have been attached to `.data`.",
+        i = "Add transaction data using `add_transactions()` before calling this function."
+      ))
     }
     return(NULL)
   }
@@ -616,8 +692,10 @@ verify_col_names <- function(x_names, required) {
   unmatched <- setdiff(required, x_names)
 
   if (length(unmatched) > 0) {
-    cli::cli_abort(c(x = "The following column{?s} {?is/are} missing: {.val {unmatched}}.",
-                     i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."))
+    cli::cli_abort(c(
+      x = "The following column{?s} {?is/are} missing: {.val {unmatched}}.",
+      i = "Hint: create these columns or use the `col_*` arguments to specify existing columns that should be mapped to these elements."
+    ))
   }
 }
 
@@ -627,6 +705,8 @@ verify_col_exist <- function(x_names, required, what = "column") {
   n <- length(unmatched)
 
   if (length(unmatched) > 0) {
-    cli::cli_abort(c(x = "The following {what}{cli::qty(n)}{?s} {?was/were} not found in the data: {.val {unmatched}}."))
+    cli::cli_abort(c(
+      x = "The following {what}{cli::qty(n)}{?s} {?was/were} not found in the data: {.val {unmatched}}."
+    ))
   }
 }

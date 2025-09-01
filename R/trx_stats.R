@@ -147,15 +147,16 @@
 #'   trx_stats(percent_of = "premium", combine_trx = TRUE, conf_int = TRUE)
 #'
 #' @export
-trx_stats <- function(.data,
-                      trx_types,
-                      percent_of = NULL,
-                      combine_trx = FALSE,
-                      col_exposure = "exposure",
-                      full_exposures_only = TRUE,
-                      conf_int = FALSE,
-                      conf_level = 0.95) {
-
+trx_stats <- function(
+  .data,
+  trx_types,
+  percent_of = NULL,
+  combine_trx = FALSE,
+  col_exposure = "exposure",
+  full_exposures_only = TRUE,
+  conf_int = FALSE,
+  conf_level = 0.95
+) {
   verify_exposed_df(.data)
 
   # verify transaction types
@@ -166,7 +167,9 @@ trx_stats <- function(.data,
   } else {
     unmatched <- setdiff(trx_types, all_trx_types)
     if (length(unmatched) > 0) {
-      cli::cli_abort(c(x = "The following transactions do not exist in `.data`: {.val {unmatched}}"))
+      cli::cli_abort(c(
+        x = "The following transactions do not exist in `.data`: {.val {unmatched}}"
+      ))
     }
   }
 
@@ -175,7 +178,7 @@ trx_stats <- function(.data,
   start_date <- attr(.data, "start_date")
   end_date <- attr(.data, "end_date")
 
-  .data <- .data |> rename(exposure = {{col_exposure}})
+  .data <- .data |> rename(exposure = {{ col_exposure }})
 
   # remove partial exposures
   if (full_exposures_only) {
@@ -190,9 +193,11 @@ trx_stats <- function(.data,
   if (combine_trx) {
     trx_n_cols <- trx_cols[grepl("_n_", trx_cols)]
     trx_amt_cols <- trx_cols[grepl("_amt_", trx_cols)]
-    .data <- .data |> mutate(
-      trx_n_All = !!rlang::parse_expr(paste(trx_n_cols, collapse = "+")),
-      trx_amt_All = !!rlang::parse_expr(paste(trx_amt_cols, collapse = "+")))
+    .data <- .data |>
+      mutate(
+        trx_n_All = !!rlang::parse_expr(paste(trx_n_cols, collapse = "+")),
+        trx_amt_All = !!rlang::parse_expr(paste(trx_amt_cols, collapse = "+"))
+      )
     trx_cols <- c("trx_n_All", "trx_amt_All")
   }
 
@@ -201,30 +206,46 @@ trx_stats <- function(.data,
   }
 
   .data <- .data |>
-    select(pol_num, exposure, !!!.groups,
-           dplyr::all_of(trx_cols), dplyr::all_of(percent_of)) |>
-    tidyr::pivot_longer(dplyr::all_of(trx_cols),
-                        names_to = c(".value", "trx_type"),
-                        names_pattern = "^(trx_(?:amt|n))_(.*)$") |>
-    mutate(trx_flag = abs(trx_n) > 0, !!!pct_nz,
-           trx_amt_sq = if (conf_int) trx_amt ^ 2)
+    select(
+      pol_num,
+      exposure,
+      !!!.groups,
+      dplyr::all_of(trx_cols),
+      dplyr::all_of(percent_of)
+    ) |>
+    tidyr::pivot_longer(
+      dplyr::all_of(trx_cols),
+      names_to = c(".value", "trx_type"),
+      names_pattern = "^(trx_(?:amt|n))_(.*)$"
+    ) |>
+    mutate(
+      trx_flag = abs(trx_n) > 0,
+      !!!pct_nz,
+      trx_amt_sq = if (conf_int) trx_amt^2
+    )
 
-  finish_trx_stats(.data, trx_types, percent_of,
-                   .groups, start_date, end_date,
-                   conf_int, conf_level)
-
+  finish_trx_stats(
+    .data,
+    trx_types,
+    percent_of,
+    .groups,
+    start_date,
+    end_date,
+    conf_int,
+    conf_level
+  )
 }
 
 #' @export
 print.trx_df <- function(x, ...) {
-
   cli::cli_h2("Transaction study results")
   if (length(groups(x)) > 0) {
     cli::cli_ul("{.field Groups}: {groups(x)}")
   }
   cli::cli_ul(c(
     "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}",
-    "{.field Transaction types}: {attr(x, 'trx_types')}"))
+    "{.field Transaction types}: {attr(x, 'trx_types')}"
+  ))
   if (!is.null(attr(x, "percent_of"))) {
     cli::cli_ul("{.field Transactions as % of}: {attr(x, 'percent_of')}")
   }
@@ -242,7 +263,6 @@ groups.trx_df <- function(x) {
 #' @export
 #' @rdname trx_stats
 summary.trx_df <- function(object, ...) {
-
   res <- group_by(object, !!!rlang::enquos(...))
 
   .groups <- groups(res)
@@ -252,36 +272,48 @@ summary.trx_df <- function(object, ...) {
   percent_of <- attr(object, "percent_of")
   xp_params <- attr(object, "xp_params")
 
-  finish_trx_stats(res, trx_types, percent_of,
-                   .groups, start_date, end_date,
-                   xp_params$conf_int, xp_params$conf_level)
-
+  finish_trx_stats(
+    res,
+    trx_types,
+    percent_of,
+    .groups,
+    start_date,
+    end_date,
+    xp_params$conf_int,
+    xp_params$conf_level
+  )
 }
 
 
 # support functions -------------------------------------------------------
 
-
-finish_trx_stats <- function(.data, trx_types, percent_of,
-                             .groups, start_date, end_date,
-                             conf_int, conf_level) {
-
+finish_trx_stats <- function(
+  .data,
+  trx_types,
+  percent_of,
+  .groups,
+  start_date,
+  end_date,
+  conf_int,
+  conf_level
+) {
   # "percent_of" formulas
   if (!is.null(percent_of)) {
     percent_of_nz <- paste0(percent_of, "_w_trx")
     pct_vals <- exp_form("sum({.col})", "{.col}", percent_of)
     pct_vals_trx <- exp_form("sum({.col})", "{.col}", percent_of_nz)
-    pct_form_all <- exp_form("trx_amt / {.col}", "pct_of_{.col}_all",
-                             percent_of)
-    pct_form_trx <- exp_form("trx_amt / {.col}", "pct_of_{.col}",
-                             percent_of_nz)
+    pct_form_all <- exp_form(
+      "trx_amt / {.col}",
+      "pct_of_{.col}_all",
+      percent_of
+    )
+    pct_form_trx <- exp_form("trx_amt / {.col}", "pct_of_{.col}", percent_of_nz)
   } else {
     pct_vals <- pct_vals_trx <- pct_form_all <- pct_form_trx <- percent_of <- NULL
   }
 
   # confidence interval formulas
   if (conf_int) {
-
     p <- c((1 - conf_level) / 2, 1 - (1 - conf_level) / 2)
 
     ci <- rlang::exprs(
@@ -290,57 +322,66 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
     )
 
     if (!is.null(percent_of)) {
-
       # standard deviations
       sds <- rlang::exprs(
         trx_amt_sq = sum(trx_amt_sq),
-        sd_trx = (trx_amt_sq / trx_flag - avg_trx ^ 2) ^ 0.5,
+        sd_trx = (trx_amt_sq / trx_flag - avg_trx^2)^0.5,
         # For binomial N
         # Var(S) = n * p * (Var(X) + E(X)^2 * (1 - p))
-        sd_all = (trx_flag * (
-          sd_trx ^ 2 + avg_trx ^ 2 * (1 - trx_util))) ^ 0.5
+        sd_all = (trx_flag * (sd_trx^2 + avg_trx^2 * (1 - trx_util)))^0.5
       )
 
       # confidence intervals with transactions
-      pct_lower <- exp_form("stats::qnorm(p[[1]], trx_amt,
+      pct_lower <- exp_form(
+        "stats::qnorm(p[[1]], trx_amt,
                             sd_trx * sqrt(trx_flag)) / {.col}",
-                            "pct_of_{.col}_lower", percent_of_nz)
-      pct_upper <- exp_form("stats::qnorm(p[[2]], trx_amt,
+        "pct_of_{.col}_lower",
+        percent_of_nz
+      )
+      pct_upper <- exp_form(
+        "stats::qnorm(p[[2]], trx_amt,
                             sd_trx * sqrt(trx_flag)) / {.col}",
-                            "pct_of_{.col}_upper", percent_of_nz)
+        "pct_of_{.col}_upper",
+        percent_of_nz
+      )
       # confidence intervals across all records
       pct_lower_all <- exp_form(
         "stats::qnorm(p[[1]], trx_amt, sd_all) / {.col}",
         "pct_of_{.col}_all_lower",
-        percent_of)
+        percent_of
+      )
       pct_upper_all = exp_form(
         "stats::qnorm(p[[2]], trx_amt, sd_all) / {.col}",
         "pct_of_{.col}_all_upper",
-        percent_of)
-      ci <- append(ci, c(sds, pct_lower, pct_upper,
-                         pct_lower_all, pct_upper_all))
+        percent_of
+      )
+      ci <- append(
+        ci,
+        c(sds, pct_lower, pct_upper, pct_lower_all, pct_upper_all)
+      )
     }
-
   } else {
     ci <- NULL
   }
 
   res <- .data |>
     group_by(trx_type, .add = TRUE) |>
-    dplyr::summarize(trx_n = sum(trx_n),
-                     trx_flag = sum(trx_flag),
-                     trx_amt = sum(trx_amt),
-                     exposure = sum(exposure),
-                     avg_trx = trx_amt / trx_flag,
-                     avg_all = trx_amt / exposure,
-                     trx_freq = trx_n / trx_flag,
-                     trx_util = trx_flag / exposure,
-                     !!!pct_vals_trx,
-                     !!!pct_vals,
-                     !!!pct_form_trx,
-                     !!!pct_form_all,
-                     !!!ci,
-                     .groups = "drop")
+    dplyr::summarize(
+      trx_n = sum(trx_n),
+      trx_flag = sum(trx_flag),
+      trx_amt = sum(trx_amt),
+      exposure = sum(exposure),
+      avg_trx = trx_amt / trx_flag,
+      avg_all = trx_amt / exposure,
+      trx_freq = trx_n / trx_flag,
+      trx_util = trx_flag / exposure,
+      !!!pct_vals_trx,
+      !!!pct_vals,
+      !!!pct_form_trx,
+      !!!pct_form_all,
+      !!!ci,
+      .groups = "drop"
+    )
 
   if (conf_int && !is.null(percent_of)) {
     res <- res |>
@@ -349,38 +390,46 @@ finish_trx_stats <- function(.data, trx_types, percent_of,
       relocate(trx_amt_sq, .after = dplyr::last_col())
   }
 
-  new_trx_df(res,
-             .groups = .groups,
-             trx_types = trx_types,
-             start_date = start_date,
-             percent_of = percent_of,
-             end_date = end_date,
-             conf_level = conf_level,
-             conf_int = conf_int)
-
+  new_trx_df(
+    res,
+    .groups = .groups,
+    trx_types = trx_types,
+    start_date = start_date,
+    percent_of = percent_of,
+    end_date = end_date,
+    conf_level = conf_level,
+    conf_int = conf_int
+  )
 }
 
 # low level class constructor
-new_trx_df <- function(x, .groups, trx_types,
-                       start_date, percent_of, end_date,
-                       conf_level, conf_int) {
-
-  tibble::new_tibble(x,
-                     class = "trx_df",
-                     groups = .groups,
-                     trx_types = trx_types,
-                     start_date = start_date,
-                     percent_of = percent_of,
-                     end_date = end_date,
-                     xp_params = list(conf_level = conf_level,
-                                      conf_int = conf_int))
-
+new_trx_df <- function(
+  x,
+  .groups,
+  trx_types,
+  start_date,
+  percent_of,
+  end_date,
+  conf_level,
+  conf_int
+) {
+  tibble::new_tibble(
+    x,
+    class = "trx_df",
+    groups = .groups,
+    trx_types = trx_types,
+    start_date = start_date,
+    percent_of = percent_of,
+    end_date = end_date,
+    xp_params = list(conf_level = conf_level, conf_int = conf_int)
+  )
 }
 
 verify_trx_df <- function(.data) {
   if (!inherits(.data, "trx_df")) {
-    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be a `trx_df` object.",
-                     i = "Hint: Use `trx_stats()` to create `trx_df` objects."
+    cli::cli_abort(c(
+      x = "`{deparse(substitute(.data))}` must be a `trx_df` object.",
+      i = "Hint: Use `trx_stats()` to create `trx_df` objects."
     ))
   }
 }

@@ -44,9 +44,11 @@ pol_wk <- function(x, issue_date) {
 }
 
 # internal function for computing all policy durations
-pol_interval <- function(x, issue_date,
-                         dur_length = c("year", "quarter", "month", "week")) {
+pol_interval <- function(
+  x,
+  issue_date,
+  dur_length = c("year", "quarter", "month", "week")
+) {
   dur_length <- rlang::arg_match(dur_length)
   clock::date_count_between(as.Date(issue_date), as.Date(x), dur_length) + 1L
 }
-

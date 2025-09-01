@@ -39,7 +39,6 @@
 #' @rdname plot_special_trx
 #' @export
 plot_utilization_rates <- function(object, ...) {
-
   verify_trx_df(object)
 
   .groups <- groups(object)
@@ -61,10 +60,3 @@ plot_utilization_rates <- function(object, ...) {
 
   autoplot(object, y = Rate, scales = "free_y", ...)
 }
-
-
-
-
-
-
-

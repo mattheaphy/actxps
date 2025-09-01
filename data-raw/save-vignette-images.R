@@ -1,12 +1,14 @@
 # Purpose: this script is used to create images used by vignettes for gt tables
 
-
 # Transaction tables example ----------------------------------------------
 
 library(actxps)
 
-exposed_data <- expose_py(census_dat, "2019-12-31",
-                          target_status = "Surrender") |>
+exposed_data <- expose_py(
+  census_dat,
+  "2019-12-31",
+  target_status = "Surrender"
+) |>
   add_transactions(withdrawals) |>
   left_join(account_vals, by = c("pol_num", "pol_date_yr"))
 trx_res <- exposed_data |>

@@ -149,17 +149,18 @@
 #' }
 #'
 #' @export
-exp_shiny <- function(dat,
-                      predictors = names(dat),
-                      expected = names(dat)[grepl("expected", names(dat))],
-                      distinct_max = 25L,
-                      title,
-                      credibility = TRUE,
-                      conf_level = 0.95,
-                      cred_r = 0.05,
-                      theme = "shiny",
-                      col_exposure = "exposure") {
-
+exp_shiny <- function(
+  dat,
+  predictors = names(dat),
+  expected = names(dat)[grepl("expected", names(dat))],
+  distinct_max = 25L,
+  title,
+  credibility = TRUE,
+  conf_level = 0.95,
+  cred_r = 0.05,
+  theme = "shiny",
+  col_exposure = "exposure"
+) {
   rlang::check_installed("shiny")
   rlang::check_installed("bslib")
   rlang::check_installed("thematic")
@@ -169,8 +170,7 @@ exp_shiny <- function(dat,
   # special logic required for split exposed data frames
   if (is_split_exposed_df(dat)) {
     check_split_expose_basis(dat, col_exposure)
-    dat <- rename(dat,
-                  exposure = {{col_exposure}})
+    dat <- rename(dat, exposure = {{ col_exposure }})
 
     if (col_exposure == "exposure_cal") {
       dat$exposure_pol <- NULL
@@ -188,7 +188,9 @@ exp_shiny <- function(dat,
   dat <- ungroup(dat)
 
   if (is.null(predictors) || all(is.na(predictors))) {
-    rlang::warn("`predictors` cannot be NULL or NA. Reverting to the default of `predictors = names(dat)`")
+    rlang::warn(
+      "`predictors` cannot be NULL or NA. Reverting to the default of `predictors = names(dat)`"
+    )
     predictors <- names(dat)
   }
 
@@ -198,7 +200,9 @@ exp_shiny <- function(dat,
     if (length(predictors) == 0) {
       rlang::abort("None of the selected predictors are column in `dat`.")
     } else {
-      rlang::inform("All predictors and expected values must be columns in `dat`. Unmatched values are removed.")
+      rlang::inform(
+        "All predictors and expected values must be columns in `dat`. Unmatched values are removed."
+      )
     }
   }
 
@@ -215,53 +219,65 @@ exp_shiny <- function(dat,
   # organize predictors
   preds <- data.frame(predictors = predictors) |>
     # drop non-predictors (if any)
-    filter(!predictors %in% c("pol_num", "status",
-                              "term_date","exposure", trx_cols)) |>
-    mutate(class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
-           order = dplyr::case_when(
-             class1 == "Date" ~ 1,
-             class1 == "logical" ~ 2,
-             class1 %in% c("character", "factor") ~ 3,
-             class1 %in% c("numeric", "integer", "double") ~ 4,
-             TRUE ~ 5
-           ),
-           filter_group = dplyr::case_when(
-             class1 == "Date" ~ "Dates",
-             class1 %in% c("logical", "character", "factor") ~ "Categorical",
-             class1 %in% c("numeric", "integer", "double") ~ "Numeric",
-             TRUE ~ "Unknown"
-           ),
-           is_number = purrr::map_lgl(predictors,
-                                      ~ is.numeric(dat[[.x]])),
-           n_unique = purrr::map_int(predictors,
-                                     ~ dplyr::n_distinct(dat[[.x]])),
-           scope = purrr::map2(predictors, class1,
-                               ~ if (.y %in% c("Date", "numeric",
-                                               "integer", "double")) {
-                                 range(dat[[.x]], na.rm = TRUE)
-                               } else {
-                                 unique(dat[[.x]])
-                               }
-           )
+    filter(
+      !predictors %in% c("pol_num", "status", "term_date", "exposure", trx_cols)
+    ) |>
+    mutate(
+      class1 = purrr::map_chr(predictors, ~ class(dat[[.x]])[[1]]),
+      order = dplyr::case_when(
+        class1 == "Date" ~ 1,
+        class1 == "logical" ~ 2,
+        class1 %in% c("character", "factor") ~ 3,
+        class1 %in% c("numeric", "integer", "double") ~ 4,
+        TRUE ~ 5
+      ),
+      filter_group = dplyr::case_when(
+        class1 == "Date" ~ "Dates",
+        class1 %in% c("logical", "character", "factor") ~ "Categorical",
+        class1 %in% c("numeric", "integer", "double") ~ "Numeric",
+        TRUE ~ "Unknown"
+      ),
+      is_number = purrr::map_lgl(predictors, ~ is.numeric(dat[[.x]])),
+      n_unique = purrr::map_int(predictors, ~ dplyr::n_distinct(dat[[.x]])),
+      scope = purrr::map2(
+        predictors,
+        class1,
+        ~ if (.y %in% c("Date", "numeric", "integer", "double")) {
+          range(dat[[.x]], na.rm = TRUE)
+        } else {
+          unique(dat[[.x]])
+        }
+      )
     ) |>
     arrange(order) |>
     select(-order)
 
   preds_small <- filter(preds, n_unique <= distinct_max)$predictors
 
-  yVar_exp <- c("q_obs", "n_claims", "claims", "exposure",
-                if (credibility) "credibility")
+  yVar_exp <- c(
+    "q_obs",
+    "n_claims",
+    "claims",
+    "exposure",
+    if (credibility) "credibility"
+  )
   if (has_trx) {
-    yVar_trx <- c("trx_util", "trx_freq", "trx_n", "trx_flag",
-                  "trx_amt", "avg_trx", "avg_all", "exposure")
+    yVar_trx <- c(
+      "trx_util",
+      "trx_freq",
+      "trx_n",
+      "trx_flag",
+      "trx_amt",
+      "avg_trx",
+      "avg_all",
+      "exposure"
+    )
   } else {
     yVar_trx <- NULL
   }
 
   # function to make input widgets
-  widget <- function(x,
-                     checkbox_limit = 8) {
-
+  widget <- function(x, checkbox_limit = 8) {
     inputId <- paste("i", x, sep = "_")
     info <- filter(preds, predictors == x)
     choices <- info$scope[[1]]
@@ -273,55 +289,52 @@ exp_shiny <- function(dat,
     }
 
     if (is.numeric(dat[[x]])) {
-
       shiny::sliderInput(
-        inputId, shiny::strong(x),
+        inputId,
+        shiny::strong(x),
         min = choices[[1]],
         max = choices[[2]],
         value = choices,
         step = if (is.integer(dat[[x]]) && info$n_unique < 100) 1L else NULL
       )
-
     } else if (is.Date(dat[[x]])) {
-
       shiny::dateRangeInput(
-        inputId, shiny::strong(x),
+        inputId,
+        shiny::strong(x),
         start = choices[[1]],
         end = choices[[2]],
         min = choices[[1]],
         max = choices[[2]],
         startview = "year"
       )
-
-    } else if (is.character(dat[[x]]) || is.logical(dat[[x]]) ||
-               is.factor(dat[[x]])) {
-
+    } else if (
+      is.character(dat[[x]]) || is.logical(dat[[x]]) || is.factor(dat[[x]])
+    ) {
       if (length(choices) > checkbox_limit) {
         shiny::selectInput(
-          inputId, shiny::strong(x),
-          choices = choices, selected = choices,
+          inputId,
+          shiny::strong(x),
+          choices = choices,
+          selected = choices,
           multiple = TRUE
         )
       } else {
         shiny::checkboxGroupInput(
-          inputId, shiny::strong(x),
-          choices = choices, selected = choices
+          inputId,
+          shiny::strong(x),
+          choices = choices,
+          selected = choices
         )
       }
-
     } else {
-
       cli::cli_abort(
         "Error creating an input widget for {x}. {x} is of class {class(dat[[x]])}, which is not supported."
       )
-
     }
-
   }
 
   # function to build filter expressions
   expr_filter <- function(x) {
-
     inputId <- paste("i", x, sep = "_")
 
     res <- if (is.numeric(dat[[x]]) || is.Date(dat[[x]])) {
@@ -330,20 +343,22 @@ exp_shiny <- function(dat,
     } else {
       # categorical
       glue::glue("{x} %in% input${inputId}")
-
     }
 
     rlang::parse_expr(res)
-
   }
 
   widgetPred <- function(fun) {
-    function(inputId, label, width,
-             choices = c("None", preds$predictors), ...) {
+    function(
+      inputId,
+      label,
+      width,
+      choices = c("None", preds$predictors),
+      ...
+    ) {
       shiny::column(
         width = width,
-        fun(inputId, shiny::strong(label),
-            choices = choices, ...)
+        fun(inputId, shiny::strong(label), choices = choices, ...)
       )
     }
   }
@@ -359,12 +374,15 @@ exp_shiny <- function(dat,
   # expected values set up
   expected <- c(expected, "control")
   expected_widget <- checkboxGroupPred(
-    "ex_checks", "Expected values:", 4,
-    choices = expected, selected = expected[expected != "control"])
+    "ex_checks",
+    "Expected values:",
+    4,
+    choices = expected,
+    selected = expected[expected != "control"]
+  )
 
   # transactions set up
   if (has_trx) {
-
     percent_of_choices <- filter(preds, is_number)$predictors
 
     trx_tab <- bslib::nav_panel(
@@ -373,78 +391,100 @@ exp_shiny <- function(dat,
         info_tooltip(
           'Choose transaction types and "percent of" variables that appear in
           the plot and table outputs. If desired, combine all transaction types
-          into a single group.')
+          into a single group.'
+        )
       ),
       value = "trx",
       shiny::fluidRow(
-        checkboxGroupPred("trx_types_checks", "Transaction types:", 4,
-                          all_trx_types, selected = all_trx_types),
-        selectPred("pct_checks", "Transactions as % of:", 4,
-                   choices = percent_of_choices, multiple = TRUE),
+        checkboxGroupPred(
+          "trx_types_checks",
+          "Transaction types:",
+          4,
+          all_trx_types,
+          selected = all_trx_types
+        ),
+        selectPred(
+          "pct_checks",
+          "Transactions as % of:",
+          4,
+          choices = percent_of_choices,
+          multiple = TRUE
+        ),
         shiny::column(
           width = 4,
-          bslib::input_switch("trx_combine",
-                              shiny::strong("Combine transactions"),
-                              value = FALSE)
+          bslib::input_switch(
+            "trx_combine",
+            shiny::strong("Combine transactions"),
+            value = FALSE
+          )
         )
       )
     )
-
   } else {
     trx_tab <- NULL
   }
 
   if (missing(title)) {
     title <- paste(attr(dat, "target_status"), collapse = "/") |>
-      paste("Experience Study",
-            if (has_trx) {
-              glue::glue("and {paste(all_trx_types, collapse = '/')} Transaction Study")})
+      paste(
+        "Experience Study",
+        if (has_trx) {
+          glue::glue(
+            "and {paste(all_trx_types, collapse = '/')} Transaction Study"
+          )
+        }
+      )
   }
 
   # function factory for output file names
   export_path <- function(study_type, x, extension) {
     function() {
-      file.path(tempdir(), paste0(study_type, "-", x, "-",
-                                  Sys.Date(), ".", extension))
+      file.path(
+        tempdir(),
+        paste0(study_type, "-", x, "-", Sys.Date(), ".", extension)
+      )
     }
   }
 
-
   ui <- bslib::page_sidebar(
-
     theme = theme,
     fillable = FALSE,
     shiny::tags$head(
-      shiny::tags$style(shiny::HTML(".html-fill-container > .html-fill-item {
+      shiny::tags$style(shiny::HTML(
+        ".html-fill-container > .html-fill-item {
                                     overflow: visible; }
                                     .html-fill-container > .no-overflow {
-                                    overflow: auto; }"))
+                                    overflow: auto; }"
+      ))
     ),
 
     title = title,
 
     sidebar = bslib::sidebar(
-
       title = "Filters",
       width = 370,
 
-      bslib::input_switch("play",
-                          list("Reactivity ",
-                               shiny::icon("play"), "/",
-                               shiny::icon("pause")),
-                          value = TRUE),
+      bslib::input_switch(
+        "play",
+        list("Reactivity ", shiny::icon("play"), "/", shiny::icon("pause")),
+        value = TRUE
+      ),
 
       # filter descriptions
       bslib::value_box(
         title = "% data remaining",
         theme = "primary",
         value = shiny::textOutput("rem_pct"),
-        showcase = shiny::plotOutput("filter_pie",
-                                     width = "75px", height = "75px")
+        showcase = shiny::plotOutput(
+          "filter_pie",
+          width = "75px",
+          height = "75px"
+        )
       ) |>
-        bslib::tooltip(paste0("Original row count: ",
-                              scales::label_comma()(total_rows)),
-                       shiny::textOutput("rem_rows")),
+        bslib::tooltip(
+          paste0("Original row count: ", scales::label_comma()(total_rows)),
+          shiny::textOutput("rem_rows")
+        ),
       shiny::strong(
         shiny::textOutput("filter_desc_header")
       ),
@@ -455,14 +495,16 @@ exp_shiny <- function(dat,
       # add filter widgets
       bslib::accordion(
         split(preds, preds$filter_group)[
-          c("Dates", "Categorical", "Numeric")] |>
+          c("Dates", "Categorical", "Numeric")
+        ] |>
           purrr::keep(\(x) length(x) > 0) |>
-          purrr::map(\(x) bslib::accordion_panel(
-            title = x$filter_group[[1]],
-            purrr::map(x$predictors, widget)
-          ))
+          purrr::map(\(x) {
+            bslib::accordion_panel(
+              title = x$filter_group[[1]],
+              purrr::map(x$predictors, widget)
+            )
+          })
       )
-
     ),
 
     bslib::layout_column_wrap(
@@ -470,19 +512,24 @@ exp_shiny <- function(dat,
       heights_equal = "row",
 
       bslib::card(
-
-        bslib::card_header("Grouping variables",
-                           info_tooltip(
-                             "The variables selected below will be used as
+        bslib::card_header(
+          "Grouping variables",
+          info_tooltip(
+            "The variables selected below will be used as
                              grouping variables in the plot and table outputs.
-                             Multiple variables can be selected as facets.")
+                             Multiple variables can be selected as facets."
+          )
         ),
         shiny::fluidRow(
           selectPred("xVar", "x:", 4),
-          selectPred("colorVar", "Color:", 4,
-                     choices = c("None", preds_small)),
-          selectPred("facetVar", "Facets:", 4, multiple = TRUE,
-                     choices = preds_small)
+          selectPred("colorVar", "Color:", 4, choices = c("None", preds_small)),
+          selectPred(
+            "facetVar",
+            "Facets:",
+            4,
+            multiple = TRUE,
+            choices = preds_small
+          )
         )
       ),
 
@@ -491,25 +538,34 @@ exp_shiny <- function(dat,
         title = "Study type",
 
         bslib::nav_panel(
-          list("Termination study",
-               info_tooltip(
-                 "Choose expected values (if available) that appear in the plot
+          list(
+            "Termination study",
+            info_tooltip(
+              "Choose expected values (if available) that appear in the plot
                  and table outputs. If desired, select a weighting variable
-                 for summarizing experience.")
+                 for summarizing experience."
+            )
           ),
           value = "exp",
           shiny::fluidRow(
             expected_widget,
-            selectPred("weightVar", "Weight by:", 4,
-                       choices = c("None",
-                                   filter(preds, is_number)$predictors)),
-            selectPred("controlVars", "Control variables:", 4,
-                       multiple = TRUE,
-                       choices = preds_small)
-          )),
+            selectPred(
+              "weightVar",
+              "Weight by:",
+              4,
+              choices = c("None", filter(preds, is_number)$predictors)
+            ),
+            selectPred(
+              "controlVars",
+              "Control variables:",
+              4,
+              multiple = TRUE,
+              choices = preds_small
+            )
+          )
+        ),
 
         trx_tab
-
       )
     ),
 
@@ -537,9 +593,11 @@ exp_shiny <- function(dat,
                   variable on the x-axis, the color variable, and faceting
                   variables used to create subplots.
 
-                </div>'),
+                </div>'
+              ),
               custom_class = "left-tip"
-            )),
+            )
+          ),
           shiny::fluidRow(
             shiny::column(
               width = 8,
@@ -548,40 +606,61 @@ exp_shiny <- function(dat,
                 selectPred("yVar", "y:", 6, choices = yVar_exp),
                 shiny::column(
                   width = 6,
-                  shiny::radioButtons("plotGeom",
-                                      shiny::strong("Geometry:"),
-                                      choices = c("Bars" = "bars",
-                                                  "Lines and Points" = "lines",
-                                                  "Points" = "points"))
+                  shiny::radioButtons(
+                    "plotGeom",
+                    shiny::strong("Geometry:"),
+                    choices = c(
+                      "Bars" = "bars",
+                      "Lines and Points" = "lines",
+                      "Points" = "points"
+                    )
+                  )
                 ),
               ),
 
               shiny::fluidRow(
                 shiny::column(
                   width = 6,
-                  bslib::input_switch("plot2ndY",
-                                      shiny::strong("Second y-axis"),
-                                      value = FALSE)
+                  bslib::input_switch(
+                    "plot2ndY",
+                    shiny::strong("Second y-axis"),
+                    value = FALSE
+                  )
                 ),
-                selectPred("yVar_2nd", "Second axis y:", 6, choices = yVar_exp,
-                           selected = "exposure"),
-              )),
+                selectPred(
+                  "yVar_2nd",
+                  "Second axis y:",
+                  6,
+                  choices = yVar_exp,
+                  selected = "exposure"
+                ),
+              )
+            ),
 
             shiny::column(
               width = 4,
-              bslib::input_switch("plotSmooth",
-                                  shiny::strong("Add smoothing"),
-                                  value = FALSE),
-              bslib::input_switch("plotCI",
-                                  shiny::strong("Confidence intervals"),
-                                  value = FALSE),
-              bslib::input_switch("plotFreeY",
-                                  shiny::strong("Free y-scales"),
-                                  value = FALSE),
-              bslib::input_switch("plotLogY",
-                                  shiny::strong("Log y-axis"),
-                                  value = FALSE)
-            ))
+              bslib::input_switch(
+                "plotSmooth",
+                shiny::strong("Add smoothing"),
+                value = FALSE
+              ),
+              bslib::input_switch(
+                "plotCI",
+                shiny::strong("Confidence intervals"),
+                value = FALSE
+              ),
+              bslib::input_switch(
+                "plotFreeY",
+                shiny::strong("Free y-scales"),
+                value = FALSE
+              ),
+              bslib::input_switch(
+                "plotLogY",
+                shiny::strong("Log y-axis"),
+                value = FALSE
+              )
+            )
+          )
         ),
 
         bslib::card(
@@ -591,10 +670,22 @@ exp_shiny <- function(dat,
             bslib::popover(
               shiny::icon("gear"),
               bslib::input_switch("plotResize", "Resize plot", value = FALSE),
-              shiny::sliderInput("plotHeight", "Height (pixels):",
-                                 200, 1500, value = 500, step = 50),
-              shiny::sliderInput("plotWidth", "Width (pixels):",
-                                 200, 1500, value = 1500, step = 50)
+              shiny::sliderInput(
+                "plotHeight",
+                "Height (pixels):",
+                200,
+                1500,
+                value = 500,
+                step = 50
+              ),
+              shiny::sliderInput(
+                "plotWidth",
+                "Width (pixels):",
+                200,
+                1500,
+                value = 1500,
+                step = 50
+              )
             )
           ),
           bslib::card_body(
@@ -612,24 +703,41 @@ exp_shiny <- function(dat,
           bslib::card_header(
             bslib::popover(
               shiny::icon("gear"),
-              bslib::input_switch("tableTotal",
-                                  shiny::strong("Total row"),
-                                  value = TRUE),
-              bslib::input_switch("tableCI",
-                                  shiny::strong("Confidence intervals"),
-                                  value = FALSE),
-              bslib::input_switch("tableCredAdj",
-                                  shiny::strong("Credibility-weighted termination rates"),
-                                  value = FALSE),
-              bslib::input_switch("tableColorful",
-                                  shiny::strong("Include color scales"),
-                                  value = TRUE),
-              shiny::sliderInput("tableDecimals",
-                                 shiny::strong("Decimals:"),
-                                 value = 1, min = 0, max = 5),
-              shiny::sliderInput("tableFontsize",
-                                 shiny::strong("Font size multiple:"),
-                                 value = 100, min = 50, max = 150, step = 5)
+              bslib::input_switch(
+                "tableTotal",
+                shiny::strong("Total row"),
+                value = TRUE
+              ),
+              bslib::input_switch(
+                "tableCI",
+                shiny::strong("Confidence intervals"),
+                value = FALSE
+              ),
+              bslib::input_switch(
+                "tableCredAdj",
+                shiny::strong("Credibility-weighted termination rates"),
+                value = FALSE
+              ),
+              bslib::input_switch(
+                "tableColorful",
+                shiny::strong("Include color scales"),
+                value = TRUE
+              ),
+              shiny::sliderInput(
+                "tableDecimals",
+                shiny::strong("Decimals:"),
+                value = 1,
+                min = 0,
+                max = 5
+              ),
+              shiny::sliderInput(
+                "tableFontsize",
+                shiny::strong("Font size multiple:"),
+                value = 100,
+                min = 50,
+                max = 150,
+                step = 5
+              )
             )
           ),
           bslib::card_body(
@@ -650,33 +758,35 @@ exp_shiny <- function(dat,
         )
       )
     )
-
   )
 
   server <- function(input, output, session) {
-
     thematic::thematic_shiny()
 
     yVar_exp2 <- shiny::reactive({
-      c(yVar_exp,
+      c(
+        yVar_exp,
         input$ex_checks,
         glue::glue("ae_{input$ex_checks}"),
         glue::glue("adj_{input$ex_checks}"),
-        if (length(input$ex_checks) > 0)
-          c("All termination rates", "All A/E ratios"))
+        if (length(input$ex_checks) > 0) {
+          c("All termination rates", "All A/E ratios")
+        }
+      )
     })
 
     yVar_trx2 <- shiny::reactive({
-      c(yVar_trx,
+      c(
+        yVar_trx,
         glue::glue("pct_of_{input$pct_checks}_w_trx"),
         glue::glue("pct_of_{input$pct_checks}_all"),
         input$pct_checks,
-        glue::glue("{input$pct_checks}_w_trx"))
+        glue::glue("{input$pct_checks}_w_trx")
+      )
     })
 
     # update y variable selections in response to inputs
     shiny::observe({
-
       new_choices <- if (input$study_type == "exp") {
         yVar_exp2()
       } else {
@@ -684,56 +794,68 @@ exp_shiny <- function(dat,
       }
 
       shiny::updateSelectInput(
-        session, "yVar", choices = new_choices,
+        session,
+        "yVar",
+        choices = new_choices,
         selected = if (input$yVar %in% new_choices) {
           input$yVar
         } else {
           new_choices[[1]]
         }
       )
-
     }) |>
       shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks)
 
     shiny::observe({
-
       if (input$study_type == "exp") {
-
         new_choices_2 <- yVar_exp2()[
-          !yVar_exp2() %in% c("All termination rates", "All A/E ratios")]
-        if(input$yVar == "All termination rates") {
+          !yVar_exp2() %in% c("All termination rates", "All A/E ratios")
+        ]
+        if (input$yVar == "All termination rates") {
           new_choices_2 <- new_choices_2[
-            !new_choices_2 %in% c('q_obs', input$ex_checks)]
+            !new_choices_2 %in% c('q_obs', input$ex_checks)
+          ]
         } else if (input$yVar == "All A/E ratios") {
           new_choices_2 <- new_choices_2[
-            !new_choices_2 %in% paste0("ae_", input$ex_checks)]
+            !new_choices_2 %in% paste0("ae_", input$ex_checks)
+          ]
         }
-
       } else {
         new_choices_2 <- yVar_trx2()
       }
 
       shiny::updateSelectInput(
-        session, "yVar_2nd", choices = new_choices_2,
+        session,
+        "yVar_2nd",
+        choices = new_choices_2,
         selected = if (input$yVar_2nd %in% new_choices_2) {
           input$yVar_2nd
         } else {
           "exposure"
         }
       )
-
     }) |>
-      shiny::bindEvent(input$study_type, input$ex_checks, input$pct_checks,
-                       input$yVar)
+      shiny::bindEvent(
+        input$study_type,
+        input$ex_checks,
+        input$pct_checks,
+        input$yVar
+      )
 
     # disable color input when using special plots
     shiny::observe(
       if (input$yVar %in% c("All termination rates", "All A/E ratios")) {
         shiny::updateSelectInput(
-          session, "colorVar", choices = "Series", selected = "Series")
+          session,
+          "colorVar",
+          choices = "Series",
+          selected = "Series"
+        )
       } else {
         shiny::updateSelectInput(
-          session, "colorVar", choices = c("None", preds_small),
+          session,
+          "colorVar",
+          choices = c("None", preds_small),
           selected = if (input$colorVar %in% c("None", preds_small)) {
             input$colorVar
           } else {
@@ -747,8 +869,12 @@ exp_shiny <- function(dat,
     # notification in pause mode
     shiny::observe({
       if (!input$play) {
-        shiny::showNotification("Reactivity is paused...", duration = NULL,
-                                id = "paused", closeButton = FALSE)
+        shiny::showNotification(
+          "Reactivity is paused...",
+          duration = NULL,
+          id = "paused",
+          closeButton = FALSE
+        )
       } else {
         shiny::removeNotification("paused")
       }
@@ -756,14 +882,13 @@ exp_shiny <- function(dat,
 
     # vector of active filters
     active_filters <- shiny::reactive({
-
       shiny::validate(
         shiny::need(input$play, "Paused")
       )
 
-      keep <- preds |> select(predictors, scope, is_number) |>
+      keep <- preds |>
+        select(predictors, scope, is_number) |>
         purrr::pmap_lgl(\(predictors, scope, is_number) {
-
           selected <- input[[paste0("i_", predictors)]]
 
           if (is_number) {
@@ -772,7 +897,6 @@ exp_shiny <- function(dat,
           } else {
             length(setdiff(scope, selected)) > 0
           }
-
         })
 
       preds$predictors[keep]
@@ -780,19 +904,18 @@ exp_shiny <- function(dat,
 
     # reactive data
     rdat <- shiny::reactive({
-
       filters <- purrr::map(active_filters(), expr_filter)
 
       dat |>
         filter(!!!filters)
     })
 
-
     # experience study
     rxp <- shiny::reactive({
-
-      shiny::validate(shiny::need(nrow(rdat()) > 0,
-                                  "No data remaining after applying filters."))
+      shiny::validate(shiny::need(
+        nrow(rdat()) > 0,
+        "No data remaining after applying filters."
+      ))
 
       .groups <- c(input$xVar, input$colorVar, input$facetVar)
       .groups <- .groups[!.groups %in% c("None", "Series")]
@@ -802,7 +925,9 @@ exp_shiny <- function(dat,
       } else {
         wt <- input$weightVar
         if (wt %in% as.character(.groups)) {
-          rlang::abort("Error: the weighting variable cannot be one of the grouping (x, color, facets) variables.")
+          rlang::abort(
+            "Error: the weighting variable cannot be one of the grouping (x, color, facets) variables."
+          )
         }
       }
 
@@ -814,28 +939,44 @@ exp_shiny <- function(dat,
       if (input$study_type == "exp") {
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
-          exp_stats(wt = wt, credibility = credibility, expected = ex,
-                    conf_level = conf_level, cred_r = cred_r,
-                    conf_int = TRUE, control_vars = ctrl)
+          exp_stats(
+            wt = wt,
+            credibility = credibility,
+            expected = ex,
+            conf_level = conf_level,
+            cred_r = cred_r,
+            conf_int = TRUE,
+            control_vars = ctrl
+          )
       } else {
         rdat() |>
           group_by(dplyr::across(dplyr::all_of(.groups))) |>
-          trx_stats(percent_of = input$pct_checks,
-                    trx_types = input$trx_types_checks,
-                    combine_trx = input$trx_combine,
-                    conf_int = TRUE,
-                    conf_level = conf_level)
+          trx_stats(
+            percent_of = input$pct_checks,
+            trx_types = input$trx_types_checks,
+            combine_trx = input$trx_combine,
+            conf_int = TRUE,
+            conf_level = conf_level
+          )
       }
-
     })
 
     # plot output
     rplot <- shiny::reactive({
-
-      if (input$study_type == "exp" && input$yVar %in% yVar_trx2() &
-          !input$yVar == "exposure") return()
-      if (input$study_type == "trx" && input$yVar %in% yVar_exp2() &
-          !input$yVar == "exposure") return()
+      if (
+        input$study_type == "exp" &&
+          input$yVar %in% yVar_trx2() &
+          !input$yVar == "exposure"
+      ) {
+        return()
+      }
+      if (
+        input$study_type == "trx" &&
+          input$yVar %in% yVar_exp2() &
+          !input$yVar == "exposure"
+      ) {
+        return()
+      }
 
       dat <- rxp()
 
@@ -858,23 +999,40 @@ exp_shiny <- function(dat,
         y <- rlang::expr(`A/E ratio`)
         plot.fun <- plot_actual_to_expected
       } else {
-        if (!all(c(input$yVar, as.character(color)) %in% names(rxp()))) return()
+        if (!all(c(input$yVar, as.character(color)) %in% names(rxp()))) {
+          return()
+        }
         y <- rlang::sym(input$yVar)
         plot.fun <- autoplot
       }
 
       second_y <- rlang::sym(input$yVar_2nd)
 
-      mapping <- ggplot2::aes(!!x, !!y, color = !!color,
-                              fill = !!color, group = !!color)
+      mapping <- ggplot2::aes(
+        !!x,
+        !!y,
+        color = !!color,
+        fill = !!color,
+        group = !!color
+      )
 
       # y labels
       get_y_labels <- function(x) {
-        if (x %in% c("claims", "n_claims", "exposure",
-                     "trx_n", "trx_flag", "trx_amt",
-                     "avg_trx", "avg_all",
-                     input$pct_checks,
-                     paste0(input$pct_checks, "_w_trx"))) {
+        if (
+          x %in%
+            c(
+              "claims",
+              "n_claims",
+              "exposure",
+              "trx_n",
+              "trx_flag",
+              "trx_amt",
+              "avg_trx",
+              "avg_all",
+              input$pct_checks,
+              paste0(input$pct_checks, "_w_trx")
+            )
+        ) {
           scales::label_comma(accuracy = 1)
         } else if (x == "trx_freq") {
           scales::label_comma(accuracy = 0.1)
@@ -887,53 +1045,59 @@ exp_shiny <- function(dat,
       second_y_labels <- get_y_labels(input$yVar_2nd)
 
       if (is.null(input$facetVar)) {
-        p <- dat |> plot.fun(mapping = mapping, geoms = input$plotGeom,
-                             y_labels = y_labels,
-                             second_axis = input$plot2ndY,
-                             second_y = !!second_y,
-                             second_y_labels = second_y_labels,
-                             y_log10 = input$plotLogY,
-                             conf_int_bars = input$plotCI)
+        p <- dat |>
+          plot.fun(
+            mapping = mapping,
+            geoms = input$plotGeom,
+            y_labels = y_labels,
+            second_axis = input$plot2ndY,
+            second_y = !!second_y,
+            second_y_labels = second_y_labels,
+            y_log10 = input$plotLogY,
+            conf_int_bars = input$plotCI
+          )
       } else {
-
         facets <- rlang::syms(input$facetVar)
         if (input$study_type == "trx") {
           facets <- append(facets, rlang::sym("trx_type"))
         }
 
-        p <- dat |> plot.fun(!!!facets, mapping = mapping,
-                             geoms = input$plotGeom,
-                             y_labels = y_labels,
-                             scales =
-                               if (input$plotFreeY) "free_y" else "fixed",
-                             second_axis = input$plot2ndY,
-                             second_y = !!second_y,
-                             second_y_labels = second_y_labels,
-                             y_log10 = input$plotLogY,
-                             conf_int_bars = input$plotCI)
+        p <- dat |>
+          plot.fun(
+            !!!facets,
+            mapping = mapping,
+            geoms = input$plotGeom,
+            y_labels = y_labels,
+            scales = if (input$plotFreeY) "free_y" else "fixed",
+            second_axis = input$plot2ndY,
+            second_y = !!second_y,
+            second_y_labels = second_y_labels,
+            y_log10 = input$plotLogY,
+            conf_int_bars = input$plotCI
+          )
       }
 
-      if (input$plotSmooth) p <- p + ggplot2::geom_smooth(method = "loess",
-                                                          formula = y ~ x)
+      if (input$plotSmooth) {
+        p <- p + ggplot2::geom_smooth(method = "loess", formula = y ~ x)
+      }
 
       p +
         ggplot2::theme_light() +
-        ggplot2::theme(axis.text =
-                         ggplot2::element_text(size = ggplot2::rel(0.95)),
-                       strip.text =
-                         ggplot2::element_text(size = ggplot2::rel(1)),
-                       strip.background =
-                         ggplot2::element_rect(fill = "#43536b")
+        ggplot2::theme(
+          axis.text = ggplot2::element_text(size = ggplot2::rel(0.95)),
+          strip.text = ggplot2::element_text(size = ggplot2::rel(1)),
+          strip.background = ggplot2::element_rect(fill = "#43536b")
         )
-
     })
 
-
     output$xpPlot <- shiny::renderPlot(
-      {rplot()},
+      {
+        rplot()
+      },
       res = 92,
       height = function() if (input$plotResize) input$plotHeight else "auto",
-      width = function() if (input$plotResize) input$plotWidth else "auto")
+      width = function() if (input$plotResize) input$plotWidth else "auto"
+    )
 
     # table output
     rtable <- shiny::reactive({
@@ -941,56 +1105,74 @@ exp_shiny <- function(dat,
       # alone as if it were wrapped in isolate(). force() resolves the issue
       force(input$tableDecimals)
       if (input$study_type == "exp") {
-        rxp() |> autotable(show_conf_int = input$tableCI,
-                           show_cred_adj = input$tableCredAdj,
-                           colorful = input$tableColorful,
-                           decimals = input$tableDecimals,
-                           fontsize = input$tableFontsize,
-                           show_total = input$tableTotal)
+        rxp() |>
+          autotable(
+            show_conf_int = input$tableCI,
+            show_cred_adj = input$tableCredAdj,
+            colorful = input$tableColorful,
+            decimals = input$tableDecimals,
+            fontsize = input$tableFontsize,
+            show_total = input$tableTotal
+          )
       } else {
-        rxp() |> autotable(show_conf_int = input$tableCI,
-                           colorful = input$tableColorful,
-                           decimals = input$tableDecimals,
-                           fontsize = input$tableFontsize,
-                           show_total = input$tableTotal)
+        rxp() |>
+          autotable(
+            show_conf_int = input$tableCI,
+            colorful = input$tableColorful,
+            decimals = input$tableDecimals,
+            fontsize = input$tableFontsize,
+            show_total = input$tableTotal
+          )
       }
     })
 
-    output$xpTable <- gt::render_gt({rtable()})
+    output$xpTable <- gt::render_gt({
+      rtable()
+    })
 
     # filter information
     output$rem_pct <- shiny::renderText({
-      scales::label_percent(accuracy=1)(nrow(rdat()) / total_rows)
+      scales::label_percent(accuracy = 1)(nrow(rdat()) / total_rows)
     })
     output$rem_rows <- shiny::renderText({
       paste0("Remaining rows: ", scales::label_comma()(nrow(rdat())))
     })
 
-    output$filter_pie <- shiny::renderPlot({
-      data.frame(name = c("included", "excluded"),
-                 n = c(nrow(rdat()), total_rows - nrow(rdat()))) |>
-        mutate(ymax = cumsum(n) / sum(n),
-               ymin = dplyr::lag(ymax, default = 0)) |>
-        ggplot2::ggplot(ggplot2::aes(ymin = ymin, ymax = ymax,
-                                     xmin = 3, xmax = 4, fill = name)) +
-        ggplot2::geom_rect() +
-        ggplot2::coord_polar(theta = "y", direction = -1) +
-        ggplot2::xlim(c(2, 4)) +
-        ggplot2::theme_void() +
-        ggplot2::theme(legend.position = "none") +
-        ggplot2::scale_fill_manual(values = c("#BBBBBB", "#033C73"))
-    }, res = 92)
+    output$filter_pie <- shiny::renderPlot(
+      {
+        data.frame(
+          name = c("included", "excluded"),
+          n = c(nrow(rdat()), total_rows - nrow(rdat()))
+        ) |>
+          mutate(
+            ymax = cumsum(n) / sum(n),
+            ymin = dplyr::lag(ymax, default = 0)
+          ) |>
+          ggplot2::ggplot(ggplot2::aes(
+            ymin = ymin,
+            ymax = ymax,
+            xmin = 3,
+            xmax = 4,
+            fill = name
+          )) +
+          ggplot2::geom_rect() +
+          ggplot2::coord_polar(theta = "y", direction = -1) +
+          ggplot2::xlim(c(2, 4)) +
+          ggplot2::theme_void() +
+          ggplot2::theme(legend.position = "none") +
+          ggplot2::scale_fill_manual(values = c("#BBBBBB", "#033C73"))
+      },
+      res = 92
+    )
 
     # function to describe filters in words
     describe_filter <- function(x) {
-
       selected <- input[[paste("i", x, sep = "_")]]
       info <- filter(preds, predictors == x)
       choices <- info$scope[[1]]
 
       # numeric or date
       if (is.numeric(dat[[x]]) || is.Date(dat[[x]])) {
-
         if (selected[[1]] == selected[[2]]) {
           # exactly equal
           glue::glue("{x} == {selected[[1]]}")
@@ -1006,7 +1188,6 @@ exp_shiny <- function(dat,
           # strictly less than
           glue::glue("{x} <= {selected[[2]]}")
         }
-
       } else if (length(selected) == 0) {
         # categorical
         # nothing selected
@@ -1014,18 +1195,21 @@ exp_shiny <- function(dat,
       } else if (length(selected) <= 0.5 * info$n_unique) {
         # minority selected - list all selections
         y <- glue::glue_collapse(
-          selected, sep = ", ",
-          last = if (length(selected) > 2) ", or " else " or ")
+          selected,
+          sep = ", ",
+          last = if (length(selected) > 2) ", or " else " or "
+        )
         glue::glue("{x} is {y}")
       } else {
         # majority selected - list all NOT selected
         y <- setdiff(choices, selected)
         y <- glue::glue_collapse(
-          y, sep = ", ",
-          last = if (length(y) > 2) ", or " else " or ")
+          y,
+          sep = ", ",
+          last = if (length(y) > 2) ", or " else " or "
+        )
         glue::glue("{x} is NOT {y}")
       }
-
     }
 
     # filter description output
@@ -1051,11 +1235,14 @@ exp_shiny <- function(dat,
     output$plotDownload <- shiny::downloadHandler(
       filename = export_path(input$study_type, "plot", "png"),
       content = function(file) {
-        ggplot2::ggsave(file, plot = rplot(),
-                        height = if (input$plotResize) input$plotHeight else NA,
-                        width = if (input$plotResize) input$plotWidth else NA,
-                        units = "px",
-                        dpi = 92)
+        ggplot2::ggsave(
+          file,
+          plot = rplot(),
+          height = if (input$plotResize) input$plotHeight else NA,
+          width = if (input$plotResize) input$plotWidth else NA,
+          units = "px",
+          dpi = 92
+        )
       }
     )
 
@@ -1065,10 +1252,8 @@ exp_shiny <- function(dat,
         gt::gtsave(rtable(), file)
       }
     )
-
   }
 
   # Run the application
   shiny::shinyApp(ui = ui, server = server)
-
 }
