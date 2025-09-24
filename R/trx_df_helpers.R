@@ -91,20 +91,23 @@
 #' summary(dat, pol_yr)
 #'
 #' @export
-as_trx_df <- function(x,
-                      col_trx_amt = "trx_amt",
-                      col_trx_n = "trx_n",
-                      col_trx_flag = "trx_flag",
-                      col_exposure = "exposure",
-                      col_percent_of = NULL,
-                      col_percent_of_w_trx = NULL,
-                      col_trx_amt_sq = "trx_amt_sq",
-                      start_date = as.Date("1900-01-01"),
-                      end_date = NULL,
-                      conf_int = FALSE,
-                      conf_level = 0.95) {
-
-  if (is_trx_df(x)) return(x)
+as_trx_df <- function(
+  x,
+  col_trx_amt = "trx_amt",
+  col_trx_n = "trx_n",
+  col_trx_flag = "trx_flag",
+  col_exposure = "exposure",
+  col_percent_of = NULL,
+  col_percent_of_w_trx = NULL,
+  col_trx_amt_sq = "trx_amt_sq",
+  start_date = as.Date("1900-01-01"),
+  end_date = NULL,
+  conf_int = FALSE,
+  conf_level = 0.95
+) {
+  if (is_trx_df(x)) {
+    return(x)
+  }
 
   if (!is.data.frame(x)) {
     rlang::abort("`x` must be a data frame.")
@@ -112,15 +115,25 @@ as_trx_df <- function(x,
 
   # column name alignment
   req_names <- c("exposure", "trx_amt", "trx_n", "trx_flag")
-  if (!missing(col_exposure)) x <- x |> rename(exposure = {{col_exposure}})
-  if (!missing(col_trx_amt)) x <- x |> rename(trx_amt = {{col_trx_amt}})
-  if (!missing(col_trx_n)) x <- x |> rename(trx_n = {{col_trx_n}})
-  if (!missing(col_trx_flag)) x <- x |> rename(trx_flag = {{col_trx_flag}})
+  if (!missing(col_exposure)) {
+    x <- x |> rename(exposure = {{ col_exposure }})
+  }
+  if (!missing(col_trx_amt)) {
+    x <- x |> rename(trx_amt = {{ col_trx_amt }})
+  }
+  if (!missing(col_trx_n)) {
+    x <- x |> rename(trx_n = {{ col_trx_n }})
+  }
+  if (!missing(col_trx_flag)) {
+    x <- x |> rename(trx_flag = {{ col_trx_flag }})
+  }
 
   if (conf_int && !missing(col_percent_of)) {
     req_names <- c(req_names, "trx_amt_sq")
-    if (!missing(col_trx_amt_sq)) x <- x |>
-        rename(trx_amt_sq = {{col_trx_amt_sq}})
+    if (!missing(col_trx_amt_sq)) {
+      x <- x |>
+        rename(trx_amt_sq = {{ col_trx_amt_sq }})
+    }
   }
 
   if (!missing(col_percent_of)) {
@@ -128,23 +141,27 @@ as_trx_df <- function(x,
   }
   if (!missing(col_percent_of_w_trx)) {
     if (missing(col_percent_of)) {
-      rlang::abort("`col_percent_of_w_trx` was supplied without passing anything to `col_percent_of`")
+      rlang::abort(
+        "`col_percent_of_w_trx` was supplied without passing anything to `col_percent_of`"
+      )
     }
     pct_w_trx_name <- rlang::parse_expr(paste0(col_percent_of, "_w_trx"))
-    x <- x |> rename(!!pct_w_trx_name := {{col_percent_of_w_trx}})
+    x <- x |> rename(!!pct_w_trx_name := {{ col_percent_of_w_trx }})
   }
 
   # check required columns
   verify_col_names(names(x), req_names)
 
-  new_trx_df(x |> mutate(trx_type = col_trx_amt),
-             .groups = list(),
-             trx_types = col_trx_amt,
-             start_date = start_date,
-             percent_of = col_percent_of,
-             end_date = end_date,
-             conf_level = conf_level,
-             conf_int = conf_int)
+  new_trx_df(
+    x |> mutate(trx_type = col_trx_amt),
+    .groups = list(),
+    trx_types = col_trx_amt,
+    start_date = start_date,
+    percent_of = col_percent_of,
+    end_date = end_date,
+    conf_level = conf_level,
+    conf_int = conf_int
+  )
 }
 
 #' @export

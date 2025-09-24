@@ -13,15 +13,15 @@ res2 <- as.data.frame(res)
 res3 <- as_trx_df(res2, col_percent_of = "av_anniv", conf_int = TRUE)
 
 test_that("as_trx_df works", {
-
   res4 <- res2 |>
     rename(expo = exposure)
   res5 <- res4 |>
-    rename(tamt = trx_amt,
-           tn = trx_n)
+    rename(tamt = trx_amt, tn = trx_n)
 
-  expect_error(as_trx_df(data.frame(a = 1:3)),
-               regexp = "The following columns are missing")
+  expect_error(
+    as_trx_df(data.frame(a = 1:3)),
+    regexp = "The following columns are missing"
+  )
 
   expect_true(is_trx_df(as_trx_df(res)))
 
@@ -31,11 +31,14 @@ test_that("as_trx_df works", {
 
   expect_error(as_trx_df(res4), regexp = "The following column is missing")
   expect_no_error(as_trx_df(res4, col_exposure = "expo"))
-  expect_no_error(as_trx_df(res5, col_exposure = "expo", col_trx_amt = "tamt",
-                            col_trx_n = "tn"))
+  expect_no_error(as_trx_df(
+    res5,
+    col_exposure = "expo",
+    col_trx_amt = "tamt",
+    col_trx_n = "tn"
+  ))
 
   expect_error(as_trx_df(1), regexp = "`x` must be a data frame.")
-
 })
 
 

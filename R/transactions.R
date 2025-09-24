@@ -43,12 +43,14 @@
 #' @seealso [expose()], [as_exposed_df()]
 #'
 #' @export
-add_transactions <- function(.data, trx_data,
-                             col_pol_num = "pol_num",
-                             col_trx_date = "trx_date",
-                             col_trx_type = "trx_type",
-                             col_trx_amt = "trx_amt") {
-
+add_transactions <- function(
+  .data,
+  trx_data,
+  col_pol_num = "pol_num",
+  col_trx_date = "trx_date",
+  col_trx_type = "trx_type",
+  col_trx_amt = "trx_amt"
+) {
   verify_exposed_df(.data)
 
   if (!is.data.frame(trx_data)) {
@@ -63,10 +65,12 @@ add_transactions <- function(.data, trx_data,
 
   # # column renames
   trx_data <- trx_data |>
-    rename(pol_num = {{col_pol_num}},
-           trx_date = {{col_trx_date}},
-           trx_type = {{col_trx_type}},
-           trx_amt = {{col_trx_amt}}) |>
+    rename(
+      pol_num = {{ col_pol_num }},
+      trx_date = {{ col_trx_date }},
+      trx_type = {{ col_trx_type }},
+      trx_amt = {{ col_trx_amt }}
+    ) |>
     mutate(trx_date = .convert_date(trx_date))
 
   .check_missing_dates(trx_data$trx_date, "trx_date")
@@ -76,17 +80,23 @@ add_transactions <- function(.data, trx_data,
   new_trx_types <- unique(trx_data$trx_type)
   conflict_trx_types <- intersect(new_trx_types, existing_trx_types)
   if (length(conflict_trx_types) > 0) {
-    cli::cli_abort(c(x = "`trx_data` contains transaction types that have already been attached to `.data`: {.val {conflict_trx_types}}.",
-                     i = "Update `trx_data` with unique transaction types."))
+    cli::cli_abort(c(
+      x = "`trx_data` contains transaction types that have already been attached to `.data`: {.val {conflict_trx_types}}.",
+      i = "Update `trx_data` with unique transaction types."
+    ))
   }
 
   # add dates to transaction data
   trx_data <- trx_data |>
     # between-join by transaction date falling within exposures windows
     inner_join(
-      date_lookup, relationship = "many-to-one",
-      dplyr::join_by(pol_num,
-                     between(trx_date, !!date_cols[[1]], !!date_cols[[2]])))
+      date_lookup,
+      relationship = "many-to-one",
+      dplyr::join_by(
+        pol_num,
+        between(trx_date, !!date_cols[[1]], !!date_cols[[2]])
+      )
+    )
 
   # pivot / summarize to match the grain of exposure data
   trx_data <- trx_data |>
@@ -95,7 +105,8 @@ add_transactions <- function(.data, trx_data,
       names_from = trx_type,
       id_cols = c(pol_num, !!date_cols[[1]]),
       values_from = c(trx_amt, trx_n),
-      values_fn = \(x) sum(x, na.rm = TRUE))
+      values_fn = \(x) sum(x, na.rm = TRUE)
+    )
 
   # add new transaction types
   attr(.data, "trx_types") <- c(existing_trx_types, as.character(new_trx_types))
@@ -103,7 +114,7 @@ add_transactions <- function(.data, trx_data,
   # update exposed_df structure to document transaction types
   .data |>
     left_join(trx_data, dplyr::join_by(pol_num, !!date_cols[[1]])) |>
-    mutate(dplyr::across(dplyr::starts_with("trx_"), \(x)
-                         dplyr::coalesce(x, 0)))
-
+    mutate(dplyr::across(dplyr::starts_with("trx_"), \(x) {
+      dplyr::coalesce(x, 0)
+    }))
 }

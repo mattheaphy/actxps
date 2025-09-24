@@ -144,44 +144,51 @@
 #' @references Herzog, Thomas (1999). Introduction to Credibility Theory
 #'
 #' @export
-exp_stats <- function(.data, target_status = attr(.data, "target_status"),
-                      expected, col_exposure = "exposure",
-                      col_status = "status",
-                      wt = NULL,
-                      credibility = FALSE,
-                      conf_level = 0.95, cred_r = 0.05,
-                      conf_int = FALSE,
-                      control_vars,
-                      control_distinct_max = 25L) {
-
+exp_stats <- function(
+  .data,
+  target_status = attr(.data, "target_status"),
+  expected,
+  col_exposure = "exposure",
+  col_status = "status",
+  wt = NULL,
+  credibility = FALSE,
+  conf_level = 0.95,
+  cred_r = 0.05,
+  conf_int = FALSE,
+  control_vars,
+  control_distinct_max = 25L
+) {
   .groups <- groups(.data)
   start_date <- attr(.data, "start_date")
   end_date <- attr(.data, "end_date")
 
   if (is.null(target_status)) {
     target_status <- levels(.data$status)[-1]
-    cli::cli_warn(c(x = "No target status was provided.",
-                    i = "{.val {target_status}} {?was/were} assumed."))
+    cli::cli_warn(c(
+      x = "No target status was provided.",
+      i = "{.val {target_status}} {?was/were} assumed."
+    ))
   }
 
   if (length(wt) > 1) {
-    cli::cli_abort(c(x = "Only 1 column can be passed to `wt`. You supplied {length(wt)} values."))
+    cli::cli_abort(c(
+      x = "Only 1 column can be passed to `wt`. You supplied {length(wt)} values."
+    ))
   }
 
   check_split_expose_basis(.data, col_exposure)
 
   res <- .data |>
-    rename(exposure = {{col_exposure}},
-           status = {{col_status}}) |>
+    rename(exposure = {{ col_exposure }}, status = {{ col_status }}) |>
     mutate(n_claims = status %in% target_status)
 
   if (!is.null(wt)) {
     res <- res |>
-      rename(.weight = {{wt}}) |>
+      rename(.weight = {{ wt }}) |>
       mutate(
         claims = n_claims * .weight,
         exposure = exposure * .weight,
-        .weight_sq = .weight ^ 2,
+        .weight_sq = .weight^2,
         .weight_n = 1
       )
   } else {
@@ -195,7 +202,6 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
   }
 
   if (!missing(control_vars) && !is.null(control_vars)) {
-
     # special handling for aggregates
     if (all(control_vars == ".none")) {
       if (".none" %in% names(res)) {
@@ -219,7 +225,10 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
     # throw an error if too many unique values
     nd_ctrl <- res |>
       ungroup() |>
-      dplyr::summarize(dplyr::across(control_vars, dplyr::n_distinct))
+      dplyr::summarize(dplyr::across(
+        dplyr::all_of(control_vars),
+        dplyr::n_distinct
+      ))
     nd_ctrl <- colnames(nd_ctrl)[nd_ctrl > control_distinct_max]
     if (length(nd_ctrl) > 0) {
       cli::cli_abort(c(
@@ -227,17 +236,25 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
         i = paste0(
           "Limit = {control_distinct_max}. Update the `control_distinct_max` ",
           "argument to increase the limit, or consider techniques like ",
-          "binning to reduce cardinality")
+          "binning to reduce cardinality"
+        )
       ))
     }
 
     # calculate observed rates across control variables
     ctrl_dat <- finish_exp_stats(
       res |> group_by(dplyr::across(dplyr::all_of(control_vars))),
-      target_status, expected = NULL, .groups = control_vars,
-      start_date = start_date, end_date = end_date,
-      credibility = FALSE, conf_level = conf_level,
-      cred_r = cred_r, wt = wt, conf_int = FALSE, control_vars = NULL
+      target_status,
+      expected = NULL,
+      .groups = control_vars,
+      start_date = start_date,
+      end_date = end_date,
+      credibility = FALSE,
+      conf_level = conf_level,
+      cred_r = cred_r,
+      wt = wt,
+      conf_int = FALSE,
+      control_vars = NULL
     ) |>
       select(dplyr::all_of(control_vars), control = q_obs)
 
@@ -245,27 +262,36 @@ exp_stats <- function(.data, target_status = attr(.data, "target_status"),
     #   to expected values
     res <- left_join(res, ctrl_dat, by = control_vars)
     expected <- c(expected, "control")
-
   } else {
     control_vars <- NULL
   }
 
-  finish_exp_stats(res, target_status, expected, .groups,
-                   start_date, end_date, credibility,
-                   conf_level, cred_r, wt, conf_int, control_vars)
-
+  finish_exp_stats(
+    res,
+    target_status,
+    expected,
+    .groups,
+    start_date,
+    end_date,
+    credibility,
+    conf_level,
+    cred_r,
+    wt,
+    conf_int,
+    control_vars
+  )
 }
 
 #' @export
 print.exp_df <- function(x, ...) {
-
   cli::cli_h2("Experience study results")
   if (length(groups(x)) > 0) {
     cli::cli_ul("{.field Groups}: {groups(x)}")
   }
   cli::cli_ul(c(
     "{.field Target status}: {attr(x, 'target_status')}",
-    "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}"))
+    "{.field Study range}: {attr(x, 'start_date')} to {attr(x, 'end_date')}"
+  ))
   if (!is.null(attr(x, "control_vars"))) {
     cli::cli_ul("{.field Control variables}: {attr(x, 'control_vars')}")
   }
@@ -289,7 +315,6 @@ groups.exp_df <- function(x) {
 #' @export
 #' @rdname exp_stats
 summary.exp_df <- function(object, ...) {
-
   res <- group_by(object, !!!rlang::enquos(...))
 
   .groups <- groups(res)
@@ -301,28 +326,43 @@ summary.exp_df <- function(object, ...) {
   wt <- attr(object, "wt")
   control_vars <- attr(object, "control_vars")
 
-  finish_exp_stats(res, target_status, expected, .groups,
-                   start_date, end_date, xp_params$credibility,
-                   xp_params$conf_level, xp_params$cred_r,
-                   wt, xp_params$conf_int, control_vars)
-
+  finish_exp_stats(
+    res,
+    target_status,
+    expected,
+    .groups,
+    start_date,
+    end_date,
+    xp_params$credibility,
+    xp_params$conf_level,
+    xp_params$cred_r,
+    wt,
+    xp_params$conf_int,
+    control_vars
+  )
 }
 
 
 # support functions -------------------------------------------------------
 
-
-finish_exp_stats <- function(.data, target_status, expected,
-                             .groups, start_date, end_date,
-                             credibility, conf_level, cred_r,
-                             wt, conf_int, control_vars) {
-
+finish_exp_stats <- function(
+  .data,
+  target_status,
+  expected,
+  .groups,
+  start_date,
+  end_date,
+  credibility,
+  conf_level,
+  cred_r,
+  wt,
+  conf_int,
+  control_vars
+) {
   # expected value formulas. these are already weighted if applicable
   if (!is.null(expected)) {
-    ex_mean <- exp_form("weighted.mean({.col}, exposure)",
-                        "{.col}", expected)
-    ex_ae <- exp_form("q_obs / {.col}",
-                      "ae_{.col}", expected)
+    ex_mean <- exp_form("weighted.mean({.col}, exposure)", "{.col}", expected)
+    ex_ae <- exp_form("q_obs / {.col}", "ae_{.col}", expected)
   } else {
     ex_ae <- ex_mean <- NULL
   }
@@ -342,37 +382,50 @@ finish_exp_stats <- function(.data, target_status, expected,
 
   # credibility formulas - varying by weights
   if (credibility) {
-
-    y <- (stats::qnorm((1 + conf_level) / 2) / cred_r) ^ 2
+    y <- (stats::qnorm((1 + conf_level) / 2) / cred_r)^2
 
     if (is.null(wt)) {
       cred <- rlang::exprs(
-        credibility = pmin(1, sqrt(
-          n_claims / (y * (1 - q_obs))
-        )))
+        credibility = pmin(
+          1,
+          sqrt(
+            n_claims / (y * (1 - q_obs))
+          )
+        )
+      )
     } else {
       cred <- rlang::exprs(
-        credibility = pmin(1, sqrt(
-          n_claims /
-            (y * ((ex2_wt - ex_wt ^ 2) * .weight_n / (.weight_n - 1) /
-                    ex_wt ^ 2 + 1 - q_obs))
-        )))
+        credibility = pmin(
+          1,
+          sqrt(
+            n_claims /
+              (y *
+                ((ex2_wt - ex_wt^2) *
+                  .weight_n /
+                  (.weight_n - 1) /
+                  ex_wt^2 +
+                  1 -
+                  q_obs))
+          )
+        )
+      )
     }
 
     if (!is.null(expected)) {
-      adj_q_exp <- exp_form("credibility * q_obs + (1 - credibility) * {.col}",
-                            "adj_{.col}", expected)
+      adj_q_exp <- exp_form(
+        "credibility * q_obs + (1 - credibility) * {.col}",
+        "adj_{.col}",
+        expected
+      )
 
       cred <- append(cred, adj_q_exp)
     }
-
-  } else{
+  } else {
     cred <- NULL
   }
 
   # confidence interval formulas
   if (conf_int) {
-
     p <- c((1 - conf_level) / 2, 1 - (1 - conf_level) / 2)
 
     if (is.null(wt)) {
@@ -384,86 +437,112 @@ finish_exp_stats <- function(.data, target_status, expected,
       ci <- rlang::exprs(
         # For binomial N
         # Var(S) = n * p * (Var(X) + E(X)^2 * (1 - p))
-        sd_agg = (n_claims * (
-          (ex2_wt - ex_wt ^ 2) + ex_wt ^ 2 * (1 - q_obs))) ^ 0.5,
+        sd_agg = (n_claims * ((ex2_wt - ex_wt^2) + ex_wt^2 * (1 - q_obs)))^0.5,
         q_obs_lower = stats::qnorm(p[[1]], claims, sd_agg) / exposure,
         q_obs_upper = stats::qnorm(p[[2]], claims, sd_agg) / exposure
       )
     }
 
     if (!is.null(expected)) {
-      ae_lower <- exp_form("q_obs_lower / {.col}",
-                           "ae_{.col}_lower", expected)
-      ae_upper <- exp_form("q_obs_upper / {.col}",
-                           "ae_{.col}_upper", expected)
+      ae_lower <- exp_form("q_obs_lower / {.col}", "ae_{.col}_lower", expected)
+      ae_upper <- exp_form("q_obs_upper / {.col}", "ae_{.col}_upper", expected)
       ci <- append(ci, c(ae_lower, ae_upper))
       if (credibility) {
-        ci <- append(ci,
-                     c(exp_form("credibility * q_obs_lower +
-                                (1 - credibility) * {.col}",
-                                "adj_{.col}_lower", expected),
-                       exp_form("credibility * q_obs_upper +
-                                (1 - credibility) * {.col}",
-                                "adj_{.col}_upper", expected)))
+        ci <- append(
+          ci,
+          c(
+            exp_form(
+              "credibility * q_obs_lower + (1 - credibility) * {.col}",
+              "adj_{.col}_lower",
+              expected
+            ),
+            exp_form(
+              "credibility * q_obs_upper + (1 - credibility) * {.col}",
+              "adj_{.col}_upper",
+              expected
+            )
+          )
+        )
       }
     }
-
   } else {
     ci <- NULL
   }
 
   res <- .data |>
-    dplyr::summarize(n_claims = sum(n_claims),
-                     claims = sum(claims),
-                     !!!ex_mean,
-                     exposure = sum(exposure),
-                     q_obs = claims / exposure,
-                     !!!ex_ae,
-                     !!!wt_forms,
-                     !!!cred,
-                     !!!ci,
-                     .groups = "drop") |>
-    relocate(exposure, q_obs,
-             dplyr::any_of(c("q_obs_lower", "q_obs_upper")),
-             .after = claims)
+    dplyr::summarize(
+      n_claims = sum(n_claims),
+      claims = sum(claims),
+      !!!ex_mean,
+      exposure = sum(exposure),
+      q_obs = claims / exposure,
+      !!!ex_ae,
+      !!!wt_forms,
+      !!!cred,
+      !!!ci,
+      .groups = "drop"
+    ) |>
+    relocate(
+      exposure,
+      q_obs,
+      dplyr::any_of(c("q_obs_lower", "q_obs_upper")),
+      .after = claims
+    )
 
   if (!is.null(wt)) {
     res <- res |>
       select(-ex_wt, -ex2_wt, -dplyr::any_of("sd_agg")) |>
-      relocate(.weight, .weight_sq, .weight_n,
-               .after = dplyr::last_col())
+      relocate(.weight, .weight_sq, .weight_n, .after = dplyr::last_col())
   }
 
-  new_exp_df(res,
-             .groups = .groups,
-             target_status = target_status,
-             start_date = start_date,
-             expected = expected,
-             end_date = end_date,
-             wt = wt,
-             credibility = credibility,
-             conf_level = conf_level, cred_r = cred_r,
-             conf_int = conf_int,
-             control_vars = control_vars)
+  new_exp_df(
+    res,
+    .groups = .groups,
+    target_status = target_status,
+    start_date = start_date,
+    expected = expected,
+    end_date = end_date,
+    wt = wt,
+    credibility = credibility,
+    conf_level = conf_level,
+    cred_r = cred_r,
+    conf_int = conf_int,
+    control_vars = control_vars
+  )
 }
 
 # low level class constructor
-new_exp_df <- function(x, .groups, target_status, start_date, expected,
-                       end_date, wt, credibility, conf_level,
-                       cred_r = cred_r, conf_int, control_vars) {
-  tibble::new_tibble(x,
-                     class = "exp_df",
-                     groups = .groups,
-                     target_status = target_status,
-                     start_date = start_date,
-                     expected = expected,
-                     end_date = end_date,
-                     wt = wt,
-                     xp_params = list(credibility = credibility,
-                                      conf_level = conf_level,
-                                      cred_r = cred_r,
-                                      conf_int = conf_int),
-                     control_vars = control_vars)
+new_exp_df <- function(
+  x,
+  .groups,
+  target_status,
+  start_date,
+  expected,
+  end_date,
+  wt,
+  credibility,
+  conf_level,
+  cred_r = cred_r,
+  conf_int,
+  control_vars
+) {
+  tibble::new_tibble(
+    x,
+    class = "exp_df",
+    groups = .groups,
+    target_status = target_status,
+    start_date = start_date,
+    expected = expected,
+    end_date = end_date,
+    wt = wt,
+    xp_params = list(
+      credibility = credibility,
+      conf_level = conf_level,
+      cred_r = cred_r,
+      conf_int = conf_int
+    ),
+    control_vars = control_vars
+  )
 }
 
 # this function is used to create formula specifications passed to dplyr::mutate
@@ -486,8 +565,9 @@ exp_form <- function(form, new_col, .col) {
 
 verify_exp_df <- function(.data) {
   if (!inherits(.data, "exp_df")) {
-    cli::cli_abort(c(x = "`{deparse(substitute(.data))}` must be an `exp_df` object.",
-                     i = "Hint: Use `exp_stats()` to create `exp_df` objects."
+    cli::cli_abort(c(
+      x = "`{deparse(substitute(.data))}` must be an `exp_df` object.",
+      i = "Hint: Use `exp_stats()` to create `exp_df` objects."
     ))
   }
 }

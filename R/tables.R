@@ -83,40 +83,43 @@ autotable <- function(object, ...) {
 
 #' @rdname autotable
 #' @export
-autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
-                             colorful = TRUE,
-                             color_q_obs = "RColorBrewer::GnBu",
-                             color_ae_ = "RColorBrewer::RdBu",
-                             rename_cols = rlang::list2(...),
-                             show_conf_int = FALSE,
-                             show_cred_adj = FALSE,
-                             decimals_amt = 0,
-                             suffix_amt = FALSE,
-                             show_total = FALSE,
-                             ...) {
-
+autotable.exp_df <- function(
+  object,
+  fontsize = 100,
+  decimals = 1,
+  colorful = TRUE,
+  color_q_obs = "RColorBrewer::GnBu",
+  color_ae_ = "RColorBrewer::RdBu",
+  rename_cols = rlang::list2(...),
+  show_conf_int = FALSE,
+  show_cred_adj = FALSE,
+  decimals_amt = 0,
+  suffix_amt = FALSE,
+  show_total = FALSE,
+  ...
+) {
   rlang::check_installed("RColorBrewer")
-
   expected <- attr(object, "expected")
   target_status <- attr(object, "target_status")
   wt <- attr(object, "wt")
   cred <- attr(object, "xp_params")$credibility
   conf_int <- attr(object, "xp_params")$conf_int
 
-  if (length(groups(object)) == 0L) show_total <- FALSE
+  if (length(groups(object)) == 0L) {
+    show_total <- FALSE
+  }
   if (show_total) {
     object <- append_total(object)
     rowname_col <- ".row_label"
   } else {
-    rowname_col <- "rowname"
+    rowname_col <- NULL
   }
 
   if (show_conf_int && !conf_int) {
     conf_int_warning()
   } else if (conf_int && !show_conf_int) {
     object <- object |>
-      select(-dplyr::ends_with("_lower"),
-             -dplyr::ends_with("_upper"))
+      select(-dplyr::ends_with("_lower"), -dplyr::ends_with("_upper"))
   }
   conf_int <- show_conf_int && conf_int
 
@@ -131,30 +134,49 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   tab <- object |>
     select(-dplyr::starts_with(".weight")) |>
     gt::gt(rowname_col = rowname_col, ...) |>
-    gt::fmt_number(c(n_claims, claims, exposure),
-                   decimals = decimals_amt, suffixing = suffix_amt) |>
-    gt::fmt_percent(c(q_obs,
-                      dplyr::ends_with("_lower"),
-                      dplyr::ends_with("_upper"),
-                      dplyr::starts_with("ae_"),
-                      dplyr::starts_with("adj_"),
-                      dplyr::any_of("credibility"),
-                      expected),
-                    decimals = decimals) |>
-    gt::tab_options(table.font.size = gt::pct(fontsize),
-                    row.striping.include_table_body = TRUE,
-                    column_labels.font.weight = "bold") |>
-    gt::cols_label(q_obs = gt::md("*q<sup>obs</sup>*"),
-                   claims = "Claims",
-                   exposure = "Exposures") |>
+    gt::fmt_number(
+      c(n_claims, claims, exposure),
+      decimals = decimals_amt,
+      suffixing = suffix_amt
+    ) |>
+    gt::fmt_percent(
+      c(
+        q_obs,
+        dplyr::ends_with("_lower"),
+        dplyr::ends_with("_upper"),
+        dplyr::starts_with("ae_"),
+        dplyr::starts_with("adj_"),
+        dplyr::any_of("credibility"),
+        expected
+      ),
+      decimals = decimals
+    ) |>
+    gt::tab_options(
+      table.font.size = gt::pct(fontsize),
+      row.striping.include_table_body = TRUE,
+      column_labels.font.weight = "bold"
+    ) |>
+    gt::cols_label(
+      q_obs = gt::md("*q<sup>obs</sup>*"),
+      claims = "Claims",
+      exposure = "Exposures"
+    ) |>
     gt::cols_label(.list = rename_cols) |>
-    gt::tab_header(title = "Experience Study Results",
-                   subtitle = glue::glue("Target status{ifelse(length(target_status) > 1,'es','')}: {paste(target_status, collapse = ', ')}")) |>
-    gt::tab_source_note(glue::glue("Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"))
+    gt::tab_header(
+      title = "Experience Study Results",
+      subtitle = glue::glue(
+        "Target status{ifelse(length(target_status) > 1,'es','')}: {paste(target_status, collapse = ', ')}"
+      )
+    ) |>
+    gt::tab_source_note(glue::glue(
+      "Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"
+    ))
 
   if (length(wt) > 0) {
     tab <- tab |>
-      gt::tab_source_note(glue::glue("Results weighted by `{wt}`") |> gt::md()) |>
+      gt::tab_source_note(
+        glue::glue("Results weighted by `{wt}`") |> gt::md()
+      ) |>
       gt::cols_label(n_claims = "# Claims")
   } else {
     tab <- tab |> gt::cols_hide(n_claims)
@@ -167,12 +189,16 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
       gt::cols_label(q_obs_lower = gt::md("*q<sup>obs</sup> CI*"))
     for (i in expected) {
       tab <- tab |>
-        gt::cols_merge_range(paste0("ae_", i, "_lower"),
-                             paste0("ae_", i, "_upper"))
+        gt::cols_merge_range(
+          paste0("ae_", i, "_lower"),
+          paste0("ae_", i, "_upper")
+        )
       if (show_cred_adj) {
         tab <- tab |>
-          gt::cols_merge_range(paste0("adj_", i, "_lower"),
-                               paste0("adj_", i, "_upper"))
+          gt::cols_merge_range(
+            paste0("adj_", i, "_lower"),
+            paste0("adj_", i, "_upper")
+          )
       }
     }
   }
@@ -187,7 +213,6 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   }
 
   if (colorful) {
-
     ae_cols <- paste0("ae_", expected)
     domain_ae <- if (length(expected > 0)) {
       object |>
@@ -220,93 +245,118 @@ autotable.exp_df <- function(object, fontsize = 100, decimals = 1,
   }
 
   tab
-
 }
 
 #' @rdname autotable
 #' @export
-autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
-                             colorful = TRUE,
-                             color_util = "RColorBrewer::GnBu",
-                             color_pct_of = "RColorBrewer::RdBu",
-                             rename_cols = rlang::list2(...),
-                             show_conf_int = FALSE,
-                             decimals_amt = 0,
-                             suffix_amt = FALSE,
-                             show_total = FALSE,
-                             ...) {
-
+autotable.trx_df <- function(
+  object,
+  fontsize = 100,
+  decimals = 1,
+  colorful = TRUE,
+  color_util = "RColorBrewer::GnBu",
+  color_pct_of = "RColorBrewer::RdBu",
+  rename_cols = rlang::list2(...),
+  show_conf_int = FALSE,
+  decimals_amt = 0,
+  suffix_amt = FALSE,
+  show_total = FALSE,
+  ...
+) {
   rlang::check_installed("RColorBrewer")
 
   percent_of <- attr(object, "percent_of")
   trx_types <- attr(object, "trx_types")
   conf_int <- attr(object, "xp_params")$conf_int
 
-  if (length(groups(object)) == 0L) show_total <- FALSE
+  if (length(groups(object)) == 0L) {
+    show_total <- FALSE
+  }
   if (show_total) {
     object <- append_total(object)
     rowname_col <- ".row_label"
   } else {
-    rowname_col <- "rowname"
+    rowname_col <- NULL
   }
 
   if (show_conf_int && !conf_int) {
     conf_int_warning()
   } else if (conf_int && !show_conf_int) {
     object <- object |>
-      select(-dplyr::ends_with("_lower"),
-             -dplyr::ends_with("_upper"))
+      select(-dplyr::ends_with("_lower"), -dplyr::ends_with("_upper"))
   }
   conf_int <- show_conf_int && conf_int
 
   # remove unnecessary columns
   if (!is.null(percent_of)) {
     object <- object |>
-      select(-dplyr::all_of(percent_of),
-             -dplyr::all_of(paste0(percent_of, "_w_trx")))
+      select(
+        -dplyr::all_of(percent_of),
+        -dplyr::all_of(paste0(percent_of, "_w_trx"))
+      )
   }
 
   tab <- object |>
     select(-exposure, -dplyr::any_of("trx_amt_sq")) |>
     arrange(trx_type) |>
     gt::gt(groupname_col = "trx_type", rowname_col = rowname_col) |>
-    gt::fmt_number(c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
-                   decimals = decimals_amt, suffixing = suffix_amt) |>
+    gt::fmt_number(
+      c(trx_n, trx_amt, trx_flag, avg_trx, avg_all),
+      decimals = decimals_amt,
+      suffixing = suffix_amt
+    ) |>
     gt::fmt_number(trx_freq, decimals = 1) |>
-    gt::fmt_percent(c(dplyr::starts_with("trx_util"),
-                      dplyr::starts_with("pct_of_")),
-                    decimals = decimals) |>
+    gt::fmt_percent(
+      c(dplyr::starts_with("trx_util"), dplyr::starts_with("pct_of_")),
+      decimals = decimals
+    ) |>
     gt::sub_missing() |>
-    gt::tab_options(table.font.size = gt::pct(fontsize),
-                    row.striping.include_table_body = TRUE,
-                    column_labels.font.weight = "bold") |>
+    gt::tab_options(
+      table.font.size = gt::pct(fontsize),
+      row.striping.include_table_body = TRUE,
+      column_labels.font.weight = "bold"
+    ) |>
     gt::tab_spanner(gt::md("**Counts**"), c("trx_n", "trx_flag")) |>
     gt::tab_spanner(gt::md("**Averages**"), c("avg_trx", "avg_all")) |>
-    gt::cols_label(trx_n = "Total",
-                   trx_flag = "Periods",
-                   trx_amt = "Amount",
-                   avg_trx = gt::md("*w/ trx*"),
-                   avg_all = gt::md("*all*"),
-                   trx_freq = "Frequency",
-                   trx_util = "Utilization") |>
+    gt::cols_label(
+      trx_n = "Total",
+      trx_flag = "Periods",
+      trx_amt = "Amount",
+      avg_trx = gt::md("*w/ trx*"),
+      avg_all = gt::md("*all*"),
+      trx_freq = "Frequency",
+      trx_util = "Utilization"
+    ) |>
     gt::cols_label(.list = rename_cols) |>
-    gt::tab_header(title = "Transaction Study Results",
-                   subtitle = glue::glue("Transaction type{ifelse(length(trx_types) > 1,'s','')}: {paste(trx_types, collapse = ', ')}")) |>
-    gt::tab_source_note(glue::glue("Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"))
+    gt::tab_header(
+      title = "Transaction Study Results",
+      subtitle = glue::glue(
+        "Transaction type{ifelse(length(trx_types) > 1,'s','')}: {paste(trx_types, collapse = ', ')}"
+      )
+    ) |>
+    gt::tab_source_note(glue::glue(
+      "Study range: {as.character(attr(object, 'start_date'))} to {as.character(attr(object, 'end_date'))}"
+    ))
 
   # merge confidence intervals into a single range column
   if (conf_int) {
     tab <- tab |>
       gt::cols_merge_range(trx_util_lower, trx_util_upper) |>
       gt::tab_spanner(gt::md("**Utilization**"), c(trx_util, trx_util_lower)) |>
-      gt::cols_label(trx_util = gt::md("*Rate*"),
-                     trx_util_lower = gt::md("*CI*"))
+      gt::cols_label(
+        trx_util = gt::md("*Rate*"),
+        trx_util_lower = gt::md("*CI*")
+      )
     for (i in percent_of) {
       tab <- tab |>
-        gt::cols_merge_range(paste0("pct_of_", i, "_w_trx_lower"),
-                             paste0("pct_of_", i, "_w_trx_upper")) |>
-        gt::cols_merge_range(paste0("pct_of_", i, "_all_lower"),
-                             paste0("pct_of_", i, "_all_upper"))
+        gt::cols_merge_range(
+          paste0("pct_of_", i, "_w_trx_lower"),
+          paste0("pct_of_", i, "_w_trx_upper")
+        ) |>
+        gt::cols_merge_range(
+          paste0("pct_of_", i, "_all_lower"),
+          paste0("pct_of_", i, "_all_upper")
+        )
     }
   }
 
@@ -315,9 +365,10 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   }
 
   if (colorful) {
-
-    pct_of_cols <- c(paste0("pct_of_", percent_of, "_w_trx"),
-                     paste0("pct_of_", percent_of, "_all"))
+    pct_of_cols <- c(
+      paste0("pct_of_", percent_of, "_w_trx"),
+      paste0("pct_of_", percent_of, "_all")
+    )
     domain_pct <- if (!is.null(percent_of)) {
       object |>
         select(dplyr::any_of(pct_of_cols)) |>
@@ -349,12 +400,10 @@ autotable.trx_df <- function(object, fontsize = 100, decimals = 1,
   }
 
   tab
-
 }
 
 
 span_expected <- function(tab, ex, conf_int, show_cred_adj) {
-
   force(ex)
 
   ae <- paste0("ae_", ex)
@@ -363,80 +412,99 @@ span_expected <- function(tab, ex, conf_int, show_cred_adj) {
   adj_ci <- paste0("adj_", ex, "_lower")
 
   tab <- tab |>
-    gt::tab_spanner(glue::glue("`{ex}`") |> gt::md(),
-                    c(ex, ae,
-                      if (show_cred_adj) adj,
-                      if (conf_int) c(
-                        ae_ci,
-                        if(show_cred_adj) adj_ci
-                      ))) |>
-    gt::cols_label(!!rlang::enquo(ex) := gt::md("*q<sup>exp</sup>*"),
-                   !!rlang::sym(ae) := gt::md("*A/E*"))
+    gt::tab_spanner(
+      glue::glue("`{ex}`") |> gt::md(),
+      c(
+        ex,
+        ae,
+        if (show_cred_adj) adj,
+        if (conf_int) {
+          c(
+            ae_ci,
+            if (show_cred_adj) adj_ci
+          )
+        }
+      )
+    ) |>
+    gt::cols_label(
+      !!rlang::enquo(ex) := gt::md("*q<sup>exp</sup>*"),
+      !!rlang::sym(ae) := gt::md("*A/E*")
+    )
 
   if (show_cred_adj) {
-    tab <- tab |> gt::cols_label(
-      !!rlang::sym(adj) := gt::md("*q<sup>adj</sup>*"))
+    tab <- tab |>
+      gt::cols_label(
+        !!rlang::sym(adj) := gt::md("*q<sup>adj</sup>*")
+      )
   }
 
   if (conf_int) {
-    tab <- tab |> gt::cols_label(
-      !!rlang::sym(ae_ci) :=
-        gt::md("*A/E CI*")) |>
+    tab <- tab |>
+      gt::cols_label(
+        !!rlang::sym(ae_ci) := gt::md("*A/E CI*")
+      ) |>
       gt::cols_move(ae_ci, after = ae)
     if (show_cred_adj) {
-      tab <- tab |> gt::cols_label(
-        !!rlang::sym(adj_ci) :=
-          gt::md("*q<sup>adj</sup> CI*"))
+      tab <- tab |>
+        gt::cols_label(
+          !!rlang::sym(adj_ci) := gt::md("*q<sup>adj</sup> CI*")
+        )
     }
   }
 
   tab
-
 }
 
 span_percent_of <- function(tab, pct_of, conf_int) {
-
   pct_names <- paste0("pct_of_", pct_of, c("_w_trx", "_all"))
   if (conf_int) {
-    pct_names <- c(pct_names,
-                   paste0(pct_names, "_lower"))
+    pct_names <- c(pct_names, paste0(pct_names, "_lower"))
   }
 
   tab <- tab |>
-    gt::tab_spanner(glue::glue("**% of {pct_of}**") |> gt::md(),
-                    pct_names) |>
-    gt::cols_label(!!rlang::sym(pct_names[[1]]) := gt::md("*w/ trx*"),
-                   !!rlang::sym(pct_names[[2]]) := gt::md("*all*"))
+    gt::tab_spanner(glue::glue("**% of {pct_of}**") |> gt::md(), pct_names) |>
+    gt::cols_label(
+      !!rlang::sym(pct_names[[1]]) := gt::md("*w/ trx*"),
+      !!rlang::sym(pct_names[[2]]) := gt::md("*all*")
+    )
 
   if (conf_int) {
     tab <- tab |>
-      gt::cols_label(!!rlang::sym(pct_names[[3]]) := gt::md("*w/ trx CI*"),
-                     !!rlang::sym(pct_names[[4]]) := gt::md("*all CI*")) |>
+      gt::cols_label(
+        !!rlang::sym(pct_names[[3]]) := gt::md("*w/ trx CI*"),
+        !!rlang::sym(pct_names[[4]]) := gt::md("*all CI*")
+      ) |>
       gt::cols_move(pct_names[[3]], pct_names[[1]])
   }
 
   tab
-
 }
 
 # internal functions for supporting grand totals
 append_total <- function(object) {
-  object <- dplyr::bind_rows(object |> mutate(.row_label = ''),
-                             summary(object) |>
-                               mutate(.row_label = 'Total'))
+  object <- dplyr::bind_rows(
+    object |> mutate(.row_label = ''),
+    summary(object) |>
+      mutate(.row_label = 'Total')
+  )
 }
 
 format_total <- function(tab) {
   tab <- tab |>
-    gt::tab_style(locations = list(
-      gt::cells_body(rows = .row_label == "Total"),
-      gt::cells_stub(rows = .row_label == "Total")
-    ),
-    style = list(gt::cell_text(weight = "bold"),
-                 gt::cell_borders(sides = "top",
-                                  style = "double",
-                                  color = "#D3D3D3",
-                                  weight = gt::px(6)))) |>
+    gt::tab_style(
+      locations = list(
+        gt::cells_body(rows = .row_label == "Total"),
+        gt::cells_stub(rows = .row_label == "Total")
+      ),
+      style = list(
+        gt::cell_text(weight = "bold"),
+        gt::cell_borders(
+          sides = "top",
+          style = "double",
+          color = "#D3D3D3",
+          weight = gt::px(6)
+        )
+      )
+    ) |>
     gt::sub_missing(missing_text = "")
-
 }

@@ -3,62 +3,72 @@ library(tidyverse)
 # simulation function -----------------------------------------------------
 
 sim_data <- function(n_pol = 1) {
-
   initial_year <- 2005L
 
   # surrender charge years remaining
   pol_yr_dist <- tibble(
     value = 1:15,
-    prob = 1 / 15)
+    prob = 1 / 15
+  )
 
   # income guarantee
   inc_guar_dist <- tibble(
     value = c(FALSE, TRUE),
-    prob = c(0.4, 0.6))
+    prob = c(0.4, 0.6)
+  )
 
   # qualified money
   qual_dist <- tibble(
     value = c(FALSE, TRUE),
-    prob = c(0.45, 0.55))
+    prob = c(0.45, 0.55)
+  )
 
   # issue age
+  # fmt: skip
   iss_age_dist <- tribble(~age, ~prob,
-                          40,0.01,
-                          45,0.02,
-                          50,0.05,
-                          55,0.15,
-                          60,0.17,
-                          65,0.225,
-                          70,0.175,
-                          75,0.1,
-                          80,0.1)
+    40, 0.01,
+    45, 0.02,
+    50, 0.05,
+    55, 0.15,
+    60, 0.17,
+    65, 0.225,
+    70, 0.175,
+    75, 0.1,
+    80, 0.1)
 
   iss_age_dist <- tibble(value = 40:80) |>
-    mutate(prob = approx(iss_age_dist$age, iss_age_dist$prob, xout = value)$y,
-           prob = prob / sum(prob))
+    mutate(
+      prob = approx(iss_age_dist$age, iss_age_dist$prob, xout = value)$y,
+      prob = prob / sum(prob)
+    )
 
   # product
   product_dist <- tibble(
     value = letters[1:3] |> factor(),
-    prob = c(0.25, 0.25, 0.5))
+    prob = c(0.25, 0.25, 0.5)
+  )
 
   # gender
   gender_dist <- tibble(value = c("F", "M") |> factor(), prob = 0.5)
 
   # withdrawal timing
+  # fmt: skip
   wd_time_dist <- tribble(~value, ~cprob,
-                          40, 0,
-                          50, 0,
-                          55, 0.05,
-                          60, 0.15,
-                          65, 0.40,
-                          70, 0.65,
-                          75, 0.80,
-                          80, 0.95,
-                          85, 0.95)
+    40, 0,
+    50, 0,
+    55, 0.05,
+    60, 0.15,
+    65, 0.40,
+    70, 0.65,
+    75, 0.80,
+    80, 0.95,
+    85, 0.95
+  )
 
-  wd_time_dist <- tibble(value = 40:85,
-                         cprob = approx(wd_time_dist$value, wd_time_dist$cprob, 40:85)$y) |>
+  wd_time_dist <- tibble(
+    value = 40:85,
+    cprob = approx(wd_time_dist$value, wd_time_dist$cprob, 40:85)$y
+  ) |>
     mutate(prob = diff(c(0, cprob)))
 
   # check that probabilities sum to 1
@@ -84,45 +94,45 @@ sim_data <- function(n_pol = 1) {
     wd_age = draw(wd_time_dist) |> pmax(age),
     premium = round(1000 * exp(rnorm(n_pol, 0, 0.75)), 0)
   )
-
 }
 
 expand_sim <- function(dat) {
-
-
   # assumptions ---------------
   # surrender charge years remaining and income guarantee
   base_rates <- read_csv("data-raw/rates/base_rates.csv", col_types = "ild")
 
   # qualified money
   qual_mult <- function(qual, age) {
-
-    case_when(qual & age >= 70 ~ 0.8,
-              qual & age >= 60 ~ 0.9,
-              qual ~ 1,
-              TRUE ~ 1.1)
+    case_when(
+      qual & age >= 70 ~ 0.8,
+      qual & age >= 60 ~ 0.9,
+      qual ~ 1,
+      TRUE ~ 1.1
+    )
   }
 
   # attained age
   age_mult <- function(age, glwb) {
-
-    if_else(!glwb,
-            case_when(
-              age < 50 ~ 1.3,
-              age < 60 ~ 1,
-              age < 65 ~ 0.9,
-              age < 70 ~ 0.8,
-              age < 80 ~ 1,
-              age < 90 ~ 1.2,
-              TRUE ~ 1.5),
-            case_when(
-              age < 50 ~ 1.2,
-              age < 60 ~ 1,
-              age < 65 ~ 0.9,
-              age < 70 ~ 0.8,
-              age < 80 ~ 0.7,
-              age < 90 ~ 0.4,
-              TRUE ~ 0.25)
+    if_else(
+      !glwb,
+      case_when(
+        age < 50 ~ 1.3,
+        age < 60 ~ 1,
+        age < 65 ~ 0.9,
+        age < 70 ~ 0.8,
+        age < 80 ~ 1,
+        age < 90 ~ 1.2,
+        TRUE ~ 1.5
+      ),
+      case_when(
+        age < 50 ~ 1.2,
+        age < 60 ~ 1,
+        age < 65 ~ 0.9,
+        age < 70 ~ 0.8,
+        age < 80 ~ 0.7,
+        age < 90 ~ 0.4,
+        TRUE ~ 0.25
+      )
     )
   }
 
@@ -134,7 +144,6 @@ expand_sim <- function(dat) {
 
   # withdrawal timing
   wd_time_mult <- function(exercised, age, inc_guar) {
-
     case_when(
       inc_guar == "FALSE" ~ 1,
       exercised ~ 1,
@@ -143,18 +152,15 @@ expand_sim <- function(dat) {
       age < 60 ~ 1.5,
       TRUE ~ 2
     )
-
   }
 
   # policy value
   size_mult <- function(x) {
-
     case_when(
       x > quantile(x, 0.8) ~ 0.5,
       x < quantile(x, 0.2) ~ 2,
       TRUE ~ 1
     )
-
   }
 
   qx_iamb$gender <- str_sub(qx_iamb$gender, 1, 1)
@@ -166,13 +172,14 @@ expand_sim <- function(dat) {
   dat <- dat |>
     slice(rep(row_number(), pol_yr)) |>
     group_by(pol_num) |>
-    mutate(pol_yr = row_number(),
-           last_yr = pol_yr == last(pol_yr)) |>
+    mutate(pol_yr = row_number(), last_yr = pol_yr == last(pol_yr)) |>
     ungroup() |>
-    mutate(t = pol_yr,
-           age = age + t - 1,
-           exercised = age >= wd_age & inc_guar,
-           pol_yr2 = pmin(max(base_rates$pol_yr), pol_yr)) |>
+    mutate(
+      t = pol_yr,
+      age = age + t - 1,
+      exercised = age >= wd_age & inc_guar,
+      pol_yr2 = pmin(max(base_rates$pol_yr), pol_yr)
+    ) |>
     left_join(base_rates, by = c("pol_yr2" = "pol_yr", "inc_guar")) |>
     left_join(qx_iamb, by = c("age", "gender")) |>
     left_join(scale_g2, by = c("age", "gender")) |>
@@ -183,13 +190,17 @@ expand_sim <- function(dat) {
       gender_mult = gender_mult[gender],
       wd_time_mult = wd_time_mult(exercised, age, inc_guar),
       size_mult = size_mult(premium),
-      q_w = pmin(qual_mult * age_mult * prod_mult * base_rate *
-                   wd_time_mult * size_mult,
-                 0.99),
+      q_w = pmin(
+        qual_mult * age_mult * prod_mult * base_rate * wd_time_mult * size_mult,
+        0.99
+      ),
       cal_yr = year(issue_date) + pol_yr - 1,
-      qx = qx * (1 - mi) ^ (cal_yr - 2012),
-      exposure = ifelse(last_yr,
-                        (interval(issue_date, end_date) / years(1)) %% 1, 1)
+      qx = qx * (1 - mi)^(cal_yr - 2012),
+      exposure = ifelse(
+        last_yr,
+        (interval(issue_date, end_date) / years(1)) %% 1,
+        1
+      )
     ) |>
     select(-pol_yr2, -t, -cal_yr, -mi, -last_yr) |>
     rename(q_d = qx)
@@ -202,7 +213,6 @@ expand_sim <- function(dat) {
     res <- rep_len(quit_status, dim(x)[[1]])
 
     for (i in seq_len(dim(x)[[1]])) {
-
       # cycle through each decrement and determine terminations
       for (j in seq_len(dim(x)[[2]])) {
         if (runif(1) < x[[i, j]] * y[[i]]) {
@@ -211,7 +221,9 @@ expand_sim <- function(dat) {
         }
       }
 
-      if (res[[i]] < quit_status) break
+      if (res[[i]] < quit_status) {
+        break
+      }
 
       # otherwise set to status 0 = active
       res[[i]] <- 0L
@@ -230,16 +242,21 @@ expand_sim <- function(dat) {
     mutate(status = persist(cbind(Death = q_d, Surrender = q_w), exposure)) |>
     ungroup() |>
     filter(status <= 2) |>
-    mutate(status = factor(status_map[as.character(status)],
-                           levels = status_map))
+    mutate(
+      status = factor(status_map[as.character(status)], levels = status_map)
+    )
 
   dat |>
-    mutate(term_date = if_else(status == "Active",
-                               NA_Date_,
-                               issue_date %m+% years(pol_yr - 1) +
-                                 sample(0:364, nrow(dat), replace = TRUE))) |>
+    mutate(
+      term_date = if_else(
+        status == "Active",
+        NA_Date_,
+        issue_date %m+%
+          years(pol_yr - 1) +
+          sample(0:364, nrow(dat), replace = TRUE)
+      )
+    ) |>
     select(-base_rate, -ends_with("_mult"), -exposure)
-
 }
 
 
@@ -258,8 +275,6 @@ census_dat <- census_dat |>
   select(-pol_yr) |>
   inner_join(final_status, by = "pol_num") |>
   select(pol_num, status, everything())
-
-
 
 
 # transactions and account values -----------------------------------------
@@ -286,42 +301,49 @@ expo_dat <- expo_dat |>
   mutate(
     age = age + pol_yr - 1,
     wd_flag = age >= wd_age,
-    trx_date = if_else(wd_flag,
-                      rand_between(pol_date_yr, pol_date_yr_end),
-                      NA_Date_),
+    trx_date = if_else(
+      wd_flag,
+      rand_between(pol_date_yr, pol_date_yr_end),
+      NA_Date_
+    ),
     # withdrawal types - income guarantee if wd_flag and an age threshold
     #   has been reached depending on the product. Base withdrawal if wd_flag,
     #   otherwise NA.
     trx_type = case_when(
       .default = "Base",
       !wd_flag ~ NA,
-      inc_guar ~ case_when(
-        product == "a" & age >= 70 ~ "Rider",
-        product == "b" & age >= 50 ~ "Rider",
-        product == "c" & age >= 60 ~ "Rider",
-        .default = "Base"
-      )
-    ) |> factor(),
+      inc_guar ~
+        case_when(
+          product == "a" & age >= 70 ~ "Rider",
+          product == "b" & age >= 50 ~ "Rider",
+          product == "c" & age >= 60 ~ "Rider",
+          .default = "Base"
+        )
+    ) |>
+      factor(),
     wd_pct = case_when(
       !wd_flag ~ 0,
-      trx_type == "Rider" ~ rbeta(n, 1, (100-age) * 38 / 60) |>
-        pmax(1 / premium),
+      trx_type == "Rider" ~
+        rbeta(n, 1, (100 - age) * 38 / 60) |>
+          pmax(1 / premium),
       .default = rbeta(n, 1, 39) |> pmax(1 / premium)
     )
   ) |>
   group_by(pol_num) |>
   mutate(
     i = i[product],
-    av_end = premium * (1 + i) ^ pol_yr * cumprod(1 - wd_pct),
+    av_end = premium * (1 + i)^pol_yr * cumprod(1 - wd_pct),
     av_beg = lag(av_end, default = premium[[1]]),
-    trx_amt = av_beg * wd_pct) |>
+    trx_amt = av_beg * wd_pct
+  ) |>
   ungroup()
 
 # break withdrawals into multiple pieces per policy year
-wd_freq_dist <- tribble(~value, ~prob,
-                        1, 0.5,
-                        2, 0.15,
-                        4, 0.35)
+# fmt: skip
+wd_freq_dist <- tribble(~value, ~prob, 
+  1, 0.5, 
+  2, 0.15, 
+  4, 0.35)
 
 stopifnot(near(sum(wd_freq_dist$prob), 1))
 
@@ -332,17 +354,24 @@ freq <- expo_dat |>
   distinct()
 
 freq <- freq |>
-  mutate(freq = sample(wd_freq_dist$value,
-                       nrow(freq), replace = TRUE,
-                       prob = wd_freq_dist$prob))
+  mutate(
+    freq = sample(
+      wd_freq_dist$value,
+      nrow(freq),
+      replace = TRUE,
+      prob = wd_freq_dist$prob
+    )
+  )
 
 withdrawals <- expo_dat |>
   left_join(freq, by = "pol_num") |>
   mutate(trx_amt = trx_amt / freq) |>
   filter(trx_amt > 0) |>
   slice(rep(row_number(), freq)) |>
-  mutate(trx_date = rand_between(pol_date_yr, pol_date_yr_end),
-         trx_amt = round(trx_amt)) |>
+  mutate(
+    trx_date = rand_between(pol_date_yr, pol_date_yr_end),
+    trx_amt = round(trx_amt)
+  ) |>
   select(pol_num, trx_date, trx_type, trx_amt) |>
   filter(trx_amt > 0)
 

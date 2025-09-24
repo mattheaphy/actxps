@@ -3,8 +3,7 @@ rec_dat <- recipes::recipe(status ~ ., toy_census) |>
   prep() |>
   recipes::juice()
 
-expo_dat <- expose_py(toy_census, "2022-12-31",
-                      target_status = "Surrender") |>
+expo_dat <- expose_py(toy_census, "2022-12-31", target_status = "Surrender") |>
   tibble::as_tibble() |>
   select(all_of(names(rec_dat)))
 
@@ -15,10 +14,12 @@ test_that("step_expose is identical to expose", {
 })
 
 test_that("Policy numbers can be retained in step_expose if desired", {
-
   pol_num_dat <- recipes::recipe(status ~ ., toy_census) |>
-    step_expose(end_date = "2022-12-31", target_status = "Surrender",
-                drop_pol_num = FALSE) |>
+    step_expose(
+      end_date = "2022-12-31",
+      target_status = "Surrender",
+      drop_pol_num = FALSE
+    ) |>
     prep() |>
     recipes::juice()
 

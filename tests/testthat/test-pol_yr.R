@@ -9,10 +9,16 @@ test_that("Leap years work", {
 
 
 test_that("pol_interval works", {
-  expect_equal(pol_yr("2021-02-28", "2020-02-29"),
-               pol_interval("2021-02-28", "2020-02-29", "year"))
-  expect_equal(pol_qtr("2022-04-14", "2022-01-05"),
-               pol_interval("2022-04-14", "2022-01-05", "quarter"))
-  expect_equal(pol_wk("2022-01-19", "2022-01-05"),
-               pol_interval("2022-01-19", "2022-01-05", "week"))
+  expect_equal(
+    pol_yr("2021-02-28", "2020-02-29"),
+    pol_interval("2021-02-28", "2020-02-29", "year")
+  )
+  expect_equal(
+    pol_qtr("2022-04-14", "2022-01-05"),
+    pol_interval("2022-04-14", "2022-01-05", "quarter")
+  )
+  expect_equal(
+    pol_wk("2022-01-19", "2022-01-05"),
+    pol_interval("2022-01-19", "2022-01-05", "week")
+  )
 })

@@ -5,24 +5,24 @@ expo <- expose_py(census_dat, "2019-12-31", target_status = "Surrender") |>
 
 res <- expo |>
   group_by(pol_yr, inc_guar) |>
-  trx_stats(percent_of = c("av_anniv", "premium"),
-            conf_int = TRUE)
+  trx_stats(percent_of = c("av_anniv", "premium"), conf_int = TRUE)
 
 test_that("trx_stats error checks work", {
-
   expect_error(trx_stats(1), regexp = 'must be an `exposed_df')
   expect_error(trx_stats(no_trx), regexp = 'No transactions')
-  expect_error(trx_stats(expo, trx_types = c("abc", "def")),
-               regexp = 'The following transactions do not exist')
+  expect_error(
+    trx_stats(expo, trx_types = c("abc", "def")),
+    regexp = 'The following transactions do not exist'
+  )
   expect_no_error(trx_stats(expo))
-
 })
 
 test_that("Experience study summary method checks", {
   expect_identical(res, summary(res, pol_yr, inc_guar))
-  expect_equal(trx_stats(expo, percent_of = c("av_anniv", "premium"),
-                         conf_int = TRUE),
-               summary(res))
+  expect_equal(
+    trx_stats(expo, percent_of = c("av_anniv", "premium"), conf_int = TRUE),
+    summary(res)
+  )
 })
 
 expo2 <- head(expo) |> rename(ex = exposure)
@@ -33,35 +33,48 @@ test_that("Renaming works", {
 })
 
 test_that("trx_stats works", {
-
-  expect_equal(ncol(expo |> trx_stats(trx_types = "Base",
-                                      percent_of = c("av_anniv", "premium"),
-                                      conf_int = TRUE)),
-               ncol(res) - 2)
+  expect_equal(
+    ncol(
+      expo |>
+        trx_stats(
+          trx_types = "Base",
+          percent_of = c("av_anniv", "premium"),
+          conf_int = TRUE
+        )
+    ),
+    ncol(res) - 2
+  )
   expect_s3_class(res, "trx_df")
   expect_true(all(res$exposure >= res$trx_flag, na.rm = TRUE))
   expect_true(all(res$avg_trx >= res$avg_all, na.rm = TRUE))
   expect_true(all(res$trx_freq >= res$trx_util, na.rm = TRUE))
-  expect_true(all(res$pct_of_av_anniv_w_trx >= res$pct_of_av_anniv_all,
-                  na.rm = TRUE))
-  expect_true(all(trx_stats(expo)$exposure <=
-                    trx_stats(expo, full_exposures_only = FALSE)$exposure))
+  expect_true(all(
+    res$pct_of_av_anniv_w_trx >= res$pct_of_av_anniv_all,
+    na.rm = TRUE
+  ))
+  expect_true(all(
+    trx_stats(expo)$exposure <=
+      trx_stats(expo, full_exposures_only = FALSE)$exposure
+  ))
 
-  expect_equal(expo |> trx_stats(combine_trx = TRUE, trx_types = "Rider") |>
-                 select(-trx_type),
-               expo |> trx_stats(trx_types = "Rider") |>
-                 select(-trx_type))
+  expect_equal(
+    expo |>
+      trx_stats(combine_trx = TRUE, trx_types = "Rider") |>
+      select(-trx_type),
+    expo |> trx_stats(trx_types = "Rider") |> select(-trx_type)
+  )
 
   res2 <- expo |> trx_stats(combine_trx = TRUE) |> as.data.frame()
   attr(res2, "trx_types") <- NULL
-  res3 <- no_trx |> add_transactions(
-    withdrawals |> mutate(trx_type = "All")) |>
+  res3 <- no_trx |>
+    add_transactions(
+      withdrawals |> mutate(trx_type = "All")
+    ) |>
     trx_stats() |>
     as.data.frame()
   attr(res3, "trx_types") <- NULL
 
   expect_equal(res2, res3)
-
 })
 
 test_that("Confidence intervals work", {
@@ -76,11 +89,15 @@ test_that("Confidence intervals work", {
   # verify that confidence intervals are tighter using lower confidence
   less_confident <- expo |>
     group_by(pol_yr, inc_guar) |>
-    trx_stats(percent_of = c("av_anniv", "premium"),
-              conf_int = TRUE, conf_level = 0.5) |>
+    trx_stats(
+      percent_of = c("av_anniv", "premium"),
+      conf_int = TRUE,
+      conf_level = 0.5
+    ) |>
     filter(trx_util > 0)
-  expect_true(all(res2$trx_util_upper - res2$trx_util_lower >
-                    less_confident$trx_util_upper -
-                    less_confident$trx_util_lower))
-
+  expect_true(all(
+    res2$trx_util_upper - res2$trx_util_lower >
+      less_confident$trx_util_upper -
+        less_confident$trx_util_lower
+  ))
 })

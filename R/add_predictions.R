@@ -34,25 +34,20 @@
 #'
 #' @export
 add_predictions <- function(.data, model, ..., col_expected = NULL) {
-
   preds <- stats::predict(model, .data, ...)
 
   # assign names
   if (is.null(col_expected)) {
-
     if (is.null(colnames(preds))) {
-
       n <- ncol(preds)
       if (is.null(n) || n == 1) {
         col_expected <- "expected"
       } else {
         col_expected <- paste("expected", 1:n, sep = "_")
       }
-
     } else {
       col_expected <- colnames(preds)
     }
-
   }
 
   # convert to a data frame if necessary
@@ -62,5 +57,4 @@ add_predictions <- function(.data, model, ..., col_expected = NULL) {
 
   list(.data, purrr::set_names(preds, col_expected)) |>
     purrr::list_cbind()
-
 }

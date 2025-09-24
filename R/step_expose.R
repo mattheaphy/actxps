@@ -35,26 +35,32 @@
 #' [expose()]
 #'
 #' @export
-step_expose <- function(recipe,
-                        ...,
-                        role = NA,
-                        trained = FALSE,
-                        end_date,
-                        start_date = as.Date("1900-01-01"),
-                        target_status = NULL,
-                        options = list(
-                          cal_expo = FALSE,
-                          expo_length = "year"),
-                        drop_pol_num = TRUE,
-                        skip = TRUE,
-                        id = recipes::rand_id("expose")) {
-
+step_expose <- function(
+  recipe,
+  ...,
+  role = NA,
+  trained = FALSE,
+  end_date,
+  start_date = as.Date("1900-01-01"),
+  target_status = NULL,
+  options = list(
+    cal_expo = FALSE,
+    expo_length = "year"
+  ),
+  drop_pol_num = TRUE,
+  skip = TRUE,
+  id = recipes::rand_id("expose")
+) {
   if (length(rlang::enquos(...)) > 0) {
     rlang::warn("No variable selectors are used for step_expose.")
   }
 
-  if (!"cal_expo" %in% names(options)) options$cal_expo <- FALSE
-  if (!"expo_length" %in% names(options)) options$expo_length <- "year"
+  if (!"cal_expo" %in% names(options)) {
+    options$cal_expo <- FALSE
+  }
+  if (!"expo_length" %in% names(options)) {
+    options$expo_length <- "year"
+  }
 
   recipes::add_step(
     recipe,
@@ -71,12 +77,20 @@ step_expose <- function(recipe,
       id = id
     )
   )
-
 }
 
-step_expose_new <- function(terms, role, trained, end_date, start_date,
-                            target_status, options, drop_pol_num, skip, id) {
-
+step_expose_new <- function(
+  terms,
+  role,
+  trained,
+  end_date,
+  start_date,
+  target_status,
+  options,
+  drop_pol_num,
+  skip,
+  id
+) {
   recipes::step(
     subclass = "expose",
     terms = terms,
@@ -90,12 +104,10 @@ step_expose_new <- function(terms, role, trained, end_date, start_date,
     skip = skip,
     id = id
   )
-
 }
 
 #' @export
 prep.step_expose <- function(x, training, info = NULL, ...) {
-
   step_expose_new(
     terms = x$terms,
     role = x$role,
@@ -108,31 +120,31 @@ prep.step_expose <- function(x, training, info = NULL, ...) {
     skip = x$skip,
     id = x$id
   )
-
 }
 
 #' @export
 bake.step_expose <- function(object, new_data, ...) {
-
-  new_data <- rlang::exec("expose",
-              new_data,
-              object$end_date,
-              object$start_date,
-              object$target_status,
-              !!!object$options)
+  new_data <- rlang::exec(
+    "expose",
+    new_data,
+    object$end_date,
+    object$start_date,
+    object$target_status,
+    !!!object$options
+  )
 
   if (object$drop_pol_num) {
     new_data |> select(-pol_num)
   } else {
     new_data
   }
-
 }
 
 #' @export
 print.step_expose <- function(x, width = max(20, options()$width - 30), ...) {
-
-  title <- glue::glue("Exposed data based on {if (x$options$cal_expo) 'calendar' else 'policy'} {x$options$expo_length}s{if (!is.null(x$target_status)) paste(' for target status', paste(x$target_status, collapse = ', ')) else ''} ")
+  title <- glue::glue(
+    "Exposed data based on {if (x$options$cal_expo) 'calendar' else 'policy'} {x$options$expo_length}s{if (!is.null(x$target_status)) paste(' for target status', paste(x$target_status, collapse = ', ')) else ''} "
+  )
 
   recipes::print_step(
     untr_obj = NULL,
@@ -143,7 +155,6 @@ print.step_expose <- function(x, width = max(20, options()$width - 30), ...) {
   )
 
   invisible(x)
-
 }
 
 #' @export
