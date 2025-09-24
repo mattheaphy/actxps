@@ -1,3 +1,7 @@
+# actxps 1.6.0.9000
+
+- Fixed issue with `exp_shiny()` and newer versions of the `bslib` package. Version 0.9.0 of `bslib` is now required to use `exp_shiny()`.
+
 # actxps 1.6.0
 
 - New feature - control variables

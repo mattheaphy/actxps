@@ -27,7 +27,7 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
     shiny (>= 1.7.5),
-    bslib (>= 0.5.1),
+    bslib (>= 0.9.0),
     thematic
 Config/testthat/edition: 3
 Depends: 
