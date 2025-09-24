@@ -225,7 +225,10 @@ exp_stats <- function(
     # throw an error if too many unique values
     nd_ctrl <- res |>
       ungroup() |>
-      dplyr::summarize(dplyr::across(control_vars, dplyr::n_distinct))
+      dplyr::summarize(dplyr::across(
+        dplyr::all_of(control_vars),
+        dplyr::n_distinct
+      ))
     nd_ctrl <- colnames(nd_ctrl)[nd_ctrl > control_distinct_max]
     if (length(nd_ctrl) > 0) {
       cli::cli_abort(c(
