@@ -99,7 +99,6 @@ autotable.exp_df <- function(
   ...
 ) {
   rlang::check_installed("RColorBrewer")
-
   expected <- attr(object, "expected")
   target_status <- attr(object, "target_status")
   wt <- attr(object, "wt")
@@ -113,7 +112,7 @@ autotable.exp_df <- function(
     object <- append_total(object)
     rowname_col <- ".row_label"
   } else {
-    rowname_col <- "rowname"
+    rowname_col <- NULL
   }
 
   if (show_conf_int && !conf_int) {
@@ -277,7 +276,7 @@ autotable.trx_df <- function(
     object <- append_total(object)
     rowname_col <- ".row_label"
   } else {
-    rowname_col <- "rowname"
+    rowname_col <- NULL
   }
 
   if (show_conf_int && !conf_int) {
