@@ -53,8 +53,11 @@ The `expose()` family of functions is used to perform this transformation.
 
 
 ```{r example}
-exposed_data <- expose(census_dat, end_date = "2019-12-31",
-                       target_status = "Surrender")
+exposed_data <- expose(
+  census_dat,
+  end_date = "2019-12-31",
+  target_status = "Surrender"
+)
 
 exposed_data
 ```
@@ -110,8 +113,10 @@ expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 # using 2 different expected termination rates
 exposed_data <- exposed_data |>
-  mutate(expected_1 = expected_table[pol_yr],
-         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
+  mutate(
+    expected_1 = expected_table[pol_yr],
+    expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03)
+  )
 
 exp_res <- exposed_data |>
   group_by(pol_yr, inc_guar) |>

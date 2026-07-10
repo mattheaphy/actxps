@@ -37,8 +37,11 @@ To demonstrate this function, we're going to use a data frame containing simulat
 library(actxps)
 library(dplyr)
 
-exposed_data <- expose(census_dat, end_date = "2019-12-31",
-                       target_status = "Surrender")
+exposed_data <- expose(
+  census_dat,
+  end_date = "2019-12-31",
+  target_status = "Surrender"
+)
 
 ```
 
@@ -78,8 +81,8 @@ If the data frame passed into `exp_stats()` is grouped using `dplyr::group_by()`
 In the following, `exposed_data` is grouped by policy year before being passed to `exp_stats()`. This results in one row per policy year found in the data.
 
 ```{r grouped-1}
-exposed_data |> 
-  group_by(pol_yr) |> 
+exposed_data |>
+  group_by(pol_yr) |>
   exp_stats()
 
 ```
@@ -87,8 +90,8 @@ exposed_data |>
 Multiple grouping variables are allowed. Below, the presence of an income guarantee (`inc_guar`) is added as a second grouping variable.
 
 ```{r grouped-2}
-exposed_data |> 
-  group_by(inc_guar, pol_yr) |> 
+exposed_data |>
+  group_by(inc_guar, pol_yr) |>
   exp_stats()
 
 ```
@@ -103,9 +106,9 @@ Even if the target status exists on the input data, it can be overridden. Howeve
 Using the example data, a total termination rate can be estimated by including both death and surrender statuses in `target_status`. To ensure exposures are accurate, an adjustment is made to fully expose deaths prior to calling `exp_stats()`^[This adjustment is not necessary on surrenders because the `expose()` function previously did this for us.].
 
 ```{r targ-status}
-exposed_data |> 
-  mutate(exposure = ifelse(status == "Death", 1, status)) |> 
-  group_by(pol_yr) |> 
+exposed_data |>
+  mutate(exposure = ifelse(status == "Death", 1, status)) |>
+  group_by(pol_yr) |>
   exp_stats(target_status = c("Surrender", "Death"))
 
 ```
@@ -118,8 +121,8 @@ Experience studies often weight output by key policy values. Examples include ac
 Our sample data contains a column called `premium` that we can weight by. When weights are supplied, the `claims`, `exposure`, and `q_obs` columns will be weighted. If expected termination rates are supplied (see below), these rates and A/E values will also be weighted.^[When weights are supplied, additional columns are created containing the sum of weights, the sum of squared weights, and the number of records. These columns are used for re-summarizing the data (see the "Summary method" section on this page).]
 
 ```{r weight-res}
-exposed_data |> 
-  group_by(pol_yr) |> 
+exposed_data |>
+  group_by(pol_yr) |>
   exp_stats(wt = 'premium')
 
 ```
@@ -145,17 +148,26 @@ expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 # using 2 different expected termination assumption sets
 exposed_data <- exposed_data |>
-  mutate(expected_1 = expected_table[pol_yr],
-         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
+  mutate(
+    expected_1 = expected_table[pol_yr],
+    expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03)
+  )
 
 exp_res <- exposed_data |>
   group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"))
 
 
-exp_res |> 
-  select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
-         ae_expected_1, ae_expected_2)
+exp_res |>
+  select(
+    pol_yr,
+    inc_guar,
+    q_obs,
+    expected_1,
+    expected_2,
+    ae_expected_1,
+    ae_expected_2
+  )
 
 ```
 
@@ -164,10 +176,16 @@ As noted above, if weights are passed to `exp_stats()` then A/E ratios will also
 ```{r act-exp-wt}
 exposed_data |>
   group_by(pol_yr, inc_guar) |>
-  exp_stats(expected = c("expected_1", "expected_2"), 
-            wt = "premium") |> 
-  select(pol_yr, inc_guar, q_obs, expected_1, expected_2, 
-         ae_expected_1, ae_expected_2)
+  exp_stats(expected = c("expected_1", "expected_2"), wt = "premium") |>
+  select(
+    pol_yr,
+    inc_guar,
+    q_obs,
+    expected_1,
+    expected_2,
+    ae_expected_1,
+    ae_expected_2
+  )
 
 ```
 
@@ -184,7 +202,7 @@ To answer the question above, we can group the data by `inc_guar` and add `contr
 ```{r act-exp-ctrl}
 exposed_data |>
   group_by(inc_guar) |>
-  exp_stats(control_vars = "pol_yr") |> 
+  exp_stats(control_vars = "pol_yr") |>
   select(inc_guar, q_obs, control, ae_control)
 ```
 
@@ -200,7 +218,7 @@ As an alternative, if `".none"` is passed to `control_vars`, a single aggregate 
 ```{r act-exp-ctrl2}
 exposed_data |>
   group_by(inc_guar) |>
-  exp_stats(control_vars = ".none") |> 
+  exp_stats(control_vars = ".none") |>
   select(inc_guar, q_obs, control, ae_control)
 ```
 
@@ -218,18 +236,18 @@ It should be noted that usage of control variables is a rough approximation and 
 If the `credibility` argument is set to `TRUE`, `exp_stats()` will produce an estimate of partial credibility under the Limited Fluctuation credibility method (also known as Classical Credibility) assuming a binomial distribution of claims.^[See Herzog, Thomas (1999). Introduction to Credibility Theory for more information on Limited Fluctuation Credibility.]
 
 ```{r cred1}
-exposed_data |> 
+exposed_data |>
   group_by(pol_yr, inc_guar) |>
-  exp_stats(credibility = TRUE) |> 
+  exp_stats(credibility = TRUE) |>
   select(pol_yr, inc_guar, claims, q_obs, credibility)
 ```
 
 Under the default arguments, credibility calculations assume a 95% confidence of being within 5% of the true value. These parameters can be overridden using the `conf_level` and `cred_r` arguments, respectively.
 
 ```{r cred2}
-exposed_data |> 
+exposed_data |>
   group_by(pol_yr, inc_guar) |>
-  exp_stats(credibility = TRUE, conf_level = 0.98, cred_r = 0.03) |> 
+  exp_stats(credibility = TRUE, conf_level = 0.98, cred_r = 0.03) |>
   select(pol_yr, inc_guar, claims, q_obs, credibility)
 ```
 
@@ -247,11 +265,19 @@ where,
 
 
 ```{r cred3}
-exposed_data |> 
+exposed_data |>
   group_by(pol_yr, inc_guar) |>
-  exp_stats(credibility = TRUE, expected = "expected_1") |> 
-  select(pol_yr, inc_guar, claims, q_obs, credibility, adj_expected_1, 
-         expected_1, ae_expected_1)
+  exp_stats(credibility = TRUE, expected = "expected_1") |>
+  select(
+    pol_yr,
+    inc_guar,
+    claims,
+    q_obs,
+    credibility,
+    adj_expected_1,
+    expected_1,
+    ae_expected_1
+  )
 ```
 
 
@@ -260,9 +286,9 @@ exposed_data |>
 If `conf_int` is set to `TRUE`, `exp_stats()` will produce lower and upper confidence interval limits for the observed termination rate.
 
 ```{r conf1}
-exposed_data |> 
+exposed_data |>
   group_by(pol_yr, inc_guar) |>
-  exp_stats(conf_int = TRUE) |> 
+  exp_stats(conf_int = TRUE) |>
   select(pol_yr, inc_guar, q_obs, q_obs_lower, q_obs_upper)
 ```
 
@@ -277,18 +303,18 @@ Where `S` is the aggregate claim random variable, `X` is the weighting variable 
 The default confidence level is 95%. This can be changed using the `conf_level` argument. Below, tighter confidence intervals are constructed by decreasing the confidence level to 90%.
 
 ```{r conf2}
-exposed_data |> 
+exposed_data |>
   group_by(pol_yr, inc_guar) |>
-  exp_stats(conf_int = TRUE, conf_level = 0.9) |> 
+  exp_stats(conf_int = TRUE, conf_level = 0.9) |>
   select(pol_yr, inc_guar, q_obs, q_obs_lower, q_obs_upper)
 ```
 
 If expected values are passed to `expected`, the output will also contain confidence intervals around any actual-to-expected ratios. 
 
 ```{r conf3}
-exposed_data |> 
+exposed_data |>
   group_by(pol_yr, inc_guar) |>
-  exp_stats(conf_int = TRUE, expected = "expected_1") |> 
+  exp_stats(conf_int = TRUE, expected = "expected_1") |>
   select(pol_yr, inc_guar, starts_with("ae_"))
 ```
 
@@ -331,7 +357,7 @@ These default names can be overridden using the `col_exposure` and `col_status` 
 For example, if the status column was called `curr_stat` in our data, we could write:
 
 ```{r col-names, eval=FALSE}
-exposed_data |> 
+exposed_data |>
   exp_stats(col_status = "curr_stat")
 ```
 

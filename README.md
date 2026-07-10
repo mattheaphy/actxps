@@ -79,8 +79,11 @@ Convert census records to exposure records with one row *per policy per
 year*.
 
 ``` r
-exposed_data <- expose(census_dat, end_date = "2019-12-31", 
-                        target_status = "Surrender")
+exposed_data <- expose(
+  census_dat,
+  end_date = "2019-12-31",
+  target_status = "Surrender"
+)
 
 exposed_data
 #> 
@@ -112,8 +115,8 @@ Create a summary grouped by policy year and the presence of a guaranteed
 income rider.
 
 ``` r
-exp_res <- exposed_data |> 
-  group_by(pol_yr, inc_guar) |> 
+exp_res <- exposed_data |>
+  group_by(pol_yr, inc_guar) |>
   exp_stats()
 
 exp_res
@@ -150,12 +153,14 @@ of `exp_stats()`.
 expected_table <- c(seq(0.005, 0.03, length.out = 10), 0.2, 0.15, rep(0.05, 3))
 
 # using 2 different expected termination rates
-exposed_data <- exposed_data |> 
-  mutate(expected_1 = expected_table[pol_yr],
-         expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03))
+exposed_data <- exposed_data |>
+  mutate(
+    expected_1 = expected_table[pol_yr],
+    expected_2 = ifelse(exposed_data$inc_guar, 0.015, 0.03)
+  )
 
-exp_res <- exposed_data |> 
-  group_by(pol_yr, inc_guar) |> 
+exp_res <- exposed_data |>
+  group_by(pol_yr, inc_guar) |>
   exp_stats(expected = c("expected_1", "expected_2"))
 
 exp_res
