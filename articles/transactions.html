@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Transaction studies">
 </head>
@@ -342,8 +342,8 @@ of an income guarantee (<code>inc_guar</code>) before being passed to
 types of transactions and two distinct values of
 <code>inc_guar</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Transaction study results</span> ──</span></span>
@@ -363,8 +363,8 @@ types of transactions and two distinct values of
 <p>Multiple grouping variables are allowed. Below, policy year
 (<code>pol_yr</code>) is added as a second grouping variable.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Transaction study results</span> ──</span></span>
@@ -418,11 +418,11 @@ available in the <code>account_vals</code> data frame in the column
 <code>av_anniv</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># attach account values data</span></span>
-<span><span class="va">exposed_trx_w_av</span> <span class="op">&lt;-</span> <span class="va">exposed_trx</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">exposed_trx_w_av</span> <span class="op">&lt;-</span> <span class="va">exposed_trx</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">account_vals</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pol_num"</span>, <span class="st">"pol_date_yr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">trx_res</span> <span class="op">&lt;-</span> <span class="va">exposed_trx_w_av</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">trx_res</span> <span class="op">&lt;-</span> <span class="va">exposed_trx_w_av</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">inc_guar</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>percent_of <span class="op">=</span> <span class="st">"av_anniv"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">trx_res</span><span class="op">)</span></span>
@@ -452,9 +452,9 @@ available in the <code>account_vals</code> data frame in the column
 interval limits for the observed utilization rate. Confidence intervals
 are constructed assuming a binomial distribution.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>conf_int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>conf_int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">trx_util</span>, <span class="va">trx_util_lower</span>, <span class="va">trx_util_upper</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Transaction study results</span> ──</span></span>
@@ -481,9 +481,9 @@ are constructed assuming a binomial distribution.</p>
 <code>conf_level</code> argument. Below, tighter confidence intervals
 are constructed by decreasing the confidence level to 90%.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>conf_int <span class="op">=</span> <span class="cn">TRUE</span>, conf_level <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">exposed_trx</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>conf_int <span class="op">=</span> <span class="cn">TRUE</span>, conf_level <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="va">trx_util</span>, <span class="va">trx_util_lower</span>, <span class="va">trx_util_upper</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Transaction study results</span> ──</span></span>
@@ -518,7 +518,7 @@ regardless of transaction utilization (<code>pct_of_{*}_all</code>) are
 calculated assuming that the aggregate distribution is normal with a
 mean equal to observed transactions and a variance equal to:</li>
 </ul>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>S</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>E</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>×</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mi>S</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>E</mi><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo stretchy="false" form="postfix">)</mo><mo>×</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mi>X</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>E</mi><mo stretchy="false" form="prefix">(</mo><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>×</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
      Var(S) = E(N) \times Var(X) + E(X)^2 \times Var(N),
 </annotation></semantics></math> Where <code>S</code> is the aggregate
 transactions random variable, <code>X</code> is an individual
@@ -526,10 +526,10 @@ transaction amount assumed to follow a normal distribution, and
 <code>N</code> is a binomial random variable for transaction
 utilization.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exposed_trx_w_av</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>conf_int <span class="op">=</span> <span class="cn">TRUE</span>, percent_of <span class="op">=</span> <span class="st">"av_anniv"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"pct_of"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">exposed_trx_w_av</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/trx_stats.html">trx_stats</a></span><span class="op">(</span>conf_int <span class="op">=</span> <span class="cn">TRUE</span>, percent_of <span class="op">=</span> <span class="st">"av_anniv"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">pol_yr</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"pct_of"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 30</span></span>
 <span><span class="co">#&gt; Columns: 7</span></span>
@@ -554,15 +554,15 @@ these functions.</p>
 <span></span>
 <span><span class="va">trx_res</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># remove periods with zero transactions</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">trx_n</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">trx_n</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">pct_of_av_anniv_w_trx</span><span class="op">)</span></span></code></pre></div>
-<p><img src="transactions_files/figure-html/trx-plot-1.png" width="672"></p>
+<p><img src="transactions_files/figure-html/trx-plot-1.png" class="r-plt" alt="" width="672"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trx_res</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">trx_res</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># remove periods with zero transactions</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">trx_n</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">trx_n</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># first 10 rows showed for brevity</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/autotable.html">autotable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <center>
 <img src="../reference/figures/trx_gt.png" width="65%" height="65%">
@@ -735,7 +735,7 @@ conventions:</p>
 <p>For example, if the transaction type column was called
 <code>transaction_code</code> in our data, we could write:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exposed_data</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">exposed_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/add_transactions.html">add_transactions</a></span><span class="op">(</span><span class="va">withdrawals</span>, col_trx_type <span class="op">=</span> <span class="st">"transaction_code"</span><span class="op">)</span></span></code></pre></div>
 <p>Similarly, <code><a href="../reference/trx_stats.html">trx_stats()</a></code> assumes the input data uses the
 name <code>exposure</code> for exposures. This default can be overridden
@@ -761,7 +761,7 @@ period to exposure period.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
 </div>
 
     </footer>

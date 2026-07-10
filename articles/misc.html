@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Other functions">
 </head>
@@ -119,10 +119,15 @@ on a theoretical block of deferred annuity contracts. Below,
 <code>exp_df</code>, and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> is called using multiple
 grouping variables.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">agg_sim_exp_df</span> <span class="op">&lt;-</span> <span class="va">agg_sim_dat</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/as_exp_df.html">as_exp_df</a></span><span class="op">(</span>col_exposure <span class="op">=</span> <span class="st">"exposure_n"</span>, col_claims <span class="op">=</span> <span class="st">"claims_n"</span>,</span>
-<span>            conf_int <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>            start_date <span class="op">=</span> <span class="fl">2005</span>, end_date <span class="op">=</span> <span class="fl">2019</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">agg_sim_exp_df</span> <span class="op">&lt;-</span> <span class="va">agg_sim_dat</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/as_exp_df.html">as_exp_df</a></span><span class="op">(</span></span>
+<span>    col_exposure <span class="op">=</span> <span class="st">"exposure_n"</span>,</span>
+<span>    col_claims <span class="op">=</span> <span class="st">"claims_n"</span>,</span>
+<span>    conf_int <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    start_date <span class="op">=</span> <span class="fl">2005</span>,</span>
+<span>    end_date <span class="op">=</span> <span class="fl">2019</span>,</span>
+<span>    target_status <span class="op">=</span> <span class="st">"Surrender"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>Results summarized by policy year</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">agg_sim_exp_df</span>, <span class="va">pol_yr</span><span class="op">)</span></span>
@@ -224,26 +229,33 @@ column(s) containing predicted values. If no names are specified, the
 default name is “expected”.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create exposure records</span></span>
-<span><span class="va">exposed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span><span class="va">census_dat</span>, end_date <span class="op">=</span> <span class="st">"2019-12-31"</span>,</span>
-<span>                       target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_yr</span> <span class="op">&lt;=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">exposed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expose.html">expose</a></span><span class="op">(</span></span>
+<span>  <span class="va">census_dat</span>,</span>
+<span>  end_date <span class="op">=</span> <span class="st">"2019-12-31"</span>,</span>
+<span>  target_status <span class="op">=</span> <span class="st">"Surrender"</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pol_yr</span> <span class="op">&lt;=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># add a response column for surrenders</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>surrendered <span class="op">=</span> <span class="va">status</span> <span class="op">==</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a simple logistic model</span></span>
-<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">surrendered</span> <span class="op">~</span> <span class="va">pol_yr</span>, data <span class="op">=</span> <span class="va">exposed_data</span>, </span>
-<span>           family <span class="op">=</span> <span class="st">"binomial"</span>, weights <span class="op">=</span> <span class="va">exposure</span><span class="op">)</span></span>
+<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span></span>
+<span>  <span class="va">surrendered</span> <span class="op">~</span> <span class="va">pol_yr</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">exposed_data</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"binomial"</span>,</span>
+<span>  weights <span class="op">=</span> <span class="va">exposure</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">exp_res</span> <span class="op">&lt;-</span> <span class="va">exposed_data</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">exp_res</span> <span class="op">&lt;-</span> <span class="va">exposed_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># attach predictions</span></span>
-<span>  <span class="fu"><a href="../reference/add_predictions.html">add_predictions</a></span><span class="op">(</span><span class="va">mod</span>, type <span class="op">=</span> <span class="st">"response"</span>, col_expected <span class="op">=</span> <span class="st">"logistic"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/add_predictions.html">add_predictions</a></span><span class="op">(</span><span class="va">mod</span>, type <span class="op">=</span> <span class="st">"response"</span>, col_expected <span class="op">=</span> <span class="st">"logistic"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># summarize results</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">pol_yr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/exp_stats.html">exp_stats</a></span><span class="op">(</span>expected <span class="op">=</span> <span class="st">"logistic"</span><span class="op">)</span></span>
-<span> </span>
+<span></span>
 <span><span class="co"># create a plot</span></span>
 <span><span class="fu"><a href="../reference/plot_special.html">plot_termination_rates</a></span><span class="op">(</span><span class="va">exp_res</span><span class="op">)</span></span></code></pre></div>
-<p><img src="misc_files/figure-html/add-preds-1.png" width="480"></p>
+<p><img src="misc_files/figure-html/add-preds-1.png" class="r-plt" alt="" width="480"></p>
 <p>In addition, for users of the tidymodels framework, the actxps
 package includes a recipe step function, <code><a href="../reference/step_expose.html">step_expose()</a></code>,
 that can apply the <code><a href="../reference/expose.html">expose()</a></code> function during data
@@ -265,7 +277,7 @@ preprocessing.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     step</span></span>
 <span></span>
-<span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html" class="external-link">recipe</a></span><span class="op">(</span><span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">census_dat</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html" class="external-link">recipe</a></span><span class="op">(</span><span class="op">~</span><span class="va">.</span>, data <span class="op">=</span> <span class="va">census_dat</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/step_expose.html">step_expose</a></span><span class="op">(</span>end_date <span class="op">=</span> <span class="st">"2019-12-31"</span>, target_status <span class="op">=</span> <span class="st">"Surrender"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Recipe</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────────────</span></span></span>
@@ -288,7 +300,7 @@ preprocessing.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1. Logo <a href="https://www.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_7497397.htm#query=treasure&amp;position=7&amp;from_view=search&amp;track=sph" class="external-link">image by macrovector</a> on Freepik</p>
 </div>
 
     </footer>
